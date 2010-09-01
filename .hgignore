@@ -12,3 +12,6 @@ svn-commit.tmp*
 *.merge-left.r*
 *.merge-right.r*
 *.working
+*.iml
+*.ipr
+*.iws
