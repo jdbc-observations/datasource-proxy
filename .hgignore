@@ -1,0 +1,14 @@
+syntax: glob
+**/.DS_Store
+.svn/**
+*.class
+*.jar
+target/**
+test-output/**
+.*.swp
+.swp
+temp-testng-customsuite.xml
+svn-commit.tmp*
+*.merge-left.r*
+*.merge-right.r*
+*.working
