@@ -80,31 +80,63 @@ public class QueryCount {
         return select;
     }
 
+    public void setSelect(int select) {
+        this.select = select;
+    }
+
     public int getInsert() {
         return insert;
+    }
+
+    public void setInsert(int insert) {
+        this.insert = insert;
     }
 
     public int getUpdate() {
         return update;
     }
 
+    public void setUpdate(int update) {
+        this.update = update;
+    }
+
     public int getDelete() {
         return delete;
+    }
+
+    public void setDelete(int delete) {
+        this.delete = delete;
     }
 
     public int getOther() {
         return other;
     }
 
+    public void setOther(int other) {
+        this.other = other;
+    }
+
     public int getCall() {
         return call;
+    }
+
+    public void setCall(int call) {
+        this.call = call;
     }
 
     public int getFailure() {
         return failure;
     }
 
+    public void setFailure(int failure) {
+        this.failure = failure;
+    }
+
     public long getElapsedTime() {
         return elapsedTime;
+    }
+
+    public void setElapsedTime(long elapsedTime) {
+        this.elapsedTime = elapsedTime;
     }
 }

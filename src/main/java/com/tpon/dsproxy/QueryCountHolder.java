@@ -25,6 +25,22 @@ public class QueryCountHolder {
         return map.get(dataSourceName);
     }
 
+    public static QueryCount getGrandTotal() {
+        final QueryCount totalCount = new QueryCount();
+        final Map<String, QueryCount> map = queryCountMapHolder.get();
+        for (QueryCount queryCount : map.values()) {
+            totalCount.setSelect(totalCount.getSelect() + queryCount.getSelect());
+            totalCount.setInsert(totalCount.getInsert() + queryCount.getInsert());
+            totalCount.setUpdate(totalCount.getUpdate() + queryCount.getUpdate());
+            totalCount.setDelete(totalCount.getDelete() + queryCount.getDelete());
+            totalCount.setOther(totalCount.getOther() + queryCount.getOther());
+            totalCount.setCall(totalCount.getCall() + queryCount.getCall());
+            totalCount.setFailure(totalCount.getFailure() + queryCount.getFailure());
+            totalCount.setElapsedTime(totalCount.getElapsedTime() + queryCount.getElapsedTime());
+        }
+        return totalCount;
+    }
+
     public static void put(String dataSourceName, QueryCount count) {
         queryCountMapHolder.get().put(dataSourceName, count);
     }
