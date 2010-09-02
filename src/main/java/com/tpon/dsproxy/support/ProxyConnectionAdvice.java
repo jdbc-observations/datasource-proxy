@@ -7,6 +7,8 @@ import org.aopalliance.intercept.MethodInvocation;
 import java.sql.Connection;
 
 /**
+ * Support injecting proxies by AOP. 
+ *
  * @author Tadaya Tsuyukubo
  */
 public class ProxyConnectionAdvice implements MethodInterceptor {

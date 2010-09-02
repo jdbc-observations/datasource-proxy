@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Proxy InvocationHandler for {@link java.sql.Statement}.
+ *
  * @author Tadaya Tsuyukubo
  */
 public class StatementInvocationHandler implements InvocationHandler {

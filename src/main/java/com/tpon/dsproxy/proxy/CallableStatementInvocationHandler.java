@@ -19,6 +19,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
+ * Proxy InvocationHandler for {@link java.sql.CallableStatement}.
+ *
  * @author Tadaya Tsuyukubo
  */
 public class CallableStatementInvocationHandler implements InvocationHandler {
@@ -112,7 +114,7 @@ public class CallableStatementInvocationHandler implements InvocationHandler {
         } else if ("getDataSourceName".equals(methodName)) {
             return dataSourceName;
         } else if ("getTarget".equals(methodName)) {
-            // ProxyJdbcObject interface has method to return original object.
+            // ProxyJdbcObject interface has a method to return original object.
             return cs;
         }
 

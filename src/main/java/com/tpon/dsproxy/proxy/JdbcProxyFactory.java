@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 /**
+ * Factory class to return a proxy with InvocationHandler used by datasource-proxy.
+ *
  * @author Tadaya Tsuyukubo
  */
 public class JdbcProxyFactory {

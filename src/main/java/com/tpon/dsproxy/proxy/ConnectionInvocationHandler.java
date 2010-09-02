@@ -15,6 +15,8 @@ import java.util.HashSet;
 import java.util.Arrays;
 
 /**
+ * Proxy InvocationHandler for {@link java.sql.Connection}.
+ *
  * @author Tadaya Tsuyukubo
  */
 public class ConnectionInvocationHandler implements InvocationHandler {

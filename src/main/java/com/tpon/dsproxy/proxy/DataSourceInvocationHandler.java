@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Proxy InvocationHandler for {@link javax.sql.DataSource}.
+ *
  * @author Tadaya Tsuyukubo
  */
 public class DataSourceInvocationHandler implements InvocationHandler {

@@ -19,6 +19,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
+ * Proxy InvocationHandler for {@link java.sql.PreparedStatement}.
+ *
  * @author Tadaya Tsuyukubo
  */
 public class PreparedStatementInvocationHandler implements InvocationHandler {

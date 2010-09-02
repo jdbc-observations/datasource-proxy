@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
+ * A proxy of {@link javax.sql.DataSource} with {@link QueryExecutionListener}. 
+ *
  * @author Tadaya Tsuyukubo
  */
 public class ProxyDataSource implements DataSource {
