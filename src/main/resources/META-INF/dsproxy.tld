@@ -6,14 +6,14 @@
   <tlib-version>1.0</tlib-version>
   <jsp-version>1.2</jsp-version>
   <short-name>dsproxy</short-name>
-  <uri>http://www.t-pon.com/dsproxy/tags</uri>
+  <uri>http://www.ttddyy.net/dsproxy/tags</uri>
   <description>
     datasource-proxy tag library
   </description>
 
   <tag>
     <name>metrics</name>
-    <tag-class>com.tpon.dsproxy.support.tags.MetricsTag</tag-class>
+    <tag-class>net.ttddyy.dsproxy.support.tags.MetricsTag</tag-class>
     <body-content>empty</body-content>
     <description>
       Retrieve QueryCount values from QueryCountHolder. You need to register DataSourceQueryCountListener to use this tag.
