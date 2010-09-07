@@ -3,12 +3,12 @@
   <groupId>net.ttddyy</groupId>
   <artifactId>datasource-proxy</artifactId>
   <packaging>jar</packaging>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <name>datasource-proxy</name>
   <url>http://code.google.com/p/datasource-proxy/</url>
 
   <scm>
-    <connection>scm:svn:https://datasource-proxy.googlecode.com/svn/tags/datasource-proxy-1.0</connection>
+    <connection>scm:svn:https://datasource-proxy.googlecode.com/svn</connection>
     <!--<connection>scm:hg:file://${basedir}</connection>-->
   </scm>
 
