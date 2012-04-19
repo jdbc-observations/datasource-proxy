@@ -127,7 +127,7 @@ public class LoggingListenerTest {
                 {CommonsLogLevel.ERROR},
                 {CommonsLogLevel.FATAL},
                 {CommonsLogLevel.INFO},
-                {CommonsLogLevel.TRAC},
+                {CommonsLogLevel.TRACE},
                 {CommonsLogLevel.WARN},
         };
     }
@@ -155,7 +155,7 @@ public class LoggingListenerTest {
         messages.put(CommonsLogLevel.ERROR, log.getErrorMessages());
         messages.put(CommonsLogLevel.FATAL, log.getFatalMessages());
         messages.put(CommonsLogLevel.INFO, log.getInfoMessages());
-        messages.put(CommonsLogLevel.TRAC, log.getTraceMessages());
+        messages.put(CommonsLogLevel.TRACE, log.getTraceMessages());
         messages.put(CommonsLogLevel.WARN, log.getWarnMessages());
 
         for (Map.Entry<CommonsLogLevel, List> entry : messages.entrySet()) {

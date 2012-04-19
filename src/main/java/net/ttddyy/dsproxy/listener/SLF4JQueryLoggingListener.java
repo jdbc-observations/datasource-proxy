@@ -73,7 +73,7 @@ public class SLF4JQueryLoggingListener implements QueryExecutionListener {
             case INFO:
                 logger.info(MESSAGE, argArray);
                 break;
-            case TRAC:
+            case TRACE:
                 logger.trace(MESSAGE, argArray);
                 break;
             case WARN:

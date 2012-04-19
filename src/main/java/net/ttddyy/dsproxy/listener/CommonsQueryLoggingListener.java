@@ -86,7 +86,7 @@ public class CommonsQueryLoggingListener implements QueryExecutionListener {
             case INFO:
                 log.info(message);
                 break;
-            case TRAC:
+            case TRACE:
                 log.trace(message);
                 break;
             case WARN:

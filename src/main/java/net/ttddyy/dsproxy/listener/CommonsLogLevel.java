@@ -6,7 +6,7 @@ package net.ttddyy.dsproxy.listener;
  * @author Tadaya Tsuyukubo
  */
 public enum CommonsLogLevel {
-    DEBUG, ERROR, FATAL, INFO, TRAC, WARN;
+    DEBUG, ERROR, FATAL, INFO, TRACE, WARN;
 
     public static CommonsLogLevel nullSafeValueOf(String name) {
         if (name == null) {

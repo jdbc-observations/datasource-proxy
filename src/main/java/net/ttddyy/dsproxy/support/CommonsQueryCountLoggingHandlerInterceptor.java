@@ -60,7 +60,7 @@ public class CommonsQueryCountLoggingHandlerInterceptor extends HandlerIntercept
             case INFO:
                 log.info(message);
                 break;
-            case TRAC:
+            case TRACE:
                 log.trace(message);
                 break;
             case WARN:

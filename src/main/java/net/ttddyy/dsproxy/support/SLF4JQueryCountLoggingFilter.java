@@ -80,7 +80,7 @@ public class SLF4JQueryCountLoggingFilter implements Filter {
             case INFO:
                 logger.info(LOG_MESSAGE, argArray);
                 break;
-            case TRAC:
+            case TRACE:
                 logger.trace(LOG_MESSAGE, argArray);
                 break;
             case WARN:

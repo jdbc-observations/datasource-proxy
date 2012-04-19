@@ -56,7 +56,7 @@ public class SLF4JQueryCountLoggingHandlerInterceptor extends HandlerInterceptor
             case INFO:
                 logger.info(LOG_MESSAGE, argArray);
                 break;
-            case TRAC:
+            case TRACE:
                 logger.trace(LOG_MESSAGE, argArray);
                 break;
             case WARN:

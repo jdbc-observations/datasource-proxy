@@ -63,7 +63,7 @@ public class SLF4JQueryCountLoggingRequestListener implements ServletRequestList
             case INFO:
                 logger.info(LOG_MESSAGE, argArray);
                 break;
-            case TRAC:
+            case TRACE:
                 logger.trace(LOG_MESSAGE, argArray);
                 break;
             case WARN:
