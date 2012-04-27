@@ -8,7 +8,8 @@
   <url>http://code.google.com/p/datasource-proxy/</url>
 
   <scm>
-    <connection>scm:svn:https://datasource-proxy.googlecode.com/svn</connection>
+    <connection>scm:git:git@github.com:ttddyy/datasource-proxy.git</connection>
+    <!--<connection>scm:svn:https://datasource-proxy.googlecode.com/svn</connection>-->
     <!--<connection>scm:hg:file://${basedir}</connection>-->
   </scm>
 
