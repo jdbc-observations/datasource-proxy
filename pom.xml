@@ -18,6 +18,12 @@
     </license>
   </licenses>
 
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+
   <scm>
     <connection>scm:git:git@github.com:ttddyy/datasource-proxy.git</connection>
     <developerConnection>scm:git:git@github.com:ttddyy/datasource-proxy.git</developerConnection>
@@ -51,19 +57,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-gpg-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>sign-artifacts</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
@@ -150,8 +143,8 @@
 
     <dependency>
       <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-all</artifactId>
-      <version>1.2</version>
+      <artifactId>hamcrest-library</artifactId>
+      <version>1.2.1</version>
       <scope>test</scope>
     </dependency>
 
