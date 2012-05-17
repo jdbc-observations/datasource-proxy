@@ -1,8 +1,21 @@
 
 # datasource-proxy
 
-[Project Home](http://code.google.com/p/datasource-proxy/)
+## links
 
-[Sample Configuration](http://code.google.com/p/datasource-proxy/wiki/SampleConfiguration)
+- [Project Home](http://code.google.com/p/datasource-proxy/)
 
-[How to use](http://code.google.com/p/datasource-proxy/wiki/HowToUse)
+- [Sample Configuration](http://code.google.com/p/datasource-proxy/wiki/SampleConfiguration)
+
+- [How to use](http://code.google.com/p/datasource-proxy/wiki/HowToUse)
+
+
+## maven
+
+```xml
+<dependency>
+  <groupId>net.ttddyy</groupId>
+  <artifactId>datasource-proxy</artifactId>
+  <version>1.1</version>
+</dependency>
+```
