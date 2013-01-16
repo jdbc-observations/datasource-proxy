@@ -606,7 +606,7 @@ public class CallableStatementInvocationHandlerMockTest {
 
     private CallableStatement getProxyStatement(CallableStatement statement, String query,
                                                 QueryExecutionListener listener) {
-        return JdbcProxyFactory.createCallableStatement(statement, query, listener, DS_NAME);
+        return new JdkJdbcProxyFactory().createCallableStatement(statement, query, listener, DS_NAME);
     }
 
     @Test

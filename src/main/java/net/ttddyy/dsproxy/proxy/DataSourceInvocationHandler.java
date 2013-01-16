@@ -26,14 +26,17 @@ public class DataSourceInvocationHandler implements InvocationHandler {
     private DataSource dataSource;
     private QueryExecutionListener listener;
     private String dataSourceName;
+    private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
 
     public DataSourceInvocationHandler() {
     }
 
-    public DataSourceInvocationHandler(DataSource dataSource, QueryExecutionListener listener, String dataSourceName) {
+    public DataSourceInvocationHandler(DataSource dataSource, QueryExecutionListener listener, String dataSourceName,
+                                       JdbcProxyFactory jdbcProxyFactory) {
         this.dataSource = dataSource;
         this.listener = listener;
         this.dataSourceName = dataSourceName;
+        this.jdbcProxyFactory = jdbcProxyFactory;
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -66,7 +69,7 @@ public class DataSourceInvocationHandler implements InvocationHandler {
             final Object retVal = method.invoke(dataSource, args);
 
             if ("getConnection".equals(methodName)) {
-                return JdbcProxyFactory.createConnection((Connection) retVal, listener, dataSourceName);
+                return jdbcProxyFactory.createConnection((Connection) retVal, listener, dataSourceName);
             }
             return retVal;
         }

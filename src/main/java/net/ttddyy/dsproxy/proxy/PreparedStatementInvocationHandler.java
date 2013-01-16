@@ -81,6 +81,7 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
     private String dataSourceName;
     private SortedMap<Integer, Object> queryParams = new TreeMap<Integer, Object>(); // sorted by key
     private QueryExecutionListener listener;
+    private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
 
     private List<BatchQueryHolder> batchQueries = new ArrayList<BatchQueryHolder>();
 
@@ -96,11 +97,12 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
     }
 
     public PreparedStatementInvocationHandler(
-            PreparedStatement ps, String query, QueryExecutionListener listener, String dataSourceName) {
+            PreparedStatement ps, String query, QueryExecutionListener listener, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
         this.ps = ps;
         this.query = query;
         this.listener = listener;
         this.dataSourceName = dataSourceName;
+        this.jdbcProxyFactory = jdbcProxyFactory;
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -135,7 +137,7 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
 
         if (GET_CONNECTION_METHOD.contains(methodName)) {
             final Connection conn = (Connection) MethodUtils.proceedExecution(method, ps, args);
-            return JdbcProxyFactory.createConnection(conn, listener, dataSourceName);
+            return jdbcProxyFactory.createConnection(conn, listener, dataSourceName);
         }
 
 

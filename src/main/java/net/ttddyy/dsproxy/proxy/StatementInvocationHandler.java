@@ -7,14 +7,9 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.Statement;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.sql.Statement;
+import java.util.*;
 
 /**
  * Proxy InvocationHandler for {@link java.sql.Statement}.
@@ -57,6 +52,7 @@ public class StatementInvocationHandler implements InvocationHandler {
     private QueryExecutionListener listener;
     private String dataSourceName;
     private List<String> batchQueries = new ArrayList<String>();
+    private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
 
     public StatementInvocationHandler(Statement stmt) {
         this.stmt = stmt;
@@ -68,10 +64,11 @@ public class StatementInvocationHandler implements InvocationHandler {
     }
 
     public StatementInvocationHandler(
-            Statement stmt, QueryExecutionListener listener, String dataSourceName) {
+            Statement stmt, QueryExecutionListener listener, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
         this.stmt = stmt;
         this.listener = listener;
         this.dataSourceName = dataSourceName;
+        this.jdbcProxyFactory = jdbcProxyFactory;
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -106,7 +103,7 @@ public class StatementInvocationHandler implements InvocationHandler {
 
         if (GET_CONNECTION_METHOD.contains(methodName)) {
             final Connection conn = (Connection) MethodUtils.proceedExecution(method, stmt, args);
-            return JdbcProxyFactory.createConnection(conn, listener, dataSourceName);
+            return jdbcProxyFactory.createConnection(conn, listener, dataSourceName);
         }
 
         if ("addBatch".equals(methodName) || "clearBatch".equals(methodName)) {

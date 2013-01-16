@@ -82,6 +82,7 @@ public class CallableStatementInvocationHandler implements InvocationHandler {
     private String dataSourceName;
     private SortedMap<Object, Object> queryParams = new TreeMap<Object, Object>(); // sorted by key(int or String)
     private QueryExecutionListener listener;
+    private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
 
     private List<BatchQueryHolder> batchQueries = new ArrayList<BatchQueryHolder>();
 
@@ -89,11 +90,12 @@ public class CallableStatementInvocationHandler implements InvocationHandler {
     }
 
     public CallableStatementInvocationHandler(
-            CallableStatement cs, String query, QueryExecutionListener listener, String dataSourceName) {
+            CallableStatement cs, String query, QueryExecutionListener listener, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
         this.cs = cs;
         this.query = query;
         this.listener = listener;
         this.dataSourceName = dataSourceName;
+        this.jdbcProxyFactory = jdbcProxyFactory;
     }
 
 
@@ -129,7 +131,7 @@ public class CallableStatementInvocationHandler implements InvocationHandler {
 
         if (GET_CONNECTION_METHOD.contains(methodName)) {
             final Connection conn = (Connection) MethodUtils.proceedExecution(method, cs, args);
-            return JdbcProxyFactory.createConnection(conn, listener, dataSourceName);
+            return jdbcProxyFactory.createConnection(conn, listener, dataSourceName);
         }
 
 

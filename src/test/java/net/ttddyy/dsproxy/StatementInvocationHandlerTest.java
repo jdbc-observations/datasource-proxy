@@ -7,6 +7,7 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 
+import net.ttddyy.dsproxy.proxy.JdkJdbcProxyFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -42,7 +43,7 @@ public class StatementInvocationHandlerTest {
         Connection connection = jdbcDataSource.getConnection();
         Statement stmt = connection.createStatement();
 
-        statement = JdbcProxyFactory.createStatement(stmt, chainListener);
+        statement = new JdkJdbcProxyFactory().createStatement(stmt, chainListener);
     }
 
     @AfterMethod

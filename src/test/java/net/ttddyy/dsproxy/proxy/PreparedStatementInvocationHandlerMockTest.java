@@ -132,7 +132,7 @@ public class PreparedStatementInvocationHandlerMockTest {
     }
 
     private PreparedStatement getProxyStatement(PreparedStatement statement, String query, QueryExecutionListener listener) {
-        return JdbcProxyFactory.createPreparedStatement(statement, query, listener, DS_NAME);
+        return new JdkJdbcProxyFactory().createPreparedStatement(statement, query, listener, DS_NAME);
     }
 
     @SuppressWarnings("unchecked")

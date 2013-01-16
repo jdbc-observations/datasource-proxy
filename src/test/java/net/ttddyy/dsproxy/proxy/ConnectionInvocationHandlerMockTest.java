@@ -71,7 +71,7 @@ public class ConnectionInvocationHandlerMockTest {
 
     private Connection getProxyConnection(Connection mockConnection) {
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
-        return JdbcProxyFactory.createConnection(mockConnection, listener, "myDS");
+        return new JdkJdbcProxyFactory().createConnection(mockConnection, listener, "myDS");
     }
 
     private void verifyStatement(Statement statement) {

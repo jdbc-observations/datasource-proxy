@@ -40,7 +40,7 @@ public class DataSourceInvocationHandlerMockTest {
     }
 
     private DataSource getProxyDataSource(DataSource ds) {
-        return JdbcProxyFactory.createDataSource(ds, null, DS_NAME);
+        return new JdkJdbcProxyFactory().createDataSource(ds, null, DS_NAME);
     }
 
     private void verifyConnection(Connection conn) {

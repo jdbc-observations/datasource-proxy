@@ -391,7 +391,7 @@ public class StatementInvocationHandlerMockTest {
     }
 
     private Statement getProxyStatement(Statement statement, QueryExecutionListener listener) {
-        return JdbcProxyFactory.createStatement(statement, listener, DS_NAME);
+        return new JdkJdbcProxyFactory().createStatement(statement, listener, DS_NAME);
     }
 
     @SuppressWarnings("unchecked")

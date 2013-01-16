@@ -29,6 +29,7 @@ public class ConnectionInvocationHandler implements InvocationHandler {
     private Connection connection;
     private QueryExecutionListener listener;
     private String dataSourceName;
+    private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
 
     public ConnectionInvocationHandler(Connection connection) {
         this.connection = connection;
@@ -40,10 +41,11 @@ public class ConnectionInvocationHandler implements InvocationHandler {
     }
 
     public ConnectionInvocationHandler(
-            Connection connection, QueryExecutionListener listener, String dataSourceName) {
+            Connection connection, QueryExecutionListener listener, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
         this.connection = connection;
         this.listener = listener;
         this.dataSourceName = dataSourceName;
+        this.jdbcProxyFactory = jdbcProxyFactory;
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -78,17 +80,17 @@ public class ConnectionInvocationHandler implements InvocationHandler {
             // when it is a call to createStatement or prepareStaement, or prepareCall return proxy
             // most of the time, spring and hibernate use prepareStatement to execute query as batch
             if ("createStatement".equals(methodName)) {
-                return JdbcProxyFactory.createStatement((Statement) retVal, listener, dataSourceName);
+                return jdbcProxyFactory.createStatement((Statement) retVal, listener, dataSourceName);
             } else if ("prepareStatement".equals(methodName)) {
                 if (ObjectArrayUtils.isFirstArgString(args)) {
                     final String query = (String) args[0];
-                    return JdbcProxyFactory.createPreparedStatement((PreparedStatement) retVal, query,
+                    return jdbcProxyFactory.createPreparedStatement((PreparedStatement) retVal, query,
                             listener, dataSourceName);
                 }
             } else if ("prepareCall".equals(methodName)) {  // for stored procedure call
                 if (ObjectArrayUtils.isFirstArgString(args)) {
                     final String query = (String) args[0];
-                    return JdbcProxyFactory.createCallableStatement((CallableStatement) retVal, query,
+                    return jdbcProxyFactory.createCallableStatement((CallableStatement) retVal, query,
                             listener, dataSourceName);
                 }
             }
