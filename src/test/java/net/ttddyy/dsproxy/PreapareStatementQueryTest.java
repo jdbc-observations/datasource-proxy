@@ -1,8 +1,9 @@
 package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.listener.ChainListener;
-import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdkJdbcProxyFactory;
+import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.testng.Assert;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -39,12 +40,13 @@ public class PreapareStatementQueryTest {
         ChainListener chainListener = new ChainListener();
         chainListener.addListener(testListener);
         chainListener.addListener(lastQueryListener);
+        InterceptorHolder interceptorHolder = new InterceptorHolder(chainListener, QueryTransformer.DEFAULT);
 
         // real datasource
         jdbcDataSource = TestUtils.getDataSourceWithData();
 
         final Connection conn = jdbcDataSource.getConnection();
-        connection = new JdkJdbcProxyFactory().createConnection(conn, chainListener);
+        connection = new JdkJdbcProxyFactory().createConnection(conn, interceptorHolder);
     }
 
     @AfterMethod

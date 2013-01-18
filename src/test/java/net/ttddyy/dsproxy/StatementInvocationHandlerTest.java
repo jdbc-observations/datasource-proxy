@@ -1,13 +1,14 @@
 package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.listener.ChainListener;
-import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 
 import net.ttddyy.dsproxy.proxy.JdkJdbcProxyFactory;
+import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -36,6 +37,7 @@ public class StatementInvocationHandlerTest {
         ChainListener chainListener = new ChainListener();
         chainListener.addListener(testListener);
         chainListener.addListener(lastQueryListener);
+        InterceptorHolder interceptorHolder = new InterceptorHolder(chainListener, QueryTransformer.DEFAULT);
 
         // real datasource
         jdbcDataSource = TestUtils.getDataSourceWithData();
@@ -43,7 +45,7 @@ public class StatementInvocationHandlerTest {
         Connection connection = jdbcDataSource.getConnection();
         Statement stmt = connection.createStatement();
 
-        statement = new JdkJdbcProxyFactory().createStatement(stmt, chainListener);
+        statement = new JdkJdbcProxyFactory().createStatement(stmt, interceptorHolder);
     }
 
     @AfterMethod

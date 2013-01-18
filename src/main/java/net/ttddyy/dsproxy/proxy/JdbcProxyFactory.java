@@ -20,19 +20,19 @@ public interface JdbcProxyFactory {
      */
     static final JdbcProxyFactory DEFAULT = new JdkJdbcProxyFactory();
 
-    DataSource createDataSource(DataSource dataSource, QueryExecutionListener listener, String dataSourceName);
+    DataSource createDataSource(DataSource dataSource, InterceptorHolder interceptorHolder, String dataSourceName);
 
-    Connection createConnection(Connection connection, QueryExecutionListener listener);
+    Connection createConnection(Connection connection, InterceptorHolder interceptorHolder);
 
-    Connection createConnection(Connection connection, QueryExecutionListener listener, String dataSourceName);
+    Connection createConnection(Connection connection, InterceptorHolder interceptorHolder, String dataSourceName);
 
-    Statement createStatement(Statement statement, QueryExecutionListener listener);
+    Statement createStatement(Statement statement, InterceptorHolder interceptorHolder);
 
-    Statement createStatement(Statement statement, QueryExecutionListener listener, String dataSourceName);
+    Statement createStatement(Statement statement, InterceptorHolder interceptorHolder, String dataSourceName);
 
-    PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query, QueryExecutionListener listener);
+    PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query, InterceptorHolder interceptorHolder);
 
-    PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query, QueryExecutionListener listener, String dataSourceName);
+    PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query, InterceptorHolder interceptorHolder, String dataSourceName);
 
-    CallableStatement createCallableStatement(CallableStatement callableStatement, String query, QueryExecutionListener listener, String dataSourceName);
+    CallableStatement createCallableStatement(CallableStatement callableStatement, String query, InterceptorHolder interceptorHolder, String dataSourceName);
 }

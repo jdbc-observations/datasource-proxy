@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.transform.QueryTransformer;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -80,7 +81,7 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
     private String query;
     private String dataSourceName;
     private SortedMap<Integer, Object> queryParams = new TreeMap<Integer, Object>(); // sorted by key
-    private QueryExecutionListener listener;
+    private InterceptorHolder interceptorHolder;
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
 
     private List<BatchQueryHolder> batchQueries = new ArrayList<BatchQueryHolder>();
@@ -90,17 +91,28 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
         this.query = query;
     }
 
+    @Deprecated
     public PreparedStatementInvocationHandler(PreparedStatement ps, String query, QueryExecutionListener listener) {
         this.ps = ps;
         this.query = query;
-        this.listener = listener;
+        this.interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
     }
 
+    @Deprecated
     public PreparedStatementInvocationHandler(
             PreparedStatement ps, String query, QueryExecutionListener listener, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
         this.ps = ps;
         this.query = query;
-        this.listener = listener;
+        this.interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
+        this.dataSourceName = dataSourceName;
+        this.jdbcProxyFactory = jdbcProxyFactory;
+    }
+
+    public PreparedStatementInvocationHandler(
+            PreparedStatement ps, String query, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
+        this.ps = ps;
+        this.query = query;
+        this.interceptorHolder = interceptorHolder;
         this.dataSourceName = dataSourceName;
         this.jdbcProxyFactory = jdbcProxyFactory;
     }
@@ -137,7 +149,7 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
 
         if (GET_CONNECTION_METHOD.contains(methodName)) {
             final Connection conn = (Connection) MethodUtils.proceedExecution(method, ps, args);
-            return jdbcProxyFactory.createConnection(conn, listener, dataSourceName);
+            return jdbcProxyFactory.createConnection(conn, interceptorHolder, dataSourceName);
         }
 
 
@@ -186,6 +198,7 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
             queries.add(new QueryInfo(query, new ArrayList<Object>(queryParams.values())));
         }
 
+        final QueryExecutionListener listener = interceptorHolder.getListener();
         listener.beforeQuery(new ExecutionInfo(dataSourceName, method, args), queries);
 
         // Invoke method on original Statement.

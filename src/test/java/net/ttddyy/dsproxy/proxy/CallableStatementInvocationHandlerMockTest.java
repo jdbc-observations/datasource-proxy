@@ -12,6 +12,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 
+import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -56,10 +57,11 @@ public class CallableStatementInvocationHandlerMockTest {
 
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        InterceptorHolder interceptorHolder = getInterceptorHolder(listener);
 
         when(stat.execute()).thenReturn(true);
 
-        CallableStatement statement = getProxyStatement(stat, query, listener);
+        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
 
         boolean result = statement.execute();
         assertTrue(result);
@@ -72,10 +74,11 @@ public class CallableStatementInvocationHandlerMockTest {
 
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        InterceptorHolder interceptorHolder = getInterceptorHolder(listener);
 
         when(stat.execute()).thenReturn(true);
 
-        CallableStatement statement = getProxyStatement(stat, query, listener);
+        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
 
         setParameterByPosition(statement);
         boolean result = statement.execute();
@@ -91,10 +94,11 @@ public class CallableStatementInvocationHandlerMockTest {
 
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        InterceptorHolder interceptorHolder = getInterceptorHolder(listener);
 
         when(stat.execute()).thenReturn(true);
 
-        CallableStatement statement = getProxyStatement(stat, query, listener);
+        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
 
         setParameterByName(statement);
         boolean result = statement.execute();
@@ -110,10 +114,11 @@ public class CallableStatementInvocationHandlerMockTest {
 
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        InterceptorHolder interceptorHolder = getInterceptorHolder(listener);
 
         when(stat.executeUpdate()).thenReturn(100);
 
-        CallableStatement statement = getProxyStatement(stat, query, listener);
+        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
 
         int result = statement.executeUpdate();
         assertThat(result, is(100));
@@ -126,10 +131,11 @@ public class CallableStatementInvocationHandlerMockTest {
 
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        InterceptorHolder interceptorHolder = getInterceptorHolder(listener);
 
         when(stat.executeUpdate()).thenReturn(100);
 
-        CallableStatement statement = getProxyStatement(stat, query, listener);
+        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
 
         setParameterByPosition(statement);
         int result = statement.executeUpdate();
@@ -145,10 +151,11 @@ public class CallableStatementInvocationHandlerMockTest {
 
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        InterceptorHolder interceptorHolder = getInterceptorHolder(listener);
 
         when(stat.executeUpdate()).thenReturn(100);
 
-        CallableStatement statement = getProxyStatement(stat, query, listener);
+        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
 
         setParameterByName(statement);
         int result = statement.executeUpdate();
@@ -164,11 +171,12 @@ public class CallableStatementInvocationHandlerMockTest {
 
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        InterceptorHolder interceptorHolder = getInterceptorHolder(listener);
 
         ResultSet mockResultSet = mock(ResultSet.class);
         when(stat.executeQuery()).thenReturn(mockResultSet);
 
-        CallableStatement statement = getProxyStatement(stat, query, listener);
+        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
 
         ResultSet result = statement.executeQuery();
         assertThat(result, is(mockResultSet));
@@ -181,11 +189,12 @@ public class CallableStatementInvocationHandlerMockTest {
 
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        InterceptorHolder interceptorHolder = getInterceptorHolder(listener);
 
         ResultSet mockResultSet = mock(ResultSet.class);
         when(stat.executeQuery()).thenReturn(mockResultSet);
 
-        CallableStatement statement = getProxyStatement(stat, query, listener);
+        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
 
         setParameterByPosition(statement);
         ResultSet result = statement.executeQuery();
@@ -201,11 +210,12 @@ public class CallableStatementInvocationHandlerMockTest {
 
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        InterceptorHolder interceptorHolder = getInterceptorHolder(listener);
 
         ResultSet mockResultSet = mock(ResultSet.class);
         when(stat.executeQuery()).thenReturn(mockResultSet);
 
-        CallableStatement statement = getProxyStatement(stat, query, listener);
+        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
 
         setParameterByName(statement);
         ResultSet result = statement.executeQuery();
@@ -221,8 +231,9 @@ public class CallableStatementInvocationHandlerMockTest {
 
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        InterceptorHolder interceptorHolder = getInterceptorHolder(listener);
 
-        CallableStatement statement = getProxyStatement(stat, query, listener);
+        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
 
         statement.setString(1, "foo");
         statement.setInt(2, 10);
@@ -248,8 +259,9 @@ public class CallableStatementInvocationHandlerMockTest {
 
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        InterceptorHolder interceptorHolder = getInterceptorHolder(listener);
 
-        PreparedStatement statement = getProxyStatement(stat, query, listener);
+        PreparedStatement statement = getProxyStatement(stat, query, interceptorHolder);
         statement.setString(1, "foo");
         statement.setInt(2, 10);
         statement.addBatch();
@@ -278,8 +290,9 @@ public class CallableStatementInvocationHandlerMockTest {
 
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        InterceptorHolder interceptorHolder = getInterceptorHolder(listener);
 
-        PreparedStatement statement = getProxyStatement(stat, query, listener);
+        PreparedStatement statement = getProxyStatement(stat, query, interceptorHolder);
         statement.setString(1, "foo");
 
         statement.clearParameters();
@@ -309,8 +322,9 @@ public class CallableStatementInvocationHandlerMockTest {
 
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        InterceptorHolder interceptorHolder = getInterceptorHolder(listener);
 
-        PreparedStatement statement = getProxyStatement(stat, query, listener);
+        PreparedStatement statement = getProxyStatement(stat, query, interceptorHolder);
         statement.setString(1, "foo");
         statement.setInt(2, 10);
         statement.clearParameters();
@@ -335,6 +349,9 @@ public class CallableStatementInvocationHandlerMockTest {
 
     }
 
+    private InterceptorHolder getInterceptorHolder(QueryExecutionListener listener) {
+        return new InterceptorHolder(listener, QueryTransformer.DEFAULT);
+    }
 
     private static class Param<T> {
         Class<T> clazz;
@@ -605,8 +622,8 @@ public class CallableStatementInvocationHandlerMockTest {
 
 
     private CallableStatement getProxyStatement(CallableStatement statement, String query,
-                                                QueryExecutionListener listener) {
-        return new JdkJdbcProxyFactory().createCallableStatement(statement, query, listener, DS_NAME);
+                                                InterceptorHolder interceptorHolder) {
+        return new JdkJdbcProxyFactory().createCallableStatement(statement, query, interceptorHolder, DS_NAME);
     }
 
     @Test

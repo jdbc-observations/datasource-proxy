@@ -3,20 +3,14 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.transform.QueryTransformer;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Proxy InvocationHandler for {@link java.sql.CallableStatement}.
@@ -81,7 +75,7 @@ public class CallableStatementInvocationHandler implements InvocationHandler {
     private String query;
     private String dataSourceName;
     private SortedMap<Object, Object> queryParams = new TreeMap<Object, Object>(); // sorted by key(int or String)
-    private QueryExecutionListener listener;
+    private InterceptorHolder interceptorHolder;
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
 
     private List<BatchQueryHolder> batchQueries = new ArrayList<BatchQueryHolder>();
@@ -89,11 +83,21 @@ public class CallableStatementInvocationHandler implements InvocationHandler {
     public CallableStatementInvocationHandler() {
     }
 
+    @Deprecated
     public CallableStatementInvocationHandler(
             CallableStatement cs, String query, QueryExecutionListener listener, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
         this.cs = cs;
         this.query = query;
-        this.listener = listener;
+        this.interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
+        this.dataSourceName = dataSourceName;
+        this.jdbcProxyFactory = jdbcProxyFactory;
+    }
+
+    public CallableStatementInvocationHandler(
+            CallableStatement cs, String query, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
+        this.cs = cs;
+        this.query = query;
+        this.interceptorHolder = interceptorHolder;
         this.dataSourceName = dataSourceName;
         this.jdbcProxyFactory = jdbcProxyFactory;
     }
@@ -131,7 +135,7 @@ public class CallableStatementInvocationHandler implements InvocationHandler {
 
         if (GET_CONNECTION_METHOD.contains(methodName)) {
             final Connection conn = (Connection) MethodUtils.proceedExecution(method, cs, args);
-            return jdbcProxyFactory.createConnection(conn, listener, dataSourceName);
+            return jdbcProxyFactory.createConnection(conn, interceptorHolder, dataSourceName);
         }
 
 
@@ -181,7 +185,7 @@ public class CallableStatementInvocationHandler implements InvocationHandler {
             queries.add(new QueryInfo(query, new ArrayList<Object>(queryParams.values())));
         }
 
-
+        final QueryExecutionListener listener = interceptorHolder.getListener();
         listener.beforeQuery(new ExecutionInfo(dataSourceName, method, args), queries);
 
         // Invoke method on original Statement.

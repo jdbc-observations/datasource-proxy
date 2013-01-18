@@ -17,6 +17,7 @@ import static org.hamcrest.Matchers.sameInstance;
 import net.ttddyy.dsproxy.proxy.ConnectionInvocationHandler;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
+import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -391,7 +392,8 @@ public class StatementInvocationHandlerMockTest {
     }
 
     private Statement getProxyStatement(Statement statement, QueryExecutionListener listener) {
-        return new JdkJdbcProxyFactory().createStatement(statement, listener, DS_NAME);
+        InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
+        return new JdkJdbcProxyFactory().createStatement(statement, interceptorHolder, DS_NAME);
     }
 
     @SuppressWarnings("unchecked")

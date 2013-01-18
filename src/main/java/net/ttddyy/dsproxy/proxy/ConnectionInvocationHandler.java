@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.transform.QueryTransformer;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -9,10 +10,10 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.util.Set;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Arrays;
+import java.util.Set;
 
 /**
  * Proxy InvocationHandler for {@link java.sql.Connection}.
@@ -27,7 +28,7 @@ public class ConnectionInvocationHandler implements InvocationHandler {
 
 
     private Connection connection;
-    private QueryExecutionListener listener;
+    private InterceptorHolder interceptorHolder;
     private String dataSourceName;
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
 
@@ -35,15 +36,25 @@ public class ConnectionInvocationHandler implements InvocationHandler {
         this.connection = connection;
     }
 
+    @Deprecated
     public ConnectionInvocationHandler(Connection connection, QueryExecutionListener listener) {
         this.connection = connection;
-        this.listener = listener;
+        this.interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
     }
 
+    @Deprecated
     public ConnectionInvocationHandler(
             Connection connection, QueryExecutionListener listener, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
         this.connection = connection;
-        this.listener = listener;
+        this.interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
+        this.dataSourceName = dataSourceName;
+        this.jdbcProxyFactory = jdbcProxyFactory;
+    }
+
+    public ConnectionInvocationHandler(
+            Connection connection, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
+        this.connection = connection;
+        this.interceptorHolder = interceptorHolder;
         this.dataSourceName = dataSourceName;
         this.jdbcProxyFactory = jdbcProxyFactory;
     }
@@ -80,18 +91,21 @@ public class ConnectionInvocationHandler implements InvocationHandler {
             // when it is a call to createStatement or prepareStaement, or prepareCall return proxy
             // most of the time, spring and hibernate use prepareStatement to execute query as batch
             if ("createStatement".equals(methodName)) {
-                return jdbcProxyFactory.createStatement((Statement) retVal, listener, dataSourceName);
+                // for normal statement, transforming query is handled inside of handler.
+                return jdbcProxyFactory.createStatement((Statement) retVal, interceptorHolder, dataSourceName);
             } else if ("prepareStatement".equals(methodName)) {
                 if (ObjectArrayUtils.isFirstArgString(args)) {
                     final String query = (String) args[0];
-                    return jdbcProxyFactory.createPreparedStatement((PreparedStatement) retVal, query,
-                            listener, dataSourceName);
+                    final String transformedQuery = interceptorHolder.getQueryTransformer().transformQuery(query);
+                    return jdbcProxyFactory.createPreparedStatement((PreparedStatement) retVal, transformedQuery,
+                            interceptorHolder, dataSourceName);
                 }
             } else if ("prepareCall".equals(methodName)) {  // for stored procedure call
                 if (ObjectArrayUtils.isFirstArgString(args)) {
                     final String query = (String) args[0];
-                    return jdbcProxyFactory.createCallableStatement((CallableStatement) retVal, query,
-                            listener, dataSourceName);
+                    final String transformedQuery = interceptorHolder.getQueryTransformer().transformQuery(query);
+                    return jdbcProxyFactory.createCallableStatement((CallableStatement) retVal, transformedQuery,
+                            interceptorHolder, dataSourceName);
                 }
             }
 

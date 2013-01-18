@@ -1,8 +1,9 @@
 package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
-import net.ttddyy.dsproxy.proxy.JdkJdbcProxyFactory;
+import net.ttddyy.dsproxy.transform.QueryTransformer;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
@@ -18,7 +19,7 @@ import java.util.logging.Logger;
  */
 public class ProxyDataSource implements DataSource {
     private DataSource dataSource;
-    private QueryExecutionListener listener;
+    private InterceptorHolder interceptorHolder;
     private String dataSourceName = "";
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
 
@@ -41,7 +42,7 @@ public class ProxyDataSource implements DataSource {
     }
 
     private Connection getConnectionProxy(Connection conn) {
-        return jdbcProxyFactory.createConnection(conn, listener, dataSourceName);
+        return jdbcProxyFactory.createConnection(conn, interceptorHolder, dataSourceName);
     }
 
     public void setLogWriter(PrintWriter printWriter) throws SQLException {
@@ -64,8 +65,9 @@ public class ProxyDataSource implements DataSource {
         return dataSource.isWrapperFor(iface);
     }
 
+    @Deprecated
     public void setListener(QueryExecutionListener listener) {
-        this.listener = listener;
+        this.interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
     }
 
     public void setDataSourceName(String dataSourceName) {
@@ -86,5 +88,13 @@ public class ProxyDataSource implements DataSource {
 
     public void setJdbcProxyFactory(JdbcProxyFactory jdbcProxyFactory) {
         this.jdbcProxyFactory = jdbcProxyFactory;
+    }
+
+    public InterceptorHolder getInterceptorHolder() {
+        return interceptorHolder;
+    }
+
+    public void setInterceptorHolder(InterceptorHolder interceptorHolder) {
+        this.interceptorHolder = interceptorHolder;
     }
 }

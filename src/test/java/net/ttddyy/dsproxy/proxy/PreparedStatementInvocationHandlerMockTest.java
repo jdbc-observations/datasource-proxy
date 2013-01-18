@@ -12,6 +12,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 
+import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -132,7 +133,8 @@ public class PreparedStatementInvocationHandlerMockTest {
     }
 
     private PreparedStatement getProxyStatement(PreparedStatement statement, String query, QueryExecutionListener listener) {
-        return new JdkJdbcProxyFactory().createPreparedStatement(statement, query, listener, DS_NAME);
+        InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
+        return new JdkJdbcProxyFactory().createPreparedStatement(statement, query, interceptorHolder, DS_NAME);
     }
 
     @SuppressWarnings("unchecked")

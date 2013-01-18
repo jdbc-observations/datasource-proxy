@@ -1,21 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.sameInstance;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertTrue;
-
-import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
-import net.ttddyy.dsproxy.proxy.PreparedStatementInvocationHandler;
-import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
-import net.ttddyy.dsproxy.proxy.StatementInvocationHandler;
+import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.InvocationHandler;
@@ -24,6 +10,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -71,7 +62,8 @@ public class ConnectionInvocationHandlerMockTest {
 
     private Connection getProxyConnection(Connection mockConnection) {
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
-        return new JdkJdbcProxyFactory().createConnection(mockConnection, listener, "myDS");
+        InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
+        return new JdkJdbcProxyFactory().createConnection(mockConnection, interceptorHolder, "myDS");
     }
 
     private void verifyStatement(Statement statement) {

@@ -1,6 +1,8 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.transform.NoOpQueryTransformer;
+import net.ttddyy.dsproxy.transform.QueryTransformer;
 
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
@@ -24,17 +26,25 @@ public class DataSourceInvocationHandler implements InvocationHandler {
     );
 
     private DataSource dataSource;
-    private QueryExecutionListener listener;
+    private InterceptorHolder interceptorHolder;
     private String dataSourceName;
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
 
     public DataSourceInvocationHandler() {
     }
 
+    @Deprecated
     public DataSourceInvocationHandler(DataSource dataSource, QueryExecutionListener listener, String dataSourceName,
                                        JdbcProxyFactory jdbcProxyFactory) {
         this.dataSource = dataSource;
-        this.listener = listener;
+        this.interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
+        this.dataSourceName = dataSourceName;
+        this.jdbcProxyFactory = jdbcProxyFactory;
+    }
+    public DataSourceInvocationHandler(DataSource dataSource, InterceptorHolder interceptorHolder, String dataSourceName,
+                                       JdbcProxyFactory jdbcProxyFactory) {
+        this.dataSource = dataSource;
+        this.interceptorHolder = interceptorHolder;
         this.dataSourceName = dataSourceName;
         this.jdbcProxyFactory = jdbcProxyFactory;
     }
@@ -69,7 +79,7 @@ public class DataSourceInvocationHandler implements InvocationHandler {
             final Object retVal = method.invoke(dataSource, args);
 
             if ("getConnection".equals(methodName)) {
-                return jdbcProxyFactory.createConnection((Connection) retVal, listener, dataSourceName);
+                return jdbcProxyFactory.createConnection((Connection) retVal, interceptorHolder, dataSourceName);
             }
             return retVal;
         }
@@ -84,8 +94,17 @@ public class DataSourceInvocationHandler implements InvocationHandler {
         this.dataSource = dataSource;
     }
 
+    @Deprecated
     public void setListener(QueryExecutionListener listener) {
-        this.listener = listener;
+        this.interceptorHolder = new InterceptorHolder(listener, new NoOpQueryTransformer());
+    }
+
+    public void setInterceptorHolder(InterceptorHolder interceptorHolder) {
+        this.interceptorHolder = interceptorHolder;
+    }
+
+    public void setJdbcProxyFactory(JdbcProxyFactory jdbcProxyFactory) {
+        this.jdbcProxyFactory = jdbcProxyFactory;
     }
 
     public void setDataSourceName(String dataSourceName) {
