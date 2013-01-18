@@ -17,14 +17,11 @@ import java.util.Collections;
  */
 public class SLF4JQueryCountLoggingHandlerInterceptor extends HandlerInterceptorAdapter {
 
-    private static final String LOG_MESSAGE =
-            "DataSource:{} ElapsedTime:{} Call:{} Query:{} (Select:{} Insert:{} Update:{} Delete:{} Other{})";
-    
     private Logger logger = LoggerFactory.getLogger(SLF4JQueryCountLoggingHandlerInterceptor.class);
 
     private boolean clearQueryCounter = true;
     private SLF4JLogLevel logLevel = SLF4JLogLevel.DEBUG;
-
+    private QueryCountLogFormatter logFormatter = new DefaultQueryCountLogFormatter();
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
@@ -33,10 +30,9 @@ public class SLF4JQueryCountLoggingHandlerInterceptor extends HandlerInterceptor
         Collections.sort(dsNames);
 
         for (String dsName : dsNames) {
-            final QueryCount counter = QueryCountHolder.get(dsName);
-            final Object[] args = {dsName, counter.getElapsedTime(), counter.getCall(), counter.getTotalNumOfQuery(),
-                    counter.getSelect(), counter.getInsert(), counter.getUpdate(), counter.getDelete(), counter.getOther()};
-            writeLog(args);
+            final QueryCount count = QueryCountHolder.get(dsName);
+            final String message = logFormatter.getLogMessage(dsName, count);
+            SLF4JLogUtils.writeLog(logger, logLevel, message);
         }
 
         if (clearQueryCounter) {
@@ -45,31 +41,15 @@ public class SLF4JQueryCountLoggingHandlerInterceptor extends HandlerInterceptor
 
     }
 
-    private void writeLog(Object[] argArray) {
-        switch (logLevel) {
-            case DEBUG:
-                logger.debug(LOG_MESSAGE, argArray);
-                break;
-            case ERROR:
-                logger.error(LOG_MESSAGE, argArray);
-                break;
-            case INFO:
-                logger.info(LOG_MESSAGE, argArray);
-                break;
-            case TRACE:
-                logger.trace(LOG_MESSAGE, argArray);
-                break;
-            case WARN:
-                logger.warn(LOG_MESSAGE, argArray);
-                break;
-        }
-    }
-
     public void setClearQueryCounter(boolean clearQueryCounter) {
         this.clearQueryCounter = clearQueryCounter;
     }
 
     public void setLogLevel(SLF4JLogLevel logLevel) {
         this.logLevel = logLevel;
+    }
+
+    public void setLogFormatter(QueryCountLogFormatter logFormatter) {
+        this.logFormatter = logFormatter;
     }
 }

@@ -26,6 +26,7 @@ public class CommonsQueryCountLoggingRequestListener implements ServletRequestLi
     private static final CommonsLogLevel DEFAULT_LOG_LEVEL = CommonsLogLevel.DEBUG;
 
     private Log log = LogFactory.getLog(CommonsQueryCountLoggingRequestListener.class);
+    private QueryCountLogFormatter logFormatter = new DefaultQueryCountLogFormatter();
 
     public void requestInitialized(ServletRequestEvent sre) {
     }
@@ -42,36 +43,15 @@ public class CommonsQueryCountLoggingRequestListener implements ServletRequestLi
         Collections.sort(dsNames);
 
         for (String dsName : dsNames) {
-            final QueryCount counter = QueryCountHolder.get(dsName);
-            final String message = CommonsLogUtils.getCountLogMessage(counter, dsName);
-            writeLog(logLevel, message);
+            final QueryCount count = QueryCountHolder.get(dsName);
+            final String message = logFormatter.getLogMessage(dsName, count);
+            CommonsLogUtils.writeLog(log, logLevel, message);
         }
 
         QueryCountHolder.clear();
     }
 
-    private void writeLog(CommonsLogLevel logLevel, String message) {
-        switch (logLevel) {
-            case DEBUG:
-                log.debug(message);
-                break;
-            case ERROR:
-                log.error(message);
-                break;
-            case FATAL:
-                log.fatal(message);
-                break;
-            case INFO:
-                log.info(message);
-                break;
-            case TRACE:
-                log.trace(message);
-                break;
-            case WARN:
-                log.warn(message);
-                break;
-        }
+    public void setLogFormatter(QueryCountLogFormatter logFormatter) {
+        this.logFormatter = logFormatter;
     }
-
-
 }

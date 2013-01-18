@@ -20,11 +20,8 @@ public class SLF4JQueryCountLoggingRequestListener implements ServletRequestList
     private static final String LOG_LEVEL_PARAM = "queryCountSLF4JLogLevel";
     private static final SLF4JLogLevel DEFAULT_LOG_LEVEL = SLF4JLogLevel.DEBUG;
 
-    private static final String LOG_MESSAGE =
-            "DataSource:{} ElapsedTime:{} Call:{} Query:{} (Select:{} Insert:{} Update:{} Delete:{} Other{})";
-
     private Logger logger = LoggerFactory.getLogger(SLF4JQueryCountLoggingRequestListener.class);
-
+    private QueryCountLogFormatter logFormatter = new DefaultQueryCountLogFormatter();
 
     public void requestInitialized(ServletRequestEvent sre) {
     }
@@ -42,35 +39,16 @@ public class SLF4JQueryCountLoggingRequestListener implements ServletRequestList
         Collections.sort(dsNames);
 
         for (String dsName : dsNames) {
-            final QueryCount counter = QueryCountHolder.get(dsName);
-            final Object[] args = {dsName, counter.getElapsedTime(), counter.getCall(), counter.getTotalNumOfQuery(),
-                    counter.getSelect(), counter.getInsert(), counter.getUpdate(), counter.getDelete(), counter.getOther()};
-            writeLog(logLevel, args);
+            final QueryCount count = QueryCountHolder.get(dsName);
+            final String message = logFormatter.getLogMessage(dsName, count);
+            SLF4JLogUtils.writeLog(logger, logLevel, message);
         }
 
         QueryCountHolder.clear();
 
     }
 
-    private void writeLog(SLF4JLogLevel logLevel, Object[] argArray) {
-        switch (logLevel) {
-            case DEBUG:
-                logger.debug(LOG_MESSAGE, argArray);
-                break;
-            case ERROR:
-                logger.error(LOG_MESSAGE, argArray);
-                break;
-            case INFO:
-                logger.info(LOG_MESSAGE, argArray);
-                break;
-            case TRACE:
-                logger.trace(LOG_MESSAGE, argArray);
-                break;
-            case WARN:
-                logger.warn(LOG_MESSAGE, argArray);
-                break;
-        }
+    public void setLogFormatter(QueryCountLogFormatter logFormatter) {
+        this.logFormatter = logFormatter;
     }
-
-
 }

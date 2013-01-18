@@ -27,6 +27,7 @@ public class CommonsQueryCountLoggingHandlerInterceptor extends HandlerIntercept
 
     private boolean clearQueryCounter = true;
     private CommonsLogLevel logLevel = CommonsLogLevel.DEBUG;
+    private QueryCountLogFormatter logFormatter = new DefaultQueryCountLogFormatter();
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
@@ -35,38 +36,15 @@ public class CommonsQueryCountLoggingHandlerInterceptor extends HandlerIntercept
         Collections.sort(dsNames);
 
         for (String dsName : dsNames) {
-            final QueryCount counter = QueryCountHolder.get(dsName);
-            final String message = CommonsLogUtils.getCountLogMessage(counter, dsName);
-            writeLog(message);
+            final QueryCount count = QueryCountHolder.get(dsName);
+            final String message = logFormatter.getLogMessage(dsName, count);
+            CommonsLogUtils.writeLog(log, logLevel, message);
         }
 
         if (clearQueryCounter) {
             QueryCountHolder.clear();
         }
 
-    }
-
-    private void writeLog(String message) {
-        switch (logLevel) {
-            case DEBUG:
-                log.debug(message);
-                break;
-            case ERROR:
-                log.error(message);
-                break;
-            case FATAL:
-                log.fatal(message);
-                break;
-            case INFO:
-                log.info(message);
-                break;
-            case TRACE:
-                log.trace(message);
-                break;
-            case WARN:
-                log.warn(message);
-                break;
-        }
     }
 
 
@@ -76,5 +54,9 @@ public class CommonsQueryCountLoggingHandlerInterceptor extends HandlerIntercept
 
     public void setLogLevel(CommonsLogLevel logLevel) {
         this.logLevel = logLevel;
+    }
+
+    public void setLogFormatter(QueryCountLogFormatter logFormatter) {
+        this.logFormatter = logFormatter;
     }
 }
