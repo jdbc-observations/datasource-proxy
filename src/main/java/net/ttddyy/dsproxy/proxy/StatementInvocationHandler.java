@@ -120,7 +120,8 @@ public class StatementInvocationHandler implements InvocationHandler {
         if ("addBatch".equals(methodName) || "clearBatch".equals(methodName)) {
             if ("addBatch".equals(methodName) && ObjectArrayUtils.isFirstArgString(args)) {
                 final QueryTransformer queryTransformer = interceptorHolder.getQueryTransformer();
-                final String transformedQuery = queryTransformer.transformQuery((String) args[0]);
+                final String query = (String) args[0];
+                final String transformedQuery = queryTransformer.transformQuery(dataSourceName, query);
                 batchQueries.add(transformedQuery);
             } else if ("clearBatch".equals(methodName)) {
                 batchQueries.clear();
@@ -147,7 +148,8 @@ public class StatementInvocationHandler implements InvocationHandler {
 
             if (ObjectArrayUtils.isFirstArgString(args)) {
                 final QueryTransformer queryTransformer = interceptorHolder.getQueryTransformer();
-                final String transformedQuery = queryTransformer.transformQuery((String) args[0]);
+                final String query = (String) args[0];
+                final String transformedQuery = queryTransformer.transformQuery(dataSourceName, query);
                 queries.add(new QueryInfo(transformedQuery, null));
             }
         }

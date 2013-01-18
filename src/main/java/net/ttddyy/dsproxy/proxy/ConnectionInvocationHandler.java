@@ -96,14 +96,14 @@ public class ConnectionInvocationHandler implements InvocationHandler {
             } else if ("prepareStatement".equals(methodName)) {
                 if (ObjectArrayUtils.isFirstArgString(args)) {
                     final String query = (String) args[0];
-                    final String transformedQuery = interceptorHolder.getQueryTransformer().transformQuery(query);
+                    final String transformedQuery = interceptorHolder.getQueryTransformer().transformQuery(dataSourceName, query);
                     return jdbcProxyFactory.createPreparedStatement((PreparedStatement) retVal, transformedQuery,
                             interceptorHolder, dataSourceName);
                 }
             } else if ("prepareCall".equals(methodName)) {  // for stored procedure call
                 if (ObjectArrayUtils.isFirstArgString(args)) {
                     final String query = (String) args[0];
-                    final String transformedQuery = interceptorHolder.getQueryTransformer().transformQuery(query);
+                    final String transformedQuery = interceptorHolder.getQueryTransformer().transformQuery(dataSourceName, query);
                     return jdbcProxyFactory.createCallableStatement((CallableStatement) retVal, transformedQuery,
                             interceptorHolder, dataSourceName);
                 }

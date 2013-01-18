@@ -10,5 +10,5 @@ public interface QueryTransformer {
 
     static QueryTransformer DEFAULT = new NoOpQueryTransformer();
 
-    String transformQuery(String query);
+    String transformQuery(String dataSourceName, String query);
 }
