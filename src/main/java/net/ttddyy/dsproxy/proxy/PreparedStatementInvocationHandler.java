@@ -26,57 +26,6 @@ import java.util.TreeMap;
  */
 public class PreparedStatementInvocationHandler implements InvocationHandler {
 
-    private static final Set<String> PARAMETER_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("setArray", "setAsciiStream", "setBigDecimal",
-                    "setBinaryStream", "setBlob", "setBoolean", "setByte",
-                    "setBytes", "setCharacterStream", "setClob", "setDate",
-                    "setDouble", "setFloat", "setInt", "setLong",
-                    "setNull", "setObject", "setRef", "setShort",
-                    "setString", "setTime", "setTimestamp", "setUnicodeStream", "setURL",
-                    "clearParameters"
-            ))
-    );
-
-    private static final Set<String> BATCH_PARAM_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("addBatch", "clearBatch"))
-    );
-
-    private static final Set<String> EXEC_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("executeBatch", "executeQuery", "executeUpdate", "execute"))
-    );
-
-    private static final Set<String> JDBC4_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("unwrap", "isWrapperFor"))
-    );
-
-    private static final Set<String> GET_CONNECTION_METHOD = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("getConnection"))
-    );
-
-    private static final Set<String> METHODS_TO_INTERCEPT = Collections.unmodifiableSet(
-            new HashSet<String>() {
-                {
-                    addAll(PARAMETER_METHODS);
-                    addAll(BATCH_PARAM_METHODS);
-                    addAll(EXEC_METHODS);
-                    addAll(JDBC4_METHODS);
-                    addAll(GET_CONNECTION_METHOD);
-                    add("getDataSourceName");
-                    add("toString");
-                    add("getTarget"); // from ProxyJdbcObject
-                }
-            }
-    );
-
-    private static final Set<String> METHODS_TO_OPERATE_PARAMETER = Collections.unmodifiableSet(
-            new HashSet<String>() {
-                {
-                    addAll(PARAMETER_METHODS);
-                    addAll(BATCH_PARAM_METHODS);
-                }
-            }
-    );
-
     private PreparedStatement ps;
     private String query;
     private String dataSourceName;
@@ -121,7 +70,7 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
 
         final String methodName = method.getName();
 
-        if (!METHODS_TO_INTERCEPT.contains(methodName)) {
+        if (!StatementMethodNames.METHODS_TO_INTERCEPT.contains(methodName)) {
             return MethodUtils.proceedExecution(method, ps, args);
         }
 
@@ -138,7 +87,7 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
             return ps;
         }
 
-        if (JDBC4_METHODS.contains(methodName)) {
+        if (StatementMethodNames.JDBC4_METHODS.contains(methodName)) {
             final Class<?> clazz = (Class<?>) args[0];
             if ("unwrap".equals(methodName)) {
                 return ps.unwrap(clazz);
@@ -147,16 +96,16 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
             }
         }
 
-        if (GET_CONNECTION_METHOD.contains(methodName)) {
+        if (StatementMethodNames.GET_CONNECTION_METHOD.contains(methodName)) {
             final Connection conn = (Connection) MethodUtils.proceedExecution(method, ps, args);
             return jdbcProxyFactory.createConnection(conn, interceptorHolder, dataSourceName);
         }
 
 
-        if (METHODS_TO_OPERATE_PARAMETER.contains(methodName)) {
+        if (StatementMethodNames.METHODS_TO_OPERATE_PARAMETER.contains(methodName)) {
 
             // parameter setting operation. for now ignore 3rd argument
-            if (PARAMETER_METHODS.contains(methodName)) {
+            if (StatementMethodNames.PARAMETER_METHODS.contains(methodName)) {
 
                 if ("clearParameters".equals(methodName)) {
                     queryParams.clear();
@@ -166,7 +115,7 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
                     queryParams.put(paramIndex, paramValue);
                 }
 
-            } else if (BATCH_PARAM_METHODS.contains(methodName)) {
+            } else if (StatementMethodNames.BATCH_PARAM_METHODS.contains(methodName)) {
 
                 if ("addBatch".equals(methodName)) {
                     BatchQueryHolder queryHolder = new BatchQueryHolder();
