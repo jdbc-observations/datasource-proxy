@@ -18,7 +18,9 @@ public interface StatementMethodNames {
                     "setDouble", "setFloat", "setInt", "setLong",
                     "setNull", "setObject", "setRef", "setShort",
                     "setString", "setTime", "setTimestamp", "setUnicodeStream", "setURL",
-                    "clearParameters"
+                    "setRowId", "setNString", "setNCharacterStream", "setNClob", "setSQLXML",
+                    "clearParameters",
+                    "registerOutParameter"  // CallableStatement output parameter
             ))
     );
 

@@ -3,6 +3,8 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.transform.ParameterReplacer;
+import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 
 import java.lang.reflect.InvocationHandler;
@@ -10,14 +12,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * Proxy InvocationHandler for {@link java.sql.PreparedStatement}.
@@ -29,11 +25,12 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
     private PreparedStatement ps;
     private String query;
     private String dataSourceName;
-    private SortedMap<Integer, Object> queryParams = new TreeMap<Integer, Object>(); // sorted by key
+    private ParameterOperationHolder parameterOperationHolder = new ParameterOperationHolder();  // TODO: rename
     private InterceptorHolder interceptorHolder;
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
 
     private List<BatchQueryHolder> batchQueries = new ArrayList<BatchQueryHolder>();
+
 
     public PreparedStatementInvocationHandler(PreparedStatement ps, String query) {
         this.ps = ps;
@@ -108,19 +105,22 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
             if (StatementMethodNames.PARAMETER_METHODS.contains(methodName)) {
 
                 if ("clearParameters".equals(methodName)) {
-                    queryParams.clear();
+                    parameterOperationHolder.clear();
                 } else {
                     final Integer paramIndex = (Integer) args[0];
                     final Object paramValue = args[1];
-                    queryParams.put(paramIndex, paramValue);
+                    parameterOperationHolder.put(paramIndex, method, args);
                 }
 
             } else if (StatementMethodNames.BATCH_PARAM_METHODS.contains(methodName)) {
 
                 if ("addBatch".equals(methodName)) {
-                    BatchQueryHolder queryHolder = new BatchQueryHolder();
+
+                    transformParameters();
+
+                    final BatchQueryHolder queryHolder = new BatchQueryHolder();
                     queryHolder.setQuery(query);
-                    queryHolder.setArgs(new ArrayList<Object>(queryParams.values()));
+                    queryHolder.setArgs(getQueryParameters(parameterOperationHolder));
                     batchQueries.add(queryHolder);
                 } else if ("clearBatch".equals(methodName)) {
                     batchQueries.clear();
@@ -144,7 +144,9 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
         } else if ("executeQuery".equals(methodName) || "executeUpdate".equals(methodName)
                 || "execute".equals(methodName)) {
 
-            queries.add(new QueryInfo(query, new ArrayList<Object>(queryParams.values())));
+            transformParameters();
+
+            queries.add(new QueryInfo(query, getQueryParameters(parameterOperationHolder)));
         }
 
         final QueryExecutionListener listener = interceptorHolder.getListener();
@@ -164,14 +166,47 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
             execInfo.setElapsedTime(afterTime - beforeTime);
 
             return retVal;
-        }
-        catch (InvocationTargetException ex) {
+        } catch (InvocationTargetException ex) {
             execInfo.setThrowable(ex.getTargetException());
             throw ex.getTargetException();
         } finally {
             listener.afterQuery(execInfo, queries);
         }
 
+    }
+
+    private List<Object> getQueryParameters(ParameterOperationHolder parameterOperationHolder) {
+        final List<Object> queryParameters = new ArrayList<Object>(parameterOperationHolder.getParamsByIndex().size());
+        for (ParameterSetOperation parameterSetOperation : parameterOperationHolder.getParamsByIndex().values()) {
+            queryParameters.add(parameterSetOperation.getArgs()[1]);  // index=1 is always a value
+        }
+        return queryParameters;
+    }
+
+    private void transformParameters() throws SQLException, IllegalAccessException, InvocationTargetException {
+
+        // transform parameters
+        final ParameterReplacer parameterReplacer = new ParameterReplacer(parameterOperationHolder);
+        final ParameterTransformer parameterTransformer = interceptorHolder.getParameterTransformer();
+        parameterTransformer.transformParameters(dataSourceName, query, parameterReplacer);
+
+        if (parameterReplacer.isModified()) {
+            final ParameterOperationHolder modifiedParameterOperationHolder = parameterReplacer.getModifiedParameters();
+
+            // reset parameters
+            ps.clearParameters();  // clear existing parameters
+            for (Map.Entry<Integer, ParameterSetOperation> entry : modifiedParameterOperationHolder.getParamsByIndex().entrySet()) {
+                final Integer index = entry.getKey();
+                final ParameterSetOperation operation = entry.getValue();
+                final Method paramMethod = operation.getMethod();
+                final Object[] paramArgs = operation.getArgs();
+
+                paramMethod.invoke(ps, paramArgs);
+            }
+
+            // replace
+            parameterOperationHolder = modifiedParameterOperationHolder;
+        }
     }
 
 }
