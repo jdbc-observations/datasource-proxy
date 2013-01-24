@@ -84,37 +84,43 @@ public class ConnectionInvocationHandler implements InvocationHandler {
             }
         }
 
-        // Invoke method on original Connection.
-        try {
-            Object retVal = method.invoke(connection, args);
-
-            // when it is a call to createStatement or prepareStaement, or prepareCall return proxy
-            // most of the time, spring and hibernate use prepareStatement to execute query as batch
-            if ("createStatement".equals(methodName)) {
-                // for normal statement, transforming query is handled inside of handler.
-                return jdbcProxyFactory.createStatement((Statement) retVal, interceptorHolder, dataSourceName);
-            } else if ("prepareStatement".equals(methodName)) {
-                if (ObjectArrayUtils.isFirstArgString(args)) {
-                    final String query = (String) args[0];
-                    final String transformedQuery = interceptorHolder.getQueryTransformer().transformQuery(dataSourceName, query);
-                    return jdbcProxyFactory.createPreparedStatement((PreparedStatement) retVal, transformedQuery,
-                            interceptorHolder, dataSourceName);
-                }
-            } else if ("prepareCall".equals(methodName)) {  // for stored procedure call
-                if (ObjectArrayUtils.isFirstArgString(args)) {
-                    final String query = (String) args[0];
-                    final String transformedQuery = interceptorHolder.getQueryTransformer().transformQuery(dataSourceName, query);
-                    return jdbcProxyFactory.createCallableStatement((CallableStatement) retVal, transformedQuery,
-                            interceptorHolder, dataSourceName);
-                }
+        // replace query for PreparedStatement and CallableStatement
+        if ("prepareStatement".equals(methodName) || "prepareCall".equals(methodName)) {
+            if (ObjectArrayUtils.isFirstArgString(args)) {
+                final String query = (String) args[0];
+                final String transformedQuery = interceptorHolder.getQueryTransformer().transformQuery(dataSourceName, query);
+                args[0] = transformedQuery;
             }
-
-            return retVal;
         }
-        catch (InvocationTargetException ex) {
+
+        // Invoke method on original Connection.
+        final Object retVal;
+        try {
+            retVal = method.invoke(connection, args);
+        } catch (InvocationTargetException ex) {
             throw ex.getTargetException();
         }
 
+        // when it is a call to createStatement or prepareStaement, or prepareCall return proxy
+        // most of the time, spring and hibernate use prepareStatement to execute query as batch
+        if ("createStatement".equals(methodName)) {
+            // for normal statement, transforming query is handled inside of handler.
+            return jdbcProxyFactory.createStatement((Statement) retVal, interceptorHolder, dataSourceName);
+        } else if ("prepareStatement".equals(methodName)) {
+            if (ObjectArrayUtils.isFirstArgString(args)) {
+                final String query = (String) args[0];
+                return jdbcProxyFactory.createPreparedStatement((PreparedStatement) retVal, query,
+                        interceptorHolder, dataSourceName);
+            }
+        } else if ("prepareCall".equals(methodName)) {  // for stored procedure call
+            if (ObjectArrayUtils.isFirstArgString(args)) {
+                final String query = (String) args[0];
+                return jdbcProxyFactory.createCallableStatement((CallableStatement) retVal, query,
+                        interceptorHolder, dataSourceName);
+            }
+        }
+
+        return retVal;
 
     }
 
