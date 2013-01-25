@@ -122,6 +122,7 @@ public class StatementInvocationHandler implements InvocationHandler {
                 final QueryTransformer queryTransformer = interceptorHolder.getQueryTransformer();
                 final String query = (String) args[0];
                 final String transformedQuery = queryTransformer.transformQuery(dataSourceName, query);
+                args[0] = transformedQuery;  // replace to the new query
                 batchQueries.add(transformedQuery);
             } else if ("clearBatch".equals(methodName)) {
                 batchQueries.clear();
@@ -150,6 +151,7 @@ public class StatementInvocationHandler implements InvocationHandler {
                 final QueryTransformer queryTransformer = interceptorHolder.getQueryTransformer();
                 final String query = (String) args[0];
                 final String transformedQuery = queryTransformer.transformQuery(dataSourceName, query);
+                args[0] = transformedQuery; // replace to the new query
                 queries.add(new QueryInfo(transformedQuery, null));
             }
         }
