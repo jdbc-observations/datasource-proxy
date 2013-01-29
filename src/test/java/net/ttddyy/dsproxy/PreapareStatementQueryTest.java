@@ -32,8 +32,6 @@ public class PreapareStatementQueryTest {
 
     @BeforeMethod
     public void setup() throws Exception {
-        //aaa
-
         testListener = new TestListener();
         lastQueryListener = new LastQueryListener();
 
