@@ -4,7 +4,7 @@ import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdkJdbcProxyFactory;
-import org.hsqldb.jdbc.jdbcDataSource;
+import org.hsqldb.jdbc.JDBCDataSource;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -60,18 +60,20 @@ public class CallableStatementQueryTransformerTest {
     @BeforeMethod
     public void setup() throws Exception {
         // real datasource
-        org.hsqldb.jdbc.jdbcDataSource rawDataSource = new jdbcDataSource();
+        JDBCDataSource rawDataSource = new JDBCDataSource();
         rawDataSource.setDatabase("jdbc:hsqldb:mem:aname");
         rawDataSource.setUser("sa");
         this.rawDatasource = rawDataSource;
 
         // create stored procedure
-        String procFoo = "CREATE ALIAS proc_foo FOR \"net.ttddyy.dsproxy.transform.CallableStatementQueryTransformerTest.procFoo\";";
-        String procBar = "CREATE ALIAS proc_bar FOR \"net.ttddyy.dsproxy.transform.CallableStatementQueryTransformerTest.procBar\";";
+        String procFoo = "CREATE FUNCTION proc_foo(s VARCHAR(50)) RETURNS VARCHAR(50) LANGUAGE JAVA DETERMINISTIC NO SQL EXTERNAL NAME 'CLASSPATH:net.ttddyy.dsproxy.transform.CallableStatementQueryTransformerTest.procFoo'";
+        String procBar = "CREATE FUNCTION proc_bar(s VARCHAR(50)) RETURNS VARCHAR(50) LANGUAGE JAVA DETERMINISTIC NO SQL EXTERNAL NAME 'CLASSPATH:net.ttddyy.dsproxy.transform.CallableStatementQueryTransformerTest.procBar'";
+
         String tableFoo = "CREATE TABLE foo ( id INTEGER PRIMARY KEY, name VARCHAR(10) );";
         String tableBar = "CREATE TABLE bar ( id INTEGER PRIMARY KEY, name VARCHAR(10) );";
-        String insertFoo = "CREATE ALIAS insert_foo FOR \"net.ttddyy.dsproxy.transform.CallableStatementQueryTransformerTest.insertFoo\";";
-        String insertBar = "CREATE ALIAS insert_bar FOR \"net.ttddyy.dsproxy.transform.CallableStatementQueryTransformerTest.insertBar\";";
+        String insertFoo = "CREATE PROCEDURE insert_foo(IN id INT, IN name VARCHAR(50)) LANGUAGE JAVA NOT DETERMINISTIC MODIFIES SQL DATA EXTERNAL NAME 'CLASSPATH:net.ttddyy.dsproxy.transform.CallableStatementQueryTransformerTest.insertFoo'";
+        String insertBar = "CREATE PROCEDURE insert_bar(IN id INT, IN name VARCHAR(50)) LANGUAGE JAVA NOT DETERMINISTIC MODIFIES SQL DATA EXTERNAL NAME 'CLASSPATH:net.ttddyy.dsproxy.transform.CallableStatementQueryTransformerTest.insertBar'";
+
         Statement statement = rawDataSource.getConnection().createStatement();
         statement.addBatch(procFoo);
         statement.addBatch(procBar);
@@ -142,9 +144,13 @@ public class CallableStatementQueryTransformerTest {
 
 
         Statement statement = rawDatasource.getConnection().createStatement();
-        ResultSet rs = statement.executeQuery("SELECT COUNT(*) FROM bar");
+        ResultSet rs = statement.executeQuery("SELECT COUNT(*) FROM foo");
         assertThat(rs.next(), is(true));
-        assertThat(rs.getInt(1), is(2));
+        assertThat("table foo has no records", rs.getInt(1), is(0));
+
+        rs = statement.executeQuery("SELECT COUNT(*) FROM bar");
+        assertThat(rs.next(), is(true));
+        assertThat("table foo has 2 records", rs.getInt(1), is(2));
 
         rs = statement.executeQuery("SELECT id, name FROM bar ORDER BY id ASC");
         assertThat(rs.next(), is(true));

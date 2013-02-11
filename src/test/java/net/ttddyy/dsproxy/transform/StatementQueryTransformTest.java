@@ -4,7 +4,7 @@ import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdkJdbcProxyFactory;
-import org.hsqldb.jdbc.jdbcDataSource;
+import org.hsqldb.jdbc.JDBCDataSource;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -32,7 +32,7 @@ public class StatementQueryTransformTest {
     @BeforeMethod
     public void setup() throws Exception {
         // real datasource
-        org.hsqldb.jdbc.jdbcDataSource rawDataSource = new jdbcDataSource();
+        JDBCDataSource rawDataSource = new JDBCDataSource();
         rawDataSource.setDatabase("jdbc:hsqldb:mem:aname");
         rawDataSource.setUser("sa");
         this.rawDatasource = rawDataSource;

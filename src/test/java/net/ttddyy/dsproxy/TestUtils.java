@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy;
 
-import org.hsqldb.jdbc.jdbcDataSource;
+import org.hsqldb.jdbc.JDBCDataSource;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import java.sql.Statement;
 public class TestUtils {
 
     public static DataSource getDataSourceWithData() throws Exception {
-        jdbcDataSource dataSource = new jdbcDataSource();
+        JDBCDataSource dataSource = new JDBCDataSource();
         dataSource.setDatabase("jdbc:hsqldb:mem:aname");
         dataSource.setUser("sa");
 
@@ -29,7 +29,7 @@ public class TestUtils {
         Connection conn = dataSource.getConnection();
         Statement stmt = conn.createStatement();
         for (String query : queries) {
-            stmt.executeQuery(query);
+            stmt.execute(query);
         }
         conn.close();
     }

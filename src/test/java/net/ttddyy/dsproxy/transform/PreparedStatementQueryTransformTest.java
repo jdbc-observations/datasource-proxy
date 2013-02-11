@@ -4,7 +4,7 @@ import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdkJdbcProxyFactory;
-import org.hsqldb.jdbc.jdbcDataSource;
+import org.hsqldb.jdbc.JDBCDataSource;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -33,7 +33,7 @@ public class PreparedStatementQueryTransformTest {
     @BeforeMethod
     public void setup() throws Exception {
         // real datasource
-        org.hsqldb.jdbc.jdbcDataSource rawDataSource = new jdbcDataSource();
+        JDBCDataSource rawDataSource = new JDBCDataSource();
         rawDataSource.setDatabase("jdbc:hsqldb:mem:aname");
         rawDataSource.setUser("sa");
         this.rawDatasource = rawDataSource;
@@ -75,6 +75,15 @@ public class PreparedStatementQueryTransformTest {
         InterceptorHolder interceptorHolder = new InterceptorHolder(queryListener, transformer);
 
         return new JdkJdbcProxyFactory().createConnection(rawDatasource.getConnection(), interceptorHolder);
+    }
+
+    @Test
+    public void testCreatePreparedStatement() throws Exception {
+        getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
+
+        // when preparedStatement method is called, intercept should be called
+        assertThat(interceptedQueries, hasSize(1));
+        assertThat(interceptedQueries, hasItem("UPDATE foo SET name = ?"));
     }
 
     @Test
@@ -170,9 +179,6 @@ public class PreparedStatementQueryTransformTest {
     public void testClearBatch() throws Exception {
         PreparedStatement ps = getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
         ps.clearBatch();
-        int[] result = ps.executeBatch();
-
-        assertThat(result.length, is(0));
 
         // even though batch is canceled, interceptor was called once.
         assertThat(interceptedQueries, hasSize(1));
