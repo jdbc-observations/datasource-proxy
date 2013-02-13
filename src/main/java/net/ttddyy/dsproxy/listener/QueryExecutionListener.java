@@ -16,6 +16,8 @@ import java.util.List;
  */
 public interface QueryExecutionListener {
 
+    static QueryExecutionListener DEFAULT = new NoOpQueryExecutionListener();
+
     void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList);
 
     void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList);
