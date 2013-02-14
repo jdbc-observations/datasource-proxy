@@ -67,13 +67,13 @@ public class PreparedStatementParameterTransformTest {
         ParameterTransformer paramTransformer = mock(ParameterTransformer.class);
         doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[2];
+                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
                 replacer.clearParameters();
                 replacer.setInt(1, 2);  // replace first id=1 to id=2
                 replacer.setInt(2, 2);  // replace second id=1 to id=2
                 return null;
             }
-        }).when(paramTransformer).transformParameters(anyString(), anyString(), isA(ParameterReplacer.class));
+        }).when(paramTransformer).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
         Connection connection = getProxyConnection(paramTransformer);
 
@@ -87,7 +87,7 @@ public class PreparedStatementParameterTransformTest {
         assertThat(rs.getInt(1), is(2));
         assertThat(rs.getString(2), is("bar"));
 
-        verify(paramTransformer, only()).transformParameters(anyString(), anyString(), isA(ParameterReplacer.class));
+        verify(paramTransformer, only()).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
     }
 
@@ -97,11 +97,11 @@ public class PreparedStatementParameterTransformTest {
         ParameterTransformer paramTransformer = mock(ParameterTransformer.class);
         doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[2];
+                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
                 replacer.setInt(2, 2);  // just replace the second id.  after this: "where id=1 and id=2"
                 return null;
             }
-        }).when(paramTransformer).transformParameters(anyString(), anyString(), isA(ParameterReplacer.class));
+        }).when(paramTransformer).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
         Connection connection = getProxyConnection(paramTransformer);
 
@@ -112,7 +112,7 @@ public class PreparedStatementParameterTransformTest {
         ResultSet rs = ps.executeQuery();
 
         assertThat("should have no matching record 'where id=1 and id=2'", rs.next(), is(false));
-        verify(paramTransformer, only()).transformParameters(anyString(), anyString(), isA(ParameterReplacer.class));
+        verify(paramTransformer, only()).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
     }
 
@@ -122,12 +122,12 @@ public class PreparedStatementParameterTransformTest {
         ParameterTransformer paramTransformer = mock(ParameterTransformer.class);
         doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[2];
+                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
                 String name = replacer.getValue(1);
                 replacer.setString(1, name + "-INTERCEPTED");
                 return null;
             }
-        }).when(paramTransformer).transformParameters(anyString(), anyString(), isA(ParameterReplacer.class));
+        }).when(paramTransformer).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
         Connection connection = getProxyConnection(paramTransformer);
 
@@ -150,7 +150,7 @@ public class PreparedStatementParameterTransformTest {
         name = queryForString("SELECT name FROM foo WHERE id = 2");
         assertThat(name, is("BAR-INTERCEPTED"));
 
-        verify(paramTransformer, times(2)).transformParameters(anyString(), anyString(), isA(ParameterReplacer.class));
+        verify(paramTransformer, times(2)).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
     }
 
@@ -172,7 +172,7 @@ public class PreparedStatementParameterTransformTest {
             // for first batch
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 // first batch. call clearParameters().
-                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[2];
+                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
                 replacer.clearParameters();
                 replacer.setString(1, "BAZ");
                 replacer.setInt(2, 3);  // id=3
@@ -182,14 +182,14 @@ public class PreparedStatementParameterTransformTest {
             // for second batch
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 // second batch. don't call clearParameters().
-                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[2];
+                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
                 String name = replacer.getValue(1);
                 replacer.setString(1, name + "-INTERCEPTED");
                 return null;
             }
         }
 
-        ).when(paramTransformer).transformParameters(anyString(), anyString(), isA(ParameterReplacer.class));
+        ).when(paramTransformer).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
         Connection connection = getProxyConnection(paramTransformer);
 
@@ -215,7 +215,7 @@ public class PreparedStatementParameterTransformTest {
         name = queryForString("SELECT name FROM foo WHERE id = 3");
         assertThat(name, is("BAZ"));
 
-        verify(paramTransformer, times(2)).transformParameters(anyString(), anyString(), isA(ParameterReplacer.class));
+        verify(paramTransformer, times(2)).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
     }
 

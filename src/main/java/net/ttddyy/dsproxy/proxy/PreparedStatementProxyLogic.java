@@ -5,6 +5,7 @@ import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.transform.ParameterReplacer;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
+import net.ttddyy.dsproxy.transform.TransformInfo;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Shared logic for PreparedStatement and CallableStatement invocation.
+ * Shared logic for {@link PreparedStatement} and {@link CallableStatement} invocation.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.2
@@ -103,8 +104,7 @@ public class PreparedStatementProxyLogic {
                 // Batch parameter operation
                 if ("addBatch".equals(methodName)) {
 
-                    // TODO: indicate whether from CS or PS
-                    transformParameters();
+                    transformParameters(true, batchQueries.size());
 
                     BatchQueryHolder queryHolder = new BatchQueryHolder();
                     queryHolder.setQuery(query);
@@ -131,7 +131,7 @@ public class PreparedStatementProxyLogic {
         } else if ("executeQuery".equals(methodName) || "executeUpdate".equals(methodName)
                 || "execute".equals(methodName)) {
 
-            transformParameters();
+            transformParameters(false, 0);
 
             queries.add(new QueryInfo(query, getQueryParameters(parameterOperationHolder)));
         }
@@ -173,12 +173,13 @@ public class PreparedStatementProxyLogic {
         return queryParameters;
     }
 
-    private void transformParameters() throws SQLException, IllegalAccessException, InvocationTargetException {
+    private void transformParameters(boolean isBatch, int count) throws SQLException, IllegalAccessException, InvocationTargetException {
 
         // transform parameters
         final ParameterReplacer parameterReplacer = new ParameterReplacer(parameterOperationHolder);
+        final TransformInfo transformInfo = new TransformInfo(ps.getClass(), dataSourceName, query, isBatch, count);
         final ParameterTransformer parameterTransformer = interceptorHolder.getParameterTransformer();
-        parameterTransformer.transformParameters(dataSourceName, query, parameterReplacer);
+        parameterTransformer.transformParameters(parameterReplacer, transformInfo);
 
         if (parameterReplacer.isModified()) {
 

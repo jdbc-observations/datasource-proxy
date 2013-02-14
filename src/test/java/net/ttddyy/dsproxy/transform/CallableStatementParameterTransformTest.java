@@ -88,13 +88,13 @@ public class CallableStatementParameterTransformTest {
         ParameterTransformer paramTransformer = mock(ParameterTransformer.class);
         doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[2];
+                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
                 replacer.setString("@p1", "first_REPLACED");  // replace first parameter by name
                 replacer.setString(2, "second_REPLACED");  // replace second parameter by index
                 replacer.registerOutParameter("@p4", Types.VARCHAR);
                 return null;
             }
-        }).when(paramTransformer).transformParameters(anyString(), anyString(), isA(ParameterReplacer.class));
+        }).when(paramTransformer).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
         Connection conn = getProxyConnection(paramTransformer);
 
@@ -107,7 +107,7 @@ public class CallableStatementParameterTransformTest {
         cs.registerOutParameter(6, Types.INTEGER);
         cs.execute();
 
-        verify(paramTransformer, only()).transformParameters(anyString(), anyString(), isA(ParameterReplacer.class));
+        verify(paramTransformer, only()).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
         String out1 = cs.getString("@p4");
         assertThat(out1, is("FOO:first_REPLACED+second_REPLACED+100"));
@@ -126,7 +126,7 @@ public class CallableStatementParameterTransformTest {
         ParameterTransformer paramTransformer = mock(ParameterTransformer.class);
         doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[2];
+                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
                 replacer.clearParameters();
                 replacer.setString("@p1", "first_REPLACED");
                 replacer.setString(2, "second_REPLACED");
@@ -136,7 +136,7 @@ public class CallableStatementParameterTransformTest {
                 replacer.registerOutParameter(6, Types.INTEGER);
                 return null;
             }
-        }).when(paramTransformer).transformParameters(anyString(), anyString(), isA(ParameterReplacer.class));
+        }).when(paramTransformer).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
         Connection conn = getProxyConnection(paramTransformer);
 
@@ -149,7 +149,7 @@ public class CallableStatementParameterTransformTest {
         cs.registerOutParameter(6, Types.INTEGER);
         cs.execute();
 
-        verify(paramTransformer, only()).transformParameters(anyString(), anyString(), isA(ParameterReplacer.class));
+        verify(paramTransformer, only()).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
         String out1 = cs.getString("@p4");
         assertThat(out1, is("FOO:first_REPLACED+second_REPLACED+200"));
@@ -168,17 +168,17 @@ public class CallableStatementParameterTransformTest {
         ParameterTransformer paramTransformer = mock(ParameterTransformer.class);
         doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[2];
+                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
                 replacer.setString("@p2", "second-1_REPLACED");  // first batch
                 return null;
             }
         }).doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[2];
+                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
                 replacer.setString("@p2", "second-2_REPLACED");  // second batch
                 return null;
             }
-        }).when(paramTransformer).transformParameters(anyString(), anyString(), isA(ParameterReplacer.class));
+        }).when(paramTransformer).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
         Connection conn = getProxyConnection(paramTransformer);
 
@@ -191,7 +191,7 @@ public class CallableStatementParameterTransformTest {
         cs.addBatch();
         cs.executeBatch();
 
-        verify(paramTransformer, times(2)).transformParameters(anyString(), anyString(), isA(ParameterReplacer.class));
+        verify(paramTransformer, times(2)).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
         assertThat(batchValues, hasSize(2));
         assertThat(batchValues.get(0), is("BAR:first-1+second-1_REPLACED"));
@@ -205,7 +205,7 @@ public class CallableStatementParameterTransformTest {
         doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 // first batch. call clearParameters().
-                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[2];
+                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
                 replacer.clearParameters();
                 replacer.setString(1, "first-1_REPLACED");
                 replacer.setString("@p2", "second-1_REPLACED");
@@ -214,11 +214,11 @@ public class CallableStatementParameterTransformTest {
         }).doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 // second batch. don't call clearParameters().
-                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[2];
+                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
                 replacer.setString("@p2", "second-2_REPLACED");
                 return null;
             }
-        }).when(paramTransformer).transformParameters(anyString(), anyString(), isA(ParameterReplacer.class));
+        }).when(paramTransformer).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
         Connection conn = getProxyConnection(paramTransformer);
 
@@ -231,7 +231,7 @@ public class CallableStatementParameterTransformTest {
         cs.addBatch();
         cs.executeBatch();
 
-        verify(paramTransformer, times(2)).transformParameters(anyString(), anyString(), isA(ParameterReplacer.class));
+        verify(paramTransformer, times(2)).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
         assertThat(batchValues, hasSize(2));
         assertThat(batchValues.get(0), is("BAR:first-1_REPLACED+second-1_REPLACED"));

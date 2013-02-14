@@ -6,7 +6,7 @@ package net.ttddyy.dsproxy.transform;
  */
 public class NoOpParameterTransformer implements ParameterTransformer {
 
-    public void transformParameters(String dataSourceName, String query, ParameterReplacer replacer) {
+    public void transformParameters(ParameterReplacer replacer, TransformInfo transformInfo) {
         // do nothing
     }
 }

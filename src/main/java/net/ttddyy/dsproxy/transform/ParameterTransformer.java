@@ -8,5 +8,5 @@ public interface ParameterTransformer {
 
     static ParameterTransformer DEFAULT = new NoOpParameterTransformer();
 
-    void transformParameters(String dataSourceName, String query, ParameterReplacer replacer);
+    void transformParameters(ParameterReplacer replacer, TransformInfo transformInfo);
 }
