@@ -65,8 +65,8 @@ public class PreparedStatementQueryTransformTest {
     private Connection getProxyConnection(final boolean isSelect) throws Exception {
 
         QueryTransformer transformer = new QueryTransformer() {
-            public String transformQuery(String dataSourceName, String query) {
-                interceptedQueries.add(query);
+            public String transformQuery(TransformInfo transformInfo) {
+                interceptedQueries.add(transformInfo.getQuery());
                 return isSelect ? "SELECT * FROM bar" : "UPDATE bar SET name = ?";
             }
         };

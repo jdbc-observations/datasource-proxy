@@ -7,7 +7,7 @@ package net.ttddyy.dsproxy.transform;
  * @since 1.2
  */
 public class NoOpQueryTransformer implements QueryTransformer {
-    public String transformQuery(final String dataSourceName, final String query) {
-        return query;
+    public String transformQuery(TransformInfo transformInfo) {
+        return transformInfo.getQuery();
     }
 }

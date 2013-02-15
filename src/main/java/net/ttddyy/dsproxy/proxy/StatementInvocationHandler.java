@@ -4,6 +4,7 @@ import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
+import net.ttddyy.dsproxy.transform.TransformInfo;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -121,7 +122,10 @@ public class StatementInvocationHandler implements InvocationHandler {
             if ("addBatch".equals(methodName) && ObjectArrayUtils.isFirstArgString(args)) {
                 final QueryTransformer queryTransformer = interceptorHolder.getQueryTransformer();
                 final String query = (String) args[0];
-                final String transformedQuery = queryTransformer.transformQuery(dataSourceName, query);
+                final Class<? extends Statement> clazz = Statement.class;
+                final int batchCount = batchQueries.size();
+                final TransformInfo transformInfo = new TransformInfo(clazz, dataSourceName, query, true, batchCount);
+                final String transformedQuery = queryTransformer.transformQuery(transformInfo);
                 args[0] = transformedQuery;  // replace to the new query
                 batchQueries.add(transformedQuery);
             } else if ("clearBatch".equals(methodName)) {
@@ -150,7 +154,8 @@ public class StatementInvocationHandler implements InvocationHandler {
             if (ObjectArrayUtils.isFirstArgString(args)) {
                 final QueryTransformer queryTransformer = interceptorHolder.getQueryTransformer();
                 final String query = (String) args[0];
-                final String transformedQuery = queryTransformer.transformQuery(dataSourceName, query);
+                final TransformInfo transformInfo = new TransformInfo(Statement.class, dataSourceName, query, false, 0);
+                final String transformedQuery = queryTransformer.transformQuery(transformInfo);
                 args[0] = transformedQuery; // replace to the new query
                 queries.add(new QueryInfo(transformedQuery, null));
             }

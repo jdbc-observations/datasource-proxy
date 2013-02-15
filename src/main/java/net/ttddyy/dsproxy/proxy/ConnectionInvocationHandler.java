@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
+import net.ttddyy.dsproxy.transform.TransformInfo;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -88,7 +89,10 @@ public class ConnectionInvocationHandler implements InvocationHandler {
         if ("prepareStatement".equals(methodName) || "prepareCall".equals(methodName)) {
             if (ObjectArrayUtils.isFirstArgString(args)) {
                 final String query = (String) args[0];
-                final String transformedQuery = interceptorHolder.getQueryTransformer().transformQuery(dataSourceName, query);
+                final Class<? extends Statement> clazz =
+                        "prepareStatement".equals(methodName) ? PreparedStatement.class : CallableStatement.class;
+                final TransformInfo transformInfo = new TransformInfo(clazz, dataSourceName, query, false, 0);
+                final String transformedQuery = interceptorHolder.getQueryTransformer().transformQuery(transformInfo);
                 args[0] = transformedQuery;
             }
         }

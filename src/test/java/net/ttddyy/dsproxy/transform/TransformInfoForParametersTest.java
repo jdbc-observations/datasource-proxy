@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class TransformInfoTest {
+public class TransformInfoForParametersTest {
 
     private TransformInfo transformInfo; // work around to pass obj in inner class
 
@@ -35,7 +35,7 @@ public class TransformInfoTest {
         doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 // store called TransformInfo object to instance variable
-                TransformInfoTest.this.transformInfo = (TransformInfo) invocation.getArguments()[1];
+                TransformInfoForParametersTest.this.transformInfo = (TransformInfo) invocation.getArguments()[1];
                 return null;
             }
         }).when(parameterTransformer).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));

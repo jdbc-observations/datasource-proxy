@@ -51,8 +51,8 @@ public class CallableStatementQueryTransformerTest {
     private List<String> interceptedQueries = new ArrayList<String>();
 
     private QueryTransformer transformer = new QueryTransformer() {
-        public String transformQuery(String dataSourceName, String query) {
-            interceptedQueries.add(query);
+        public String transformQuery(TransformInfo transformInfo) {
+            interceptedQueries.add(transformInfo.getQuery());
             return "call proc_bar('BAR')";
         }
     };
@@ -94,8 +94,8 @@ public class CallableStatementQueryTransformerTest {
     private Connection getProxyConnection(final String replacedQuery) throws Exception {
 
         QueryTransformer transformer = new QueryTransformer() {
-            public String transformQuery(String dataSourceName, String query) {
-                interceptedQueries.add(query);
+            public String transformQuery(TransformInfo transformInfo) {
+                interceptedQueries.add(transformInfo.getQuery());
                 return replacedQuery;
             }
         };

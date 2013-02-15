@@ -51,9 +51,9 @@ public class PreparedStatementParameterTransformTest {
     private Connection getProxyConnection(ParameterTransformer paramTransformer) throws Exception {
         QueryExecutionListener queryListener = mock(QueryExecutionListener.class);
         QueryTransformer queryTransformer = mock(QueryTransformer.class);
-        when(queryTransformer.transformQuery(anyString(), anyString())).thenAnswer(new Answer<String>() {
+        when(queryTransformer.transformQuery(isA(TransformInfo.class))).thenAnswer(new Answer<String>() {
             public String answer(InvocationOnMock invocation) throws Throwable {
-                return (String) invocation.getArguments()[1];  // return input as is
+                return ((TransformInfo) invocation.getArguments()[0]).getQuery();  // return input query as is
             }
         });
         InterceptorHolder interceptorHolder = new InterceptorHolder(queryListener, queryTransformer, paramTransformer);
