@@ -3,56 +3,37 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.sameInstance;
-
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.mockito.ArgumentCaptor;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertTrue;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.CallableStatement;
-import java.sql.Clob;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.sql.Connection;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.lang.reflect.Proxy;
-import java.lang.reflect.InvocationHandler;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author Tadaya Tsuyukubo
  */
-public class CallableStatementInvocationHandlerMockTest {
+public class PreparedStatementProxyLogicForCallableStatementMockTest {
     private static final String DS_NAME = "myDS";
 
     @Test
-    public void testExecuteWithNoParam() throws Exception {
+    public void testExecuteWithNoParam() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -61,15 +42,18 @@ public class CallableStatementInvocationHandlerMockTest {
 
         when(stat.execute()).thenReturn(true);
 
-        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, interceptorHolder);
 
-        boolean result = statement.execute();
-        assertTrue(result);
+        Method method = CallableStatement.class.getMethod("execute");
+        Object result = logic.invoke(stat, method, null);
+
+        assertThat(result, is(instanceOf(boolean.class)));
+        assertTrue((Boolean) result);
         verifyListenerWithNoParam(listener, "execute", query);
     }
 
     @Test
-    public void testExecuteWithParamByPosition() throws Exception {
+    public void testExecuteWithParamByPosition() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -78,18 +62,21 @@ public class CallableStatementInvocationHandlerMockTest {
 
         when(stat.execute()).thenReturn(true);
 
-        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, interceptorHolder);
 
-        setParameterByPosition(statement);
-        boolean result = statement.execute();
-        assertTrue(result);
+        setParameterByPosition(logic);
+        Method method = CallableStatement.class.getMethod("execute");
+        Object result = logic.invoke(stat, method, null);
+
+        assertThat(result, is(instanceOf(boolean.class)));
+        assertTrue((Boolean) result);
         verifyParametersByPosition(stat);
 
         verifyListenerWithParamByPosition(listener, "execute", query);
     }
 
     @Test
-    public void testExecuteWithParamByName() throws Exception {
+    public void testExecuteWithParamByName() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -98,18 +85,21 @@ public class CallableStatementInvocationHandlerMockTest {
 
         when(stat.execute()).thenReturn(true);
 
-        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, interceptorHolder);
 
-        setParameterByName(statement);
-        boolean result = statement.execute();
-        assertTrue(result);
+        setParameterByName(logic);
+        Method method = CallableStatement.class.getMethod("execute");
+        Object result = logic.invoke(stat, method, null);
+
+        assertThat(result, is(instanceOf(boolean.class)));
+        assertTrue((Boolean) result);
         verifyParametersByName(stat);
 
         verifyListenerWithParamByName(listener, "execute", query);
     }
 
     @Test
-    public void testExecuteUpdateWithNoParam() throws Exception {
+    public void testExecuteUpdateWithNoParam() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -118,15 +108,18 @@ public class CallableStatementInvocationHandlerMockTest {
 
         when(stat.executeUpdate()).thenReturn(100);
 
-        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, interceptorHolder);
 
-        int result = statement.executeUpdate();
-        assertThat(result, is(100));
+        Method method = CallableStatement.class.getMethod("executeUpdate");
+        Object result = logic.invoke(stat, method, null);
+
+        assertThat(result, is(instanceOf(int.class)));
+        assertThat((Integer) result, is(100));
         verifyListenerWithNoParam(listener, "executeUpdate", query);
     }
 
     @Test
-    public void testExecuteUpdateWithParamByPosition() throws Exception {
+    public void testExecuteUpdateWithParamByPosition() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -135,18 +128,21 @@ public class CallableStatementInvocationHandlerMockTest {
 
         when(stat.executeUpdate()).thenReturn(100);
 
-        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, interceptorHolder);
 
-        setParameterByPosition(statement);
-        int result = statement.executeUpdate();
-        assertThat(result, is(100));
+        setParameterByPosition(logic);
+        Method method = CallableStatement.class.getMethod("executeUpdate");
+        Object result = logic.invoke(stat, method, null);
+
+        assertThat(result, is(instanceOf(int.class)));
+        assertThat((Integer) result, is(100));
         verifyParametersByPosition(stat);
 
         verifyListenerWithParamByPosition(listener, "executeUpdate", query);
     }
 
     @Test
-    public void testExecuteUpdateWithParamByName() throws Exception {
+    public void testExecuteUpdateWithParamByName() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -155,18 +151,21 @@ public class CallableStatementInvocationHandlerMockTest {
 
         when(stat.executeUpdate()).thenReturn(100);
 
-        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, interceptorHolder);
 
-        setParameterByName(statement);
-        int result = statement.executeUpdate();
-        assertThat(result, is(100));
+        setParameterByName(logic);
+        Method method = CallableStatement.class.getMethod("executeUpdate");
+        Object result = logic.invoke(stat, method, null);
+
+        assertThat(result, is(instanceOf(int.class)));
+        assertThat((Integer) result, is(100));
         verifyParametersByName(stat);
 
         verifyListenerWithParamByName(listener, "executeUpdate", query);
     }
 
     @Test
-    public void testExecuteQueryWithNoParam() throws Exception {
+    public void testExecuteQueryWithNoParam() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -176,15 +175,17 @@ public class CallableStatementInvocationHandlerMockTest {
         ResultSet mockResultSet = mock(ResultSet.class);
         when(stat.executeQuery()).thenReturn(mockResultSet);
 
-        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, interceptorHolder);
+        Method method = CallableStatement.class.getMethod("executeQuery");
+        Object result = logic.invoke(stat, method, null);
 
-        ResultSet result = statement.executeQuery();
-        assertThat(result, is(mockResultSet));
+        assertThat(result, is(instanceOf(ResultSet.class)));
+        assertThat((ResultSet) result, is(mockResultSet));
         verifyListenerWithNoParam(listener, "executeQuery", query);
     }
 
     @Test
-    public void testExecuteQueryWithParamByPosition() throws Exception {
+    public void testExecuteQueryWithParamByPosition() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -194,18 +195,20 @@ public class CallableStatementInvocationHandlerMockTest {
         ResultSet mockResultSet = mock(ResultSet.class);
         when(stat.executeQuery()).thenReturn(mockResultSet);
 
-        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, interceptorHolder);
+        setParameterByPosition(logic);
+        Method method = CallableStatement.class.getMethod("executeQuery");
+        Object result = logic.invoke(stat, method, null);
 
-        setParameterByPosition(statement);
-        ResultSet result = statement.executeQuery();
-        assertThat(result, is(mockResultSet));
+        assertThat(result, is(instanceOf(ResultSet.class)));
+        assertThat((ResultSet) result, is(mockResultSet));
         verifyParametersByPosition(stat);
 
         verifyListenerWithParamByPosition(listener, "executeQuery", query);
     }
 
     @Test
-    public void testExecuteQueryWithParamByName() throws Exception {
+    public void testExecuteQueryWithParamByName() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -215,64 +218,81 @@ public class CallableStatementInvocationHandlerMockTest {
         ResultSet mockResultSet = mock(ResultSet.class);
         when(stat.executeQuery()).thenReturn(mockResultSet);
 
-        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, interceptorHolder);
 
-        setParameterByName(statement);
-        ResultSet result = statement.executeQuery();
-        assertThat(result, is(mockResultSet));
+        setParameterByName(logic);
+        Method method = CallableStatement.class.getMethod("executeQuery");
+        Object result = logic.invoke(stat, method, null);
+
+        assertThat(result, is(instanceOf(ResultSet.class)));
+        assertThat((ResultSet) result, is(mockResultSet));
         verifyParametersByName(stat);
 
         verifyListenerWithParamByName(listener, "executeQuery", query);
     }
 
     @Test
-    public void testExecuteBatch() throws Exception {
+    public void testExecuteBatch() throws Throwable {
         final String query = "{call procedure_a}";
 
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
         InterceptorHolder interceptorHolder = getInterceptorHolder(listener);
 
-        CallableStatement statement = getProxyStatement(stat, query, interceptorHolder);
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, interceptorHolder);
 
-        statement.setString(1, "foo");
-        statement.setInt(2, 10);
-        statement.addBatch();
+        Method setString = CallableStatement.class.getMethod("setString", int.class, String.class);
+        Method setInt = CallableStatement.class.getMethod("setInt", int.class, int.class);
+        Method addBatch = CallableStatement.class.getMethod("addBatch");
+        Method executeBatch = CallableStatement.class.getMethod("executeBatch");
 
-        statement.setString(1, "bar");
-        statement.setInt(2, 20);
-        statement.addBatch();
+        logic.invoke(stat, setString, new Object[]{1, "foo"});
+        logic.invoke(stat, setInt, new Object[]{2, 10});
+        logic.invoke(stat, addBatch, null);
 
-        statement.setString(1, "baz");
-        statement.setInt(2, 30);
-        statement.addBatch();
+        logic.invoke(stat, setString, new Object[]{1, "bar"});
+        logic.invoke(stat, setInt, new Object[]{2, 20});
+        logic.invoke(stat, addBatch, null);
 
-        statement.executeBatch();
+        logic.invoke(stat, setString, new Object[]{1, "baz"});
+        logic.invoke(stat, setInt, new Object[]{2, 30});
+        logic.invoke(stat, addBatch, null);
+
+
+        logic.invoke(stat, executeBatch, null);
 
         MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query,
                 new Object[][]{{"foo", 10}, {"bar", 20}, {"baz", 30}});
     }
 
     @Test
-    public void testBatchWithClearBatch() throws Exception {
+    public void testBatchWithClearBatch() throws Throwable {
         final String query = "{call procedure_a}";
 
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
         InterceptorHolder interceptorHolder = getInterceptorHolder(listener);
 
-        PreparedStatement statement = getProxyStatement(stat, query, interceptorHolder);
-        statement.setString(1, "foo");
-        statement.setInt(2, 10);
-        statement.addBatch();
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, interceptorHolder);
 
-        statement.clearBatch();
+        Method setString = CallableStatement.class.getMethod("setString", int.class, String.class);
+        Method setInt = CallableStatement.class.getMethod("setInt", int.class, int.class);
+        Method addBatch = CallableStatement.class.getMethod("addBatch");
+        Method executeBatch = CallableStatement.class.getMethod("executeBatch");
+        Method clearBatch = CallableStatement.class.getMethod("clearBatch");
 
-        statement.setString(1, "FOO");
-        statement.setInt(2, 20);
-        statement.addBatch();
+        logic.invoke(stat, setString, new Object[]{1, "foo"});
+        logic.invoke(stat, setInt, new Object[]{2, 10});
+        logic.invoke(stat, addBatch, null);
 
-        statement.executeBatch();
+        logic.invoke(stat, clearBatch, null);
+
+
+        logic.invoke(stat, setString, new Object[]{1, "FOO"});
+        logic.invoke(stat, setInt, new Object[]{2, 20});
+        logic.invoke(stat, addBatch, null);
+
+        logic.invoke(stat, executeBatch, null);
 
         verify(stat).setString(1, "foo");
         verify(stat).setInt(2, 10);
@@ -285,25 +305,30 @@ public class CallableStatementInvocationHandlerMockTest {
     }
 
     @Test
-    public void testBatchWithClearParameters() throws Exception {
+    public void testBatchWithClearParameters() throws Throwable {
         final String query = "{call procedure_a}";
 
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
         InterceptorHolder interceptorHolder = getInterceptorHolder(listener);
 
-        PreparedStatement statement = getProxyStatement(stat, query, interceptorHolder);
-        statement.setString(1, "foo");
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, interceptorHolder);
 
-        statement.clearParameters();
+        Method setString = CallableStatement.class.getMethod("setString", int.class, String.class);
+        Method setInt = CallableStatement.class.getMethod("setInt", int.class, int.class);
+        Method addBatch = CallableStatement.class.getMethod("addBatch");
+        Method executeBatch = CallableStatement.class.getMethod("executeBatch");
+        Method clearParameters = CallableStatement.class.getMethod("clearParameters");
 
-        statement.setString(1, "FOO");
+        logic.invoke(stat, setString, new Object[]{1, "foo"});
 
-        statement.setInt(2, 10);
-        statement.addBatch();
+        logic.invoke(stat, clearParameters, null);
 
+        logic.invoke(stat, setString, new Object[]{1, "FOO"});
+        logic.invoke(stat, setInt, new Object[]{2, 10});
+        logic.invoke(stat, addBatch, null);
 
-        statement.executeBatch();
+        logic.invoke(stat, executeBatch, null);
 
         verify(stat).setString(1, "foo");
         verify(stat).clearParameters();
@@ -317,20 +342,26 @@ public class CallableStatementInvocationHandlerMockTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testClearParameters() throws Exception {
+    public void testClearParameters() throws Throwable {
         final String query = "{call procedure_a}";
 
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
         InterceptorHolder interceptorHolder = getInterceptorHolder(listener);
 
-        PreparedStatement statement = getProxyStatement(stat, query, interceptorHolder);
-        statement.setString(1, "foo");
-        statement.setInt(2, 10);
-        statement.clearParameters();
-        statement.addBatch();
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, interceptorHolder);
+        Method setString = CallableStatement.class.getMethod("setString", int.class, String.class);
+        Method setInt = CallableStatement.class.getMethod("setInt", int.class, int.class);
+        Method addBatch = CallableStatement.class.getMethod("addBatch");
+        Method executeBatch = CallableStatement.class.getMethod("executeBatch");
+        Method clearParameters = CallableStatement.class.getMethod("clearParameters");
 
-        statement.executeBatch();
+        logic.invoke(stat, setString, new Object[]{1, "foo"});
+        logic.invoke(stat, setInt, new Object[]{2, 10});
+        logic.invoke(stat, clearParameters, new Object[]{});
+        logic.invoke(stat, addBatch, new Object[]{});
+
+        logic.invoke(stat, executeBatch, new Object[]{});
 
         verify(stat).setString(1, "foo");
         verify(stat).setInt(2, 10);
@@ -445,50 +476,95 @@ public class CallableStatementInvocationHandlerMockTest {
     };
 
 
-    private void setParameterByPosition(CallableStatement statement) throws Exception {
-        statement.setArray(PARAM_ARRAY.index, PARAM_ARRAY.value);
-        statement.setAsciiStream(PARAM_ASCIISTREAM.index, PARAM_ASCIISTREAM.value);
-        statement.setBigDecimal(PARAM_BIGDECIMAL.index, PARAM_BIGDECIMAL.value);
-        statement.setBinaryStream(PARAM_BINARYSTREAM.index, PARAM_BINARYSTREAM.value);
-        statement.setBlob(PARAM_BLOB.index, PARAM_BLOB.value);
-        statement.setBoolean(PARAM_BOOLEAN.index, PARAM_BOOLEAN.value);
-        statement.setCharacterStream(PARAM_CHARACTERSTREAM.index, PARAM_CHARACTERSTREAM.value);
-        statement.setClob(PARAM_CLOB.index, PARAM_CLOB.value);
-        statement.setDate(PARAM_DATE.index, PARAM_DATE.value);
-        statement.setDouble(PARAM_DOUBLE.index, PARAM_DOUBLE.value);
-        statement.setFloat(PARAM_FLOAT.index, PARAM_FLOAT.value);
-        statement.setInt(PARAM_INT.index, PARAM_INT.value);
-        statement.setLong(PARAM_LONG.index, PARAM_LONG.value);
-        statement.setNull(PARAM_NULL.index, PARAM_NULL.value);
-        statement.setObject(PARAM_OBJECT.index, PARAM_OBJECT.value);
-        statement.setRef(PARAM_REF.index, PARAM_REF.value);
-        statement.setShort(PARAM_SHORT.index, PARAM_SHORT.value);
-        statement.setString(PARAM_STRING.index, PARAM_STRING.value);
-        statement.setTime(PARAM_TIME.index, PARAM_TIME.value);
-        statement.setTimestamp(PARAM_TIMESTAMP.index, PARAM_TIMESTAMP.value);
-        statement.setURL(PARAM_URL.index, PARAM_URL.value);
+    private void setParameterByPosition(PreparedStatementProxyLogic logic) throws Throwable {
+
+        Method setArray = CallableStatement.class.getMethod("setArray", int.class, Array.class);
+        Method setAsciiStream = CallableStatement.class.getMethod("setAsciiStream", int.class, InputStream.class);
+        Method setBigDecimal = CallableStatement.class.getMethod("setBigDecimal", int.class, BigDecimal.class);
+        Method setBinaryStream = CallableStatement.class.getMethod("setBinaryStream", int.class, InputStream.class);
+        Method setBlob = CallableStatement.class.getMethod("setBlob", int.class, Blob.class);
+        Method setBoolean = CallableStatement.class.getMethod("setBoolean", int.class, boolean.class);
+        Method setCharacterStream = CallableStatement.class.getMethod("setCharacterStream", int.class, Reader.class);
+        Method setClob = CallableStatement.class.getMethod("setClob", int.class, Clob.class);
+        Method setDate = CallableStatement.class.getMethod("setDate", int.class, Date.class);
+        Method setDouble = CallableStatement.class.getMethod("setDouble", int.class, double.class);
+        Method setFloat = CallableStatement.class.getMethod("setFloat", int.class, float.class);
+        Method setInt = CallableStatement.class.getMethod("setInt", int.class, int.class);
+        Method setLong = CallableStatement.class.getMethod("setLong", int.class, long.class);
+        Method setNull = CallableStatement.class.getMethod("setNull", int.class, int.class);
+        Method setObject = CallableStatement.class.getMethod("setObject", int.class, Object.class);
+        Method setRef = CallableStatement.class.getMethod("setRef", int.class, Ref.class);
+        Method setShort = CallableStatement.class.getMethod("setShort", int.class, short.class);
+        Method setString = CallableStatement.class.getMethod("setString", int.class, String.class);
+        Method setTime = CallableStatement.class.getMethod("setTime", int.class, Time.class);
+        Method setTimestamp = CallableStatement.class.getMethod("setTimestamp", int.class, Timestamp.class);
+        Method setURL = CallableStatement.class.getMethod("setURL", int.class, URL.class);
+
+        logic.invoke(null, setArray, new Object[]{PARAM_ARRAY.index, PARAM_ARRAY.value});
+        logic.invoke(null, setAsciiStream, new Object[]{PARAM_ASCIISTREAM.index, PARAM_ASCIISTREAM.value});
+        logic.invoke(null, setBigDecimal, new Object[]{PARAM_BIGDECIMAL.index, PARAM_BIGDECIMAL.value});
+        logic.invoke(null, setBinaryStream, new Object[]{PARAM_BINARYSTREAM.index, PARAM_BINARYSTREAM.value});
+        logic.invoke(null, setBlob, new Object[]{PARAM_BLOB.index, PARAM_BLOB.value});
+        logic.invoke(null, setBoolean, new Object[]{PARAM_BOOLEAN.index, PARAM_BOOLEAN.value});
+        logic.invoke(null, setCharacterStream, new Object[]{PARAM_CHARACTERSTREAM.index, PARAM_CHARACTERSTREAM.value});
+        logic.invoke(null, setClob, new Object[]{PARAM_CLOB.index, PARAM_CLOB.value});
+        logic.invoke(null, setDate, new Object[]{PARAM_DATE.index, PARAM_DATE.value});
+        logic.invoke(null, setDouble, new Object[]{PARAM_DOUBLE.index, PARAM_DOUBLE.value});
+        logic.invoke(null, setFloat, new Object[]{PARAM_FLOAT.index, PARAM_FLOAT.value});
+        logic.invoke(null, setInt, new Object[]{PARAM_INT.index, PARAM_INT.value});
+        logic.invoke(null, setLong, new Object[]{PARAM_LONG.index, PARAM_LONG.value});
+        logic.invoke(null, setNull, new Object[]{PARAM_NULL.index, PARAM_NULL.value});
+        logic.invoke(null, setObject, new Object[]{PARAM_OBJECT.index, PARAM_OBJECT.value});
+        logic.invoke(null, setRef, new Object[]{PARAM_REF.index, PARAM_REF.value});
+        logic.invoke(null, setShort, new Object[]{PARAM_SHORT.index, PARAM_SHORT.value});
+        logic.invoke(null, setString, new Object[]{PARAM_STRING.index, PARAM_STRING.value});
+        logic.invoke(null, setTime, new Object[]{PARAM_TIME.index, PARAM_TIME.value});
+        logic.invoke(null, setTimestamp, new Object[]{PARAM_TIMESTAMP.index, PARAM_TIMESTAMP.value});
+        logic.invoke(null, setURL, new Object[]{PARAM_URL.index, PARAM_URL.value});
     }
 
-    private void setParameterByName(CallableStatement statement) throws Exception {
-        statement.setAsciiStream(PARAM_ASCIISTREAM.strIndex, PARAM_ASCIISTREAM.value);
-        statement.setBigDecimal(PARAM_BIGDECIMAL.strIndex, PARAM_BIGDECIMAL.value);
-        statement.setBinaryStream(PARAM_BINARYSTREAM.strIndex, PARAM_BINARYSTREAM.value);
-        statement.setBlob(PARAM_BLOB.strIndex, PARAM_BLOB.value);
-        statement.setBoolean(PARAM_BOOLEAN.strIndex, PARAM_BOOLEAN.value);
-        statement.setCharacterStream(PARAM_CHARACTERSTREAM.strIndex, PARAM_CHARACTERSTREAM.value);
-        statement.setClob(PARAM_CLOB.strIndex, PARAM_CLOB.value);
-        statement.setDate(PARAM_DATE.strIndex, PARAM_DATE.value);
-        statement.setDouble(PARAM_DOUBLE.strIndex, PARAM_DOUBLE.value);
-        statement.setFloat(PARAM_FLOAT.strIndex, PARAM_FLOAT.value);
-        statement.setInt(PARAM_INT.strIndex, PARAM_INT.value);
-        statement.setLong(PARAM_LONG.strIndex, PARAM_LONG.value);
-        statement.setNull(PARAM_NULL.strIndex, PARAM_NULL.value);
-        statement.setObject(PARAM_OBJECT.strIndex, PARAM_OBJECT.value);
-        statement.setShort(PARAM_SHORT.strIndex, PARAM_SHORT.value);
-        statement.setString(PARAM_STRING.strIndex, PARAM_STRING.value);
-        statement.setTime(PARAM_TIME.strIndex, PARAM_TIME.value);
-        statement.setTimestamp(PARAM_TIMESTAMP.strIndex, PARAM_TIMESTAMP.value);
-        statement.setURL(PARAM_URL.strIndex, PARAM_URL.value);
+    private void setParameterByName(PreparedStatementProxyLogic logic) throws Throwable {
+
+        Method setAsciiStream = CallableStatement.class.getMethod("setAsciiStream", String.class, InputStream.class);
+        Method setBigDecimal = CallableStatement.class.getMethod("setBigDecimal", String.class, BigDecimal.class);
+        Method setBinaryStream = CallableStatement.class.getMethod("setBinaryStream", String.class, InputStream.class);
+        Method setBlob = CallableStatement.class.getMethod("setBlob", String.class, Blob.class);
+        Method setBoolean = CallableStatement.class.getMethod("setBoolean", String.class, boolean.class);
+        Method setCharacterStream = CallableStatement.class.getMethod("setCharacterStream", String.class, Reader.class);
+        Method setClob = CallableStatement.class.getMethod("setClob", String.class, Clob.class);
+        Method setDate = CallableStatement.class.getMethod("setDate", String.class, Date.class);
+        Method setDouble = CallableStatement.class.getMethod("setDouble", String.class, double.class);
+        Method setFloat = CallableStatement.class.getMethod("setFloat", String.class, float.class);
+        Method setInt = CallableStatement.class.getMethod("setInt", String.class, int.class);
+        Method setLong = CallableStatement.class.getMethod("setLong", String.class, long.class);
+        Method setNull = CallableStatement.class.getMethod("setNull", String.class, int.class);
+        Method setObject = CallableStatement.class.getMethod("setObject", String.class, Object.class);
+        Method setShort = CallableStatement.class.getMethod("setShort", String.class, short.class);
+        Method setString = CallableStatement.class.getMethod("setString", String.class, String.class);
+        Method setTime = CallableStatement.class.getMethod("setTime", String.class, Time.class);
+        Method setTimestamp = CallableStatement.class.getMethod("setTimestamp", String.class, Timestamp.class);
+        Method setURL = CallableStatement.class.getMethod("setURL", String.class, URL.class);
+
+
+        logic.invoke(null, setAsciiStream, new Object[]{PARAM_ASCIISTREAM.strIndex, PARAM_ASCIISTREAM.value});
+        logic.invoke(null, setBigDecimal, new Object[]{PARAM_BIGDECIMAL.strIndex, PARAM_BIGDECIMAL.value});
+        logic.invoke(null, setBinaryStream, new Object[]{PARAM_BINARYSTREAM.strIndex, PARAM_BINARYSTREAM.value});
+        logic.invoke(null, setBlob, new Object[]{PARAM_BLOB.strIndex, PARAM_BLOB.value});
+        logic.invoke(null, setBoolean, new Object[]{PARAM_BOOLEAN.strIndex, PARAM_BOOLEAN.value});
+        logic.invoke(null, setCharacterStream, new Object[]{PARAM_CHARACTERSTREAM.strIndex, PARAM_CHARACTERSTREAM.value});
+        logic.invoke(null, setClob, new Object[]{PARAM_CLOB.strIndex, PARAM_CLOB.value});
+        logic.invoke(null, setDate, new Object[]{PARAM_DATE.strIndex, PARAM_DATE.value});
+        logic.invoke(null, setDouble, new Object[]{PARAM_DOUBLE.strIndex, PARAM_DOUBLE.value});
+        logic.invoke(null, setFloat, new Object[]{PARAM_FLOAT.strIndex, PARAM_FLOAT.value});
+        logic.invoke(null, setInt, new Object[]{PARAM_INT.strIndex, PARAM_INT.value});
+        logic.invoke(null, setLong, new Object[]{PARAM_LONG.strIndex, PARAM_LONG.value});
+        logic.invoke(null, setNull, new Object[]{PARAM_NULL.strIndex, PARAM_NULL.value});
+        logic.invoke(null, setObject, new Object[]{PARAM_OBJECT.strIndex, PARAM_OBJECT.value});
+        logic.invoke(null, setShort, new Object[]{PARAM_SHORT.strIndex, PARAM_SHORT.value});
+        logic.invoke(null, setString, new Object[]{PARAM_STRING.strIndex, PARAM_STRING.value});
+        logic.invoke(null, setTime, new Object[]{PARAM_TIME.strIndex, PARAM_TIME.value});
+        logic.invoke(null, setTimestamp, new Object[]{PARAM_TIMESTAMP.strIndex, PARAM_TIMESTAMP.value});
+        logic.invoke(null, setURL, new Object[]{PARAM_URL.strIndex, PARAM_URL.value});
     }
 
     private void verifyParametersByPosition(CallableStatement mockStatement) throws Exception {
@@ -621,64 +697,64 @@ public class CallableStatementInvocationHandlerMockTest {
     }
 
 
-    private CallableStatement getProxyStatement(CallableStatement statement, String query,
-                                                InterceptorHolder interceptorHolder) {
-        return new JdkJdbcProxyFactory().createCallableStatement(statement, query, interceptorHolder, DS_NAME);
+    private PreparedStatementProxyLogic getProxyLogic(CallableStatement cs, String query, InterceptorHolder interceptorHolder) {
+        return new PreparedStatementProxyLogic(cs, query, interceptorHolder, DS_NAME, new JdkJdbcProxyFactory());
     }
 
+
     @Test
-    public void testGetTarget() {
+    public void testGetTarget() throws Throwable {
         CallableStatement orig = mock(CallableStatement.class);
-        CallableStatement proxy = getProxyStatement(orig, null, null);
+        PreparedStatementProxyLogic logic = getProxyLogic(orig, null, null);
 
-        assertThat(proxy, is(not(sameInstance(orig))));
-        assertThat(proxy, is(instanceOf(ProxyJdbcObject.class)));
-
-        Object result = ((ProxyJdbcObject) proxy).getTarget();
+        Method method = ProxyJdbcObject.class.getMethod("getTarget");
+        Object result = logic.invoke(orig, method, null);
 
         assertThat(result, is(instanceOf(CallableStatement.class)));
-
-        CallableStatement resultStmt = (CallableStatement) result;
-
-        assertThat(resultStmt, is(sameInstance(orig)));
+        assertThat((CallableStatement) result, is(sameInstance(orig)));
     }
 
     @Test
-    public void testUnwrap() throws Exception {
+    public void testUnwrap() throws Throwable {
         CallableStatement mock = mock(CallableStatement.class);
         when(mock.unwrap(String.class)).thenReturn("called");
 
-        CallableStatement cs = getProxyStatement(mock, null, null);
-
-        String result = cs.unwrap(String.class);
+        PreparedStatementProxyLogic logic = getProxyLogic(mock, null, null);
+        Method method = CallableStatement.class.getMethod("unwrap", Class.class);
+        Object result = logic.invoke(mock, method, new Object[]{String.class});
 
         verify(mock).unwrap(String.class);
-        assertThat(result, is("called"));
+        assertThat(result, is(instanceOf(String.class)));
+        assertThat((String) result, is("called"));
     }
 
     @Test
-    public void testIsWrapperFor() throws Exception {
+    public void testIsWrapperFor() throws Throwable {
         CallableStatement mock = mock(CallableStatement.class);
         when(mock.isWrapperFor(String.class)).thenReturn(true);
 
-        CallableStatement cs = getProxyStatement(mock, null, null);
+        PreparedStatementProxyLogic logic = getProxyLogic(mock, null, null);
 
-        boolean result = cs.isWrapperFor(String.class);
+        Method method = CallableStatement.class.getMethod("isWrapperFor", Class.class);
+        Object result = logic.invoke(mock, method, new Object[]{String.class});
 
         verify(mock).isWrapperFor(String.class);
-        assertThat(result, is(true));
+        assertThat(result, is(instanceOf(boolean.class)));
+        assertThat((Boolean) result, is(true));
     }
 
     @Test
-    public void testGetConnection() throws Exception {
+    public void testGetConnection() throws Throwable {
         Connection conn = mock(Connection.class);
         CallableStatement stat = mock(CallableStatement.class);
 
         when(stat.getConnection()).thenReturn(conn);
-        CallableStatement statement = getProxyStatement(stat, null, null);
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, null, null);
 
-        Connection result = statement.getConnection();
+        Method method = CallableStatement.class.getMethod("getConnection");
+        Object result = logic.invoke(stat, method, null);
 
+        assertThat(result, is(instanceOf(Connection.class)));
         verify(stat).getConnection();
 
         assertTrue(Proxy.isProxyClass(result.getClass()));
