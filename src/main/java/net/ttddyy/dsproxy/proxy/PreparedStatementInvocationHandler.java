@@ -37,7 +37,7 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        return delegate.invoke(proxy, method, args);
+        return delegate.invoke(method, args);
     }
 
 }

@@ -30,8 +30,8 @@ public class CallableStatementInvocationHandler implements InvocationHandler {
         delegate = new PreparedStatementProxyLogic(cs, query, interceptorHolder, dataSourceName, jdbcProxyFactory);
     }
 
-    public Object invoke(Object o, Method method, Object[] args) throws Throwable {
-        return delegate.invoke(o, method, args);
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        return delegate.invoke(method, args);
     }
 
 }

@@ -28,7 +28,7 @@ public class DataSourceProxyLogicMockTest {
         DataSourceProxyLogic logic = getProxyLogic(ds);
 
         Method method = DataSource.class.getMethod("getConnection");
-        Object result = logic.invoke(ds, method, null);
+        Object result = logic.invoke(method, null);
 
         assertThat(result, is(instanceOf(Connection.class)));
         verifyConnection((Connection) result);
@@ -57,7 +57,7 @@ public class DataSourceProxyLogicMockTest {
         DataSourceProxyLogic logic = getProxyLogic(ds);
 
         Method method = ProxyJdbcObject.class.getMethod("getTarget");
-        Object result = logic.invoke(ds, method, null);
+        Object result = logic.invoke(method, null);
 
         assertThat(result, is(instanceOf(DataSource.class)));
         DataSource resultDS = (DataSource) result;
@@ -72,7 +72,7 @@ public class DataSourceProxyLogicMockTest {
         DataSourceProxyLogic logic = getProxyLogic(ds);
 
         Method method = Connection.class.getMethod("unwrap", Class.class);
-        Object result = logic.invoke(ds, method, new Object[]{String.class});
+        Object result = logic.invoke(method, new Object[]{String.class});
 
         verify(ds).unwrap(String.class);
         assertThat(result, is(instanceOf(String.class)));
@@ -87,7 +87,7 @@ public class DataSourceProxyLogicMockTest {
         DataSourceProxyLogic logic = getProxyLogic(ds);
 
         Method method = Connection.class.getMethod("isWrapperFor", Class.class);
-        Object result = logic.invoke(ds, method, new Object[]{String.class});
+        Object result = logic.invoke(method, new Object[]{String.class});
 
         verify(ds).isWrapperFor(String.class);
         assertThat(result, is(instanceOf(boolean.class)));

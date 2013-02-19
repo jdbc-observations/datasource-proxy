@@ -44,7 +44,7 @@ public class PreparedStatementProxyLogic {
         this.jdbcProxyFactory = jdbcProxyFactory;
     }
 
-    public Object invoke(Object o, Method method, Object[] args) throws Throwable {
+    public Object invoke(Method method, Object[] args) throws Throwable {
 
         final String methodName = method.getName();
 

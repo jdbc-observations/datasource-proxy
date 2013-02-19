@@ -38,7 +38,7 @@ public class ConnectionProxyLogic {
         this.jdbcProxyFactory = jdbcProxyFactory;
     }
 
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Method method, Object[] args) throws Throwable {
 
         final String methodName = method.getName();
 

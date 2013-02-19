@@ -55,7 +55,7 @@ public class TransformInfoForParametersTest {
 
         Method method = PreparedStatement.class.getMethod("execute");
         Object[] args = new Object[]{};
-        proxyLogic.invoke(null, method, args);
+        proxyLogic.invoke(method, args);
 
         verify(parameterTransformer, only()).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
@@ -82,7 +82,7 @@ public class TransformInfoForParametersTest {
         Object[] args = new Object[]{};
 
         // first batch invocation
-        proxyLogic.invoke(null, method, args);
+        proxyLogic.invoke(method, args);
 
         verify(parameterTransformer, times(1)).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
         assertThat(this.transformInfo, notNullValue());
@@ -93,7 +93,7 @@ public class TransformInfoForParametersTest {
         assertThat(this.transformInfo.getCount(), is(0));
 
         // second batch invocation
-        proxyLogic.invoke(null, method, args);
+        proxyLogic.invoke(method, args);
 
         verify(parameterTransformer, times(2)).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
         assertThat(this.transformInfo, notNullValue());
@@ -117,7 +117,7 @@ public class TransformInfoForParametersTest {
 
         Method method = PreparedStatement.class.getMethod("execute");
         Object[] args = new Object[]{};
-        proxyLogic.invoke(null, method, args);
+        proxyLogic.invoke(method, args);
 
         verify(parameterTransformer, only()).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
@@ -144,7 +144,7 @@ public class TransformInfoForParametersTest {
         Object[] args = new Object[]{};
 
         // first batch invocation
-        proxyLogic.invoke(null, method, args);
+        proxyLogic.invoke(method, args);
 
         verify(parameterTransformer, times(1)).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
         assertThat(this.transformInfo, notNullValue());
@@ -155,7 +155,7 @@ public class TransformInfoForParametersTest {
         assertThat(this.transformInfo.getCount(), is(0));
 
         // second batch invocation
-        proxyLogic.invoke(null, method, args);
+        proxyLogic.invoke(method, args);
 
         verify(parameterTransformer, times(2)).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
         assertThat(this.transformInfo, notNullValue());

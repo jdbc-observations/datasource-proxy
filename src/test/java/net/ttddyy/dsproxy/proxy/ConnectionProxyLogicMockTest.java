@@ -28,7 +28,7 @@ public class ConnectionProxyLogicMockTest {
         ConnectionProxyLogic logic = getProxyLogic(conn);
 
         Method method = Connection.class.getMethod("createStatement");
-        Object result = logic.invoke(conn, method, new Object[]{});
+        Object result = logic.invoke(method, new Object[]{});
 
         assertThat(result, is(instanceOf(Statement.class)));
         verifyStatement((Statement) result);
@@ -42,7 +42,7 @@ public class ConnectionProxyLogicMockTest {
 
 
         Method method = Connection.class.getMethod("createStatement", int.class, int.class);
-        Object result = logic.invoke(conn, method, new Object[]{ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY});
+        Object result = logic.invoke(method, new Object[]{ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY});
 
         assertThat(result, is(instanceOf(Statement.class)));
         verifyStatement((Statement) result);
@@ -57,7 +57,7 @@ public class ConnectionProxyLogicMockTest {
 
         // run
         Method method = Connection.class.getMethod("createStatement", int.class, int.class, int.class);
-        Object result = logic.invoke(conn, method, new Object[]{ResultSet.TYPE_FORWARD_ONLY,
+        Object result = logic.invoke(method, new Object[]{ResultSet.TYPE_FORWARD_ONLY,
                 ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT});
 
         // verify
@@ -93,7 +93,7 @@ public class ConnectionProxyLogicMockTest {
 
         // run
         Method method = Connection.class.getMethod("prepareStatement", String.class);
-        Object result = logic.invoke(conn, method, new Object[]{query});
+        Object result = logic.invoke(method, new Object[]{query});
 
         // verify
         assertThat(result, is(instanceOf(PreparedStatement.class)));
@@ -110,7 +110,7 @@ public class ConnectionProxyLogicMockTest {
 
         // run
         Method method = Connection.class.getMethod("prepareStatement", String.class, int.class);
-        Object result = logic.invoke(conn, method, new Object[]{query, Statement.RETURN_GENERATED_KEYS});
+        Object result = logic.invoke(method, new Object[]{query, Statement.RETURN_GENERATED_KEYS});
 
         // verify
         assertThat(result, is(instanceOf(PreparedStatement.class)));
@@ -129,7 +129,7 @@ public class ConnectionProxyLogicMockTest {
 
         // run
         Method method = Connection.class.getMethod("prepareStatement", String.class, int[].class);
-        Object result = logic.invoke(conn, method, new Object[]{query, columnIndexes});
+        Object result = logic.invoke(method, new Object[]{query, columnIndexes});
 
         // verify
         assertThat(result, is(instanceOf(PreparedStatement.class)));
@@ -148,7 +148,7 @@ public class ConnectionProxyLogicMockTest {
 
         // run
         Method method = Connection.class.getMethod("prepareStatement", String.class, String[].class);
-        Object result = logic.invoke(conn, method, new Object[]{query, columnNames});
+        Object result = logic.invoke(method, new Object[]{query, columnNames});
 
         // verify
         assertThat(result, is(instanceOf(PreparedStatement.class)));
@@ -166,7 +166,7 @@ public class ConnectionProxyLogicMockTest {
 
         // run
         Method method = Connection.class.getMethod("prepareStatement", String.class, int.class, int.class);
-        Object result = logic.invoke(conn, method, new Object[]{query,
+        Object result = logic.invoke(method, new Object[]{query,
                 ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY});
 
 
@@ -187,7 +187,7 @@ public class ConnectionProxyLogicMockTest {
 
         // run
         Method method = Connection.class.getMethod("prepareStatement", String.class, int.class, int.class, int.class);
-        Object result = logic.invoke(conn, method, new Object[]{query,
+        Object result = logic.invoke(method, new Object[]{query,
                 ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT});
 
         // verify
@@ -213,7 +213,7 @@ public class ConnectionProxyLogicMockTest {
 
         // run
         Method method = ProxyJdbcObject.class.getMethod("getTarget");
-        Object result = logic.invoke(orig, method, null);
+        Object result = logic.invoke(method, null);
 
         assertThat(result, is(instanceOf(Connection.class)));
         Connection resultConn = (Connection) result;
@@ -229,7 +229,7 @@ public class ConnectionProxyLogicMockTest {
 
         // run
         Method method = Connection.class.getMethod("unwrap", Class.class);
-        Object result = logic.invoke(mock, method, new Object[]{String.class});
+        Object result = logic.invoke(method, new Object[]{String.class});
 
         verify(mock).unwrap(String.class);
         assertThat(result, is(instanceOf(String.class)));
@@ -245,7 +245,7 @@ public class ConnectionProxyLogicMockTest {
 
         // run
         Method method = Connection.class.getMethod("isWrapperFor", Class.class);
-        Object result = logic.invoke(mock, method, new Object[]{String.class});
+        Object result = logic.invoke(method, new Object[]{String.class});
 
         verify(mock).isWrapperFor(String.class);
         assertThat(result, is(instanceOf(boolean.class)));
