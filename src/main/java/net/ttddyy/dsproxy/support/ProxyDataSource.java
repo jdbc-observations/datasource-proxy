@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  */
 public class ProxyDataSource implements DataSource {
     private DataSource dataSource;
-    private InterceptorHolder interceptorHolder;
+    private InterceptorHolder interceptorHolder = new InterceptorHolder();  // default
     private String dataSourceName = "";
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
 

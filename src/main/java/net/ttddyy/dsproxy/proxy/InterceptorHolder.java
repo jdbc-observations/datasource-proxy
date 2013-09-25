@@ -16,9 +16,9 @@ import net.ttddyy.dsproxy.transform.QueryTransformer;
  */
 public class InterceptorHolder {
 
-    private QueryExecutionListener listener;
-    private QueryTransformer queryTransformer = new NoOpQueryTransformer();
-    private ParameterTransformer parameterTransformer = new NoOpParameterTransformer();
+    private QueryExecutionListener listener = QueryExecutionListener.DEFAULT;
+    private QueryTransformer queryTransformer = QueryTransformer.DEFAULT;
+    private ParameterTransformer parameterTransformer = ParameterTransformer.DEFAULT;
 
     public InterceptorHolder() {
     }
