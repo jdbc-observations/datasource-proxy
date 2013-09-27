@@ -1,10 +1,11 @@
 package net.ttddyy.dsproxy.proxy;
 
 /**
- * Proxy object implements this interface to provide a method to return wrapped object.
+ * Provide a method to unwrap the original jdbc object from proxy object.
+ * <p/>
+ * Proxy object created by {@link JdbcProxyFactory} implements this interface.
  *
  * @author Tadaya Tsuyukubo
- *
  * @see JdbcProxyFactory
  * @see ConnectionInvocationHandler
  * @see StatementInvocationHandler
@@ -15,6 +16,7 @@ public interface ProxyJdbcObject {
 
     /**
      * Method to return wrapped source object(Connection, Statement, PreparedStatement, CallableStatement).
+     *
      * @return source object
      */
     Object getTarget();

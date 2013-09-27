@@ -10,7 +10,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Proxy Logic implementation for {@link DataSource} methods.
+ *
  * @author Tadaya Tsuyukubo
+ * @since 1.2
  */
 public class DataSourceProxyLogic {
 

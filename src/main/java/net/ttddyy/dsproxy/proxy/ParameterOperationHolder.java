@@ -15,7 +15,6 @@ public class ParameterOperationHolder {
     private SortedMap<Integer, ParameterSetOperation> paramsByIndex = new TreeMap<Integer, ParameterSetOperation>();
     private SortedMap<String, ParameterSetOperation> paramsByName = new TreeMap<String, ParameterSetOperation>();
 
-    // clear, put, size
     public void put(Integer index, Method method, Object... args) {
         paramsByIndex.put(index, new ParameterSetOperation(method, args));
     }

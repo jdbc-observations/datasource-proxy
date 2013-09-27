@@ -65,7 +65,11 @@ public class ProxyDataSource implements DataSource {
         return dataSource.isWrapperFor(iface);
     }
 
-    @Deprecated
+    /**
+     * Set {@link QueryExecutionListener} with default(NoOp) {@link QueryTransformer}.
+     *
+     * @param listener a lister
+     */
     public void setListener(QueryExecutionListener listener) {
         this.interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
     }

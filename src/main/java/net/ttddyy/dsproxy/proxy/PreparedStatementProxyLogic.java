@@ -83,8 +83,8 @@ public class PreparedStatementProxyLogic {
 
 
         if (StatementMethodNames.METHODS_TO_OPERATE_PARAMETER.contains(methodName)) {
-            // for parameter operation method
 
+            // for parameter operation method
             if (StatementMethodNames.PARAMETER_METHODS.contains(methodName)) {
 
                 // operation to set or clear parameterOperationHolder

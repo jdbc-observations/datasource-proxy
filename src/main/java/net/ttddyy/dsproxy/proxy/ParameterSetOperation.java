@@ -3,7 +3,7 @@ package net.ttddyy.dsproxy.proxy;
 import java.lang.reflect.Method;
 
 /**
- * Keeps method and arguments data when parameter set method is called.
+ * Keeps a method and its arguments when parameter-set-method is called.
  *
  * @author Tadaya Tsuyukubo
  * @see PreparedStatementInvocationHandler

@@ -14,7 +14,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Proxy Logic implementation for {@link Connection} methods.
+ *
  * @author Tadaya Tsuyukubo
+ * @since 1.2
  */
 public class ConnectionProxyLogic {
 

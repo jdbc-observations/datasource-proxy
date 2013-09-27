@@ -13,7 +13,10 @@ import java.sql.Statement;
 import java.util.*;
 
 /**
+ * Proxy Logic implementation for {@link Statement} methods.
+ *
  * @author Tadaya Tsuyukubo
+ * @since 1.2
  */
 public class StatementProxyLogic {
 
