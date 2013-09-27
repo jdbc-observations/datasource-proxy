@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
  * Keeps a method and its arguments when parameter-set-method is called.
  *
  * @author Tadaya Tsuyukubo
- * @see PreparedStatementInvocationHandler
+ * @see net.ttddyy.dsproxy.proxy.jdk.PreparedStatementInvocationHandler
  * @since 1.2
  */
 public class ParameterSetOperation {

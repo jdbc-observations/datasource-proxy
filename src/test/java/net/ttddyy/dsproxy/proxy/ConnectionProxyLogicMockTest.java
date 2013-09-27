@@ -1,6 +1,9 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.jdk.PreparedStatementInvocationHandler;
+import net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.testng.annotations.Test;
 

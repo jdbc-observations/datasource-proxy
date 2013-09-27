@@ -7,10 +7,10 @@ package net.ttddyy.dsproxy.proxy;
  *
  * @author Tadaya Tsuyukubo
  * @see JdbcProxyFactory
- * @see ConnectionInvocationHandler
- * @see StatementInvocationHandler
- * @see PreparedStatementInvocationHandler
- * @see CallableStatementInvocationHandler
+ * @see net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler
+ * @see net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler
+ * @see net.ttddyy.dsproxy.proxy.jdk.PreparedStatementInvocationHandler
+ * @see net.ttddyy.dsproxy.proxy.jdk.CallableStatementInvocationHandler
  */
 public interface ProxyJdbcObject {
 

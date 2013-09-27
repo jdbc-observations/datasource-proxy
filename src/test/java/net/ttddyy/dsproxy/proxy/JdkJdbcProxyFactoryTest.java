@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.testng.annotations.Test;
 
 import javax.sql.DataSource;

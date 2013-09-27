@@ -1,10 +1,10 @@
 package net.ttddyy.dsproxy.transform;
 
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.proxy.ConnectionInvocationHandler;
+import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
-import net.ttddyy.dsproxy.proxy.StatementInvocationHandler;
+import net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeMethod;

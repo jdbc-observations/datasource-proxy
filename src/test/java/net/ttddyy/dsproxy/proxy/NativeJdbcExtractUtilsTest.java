@@ -5,8 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.mockito.Mockito.mock;
 
-import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
-import net.ttddyy.dsproxy.proxy.NativeJdbcExtractUtils;
+import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.testng.annotations.Test;
 
 import java.sql.CallableStatement;

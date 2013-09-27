@@ -1,6 +1,5 @@
 package net.ttddyy.dsproxy.support;
 
-import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -9,8 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import net.ttddyy.dsproxy.proxy.JdkJdbcProxyFactory;
-import net.ttddyy.dsproxy.support.DataSourceProxyNativeJdbcExtractor;
+import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.springframework.jdbc.support.nativejdbc.NativeJdbcExtractor;
 import org.testng.annotations.Test;
 

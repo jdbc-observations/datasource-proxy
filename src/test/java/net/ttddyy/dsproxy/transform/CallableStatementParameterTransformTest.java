@@ -3,7 +3,7 @@ package net.ttddyy.dsproxy.transform;
 import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
-import net.ttddyy.dsproxy.proxy.JdkJdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -22,7 +22,6 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.*;
 

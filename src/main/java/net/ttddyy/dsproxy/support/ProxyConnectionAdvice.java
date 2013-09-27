@@ -1,7 +1,6 @@
 package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
-import net.ttddyy.dsproxy.proxy.JdkJdbcProxyFactory;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 

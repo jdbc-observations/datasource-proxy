@@ -1,6 +1,9 @@
-package net.ttddyy.dsproxy.proxy;
+package net.ttddyy.dsproxy.proxy.jdk;
 
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.proxy.DataSourceProxyLogic;
+import net.ttddyy.dsproxy.proxy.InterceptorHolder;
+import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 
 import javax.sql.DataSource;

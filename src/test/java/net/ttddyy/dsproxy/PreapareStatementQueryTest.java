@@ -2,7 +2,7 @@ package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.listener.ChainListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
-import net.ttddyy.dsproxy.proxy.JdkJdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.testng.Assert;
 import static org.testng.Assert.assertEquals;

@@ -7,7 +7,7 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 
-import net.ttddyy.dsproxy.proxy.JdkJdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;

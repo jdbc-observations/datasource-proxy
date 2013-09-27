@@ -1,4 +1,8 @@
-package net.ttddyy.dsproxy.proxy;
+package net.ttddyy.dsproxy.proxy.jdk;
+
+import net.ttddyy.dsproxy.proxy.InterceptorHolder;
+import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Proxy;
@@ -8,7 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 /**
- * Dynamic Proxy Class(Jdk Proxy) based {@link JdbcProxyFactory} implementation.
+ * Dynamic Proxy Class(Jdk Proxy) based {@link net.ttddyy.dsproxy.proxy.JdbcProxyFactory} implementation.
  *
  * @author Tadaya Tsuyukubo
  */
@@ -50,7 +54,7 @@ public class JdkJdbcProxyFactory implements JdbcProxyFactory {
         return (PreparedStatement) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
                 new Class[]{ProxyJdbcObject.class, PreparedStatement.class},
                 new PreparedStatementInvocationHandler(
-                        (PreparedStatement) preparedStatement, query, interceptorHolder, dataSourceName, this));
+                        preparedStatement, query, interceptorHolder, dataSourceName, this));
     }
 
     public CallableStatement createCallableStatement(CallableStatement callableStatement, String query,
@@ -58,6 +62,6 @@ public class JdkJdbcProxyFactory implements JdbcProxyFactory {
         return (CallableStatement) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
                 new Class[]{ProxyJdbcObject.class, CallableStatement.class},
                 new CallableStatementInvocationHandler(
-                        (CallableStatement) callableStatement, query, interceptorHolder, dataSourceName, this));
+                        callableStatement, query, interceptorHolder, dataSourceName, this));
     }
 }
