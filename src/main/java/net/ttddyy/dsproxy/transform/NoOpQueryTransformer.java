@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.transform;
 
 /**
- * No operation implementation of {@code QueryTransformer}.
+ * No operation implementation of {@link QueryTransformer}.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.2

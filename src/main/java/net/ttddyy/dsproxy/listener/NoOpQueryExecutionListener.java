@@ -6,6 +6,8 @@ import net.ttddyy.dsproxy.QueryInfo;
 import java.util.List;
 
 /**
+ * No operation implementation of {@link QueryExecutionListener}
+ *
  * @author Tadaya Tsuyukubo
  * @since 1.2
  */

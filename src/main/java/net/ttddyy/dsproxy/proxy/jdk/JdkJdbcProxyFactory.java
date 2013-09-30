@@ -15,6 +15,7 @@ import java.sql.Statement;
  * Dynamic Proxy Class(Jdk Proxy) based {@link net.ttddyy.dsproxy.proxy.JdbcProxyFactory} implementation.
  *
  * @author Tadaya Tsuyukubo
+ * @since 1.2
  */
 public class JdkJdbcProxyFactory implements JdbcProxyFactory {
 
