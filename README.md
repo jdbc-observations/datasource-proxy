@@ -7,21 +7,12 @@ Provide a proxy class to intercept executing queries.
 
 ## features
 
-- logging support
-- collect query metrics
-- web application support
-- spring-framework friendly
-- inject custom logic before/after query execution
-- query and parameter replacement (since 1.2)
-
-## links
-
-- [Project Home](http://code.google.com/p/datasource-proxy/)
-
-- [Sample Configuration](http://code.google.com/p/datasource-proxy/wiki/SampleConfiguration)
-
-- [How to use](http://code.google.com/p/datasource-proxy/wiki/HowToUse)
-
+- [logging support](https://github.com/ttddyy/datasource-proxy/wiki/Feature#wiki-feature_1)
+- [collect query metrics](https://github.com/ttddyy/datasource-proxy/wiki/Feature#wiki-feature_2)
+- [web application support](https://github.com/ttddyy/datasource-proxy/wiki/Feature#wiki-feature_3)
+- [spring-framework friendly](https://github.com/ttddyy/datasource-proxy/wiki/Feature#wiki-feature_4)
+- [inject custom logic before/after query execution](https://github.com/ttddyy/datasource-proxy/wiki/Feature#wiki-feature_5)
+- [query and parameter replacement (since 1.2)](https://github.com/ttddyy/datasource-proxy/wiki/Feature#wiki-feature_6)
 
 ## maven
 
@@ -34,6 +25,19 @@ Provide a proxy class to intercept executing queries.
 ```
 
 - No dependencies to other libraries, everything is optional.
+    - For example, if you use SLF4JQueryLoggingListener, then you need slf4j library.
+
+
+*[>> application setup sample](https://github.com/ttddyy/datasource-proxy/wiki/Application-Setup-Sample)*
+
+
+## docs
+
+- [Features](https://github.com/ttddyy/datasource-proxy/wiki/Feature)
+
+- [Sample Configuration](https://github.com/ttddyy/datasource-proxy/wiki/Application-Setup-Sample)
+
+- [Detailed Configuration](https://github.com/ttddyy/datasource-proxy/wiki/Detailed-Configuration)
 
 
 ---
