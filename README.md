@@ -5,6 +5,15 @@
 
 Provide a proxy class to intercept executing queries.
 
+## features
+
+- logging support
+- collect query metrics
+- web application support
+- spring-framework friendly
+- inject custom logic before/after query execution
+- query and parameter replacement (since 1.2)
+
 ## links
 
 - [Project Home](http://code.google.com/p/datasource-proxy/)
