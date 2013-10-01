@@ -40,6 +40,10 @@ Provide a proxy class to intercept executing queries.
 - [Detailed Configuration](https://github.com/ttddyy/datasource-proxy/wiki/Detailed-Configuration)
 
 
+## download
+
+They are available in [maven central repo](http://search.maven.org/#search|ga|1|datasource-proxy).
+
 ---
 # how to use
 
