@@ -3,7 +3,7 @@
 
 ## about
 
-Provide a proxy class to intercept executing queries.
+Provide proxy classes for JDBC API to intercept executing queries.
 
 ## features
 
@@ -39,6 +39,7 @@ Provide a proxy class to intercept executing queries.
 
 - [Detailed Configuration](https://github.com/ttddyy/datasource-proxy/wiki/Detailed-Configuration)
 
+- **[Javadoc (API)](https://github.com/ttddyy/datasource-proxy/wiki/Javadoc)**
 
 ## download
 
