@@ -4,6 +4,7 @@ import org.hsqldb.jdbc.JDBCDataSource;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 /**
@@ -38,4 +39,12 @@ public class TestUtils {
         executeQuery(dataSource, "shutdown;");
     }
 
+    public static int countTable(DataSource dataSource, String tableName) throws Exception {
+        Connection conn = dataSource.getConnection();
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("select count(*) from " + tableName);
+        rs.next();
+        conn.close();
+        return rs.getInt(1);
+    }
 }

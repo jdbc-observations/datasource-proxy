@@ -130,9 +130,12 @@ public class StatementProxyLogic {
         final List<QueryInfo> queries = new ArrayList<QueryInfo>();
 
         if ("executeBatch".equals(methodName)) {
+
             for (String batchQuery : batchQueries) {
                 queries.add(new QueryInfo(batchQuery, null));
             }
+            batchQueries.clear();
+
         } else if ("executeQuery".equals(methodName) || "executeUpdate".equals(methodName)
                 || "execute".equals(methodName)) {
 

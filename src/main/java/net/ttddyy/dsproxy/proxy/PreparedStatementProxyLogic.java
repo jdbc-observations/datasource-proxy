@@ -125,9 +125,12 @@ public class PreparedStatementProxyLogic {
         final List<QueryInfo> queries = new ArrayList<QueryInfo>();
 
         if ("executeBatch".equals(methodName)) {
+
             for (BatchQueryHolder queryHolder : batchQueries) {
                 queries.add(new QueryInfo(queryHolder.getQuery(), queryHolder.getArgs()));
             }
+            batchQueries.clear();
+
         } else if ("executeQuery".equals(methodName) || "executeUpdate".equals(methodName)
                 || "execute".equals(methodName)) {
 

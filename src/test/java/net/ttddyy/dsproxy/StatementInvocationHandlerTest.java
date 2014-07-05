@@ -2,11 +2,6 @@ package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.listener.ChainListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertSame;
-
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.testng.annotations.AfterMethod;
@@ -17,6 +12,10 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.testng.Assert.*;
 
 
 /**
@@ -181,5 +180,37 @@ public class StatementInvocationHandlerTest {
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
         assertNotNull(afterQueries);
         assertEquals(afterQueries.size(), 0);
+    }
+
+    /**
+     * When "executeBatch" is called, List<QueryInfo> should be cleared.
+     * reported:  https://github.com/ttddyy/datasource-proxy/issues/9
+     */
+    @Test
+    public void testExecuteBatchShouldClearQueries() throws Exception {
+
+        statement.addBatch("insert into emp ( id, name )values (100, 'FOO');");
+        statement.addBatch("insert into emp ( id, name )values (200, 'BAR');");
+        statement.executeBatch();  // 1st execution
+
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
+        assertThat(afterQueries, notNullValue());
+        assertThat("should pass two QueryInfo (FOO,BAR)", afterQueries, hasSize(2));
+
+        statement.addBatch("insert into emp ( id, name )values (300, 'BAZ');");
+
+        int[] updateCount = statement.executeBatch();  // 2nd execution
+        assertThat(updateCount, notNullValue());
+        assertThat(updateCount.length, is(1));
+
+        // second execution should pass only one QueryInfo to listener
+        afterQueries = lastQueryListener.getAfterQueries();
+        assertThat(afterQueries, notNullValue());
+        assertThat("should pass one QueryInfo (BAZ)", afterQueries, hasSize(1));
+
+        // verify actual data. 3 rows must be inserted, in addition to original data(2rows)
+        int count = TestUtils.countTable(jdbcDataSource, "emp");
+        assertThat("2 existing data(foo,bar) and 3 insert(FOO,BAR,BAZ).", count, is(5));
+
     }
 }
