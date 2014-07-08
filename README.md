@@ -29,6 +29,8 @@ Provide proxy classes for JDBC API to intercept executing queries.
 
 *[>> application setup sample](https://github.com/ttddyy/datasource-proxy/wiki/Application-Setup-Sample)*
 
+*[>> What's New](https://github.com/ttddyy/datasource-proxy/wiki/What's-New)*
+
 
 ## docs
 
@@ -41,6 +43,8 @@ Provide proxy classes for JDBC API to intercept executing queries.
 - [Documentation] (https://github.com/ttddyy/datasource-proxy/wiki/_pages)
 
 - **[Javadoc (API)](https://github.com/ttddyy/datasource-proxy/wiki/Javadoc)**
+
+- [What's New](https://github.com/ttddyy/datasource-proxy/wiki/What's-New)
 
 ## download
 
