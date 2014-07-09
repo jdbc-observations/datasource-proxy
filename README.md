@@ -19,7 +19,7 @@ Provide proxy classes for JDBC API to intercept executing queries.
 <dependency>
   <groupId>net.ttddyy</groupId>
   <artifactId>datasource-proxy</artifactId>
-  <version>1.2</version>
+  <version>1.2.1</version>
 </dependency>
 ```
 
