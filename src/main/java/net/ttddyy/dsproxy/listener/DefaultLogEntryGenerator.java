@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * @author Tadaya Tsuyukubo
+ * @since 1.3
  */
 public class DefaultLogEntryGenerator implements LogEntryGenerator {
 

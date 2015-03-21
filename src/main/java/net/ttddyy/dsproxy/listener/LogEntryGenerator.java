@@ -9,6 +9,7 @@ import java.util.List;
  * Generate logging entry.
  *
  * @author Tadaya Tsuyukubo
+ * @since 1.3
  */
 public interface LogEntryGenerator {
 
