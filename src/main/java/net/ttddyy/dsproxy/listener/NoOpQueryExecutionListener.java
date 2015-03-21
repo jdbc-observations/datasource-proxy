@@ -12,10 +12,13 @@ import java.util.List;
  * @since 1.2
  */
 public class NoOpQueryExecutionListener implements QueryExecutionListener {
+
+    @Override
     public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
         // do nothing
     }
 
+    @Override
     public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
         // do nothing
     }
