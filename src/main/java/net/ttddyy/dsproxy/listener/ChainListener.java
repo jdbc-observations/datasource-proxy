@@ -14,12 +14,14 @@ import java.util.List;
 public class ChainListener implements QueryExecutionListener {
     private List<QueryExecutionListener> listeners = new ArrayList<QueryExecutionListener>();
 
+    @Override
     public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
         for (QueryExecutionListener listener : listeners) {
             listener.beforeQuery(execInfo, queryInfoList);
         }
     }
 
+    @Override
     public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
         for (QueryExecutionListener listener : listeners) {
             listener.afterQuery(execInfo, queryInfoList);

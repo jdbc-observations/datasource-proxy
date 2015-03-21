@@ -32,9 +32,11 @@ import java.util.List;
  */
 public class DataSourceQueryCountListener implements QueryExecutionListener {
 
+    @Override
     public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
     }
 
+    @Override
     public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
         final String dataSourceName = execInfo.getDataSourceName();
 
@@ -64,7 +66,7 @@ public class DataSourceQueryCountListener implements QueryExecutionListener {
     }
 
     private QueryType getQueryType(String query) {
-        final String trimmedQuery = removeCommentAndWhiteSpace(query);
+        final String trimmedQuery = QueryUtils.removeCommentAndWhiteSpace(query);
         final char firstChar = trimmedQuery.charAt(0);
 
         final QueryType type;
@@ -90,10 +92,5 @@ public class DataSourceQueryCountListener implements QueryExecutionListener {
         }
         return type;
     }
-
-    private String removeCommentAndWhiteSpace(String query) {
-        return query.replaceAll("--.*\n", "").replaceAll("\n", "").replaceAll("/\\*.*\\*/", "").trim();
-    }
-
 
 }
