@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class SLF4JQueryLoggingListener implements QueryExecutionListener {
 
-    private static final String MESSAGE = "Name:{} Time:{} Num:{} Query:{}";
+    private static final String MESSAGE = "Name:{} Time:{} Success:{} Num:{} Query:{}";
 
     private Logger logger = LoggerFactory.getLogger(SLF4JQueryLoggingListener.class);
     private SLF4JLogLevel logLevel = SLF4JLogLevel.DEBUG; // default DEBUG
@@ -26,6 +26,7 @@ public class SLF4JQueryLoggingListener implements QueryExecutionListener {
         final String dataSourceName = execInfo.getDataSourceName();
         final long elapsedTime = execInfo.getElapsedTime();
         final int numOfQuery = queryInfoList.size();
+        final boolean isSuccess = execInfo.getThrowable() == null;
 
         final StringBuilder sb = new StringBuilder();
         for (QueryInfo queryInfo : queryInfoList) {
@@ -50,7 +51,7 @@ public class SLF4JQueryLoggingListener implements QueryExecutionListener {
         }
         final String queries = sb.toString();
 
-        writeLog(new Object[]{dataSourceName, elapsedTime, numOfQuery, queries});
+        writeLog(new Object[]{dataSourceName, elapsedTime, isSuccess, numOfQuery, queries});
 
     }
 

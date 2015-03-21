@@ -23,6 +23,8 @@ public class CommonsQueryLoggingListener implements QueryExecutionListener {
     }
 
     public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+        final boolean isSuccess = execInfo.getThrowable() == null;
+
         final StringBuilder sb = new StringBuilder();
 
         if (writeDataSourceName) {
@@ -34,6 +36,11 @@ public class CommonsQueryLoggingListener implements QueryExecutionListener {
         sb.append("Time:");
         sb.append(execInfo.getElapsedTime());
         sb.append(", ");
+
+        sb.append("Success:");
+        sb.append(isSuccess ? "True" : "False");
+        sb.append(", ");
+
 
         sb.append("Num:");
         sb.append(queryInfoList.size());
