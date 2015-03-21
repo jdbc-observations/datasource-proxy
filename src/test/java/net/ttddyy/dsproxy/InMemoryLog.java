@@ -12,20 +12,29 @@ import java.util.List;
  */
 public class InMemoryLog implements Log {
 
-    private String name;
+    private static String name;
 
-    private List<Object> debugMessages = new ArrayList<Object>();
-    private List<Object> errorMessages = new ArrayList<Object>();
-    private List<Object> fatalMessages = new ArrayList<Object>();
-    private List<Object> infoMessages = new ArrayList<Object>();
-    private List<Object> traceMessages = new ArrayList<Object>();
-    private List<Object> warnMessages = new ArrayList<Object>();
+    private static List<Object> debugMessages = new ArrayList<Object>();
+    private static List<Object> errorMessages = new ArrayList<Object>();
+    private static List<Object> fatalMessages = new ArrayList<Object>();
+    private static List<Object> infoMessages = new ArrayList<Object>();
+    private static List<Object> traceMessages = new ArrayList<Object>();
+    private static List<Object> warnMessages = new ArrayList<Object>();
 
     public InMemoryLog() {
     }
 
     public InMemoryLog(String name) {
         this.name = name;
+    }
+
+    public static void clear() {
+        debugMessages.clear();
+        errorMessages.clear();
+        fatalMessages.clear();
+        infoMessages.clear();
+        traceMessages.clear();
+        warnMessages.clear();
     }
 
     public boolean isDebugEnabled() {

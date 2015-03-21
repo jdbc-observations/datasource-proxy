@@ -4,8 +4,6 @@ import net.ttddyy.dsproxy.listener.CommonsLogLevel;
 import net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import org.apache.commons.logging.LogFactory;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
@@ -19,6 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 /**
  * @author Tadaya Tsuyukubo
  */
@@ -29,6 +30,7 @@ public class LoggingListenerTest {
 
     @BeforeMethod
     public void setup() throws Exception {
+        // TODO: clean up logger intercept mechanism
         System.setProperty("org.apache.commons.logging.Log", InMemoryLog.class.getCanonicalName());
 
         loggingListener = new CommonsQueryLoggingListener();
@@ -45,6 +47,7 @@ public class LoggingListenerTest {
     public void teardown() throws Exception {
         TestUtils.shutdown(jdbcDataSource);
 
+        InMemoryLog.clear();
         System.setProperty("org.apache.commons.logging.Log", "");
     }
 
@@ -110,8 +113,8 @@ public class LoggingListenerTest {
 
         final InMemoryLog log = getInMemoryLog();
         verifyMessage(CommonsLogLevel.DEBUG, log, "update emp set name = ? where id = ?");
-        verifyMessage(CommonsLogLevel.DEBUG, log, "[FOO,1]");
-        verifyMessage(CommonsLogLevel.DEBUG, log, "[BAR,2]");
+        verifyMessage(CommonsLogLevel.DEBUG, log, "(FOO,1)");
+        verifyMessage(CommonsLogLevel.DEBUG, log, "(BAR,2)");
     }
 
     private InMemoryLog getInMemoryLog() {
@@ -160,18 +163,18 @@ public class LoggingListenerTest {
 
         for (Map.Entry<CommonsLogLevel, List> entry : messages.entrySet()) {
             CommonsLogLevel msgLevel = entry.getKey();
-            List messageList = entry.getValue();
+            List<?> messageList = entry.getValue();
 
             int expectedMsgSize = (msgLevel == logLevel) ? queries.length : 0;
 
-            assertEquals(messageList.size(), expectedMsgSize);
+            assertThat(messageList, hasSize(expectedMsgSize));
             if (expectedMsgSize > 0) {
                 for (int i = 0; i < queries.length; i++) {
                     final String query = queries[i];
 
-                    assertTrue(messageList.get(i) instanceof String);
+                    assertThat(messageList.get(i), is(instanceOf(String.class)));
                     String message = (String) messageList.get(i);
-                    assertTrue(message.contains(query));
+                    assertThat(message, containsString(query));
                 }
             }
         }

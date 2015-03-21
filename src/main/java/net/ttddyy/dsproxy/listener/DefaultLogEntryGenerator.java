@@ -30,32 +30,37 @@ public class DefaultLogEntryGenerator implements LogEntryGenerator {
         sb.append(isSuccess ? "True" : "False");
         sb.append(", ");
 
-        sb.append("Num:");
+        // TODO: statement type
+
+        // TODO: isBatch
+
+        sb.append("QuerySize:");
         sb.append(queryInfoList.size());
         sb.append(", ");
 
-        sb.append("Query:");
+        // TODO: batch size
 
+        sb.append("Query:[");
         for (QueryInfo queryInfo : queryInfoList) {
-            sb.append("{");
-            final String query = queryInfo.getQuery();
-            final List args = queryInfo.getQueryArgs();
+            sb.append("(");
+            sb.append(queryInfo.getQuery());
+            sb.append("),");
+        }
+        chompIfEndWith(sb, ',');
+        sb.append("], ");
 
-            sb.append("[");
-            sb.append(query);
-            sb.append("][");
-
-            for (Object arg : args) {
+        sb.append("Params:[");
+        for (QueryInfo queryInfo : queryInfoList) {
+            sb.append("(");
+            for (Object arg : queryInfo.getQueryArgs()) {
                 sb.append(arg);
                 sb.append(',');
             }
-
-            // chop if last char is ','
             chompIfEndWith(sb, ',');
-
-            sb.append("]");
-            sb.append("} ");
+            sb.append("),");
         }
+        chompIfEndWith(sb, ',');
+        sb.append("]");
 
         return sb.toString();
     }
