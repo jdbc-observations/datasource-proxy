@@ -11,7 +11,7 @@ import java.util.List;
  */
 public abstract class AbstractQueryLoggingListener implements QueryExecutionListener {
 
-    protected LogEntryGenerator logEntryGenerator = new DefaultLogEntryGenerator();
+    protected LogEntryCreator logEntryCreator = new DefaultLogEntryCreator();
     protected boolean writeDataSourceName = true;
 
     @Override
@@ -25,14 +25,14 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
     }
 
     protected String getEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName) {
-        return this.logEntryGenerator.getLogEntry(execInfo, queryInfoList, writeDataSourceName);
+        return this.logEntryCreator.getLogEntry(execInfo, queryInfoList, writeDataSourceName);
     }
 
     protected abstract void writeLog(String message);
 
 
-    public void setLogEntryGenerator(LogEntryGenerator logEntryGenerator) {
-        this.logEntryGenerator = logEntryGenerator;
+    public void setLogEntryCreator(LogEntryCreator logEntryCreator) {
+        this.logEntryCreator = logEntryCreator;
     }
 
     public void setWriteDataSourceName(boolean writeDataSourceName) {

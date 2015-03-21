@@ -9,7 +9,7 @@ import java.util.List;
  * @author Tadaya Tsuyukubo
  * @since 1.3
  */
-public class DefaultLogEntryGenerator implements LogEntryGenerator {
+public class DefaultLogEntryCreator implements LogEntryCreator {
 
     public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName) {
         final boolean isSuccess = execInfo.getThrowable() == null;
