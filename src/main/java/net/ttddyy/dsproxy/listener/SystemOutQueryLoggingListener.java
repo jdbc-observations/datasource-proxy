@@ -6,7 +6,7 @@ package net.ttddyy.dsproxy.listener;
  * @author Tadaya Tsuyukubo
  * @since 1.3
  */
-public class SystemOutLoggingListener extends AbstractQueryLoggingListener {
+public class SystemOutQueryLoggingListener extends AbstractQueryLoggingListener {
     @Override
     protected void writeLog(String message) {
         System.out.println(message);
