@@ -9,7 +9,7 @@ import java.util.List;
  * @author Tadaya Tsuyukubo
  * @since 1.3
  */
-public abstract class AbstractLoggingListener implements QueryExecutionListener {
+public abstract class AbstractQueryLoggingListener implements QueryExecutionListener {
 
     protected LogEntryGenerator logEntryGenerator = new DefaultLogEntryGenerator();
     protected boolean writeDataSourceName = true;

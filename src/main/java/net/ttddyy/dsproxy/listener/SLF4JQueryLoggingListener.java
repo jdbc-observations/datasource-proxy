@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tadaya Tsuyukubo
  */
-public class SLF4JQueryLoggingListener extends AbstractLoggingListener {
+public class SLF4JQueryLoggingListener extends AbstractQueryLoggingListener {
 
     protected static final Logger logger = LoggerFactory.getLogger(SLF4JQueryLoggingListener.class);
     protected SLF4JLogLevel logLevel = SLF4JLogLevel.DEBUG; // default DEBUG

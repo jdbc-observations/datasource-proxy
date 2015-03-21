@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @author Tadaya Tsuyukubo
  */
-public class CommonsQueryLoggingListener extends AbstractLoggingListener {
+public class CommonsQueryLoggingListener extends AbstractQueryLoggingListener {
 
     protected static final Log log = LogFactory.getLog(CommonsQueryLoggingListener.class);
     protected CommonsLogLevel logLevel = CommonsLogLevel.DEBUG; // default DEBUG
