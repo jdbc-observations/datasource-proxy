@@ -1,38 +1,19 @@
 package net.ttddyy.dsproxy.listener;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.List;
 
 /**
  * Record executed query information using Commons-Logging.
  *
  * @author Tadaya Tsuyukubo
  */
-public class CommonsQueryLoggingListener implements QueryExecutionListener {
+public class CommonsQueryLoggingListener extends AbstractLoggingListener {
 
-    private boolean writeDataSourceName = true;
+    protected static final Log log = LogFactory.getLog(CommonsQueryLoggingListener.class);
+    protected CommonsLogLevel logLevel = CommonsLogLevel.DEBUG; // default DEBUG
 
-    private Log log = LogFactory.getLog(CommonsQueryLoggingListener.class);
-    private CommonsLogLevel logLevel = CommonsLogLevel.DEBUG; // default DEBUG
-
-    private LogEntryGenerator logEntryGenerator = new DefaultLogEntryGenerator();
-
-    public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-    }
-
-    public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        final String entry = getEntry(execInfo, queryInfoList, this.writeDataSourceName);
-        writeLog(entry);
-    }
-
-    protected String getEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName) {
-        return this.logEntryGenerator.getLogEntry(execInfo, queryInfoList, writeDataSourceName);
-    }
-
+    @Override
     protected void writeLog(String message) {
         switch (logLevel) {
             case DEBUG:
@@ -60,11 +41,4 @@ public class CommonsQueryLoggingListener implements QueryExecutionListener {
         this.logLevel = logLevel;
     }
 
-    public void setWriteDataSourceName(boolean writeDataSourceName) {
-        this.writeDataSourceName = writeDataSourceName;
-    }
-
-    public void setLogEntryGenerator(LogEntryGenerator logEntryGenerator) {
-        this.logEntryGenerator = logEntryGenerator;
-    }
 }

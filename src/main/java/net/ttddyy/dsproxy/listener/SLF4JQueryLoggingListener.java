@@ -1,37 +1,20 @@
 package net.ttddyy.dsproxy.listener;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * Log executed query information using SLF4J.
  *
  * @author Tadaya Tsuyukubo
  */
-public class SLF4JQueryLoggingListener implements QueryExecutionListener {
+public class SLF4JQueryLoggingListener extends AbstractLoggingListener {
 
-    private Logger logger = LoggerFactory.getLogger(SLF4JQueryLoggingListener.class);
-    private SLF4JLogLevel logLevel = SLF4JLogLevel.DEBUG; // default DEBUG
-    private LogEntryGenerator logEntryGenerator = new DefaultLogEntryGenerator();
-    private boolean writeDataSourceName = true;
+    protected static final Logger logger = LoggerFactory.getLogger(SLF4JQueryLoggingListener.class);
+    protected SLF4JLogLevel logLevel = SLF4JLogLevel.DEBUG; // default DEBUG
 
-    public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-    }
-
-    public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        final String entry = getEntry(execInfo, queryInfoList, this.writeDataSourceName);
-        writeLog(entry);
-    }
-
-    protected String getEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName) {
-        return this.logEntryGenerator.getLogEntry(execInfo, queryInfoList, writeDataSourceName);
-    }
-
-    private void writeLog(String message) {
+    @Override
+    protected void writeLog(String message) {
         switch (logLevel) {
             case DEBUG:
                 logger.debug(message);
@@ -55,11 +38,4 @@ public class SLF4JQueryLoggingListener implements QueryExecutionListener {
         this.logLevel = logLevel;
     }
 
-    public void setWriteDataSourceName(boolean writeDataSourceName) {
-        this.writeDataSourceName = writeDataSourceName;
-    }
-
-    public void setLogEntryGenerator(LogEntryGenerator logEntryGenerator) {
-        this.logEntryGenerator = logEntryGenerator;
-    }
 }
