@@ -19,67 +19,21 @@ public class CommonsQueryLoggingListener implements QueryExecutionListener {
     private Log log = LogFactory.getLog(CommonsQueryLoggingListener.class);
     private CommonsLogLevel logLevel = CommonsLogLevel.DEBUG; // default DEBUG
 
+    private LogEntryGenerator logEntryGenerator = new DefaultLogEntryGenerator();
+
     public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
     }
 
     public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        final boolean isSuccess = execInfo.getThrowable() == null;
-
-        final StringBuilder sb = new StringBuilder();
-
-        if (writeDataSourceName) {
-            sb.append("Name:");
-            sb.append(execInfo.getDataSourceName());
-            sb.append(", ");
-        }
-
-        sb.append("Time:");
-        sb.append(execInfo.getElapsedTime());
-        sb.append(", ");
-
-        sb.append("Success:");
-        sb.append(isSuccess ? "True" : "False");
-        sb.append(", ");
-
-
-        sb.append("Num:");
-        sb.append(queryInfoList.size());
-        sb.append(", ");
-
-        sb.append("Query:");
-
-        for (QueryInfo queryInfo : queryInfoList) {
-            sb.append("{");
-            final String query = queryInfo.getQuery();
-            final List args = queryInfo.getQueryArgs();
-
-            sb.append("[");
-            sb.append(query);
-            sb.append("][");
-
-            for (Object arg : args) {
-                sb.append(arg);
-                sb.append(',');
-            }
-
-            // chop if last char is ','
-            chopIfEndWith(sb, ',');
-
-            sb.append("]");
-            sb.append("} ");
-        }
-
-        writeLog(sb.toString());
+        final String entry = getEntry(execInfo, queryInfoList, this.writeDataSourceName);
+        writeLog(entry);
     }
 
-    private void chopIfEndWith(StringBuilder sb, char c) {
-        final int lastCharIndex = sb.length() - 1;
-        if (sb.charAt(lastCharIndex) == c) {
-            sb.deleteCharAt(lastCharIndex);
-        }
+    protected String getEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName) {
+        return this.logEntryGenerator.getLogEntry(execInfo, queryInfoList, writeDataSourceName);
     }
 
-    private void writeLog(String message) {
+    protected void writeLog(String message) {
         switch (logLevel) {
             case DEBUG:
                 log.debug(message);
@@ -108,5 +62,9 @@ public class CommonsQueryLoggingListener implements QueryExecutionListener {
 
     public void setWriteDataSourceName(boolean writeDataSourceName) {
         this.writeDataSourceName = writeDataSourceName;
+    }
+
+    public void setLogEntryGenerator(LogEntryGenerator logEntryGenerator) {
+        this.logEntryGenerator = logEntryGenerator;
     }
 }
