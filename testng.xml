@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<!--
+  Temporal for migrating from testng to junit
+  TestNG automatically run junit4 tests, thus disabling explicitly here
+-->
+<suite name="temp-suite" verbose="1">
+  <test name="test-ng-tests" junit="false">
+    <packages>
+      <package name="net.ttddyy.dsproxy.*"/>
+    </packages>
+  </test>
+</suite>
