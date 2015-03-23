@@ -134,3 +134,9 @@ Time:1, Num:1, Query:{[select this_.id as id0_0_, this_.name as name0_0_, this_.
 # architecture
 
 ![architecture diaglam](https://docs.google.com/drawings/pub?id=1KLaKmlp02c3lyQN1a_xhfG98AteyTIIVKSlnQW-aqsg&w=640&h=480&nonsense=architecture.png "architecture diaglam")
+
+---
+
+# Development
+
+[![Build Status](https://travis-ci.org/ttddyy/datasource-proxy.svg?branch=master)](https://travis-ci.org/ttddyy/datasource-proxy)

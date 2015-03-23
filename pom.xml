@@ -45,47 +45,6 @@
     <surefire.version>2.18.1</surefire.version>
   </properties>
 
-  <profiles>
-    <!--
-      for buildhive(jenkins service) to use jdk7.
-      https://buildhive.cloudbees.com/job/ttddyy/job/datasource-proxy/
-    -->
-    <profile>
-      <id>buildhive</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.2</version>
-            <configuration>
-              <source>1.6</source>
-              <target>1.6</target>
-              <testSource>1.8</testSource>
-              <testTarget>1.8</testTarget>
-              <showDeprecation>true</showDeprecation>
-              <showWarnings>true</showWarnings>
-              <encoding>UTF-8</encoding>
-              <!--<executable>/opt/jdk/jdk1.7.0/bin/javac</executable>-->
-              <executable>/opt/jdk/jdk1.8.0/bin/javac</executable>
-              <fork>true</fork>
-            </configuration>
-          </plugin>
-<!--
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <jvm>/opt/jdk/jdk1.7.0/bin/java</jvm>
-              <forkMode>once</forkMode>
-            </configuration>
-          </plugin>
--->
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
   <build>
     <plugins>
       <plugin>
