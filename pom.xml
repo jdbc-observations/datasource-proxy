@@ -61,13 +61,17 @@
             <configuration>
               <source>1.6</source>
               <target>1.6</target>
+              <testSource>1.8</testSource>
+              <testTarget>1.8</testTarget>
               <showDeprecation>true</showDeprecation>
               <showWarnings>true</showWarnings>
               <encoding>UTF-8</encoding>
-              <executable>/opt/jdk/jdk1.7.0/bin/javac</executable>
+              <!--<executable>/opt/jdk/jdk1.7.0/bin/javac</executable>-->
+              <executable>/opt/jdk/jdk1.8.0/bin/javac</executable>
               <fork>true</fork>
             </configuration>
           </plugin>
+<!--
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
@@ -76,6 +80,7 @@
               <forkMode>once</forkMode>
             </configuration>
           </plugin>
+-->
         </plugins>
       </build>
     </profile>
@@ -89,6 +94,8 @@
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
+          <testSource>1.8</testSource>
+          <testTarget>1.8</testTarget>
         </configuration>
       </plugin>
       <plugin>
