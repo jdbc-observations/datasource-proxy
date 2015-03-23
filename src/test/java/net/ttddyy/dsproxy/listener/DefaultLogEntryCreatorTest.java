@@ -28,6 +28,7 @@ public class DefaultLogEntryCreatorTest {
                 .method(method)
                 .result(result)
                 .statementType(StatementType.STATEMENT)
+                .success(true)
                 .build();
 
         QueryInfo queryInfo = new QueryInfo();
@@ -61,6 +62,25 @@ public class DefaultLogEntryCreatorTest {
         executionInfo = new ExecutionInfoBuilder().statementType(StatementType.CALLABLE).build();
         result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
         assertThat(result).containsOnlyOnce("Type:Callable");
+    }
+
+    @Test
+    public void success() throws Exception {
+        ExecutionInfo executionInfo;
+        String result;
+
+        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+
+        // success
+        executionInfo = new ExecutionInfoBuilder().success(true).build();
+        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        assertThat(result).containsOnlyOnce("Success:True");
+
+        // fail
+        executionInfo = new ExecutionInfoBuilder().success(false).build();
+        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        assertThat(result).containsOnlyOnce("Success:False");
+
     }
 
 }

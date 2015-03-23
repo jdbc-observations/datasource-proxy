@@ -159,10 +159,12 @@ public class PreparedStatementProxyLogic {
 
             execInfo.setResult(retVal);
             execInfo.setElapsedTime(afterTime - beforeTime);
+            execInfo.setSuccess(true);
 
             return retVal;
         } catch (InvocationTargetException ex) {
             execInfo.setThrowable(ex.getTargetException());
+            execInfo.setSuccess(false);
             throw ex.getTargetException();
         } finally {
             listener.afterQuery(execInfo, queries);

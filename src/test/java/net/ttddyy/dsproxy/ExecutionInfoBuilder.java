@@ -14,6 +14,7 @@ public class ExecutionInfoBuilder {
     private long elapsedTime;
     private Throwable throwable;
     private StatementType statementType;
+    private boolean success;
 
     public ExecutionInfoBuilder dataSourceName(String dataSourceName) {
         this.dataSourceName = dataSourceName;
@@ -50,6 +51,11 @@ public class ExecutionInfoBuilder {
         return this;
     }
 
+    public ExecutionInfoBuilder success(boolean success) {
+        this.success = success;
+        return this;
+    }
+
 
     public ExecutionInfo build() {
         ExecutionInfo executionInfo = new ExecutionInfo();
@@ -60,6 +66,7 @@ public class ExecutionInfoBuilder {
         executionInfo.setElapsedTime(elapsedTime);
         executionInfo.setThrowable(throwable);
         executionInfo.setStatementType(statementType);
+        executionInfo.setSuccess(success);
         return executionInfo;
     }
 }

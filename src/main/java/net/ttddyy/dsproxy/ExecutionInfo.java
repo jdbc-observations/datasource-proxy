@@ -15,6 +15,7 @@ public class ExecutionInfo {
     private long elapsedTime;
     private Throwable throwable;
     private StatementType statementType;
+    private boolean isSuccess;
 
     public ExecutionInfo() {
     }
@@ -80,5 +81,13 @@ public class ExecutionInfo {
 
     public void setStatementType(StatementType statementType) {
         this.statementType = statementType;
+    }
+
+    public boolean isSuccess() {
+        return isSuccess;
+    }
+
+    public void setSuccess(boolean isSuccess) {
+        this.isSuccess = isSuccess;
     }
 }

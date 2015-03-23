@@ -13,8 +13,6 @@ import java.util.List;
 public class DefaultLogEntryCreator implements LogEntryCreator {
 
     public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName) {
-        final boolean isSuccess = execInfo.getThrowable() == null;
-
         final StringBuilder sb = new StringBuilder();
 
         if (writeDataSourceName) {
@@ -28,7 +26,7 @@ public class DefaultLogEntryCreator implements LogEntryCreator {
         sb.append(", ");
 
         sb.append("Success:");
-        sb.append(isSuccess ? "True" : "False");
+        sb.append(execInfo.isSuccess() ? "True" : "False");
         sb.append(", ");
 
         sb.append("Type:");
