@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.StatementType;
 
 import java.util.List;
 
@@ -30,7 +31,10 @@ public class DefaultLogEntryCreator implements LogEntryCreator {
         sb.append(isSuccess ? "True" : "False");
         sb.append(", ");
 
-        // TODO: statement type
+        sb.append("Type:");
+        sb.append(getStatementType(execInfo.getStatementType()));
+        sb.append(", ");
+
 
         // TODO: isBatch
 
@@ -65,7 +69,18 @@ public class DefaultLogEntryCreator implements LogEntryCreator {
         return sb.toString();
     }
 
-    private void chompIfEndWith(StringBuilder sb, char c) {
+    protected String getStatementType(StatementType statementType) {
+        if (StatementType.STATEMENT.equals(statementType)) {
+            return "Statement";
+        } else if (StatementType.PREPARED.equals(statementType)) {
+            return "Prepared";
+        } else if (StatementType.CALLABLE.equals(statementType)) {
+            return "Callable";
+        }
+        return "Unknown";
+    }
+
+    protected void chompIfEndWith(StringBuilder sb, char c) {
         final int lastCharIndex = sb.length() - 1;
         if (sb.charAt(lastCharIndex) == c) {
             sb.deleteCharAt(lastCharIndex);

@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import net.ttddyy.dsproxy.transform.TransformInfo;
@@ -150,9 +151,9 @@ public class StatementProxyLogic {
         }
 
         final QueryExecutionListener listener = interceptorHolder.getListener();
-        listener.beforeQuery(new ExecutionInfo(dataSourceName, method, args), queries);
+        listener.beforeQuery(new ExecutionInfo(dataSourceName, StatementType.STATEMENT, method, args), queries);
 
-        final ExecutionInfo execInfo = new ExecutionInfo(dataSourceName, method, args);
+        final ExecutionInfo execInfo = new ExecutionInfo(dataSourceName, StatementType.STATEMENT, method, args);
         // Invoke method on original Statement.
         try {
             final long beforeTime = System.currentTimeMillis();

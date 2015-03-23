@@ -14,12 +14,14 @@ public class ExecutionInfo {
     private Object result;
     private long elapsedTime;
     private Throwable throwable;
+    private StatementType statementType;
 
     public ExecutionInfo() {
     }
 
-    public ExecutionInfo(String dataSourceName, Method method, Object[] methodArgs) {
+    public ExecutionInfo(String dataSourceName, StatementType statementType, Method method, Object[] methodArgs) {
         this.dataSourceName = dataSourceName;
+        this.statementType = statementType;
         this.method = method;
         this.methodArgs = methodArgs;
     }
@@ -70,5 +72,13 @@ public class ExecutionInfo {
 
     public void setThrowable(Throwable throwable) {
         this.throwable = throwable;
+    }
+
+    public StatementType getStatementType() {
+        return statementType;
+    }
+
+    public void setStatementType(StatementType statementType) {
+        this.statementType = statementType;
     }
 }

@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.transform.ParameterReplacer;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
@@ -30,6 +31,7 @@ public class PreparedStatementProxyLogic {
     private ParameterOperationHolder parameterOperationHolder = new ParameterOperationHolder();
     private InterceptorHolder interceptorHolder;
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
+    private StatementType statementType = StatementType.PREPARED;
 
     private List<BatchQueryHolder> batchQueries = new ArrayList<BatchQueryHolder>();
 
@@ -42,6 +44,9 @@ public class PreparedStatementProxyLogic {
         this.interceptorHolder = interceptorHolder;
         this.dataSourceName = dataSourceName;
         this.jdbcProxyFactory = jdbcProxyFactory;
+        if (ps instanceof CallableStatement) {
+            this.statementType = StatementType.CALLABLE;
+        }
     }
 
     public Object invoke(Method method, Object[] args) throws Throwable {
@@ -140,10 +145,10 @@ public class PreparedStatementProxyLogic {
         }
 
         final QueryExecutionListener listener = interceptorHolder.getListener();
-        listener.beforeQuery(new ExecutionInfo(dataSourceName, method, args), queries);
+        listener.beforeQuery(new ExecutionInfo(dataSourceName, this.statementType, method, args), queries);
 
         // Invoke method on original Statement.
-        final ExecutionInfo execInfo = new ExecutionInfo(dataSourceName, method, args);
+        final ExecutionInfo execInfo = new ExecutionInfo(dataSourceName, this.statementType, method, args);
 
         try {
             final long beforeTime = System.currentTimeMillis();
