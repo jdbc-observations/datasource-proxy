@@ -27,6 +27,7 @@ public class DefaultLogEntryCreatorTest {
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
+                .statementType(StatementType.STATEMENT)
                 .build();
 
         QueryInfo queryInfo = new QueryInfo();
