@@ -6,8 +6,8 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
+import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.testng.annotations.Test;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -159,6 +159,7 @@ public class PreparedStatementProxyLogicMockTest {
         assertThat(execInfo.getMethodArgs(), is(nullValue()));
         assertThat(execInfo.getDataSourceName(), is(DS_NAME));
         assertThat(execInfo.getThrowable(), is(nullValue()));
+        assertThat(execInfo.isBatch(), is(false));
 
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
         assertThat(queryInfoList.size(), is(1));

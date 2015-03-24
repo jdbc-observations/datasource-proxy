@@ -32,6 +32,7 @@ public class MockTestUtils {
         assertThat(execInfo.getMethodArgs(), is(nullValue()));
         assertThat(execInfo.getDataSourceName(), is(dataSourceName));
         assertThat(execInfo.getThrowable(), is(nullValue()));
+        assertThat(execInfo.isBatch(), is(true));
 
         final int batchSize = expectedQueryArgs.length;
 

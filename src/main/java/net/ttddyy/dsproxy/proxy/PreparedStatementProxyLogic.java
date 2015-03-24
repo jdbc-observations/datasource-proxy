@@ -128,6 +128,7 @@ public class PreparedStatementProxyLogic {
         // query execution methods
 
         final List<QueryInfo> queries = new ArrayList<QueryInfo>();
+        boolean isBatchExecution = false;
 
         if ("executeBatch".equals(methodName)) {
 
@@ -135,6 +136,7 @@ public class PreparedStatementProxyLogic {
                 queries.add(new QueryInfo(queryHolder.getQuery(), queryHolder.getArgs()));
             }
             batchQueries.clear();
+            isBatchExecution = true;
 
         } else if ("executeQuery".equals(methodName) || "executeUpdate".equals(methodName)
                 || "execute".equals(methodName)) {
@@ -145,10 +147,10 @@ public class PreparedStatementProxyLogic {
         }
 
         final QueryExecutionListener listener = interceptorHolder.getListener();
-        listener.beforeQuery(new ExecutionInfo(dataSourceName, this.statementType, method, args), queries);
+        listener.beforeQuery(new ExecutionInfo(dataSourceName, this.statementType, isBatchExecution, method, args), queries);
 
         // Invoke method on original Statement.
-        final ExecutionInfo execInfo = new ExecutionInfo(dataSourceName, this.statementType, method, args);
+        final ExecutionInfo execInfo = new ExecutionInfo(dataSourceName, this.statementType, isBatchExecution, method, args);
 
         try {
             final long beforeTime = System.currentTimeMillis();

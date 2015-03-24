@@ -6,9 +6,8 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
+import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -32,10 +31,6 @@ import static org.testng.Assert.fail;
 public class StatementProxyLogicMockTest {
 
     private static final String DS_NAME = "myDS";
-
-    @BeforeMethod
-    private void setup() {
-    }
 
     @Test
     public void testExecuteUpdate() throws Throwable {
@@ -429,6 +424,7 @@ public class StatementProxyLogicMockTest {
         assertThat(execInfo.getMethodArgs(), arrayContaining(methodArgs));
         assertThat(execInfo.getDataSourceName(), is(DS_NAME));
         assertThat(execInfo.getThrowable(), is(nullValue()));
+        assertThat(execInfo.isBatch(), is(false));
 
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
         assertThat(queryInfoList.size(), is(1));
@@ -595,6 +591,7 @@ public class StatementProxyLogicMockTest {
         assertThat(execInfo.getMethod().getName(), is("executeBatch"));
         assertThat(execInfo.getDataSourceName(), is(DS_NAME));
         assertThat(execInfo.getMethodArgs(), is(nullValue()));
+        assertThat(execInfo.isBatch(), is(true));
 
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
 
@@ -623,6 +620,7 @@ public class StatementProxyLogicMockTest {
         assertThat(execInfo.getDataSourceName(), is(DS_NAME));
         assertThat(execInfo.getMethodArgs(), is(nullValue()));
         assertThat(execInfo.getThrowable(), is(instanceOf(SQLException.class)));
+        assertThat(execInfo.isBatch(), is(true));
 
 
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
