@@ -15,6 +15,7 @@ public class ExecutionInfoBuilder {
     private Throwable throwable;
     private StatementType statementType;
     private boolean success;
+    private boolean batch;
 
     public ExecutionInfoBuilder dataSourceName(String dataSourceName) {
         this.dataSourceName = dataSourceName;
@@ -56,6 +57,11 @@ public class ExecutionInfoBuilder {
         return this;
     }
 
+    public ExecutionInfoBuilder batch(boolean batch) {
+        this.batch = batch;
+        return this;
+    }
+
 
     public ExecutionInfo build() {
         ExecutionInfo executionInfo = new ExecutionInfo();
@@ -67,6 +73,7 @@ public class ExecutionInfoBuilder {
         executionInfo.setThrowable(throwable);
         executionInfo.setStatementType(statementType);
         executionInfo.setSuccess(success);
+        executionInfo.setBatch(batch);
         return executionInfo;
     }
 }

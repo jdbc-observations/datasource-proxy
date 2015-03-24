@@ -29,6 +29,7 @@ public class DefaultLogEntryCreatorTest {
                 .result(result)
                 .statementType(StatementType.STATEMENT)
                 .success(true)
+                .batch(true)
                 .build();
 
         QueryInfo queryInfo = new QueryInfo();
@@ -38,7 +39,7 @@ public class DefaultLogEntryCreatorTest {
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
 
 
-        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Statement, QuerySize:1, Query:[(select 1)], Params:[()]");
+        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Statement, Batch:True, QuerySize:1, Query:[(select 1)], Params:[()]");
     }
 
     @Test
@@ -81,6 +82,24 @@ public class DefaultLogEntryCreatorTest {
         result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
         assertThat(result).containsOnlyOnce("Success:False");
 
+    }
+
+    @Test
+    public void batch() throws Exception {
+        ExecutionInfo executionInfo;
+        String result;
+
+        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+
+        // success
+        executionInfo = new ExecutionInfoBuilder().batch(true).build();
+        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        assertThat(result).containsOnlyOnce("Batch:True");
+
+        // fail
+        executionInfo = new ExecutionInfoBuilder().batch(false).build();
+        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        assertThat(result).containsOnlyOnce("Batch:False");
     }
 
 }
