@@ -23,6 +23,13 @@ public class ProxyDataSource implements DataSource {
     private String dataSourceName = "";
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
 
+    public ProxyDataSource() {
+    }
+
+    public ProxyDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
