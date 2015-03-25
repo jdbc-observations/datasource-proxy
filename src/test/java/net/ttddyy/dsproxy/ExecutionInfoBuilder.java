@@ -18,6 +18,10 @@ public class ExecutionInfoBuilder {
     private boolean batch;
     private int batchSize;
 
+    public static ExecutionInfoBuilder create() {
+        return new ExecutionInfoBuilder();
+    }
+
     public ExecutionInfoBuilder dataSourceName(String dataSourceName) {
         this.dataSourceName = dataSourceName;
         return this;

@@ -47,9 +47,9 @@ public class DefaultLogEntryCreator implements LogEntryCreator {
 
         sb.append("Query:[");
         for (QueryInfo queryInfo : queryInfoList) {
-            sb.append("(");
+            sb.append("\"");
             sb.append(queryInfo.getQuery());
-            sb.append("),");
+            sb.append("\",");
         }
         chompIfEndWith(sb, ',');
         sb.append("], ");
