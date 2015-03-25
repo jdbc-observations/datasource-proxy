@@ -17,14 +17,16 @@ public class ExecutionInfo {
     private StatementType statementType;
     private boolean isSuccess;
     private boolean isBatch;
+    private int batchSize;
 
     public ExecutionInfo() {
     }
 
-    public ExecutionInfo(String dataSourceName, StatementType statementType, boolean isBatch, Method method, Object[] methodArgs) {
+    public ExecutionInfo(String dataSourceName, StatementType statementType, boolean isBatch, int batchSize, Method method, Object[] methodArgs) {
         this.dataSourceName = dataSourceName;
         this.statementType = statementType;
         this.isBatch = isBatch;
+        this.batchSize = batchSize;
         this.method = method;
         this.methodArgs = methodArgs;
     }
@@ -99,5 +101,13 @@ public class ExecutionInfo {
 
     public void setBatch(boolean isBatch) {
         this.isBatch = isBatch;
+    }
+
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
     }
 }

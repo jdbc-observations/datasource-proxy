@@ -160,6 +160,7 @@ public class PreparedStatementProxyLogicMockTest {
         assertThat(execInfo.getDataSourceName(), is(DS_NAME));
         assertThat(execInfo.getThrowable(), is(nullValue()));
         assertThat(execInfo.isBatch(), is(false));
+        assertThat(execInfo.getBatchSize(), is(0));
 
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
         assertThat(queryInfoList.size(), is(1));

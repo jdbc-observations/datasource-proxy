@@ -425,6 +425,7 @@ public class StatementProxyLogicMockTest {
         assertThat(execInfo.getDataSourceName(), is(DS_NAME));
         assertThat(execInfo.getThrowable(), is(nullValue()));
         assertThat(execInfo.isBatch(), is(false));
+        assertThat(execInfo.getBatchSize(), is(0));
 
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
         assertThat(queryInfoList.size(), is(1));
@@ -592,6 +593,7 @@ public class StatementProxyLogicMockTest {
         assertThat(execInfo.getDataSourceName(), is(DS_NAME));
         assertThat(execInfo.getMethodArgs(), is(nullValue()));
         assertThat(execInfo.isBatch(), is(true));
+        assertThat(execInfo.getBatchSize(), is(queries.length));
 
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
 
@@ -621,6 +623,7 @@ public class StatementProxyLogicMockTest {
         assertThat(execInfo.getMethodArgs(), is(nullValue()));
         assertThat(execInfo.getThrowable(), is(instanceOf(SQLException.class)));
         assertThat(execInfo.isBatch(), is(true));
+        assertThat(execInfo.getBatchSize(), is(queries.length));
 
 
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();

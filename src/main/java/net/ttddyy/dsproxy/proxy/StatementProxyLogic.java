@@ -130,12 +130,14 @@ public class StatementProxyLogic {
 
         final List<QueryInfo> queries = new ArrayList<QueryInfo>();
         boolean isBatchExecute = false;
+        int batchSize = 0;
 
         if ("executeBatch".equals(methodName)) {
 
             for (String batchQuery : batchQueries) {
                 queries.add(new QueryInfo(batchQuery, null));
             }
+            batchSize = batchQueries.size();
             batchQueries.clear();
             isBatchExecute = true;
 
@@ -153,9 +155,9 @@ public class StatementProxyLogic {
         }
 
         final QueryExecutionListener listener = interceptorHolder.getListener();
-        listener.beforeQuery(new ExecutionInfo(dataSourceName, StatementType.STATEMENT, isBatchExecute, method, args), queries);
+        listener.beforeQuery(new ExecutionInfo(dataSourceName, StatementType.STATEMENT, isBatchExecute, batchSize, method, args), queries);
 
-        final ExecutionInfo execInfo = new ExecutionInfo(dataSourceName, StatementType.STATEMENT, isBatchExecute, method, args);
+        final ExecutionInfo execInfo = new ExecutionInfo(dataSourceName, StatementType.STATEMENT, isBatchExecute, batchSize, method, args);
         // Invoke method on original Statement.
         try {
             final long beforeTime = System.currentTimeMillis();

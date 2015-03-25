@@ -41,7 +41,9 @@ public class DefaultLogEntryCreator implements LogEntryCreator {
         sb.append(queryInfoList.size());
         sb.append(", ");
 
-        // TODO: batch size
+        sb.append("BatchSize:");
+        sb.append(execInfo.getBatchSize());
+        sb.append(", ");
 
         sb.append("Query:[");
         for (QueryInfo queryInfo : queryInfoList) {
