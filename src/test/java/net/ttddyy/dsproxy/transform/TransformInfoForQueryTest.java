@@ -5,11 +5,10 @@ import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 import java.sql.CallableStatement;
@@ -29,7 +28,7 @@ public class TransformInfoForQueryTest {
 
     private TransformInfo transformInfo;
 
-    @BeforeMethod
+    @Before
     public void setUp() {
         transformInfo = null;
     }
@@ -112,17 +111,8 @@ public class TransformInfoForQueryTest {
 
     }
 
-    @DataProvider
-    private Object[][] connectionHandlerTestData() {
-        return new Object[][]{
-                {"prepareStatement", PreparedStatement.class},
-                {"prepareCall", CallableStatement.class}
-        };
-    }
-
-
-    @Test(dataProvider = "connectionHandlerTestData")
-    public void testQueryTransformerInConnectionHandler(String methodName, Class<? extends PreparedStatement> callingClass) throws Throwable {
+    @Test
+    public void testQueryTransformerInConnectionHandlerForPrepareStatement() throws Throwable {
 
         Connection conn = mock(Connection.class);
         QueryTransformer queryTransformer = getMockQueryTransformer(1);
@@ -130,13 +120,36 @@ public class TransformInfoForQueryTest {
         JdbcProxyFactory proxyFactory = mock(JdbcProxyFactory.class);
         ConnectionInvocationHandler handler = new ConnectionInvocationHandler(conn, interceptors, "my-ds", proxyFactory);
 
-        Method method = Connection.class.getMethod(methodName, String.class);
+        Method method = Connection.class.getMethod("prepareStatement", String.class);
 
         handler.invoke(null, method, new Object[]{"my-query"});
 
         verify(queryTransformer).transformQuery(isA(TransformInfo.class));
         assertThat(transformInfo, notNullValue());
-        assertThat(transformInfo.getClazz(), typeCompatibleWith(callingClass));
+        assertThat(transformInfo.getClazz(), typeCompatibleWith(PreparedStatement.class));
+        assertThat(transformInfo.getQuery(), is("my-query"));
+        assertThat(transformInfo.getDataSourceName(), is("my-ds"));
+        assertThat(transformInfo.isBatch(), is(false));
+        assertThat(transformInfo.getCount(), is(0));
+
+    }
+
+    @Test
+    public void testQueryTransformerInConnectionHandlerForPrepareCall() throws Throwable {
+
+        Connection conn = mock(Connection.class);
+        QueryTransformer queryTransformer = getMockQueryTransformer(1);
+        InterceptorHolder interceptors = new InterceptorHolder(QueryExecutionListener.DEFAULT, queryTransformer);
+        JdbcProxyFactory proxyFactory = mock(JdbcProxyFactory.class);
+        ConnectionInvocationHandler handler = new ConnectionInvocationHandler(conn, interceptors, "my-ds", proxyFactory);
+
+        Method method = Connection.class.getMethod("prepareCall", String.class);
+
+        handler.invoke(null, method, new Object[]{"my-query"});
+
+        verify(queryTransformer).transformQuery(isA(TransformInfo.class));
+        assertThat(transformInfo, notNullValue());
+        assertThat(transformInfo.getClazz(), typeCompatibleWith(CallableStatement.class));
         assertThat(transformInfo.getQuery(), is("my-query"));
         assertThat(transformInfo.getDataSourceName(), is("my-ds"));
         assertThat(transformInfo.isBatch(), is(false));

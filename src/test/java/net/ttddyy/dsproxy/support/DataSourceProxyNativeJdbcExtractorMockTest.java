@@ -9,8 +9,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
+import org.junit.Test;
 import org.springframework.jdbc.support.nativejdbc.NativeJdbcExtractor;
-import org.testng.annotations.Test;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;

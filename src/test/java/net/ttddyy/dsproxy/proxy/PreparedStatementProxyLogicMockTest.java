@@ -23,7 +23,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.assertTrue;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -411,7 +410,7 @@ public class PreparedStatementProxyLogicMockTest {
         assertThat(result, is(instanceOf(Connection.class)));
         verify(stat).getConnection();
 
-        assertTrue(Proxy.isProxyClass(result.getClass()));
+        assertThat(Proxy.isProxyClass(result.getClass()), is(true));
 
         InvocationHandler handler = Proxy.getInvocationHandler(result);
         assertThat(handler, is(instanceOf(ConnectionInvocationHandler.class)));

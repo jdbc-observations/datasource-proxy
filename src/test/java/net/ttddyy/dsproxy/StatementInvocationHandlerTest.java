@@ -4,9 +4,9 @@ import net.ttddyy.dsproxy.listener.ChainListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.testng.Assert.*;
+import static org.hamcrest.Matchers.is;
 
 
 /**
@@ -28,7 +28,7 @@ public class StatementInvocationHandlerTest {
     private LastQueryListener lastQueryListener;
     private Statement statement;
 
-    @BeforeMethod
+    @Before
     public void setup() throws Exception {
         testListener = new TestListener();
         lastQueryListener = new LastQueryListener();
@@ -47,7 +47,7 @@ public class StatementInvocationHandlerTest {
         statement = new JdkJdbcProxyFactory().createStatement(stmt, interceptorHolder);
     }
 
-    @AfterMethod
+    @After
     public void teardown() throws Exception {
         TestUtils.shutdown(jdbcDataSource);
     }
@@ -63,31 +63,28 @@ public class StatementInvocationHandlerTest {
         } catch (Exception e) {
             ex = e;
         }
-        assertNotNull(ex);
+        assertThat(ex, is(notNullValue()));
 
-        assertEquals(testListener.beforeCount, 1);
-        assertEquals(testListener.afterCount, 1);
+        assertThat(testListener.beforeCount, is(1));
+        assertThat(testListener.afterCount, is(1));
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
-        assertNotNull(beforeQueries);
-        assertEquals(beforeQueries.size(), 1);
-        assertEquals(beforeQueries.get(0).getQuery(), query);
+        assertThat(beforeQueries, hasSize(1));
+        assertThat(beforeQueries.get(0).getQuery(), is(query));
 
         ExecutionInfo beforeExec = lastQueryListener.getBeforeExecInfo();
-        assertNotNull(beforeExec);
-        assertNull(beforeExec.getThrowable());
+        assertThat(beforeExec.getThrowable(), is(nullValue()));
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
-        assertNotNull(afterQueries);
-        assertEquals(afterQueries.size(), 1);
-        assertEquals(afterQueries.get(0).getQuery(), query);
+        assertThat(afterQueries, hasSize(1));
+        assertThat(afterQueries.get(0).getQuery(), is(query));
 
         ExecutionInfo afterExec = lastQueryListener.getAfterExecInfo();
-        assertNotNull(afterExec);
-        assertNotNull(afterExec.getThrowable());
+        assertThat(afterExec, is(notNullValue()));
+        assertThat(afterExec.getThrowable(), is(notNullValue()));
 
         Throwable thrownException = afterExec.getThrowable();
-        assertSame(thrownException, ex);
+        assertThat(thrownException, sameInstance((Throwable)ex));
 
     }
 
@@ -96,18 +93,16 @@ public class StatementInvocationHandlerTest {
         final String query = "select * from emp;";
         statement.executeQuery(query);
 
-        assertEquals(testListener.beforeCount, 1);
-        assertEquals(testListener.afterCount, 1);
+        assertThat(testListener.beforeCount, is(1));
+        assertThat(testListener.afterCount, is(1));
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
-        assertNotNull(beforeQueries);
-        assertEquals(beforeQueries.size(), 1);
-        assertEquals(beforeQueries.get(0).getQuery(), query);
+        assertThat(beforeQueries, hasSize(1));
+        assertThat(beforeQueries.get(0).getQuery(), is(query));
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
-        assertNotNull(afterQueries);
-        assertEquals(afterQueries.size(), 1);
-        assertEquals(afterQueries.get(0).getQuery(), query);
+        assertThat(afterQueries, hasSize(1));
+        assertThat(afterQueries.get(0).getQuery(), is(query));
     }
 
     @Test
@@ -115,71 +110,65 @@ public class StatementInvocationHandlerTest {
         final String query = "update emp set name = 'bar';";
         statement.executeUpdate(query);
 
-        assertEquals(testListener.beforeCount, 1);
-        assertEquals(testListener.afterCount, 1);
+        assertThat(testListener.beforeCount, is(1));
+        assertThat(testListener.afterCount, is(1));
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
-        assertNotNull(beforeQueries);
-        assertEquals(beforeQueries.size(), 1);
-        assertEquals(beforeQueries.get(0).getQuery(), query);
+        assertThat(beforeQueries, hasSize(1));
+        assertThat(beforeQueries.get(0).getQuery(), is(query));
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
-        assertNotNull(afterQueries);
-        assertEquals(afterQueries.size(), 1);
-        assertEquals(afterQueries.get(0).getQuery(), query);
+        assertThat(afterQueries, hasSize(1));
+        assertThat(afterQueries.get(0).getQuery(), is(query));
     }
 
     @Test
     public void testExecuteBatch() throws Exception {
         final String query1 = "insert into emp ( id, name ) values (3, 'baz');";
         statement.addBatch(query1);
-        assertEquals(testListener.beforeCount, 0);
-        assertEquals(testListener.afterCount, 0);
+        assertThat(testListener.beforeCount, is(0));
+        assertThat(testListener.afterCount, is(0));
 
         final String query2 = "update emp set name = 'FOO';";
         statement.addBatch(query2);
-        assertEquals(testListener.beforeCount, 0);
-        assertEquals(testListener.afterCount, 0);
+        assertThat(testListener.beforeCount, is(0));
+        assertThat(testListener.afterCount, is(0));
 
         int[] result = statement.executeBatch();
-        assertEquals(testListener.beforeCount, 1);
-        assertEquals(testListener.afterCount, 1);
+        assertThat(testListener.beforeCount, is(1));
+        assertThat(testListener.afterCount, is(1));
 
-        assertEquals(result.length, 2);
-        assertEquals(result[0], 1, "one row inserted");
-        assertEquals(result[1], 3, "two rows updated");
+        assertThat(result.length, is(2));
+        assertThat("one row inserted", result[0], is(1));
+        assertThat("two rows updated", result[1], is(3));
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
-        assertNotNull(beforeQueries);
-        assertEquals(beforeQueries.size(), 2);
-        assertEquals(beforeQueries.get(0).getQuery(), query1);
-        assertEquals(beforeQueries.get(1).getQuery(), query2);
+        assertThat(beforeQueries, hasSize(2));
+        assertThat(beforeQueries.get(0).getQuery(), is(query1));
+        assertThat(beforeQueries.get(1).getQuery(), is(query2));
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
-        assertNotNull(afterQueries);
-        assertEquals(afterQueries.size(), 2);
-        assertEquals(afterQueries.get(0).getQuery(), query1);
-        assertEquals(afterQueries.get(1).getQuery(), query2);
+        assertThat(afterQueries, hasSize(2));
+        assertThat(afterQueries.get(0).getQuery(), is(query1));
+        assertThat(afterQueries.get(1).getQuery(), is(query2));
 
     }
 
     @Test
     public void testClearBatch() throws Exception {
         statement.addBatch("insert into emp ( id, name ) values (2, 'bar');");
-        assertEquals(testListener.beforeCount, 0);
-        assertEquals(testListener.afterCount, 0);
+        assertThat(testListener.beforeCount, is(0));
+        assertThat(testListener.afterCount, is(0));
 
         statement.clearBatch();
-        assertEquals(testListener.beforeCount, 0);
-        assertEquals(testListener.afterCount, 0);
+        assertThat(testListener.beforeCount, is(0));
+        assertThat(testListener.afterCount, is(0));
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
-        assertNotNull(beforeQueries);
-        assertEquals(beforeQueries.size(), 0);
+        assertThat(beforeQueries, hasSize(0));
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
-        assertNotNull(afterQueries);
-        assertEquals(afterQueries.size(), 0);
+        assertThat(afterQueries, hasSize(0));
     }
 
     /**

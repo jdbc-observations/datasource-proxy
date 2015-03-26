@@ -4,10 +4,9 @@ import net.ttddyy.dsproxy.listener.CommonsLogLevel;
 import net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import org.apache.commons.logging.LogFactory;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -28,7 +27,7 @@ public class LoggingListenerTest {
     private ProxyDataSource proxyDataSource;
     private CommonsQueryLoggingListener loggingListener;
 
-    @BeforeMethod
+    @Before
     public void setup() throws Exception {
         // TODO: clean up logger intercept mechanism
         System.setProperty("org.apache.commons.logging.Log", InMemoryLog.class.getCanonicalName());
@@ -43,7 +42,7 @@ public class LoggingListenerTest {
         proxyDataSource.setListener(loggingListener);
     }
 
-    @AfterMethod
+    @After
     public void teardown() throws Exception {
         TestUtils.shutdown(jdbcDataSource);
 
@@ -123,34 +122,6 @@ public class LoggingListenerTest {
         return log;
     }
 
-    @DataProvider
-    public Object[][] getLogLevelData() {
-        return new Object[][]{
-                {CommonsLogLevel.DEBUG},
-                {CommonsLogLevel.ERROR},
-                {CommonsLogLevel.FATAL},
-                {CommonsLogLevel.INFO},
-                {CommonsLogLevel.TRACE},
-                {CommonsLogLevel.WARN},
-        };
-    }
-
-    @Test(dataProvider = "getLogLevelData")
-    public void testLogLevel(CommonsLogLevel logLevel) throws Exception {
-        loggingListener.setLogLevel(logLevel);
-
-        Connection connection = proxyDataSource.getConnection();
-        Statement statement = connection.createStatement();
-        statement.executeQuery("select * from emp where id=1");
-        statement.executeQuery("select * from emp where id=2");
-
-
-        final InMemoryLog log = getInMemoryLog();
-
-        verifyMessage(logLevel, log,
-                "select * from emp where id=1", "select * from emp where id=2");
-
-    }
 
     private void verifyMessage(CommonsLogLevel logLevel, InMemoryLog log, String... queries) {
         Map<CommonsLogLevel, List> messages = new HashMap<CommonsLogLevel, List>();

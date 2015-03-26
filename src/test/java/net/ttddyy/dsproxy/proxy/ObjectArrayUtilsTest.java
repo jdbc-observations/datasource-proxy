@@ -1,18 +1,19 @@
 package net.ttddyy.dsproxy.proxy;
 
-import net.ttddyy.dsproxy.proxy.ObjectArrayUtils;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-import static org.testng.Assert.assertEquals;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Tadaya Tsuyukubo
  */
+@RunWith(Parameterized.class)
 public class ObjectArrayUtilsTest {
 
-
-    @DataProvider
-    public Object[][] getIsFirstArgStringData() {
+    @Parameterized.Parameters
+    public static Object[][] getIsFirstArgStringData() {
         return new Object[][]{
                 // expected, input string
                 {true, new Object[]{"str"}},
@@ -24,13 +25,21 @@ public class ObjectArrayUtilsTest {
                 {false, new Object[]{1L, "str"}},
                 {false, new Object[]{1.0, "str"}},
                 {false, new Object[]{'c', "str"}}, // character
-                {false, new Object[]{new Object(), "str"}}, 
+                {false, new Object[]{new Object(), "str"}},
         };
     }
 
-    @Test(dataProvider = "getIsFirstArgStringData")
-    public void testIsFirstArgString(boolean expected, Object[] inputArray) {
-        boolean actual = ObjectArrayUtils.isFirstArgString(inputArray);
-        assertEquals(actual, expected);
+    private boolean expected;
+    private Object[] inputArray;
+
+    public ObjectArrayUtilsTest(boolean expected, Object[] inputArray) {
+        this.expected = expected;
+        this.inputArray = inputArray;
+    }
+
+    @Test
+    public void testIsFirstArgString() {
+        boolean actual = ObjectArrayUtils.isFirstArgString(this.inputArray);
+        assertThat(actual).isEqualTo(this.expected);
     }
 }

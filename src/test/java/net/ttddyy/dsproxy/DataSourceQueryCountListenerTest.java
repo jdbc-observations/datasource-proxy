@@ -1,38 +1,27 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import net.ttddyy.dsproxy.QueryCount;
-import net.ttddyy.dsproxy.QueryCountHolder;
-import net.ttddyy.dsproxy.QueryInfo;
-import net.ttddyy.dsproxy.QueryType;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * @author Tadaya Tsuyukubo
  */
+@RunWith(Parameterized.class)
 public class DataSourceQueryCountListenerTest {
 
-    @BeforeMethod
-    public void setup() {
-        QueryCountHolder.clear();
-    }
-
-    @DataProvider
-    public Object[][] getSingleQueryData() {
+    @Parameterized.Parameters
+    public static Object[][] getSingleQueryData() {
         return new Object[][]{
                 // Query, Query Type
                 {"select * from emp", QueryType.SELECT},
@@ -43,15 +32,29 @@ public class DataSourceQueryCountListenerTest {
         };
     }
 
+    private String query;
+
+    private QueryType expectedType;
+
+    public DataSourceQueryCountListenerTest(String query, QueryType expectedType) {
+        this.query = query;
+        this.expectedType = expectedType;
+    }
+
+    @Before
+    public void setup() {
+        QueryCountHolder.clear();
+    }
+
     @SuppressWarnings("unchecked")
-    @Test(dataProvider = "getSingleQueryData")
-    public void testSingleQuery(String query, QueryType expectedType) {
+    @Test
+    public void testSingleQuery() {
         ExecutionInfo executionInfo = mock(ExecutionInfo.class);
         when(executionInfo.getDataSourceName()).thenReturn("testDS");
         when(executionInfo.getElapsedTime()).thenReturn(123L);
 
         QueryInfo queryInfo = mock(QueryInfo.class);
-        when(queryInfo.getQuery()).thenReturn(query);
+        when(queryInfo.getQuery()).thenReturn(this.query);
 
         List<QueryInfo> queryInfoList = new ArrayList<QueryInfo>();
         queryInfoList.add(queryInfo);
@@ -67,7 +70,7 @@ public class DataSourceQueryCountListenerTest {
         assertThat(queryCount.getCall(), is(equalTo(1)));
         assertThat(queryCount.getTotalNumOfQuery(), is(1));
 
-        if (QueryType.SELECT == expectedType) {
+        if (QueryType.SELECT == this.expectedType) {
             assertThat(queryCount.getSelect(), is(1));
         } else {
             assertThat(queryCount.getSelect(), is(0));

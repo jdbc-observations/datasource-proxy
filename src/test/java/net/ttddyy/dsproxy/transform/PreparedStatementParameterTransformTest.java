@@ -5,11 +5,11 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.hsqldb.jdbc.JDBCDataSource;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -25,7 +25,7 @@ public class PreparedStatementParameterTransformTest {
 
     private DataSource rawDatasource;
 
-    @BeforeMethod
+    @Before
     public void setup() throws Exception {
         // real datasource
         JDBCDataSource rawDataSource = new JDBCDataSource();
@@ -43,7 +43,7 @@ public class PreparedStatementParameterTransformTest {
 
     }
 
-    @AfterMethod
+    @After
     public void teardown() throws Exception {
         TestUtils.shutdown(rawDatasource);
     }

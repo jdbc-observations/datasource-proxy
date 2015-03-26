@@ -5,7 +5,7 @@ import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.jdk.PreparedStatementInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -18,7 +18,6 @@ import java.sql.Statement;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.assertTrue;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -80,7 +79,7 @@ public class ConnectionProxyLogicMockTest {
     private void verifyStatement(Statement statement) {
         assertThat(statement, notNullValue());
 
-        assertTrue(Proxy.isProxyClass(statement.getClass()));
+        assertThat(Proxy.isProxyClass(statement.getClass()), is(true));
         InvocationHandler handler = Proxy.getInvocationHandler(statement);
         assertThat(handler, is(instanceOf(StatementInvocationHandler.class)));
     }
@@ -203,7 +202,7 @@ public class ConnectionProxyLogicMockTest {
     private void verifyPreparedStatement(PreparedStatement statement) {
         assertThat(statement, notNullValue());
 
-        assertTrue(Proxy.isProxyClass(statement.getClass()));
+        assertThat(Proxy.isProxyClass(statement.getClass()), is(true));
         InvocationHandler handler = Proxy.getInvocationHandler(statement);
         assertThat(handler, is(instanceOf(PreparedStatementInvocationHandler.class)));
     }

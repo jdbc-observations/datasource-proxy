@@ -1,15 +1,15 @@
 package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.support.ProxyDataSource;
-import org.hsqldb.jdbc.JDBCDataSource;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.sql.*;
 
-import static org.testng.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * TODO: clean up & rewrite
@@ -21,7 +21,7 @@ public class ProxyDataSourceTest {
     private ProxyDataSource proxyDataSource;
     private TestListener listener;
 
-    @BeforeMethod
+    @Before
     public void setup() throws Exception {
         DataSource dataSource = TestUtils.getDataSourceWithData();
 
@@ -32,7 +32,7 @@ public class ProxyDataSourceTest {
         proxyDataSource.setListener(listener);
     }
 
-    @AfterMethod
+    @After
     public void teardown() throws Exception {
         TestUtils.shutdown(proxyDataSource);
     }
@@ -54,8 +54,8 @@ public class ProxyDataSourceTest {
         Statement st = conn.createStatement();
         st.executeUpdate("create table aa ( a varchar(5) primary key );");
 
-        assertEquals(listener.getBeforeCount(), 1);
-        assertEquals(listener.getAfterCount(), 1);
+        assertThat(listener.getBeforeCount()).isEqualTo(1);
+        assertThat(listener.getAfterCount()).isEqualTo(1);
     }
 
     @Test
@@ -64,8 +64,8 @@ public class ProxyDataSourceTest {
         Statement st = conn.createStatement();
         st.executeQuery("SELECT * FROM INFORMATION_SCHEMA.TABLES;");  // hsqldb system table
 
-        assertEquals(listener.getBeforeCount(), 1);
-        assertEquals(listener.getAfterCount(), 1);
+        assertThat(listener.getBeforeCount()).isEqualTo(1);
+        assertThat(listener.getAfterCount()).isEqualTo(1);
     }
 
     @Test
@@ -74,8 +74,8 @@ public class ProxyDataSourceTest {
         Statement st = conn.createStatement();
         st.executeQuery("select * from emp;");
 
-        assertEquals(listener.getBeforeCount(), 1);
-        assertEquals(listener.getAfterCount(), 1);
+        assertThat(listener.getBeforeCount()).isEqualTo(1);
+        assertThat(listener.getAfterCount()).isEqualTo(1);
     }
 
     @Test
@@ -84,8 +84,8 @@ public class ProxyDataSourceTest {
         PreparedStatement st = conn.prepareStatement("select * from emp");
         st.executeQuery();
 
-        assertEquals(listener.getBeforeCount(), 1);
-        assertEquals(listener.getAfterCount(), 1);
+        assertThat(listener.getBeforeCount()).isEqualTo(1);
+        assertThat(listener.getAfterCount()).isEqualTo(1);
     }
 
     @Test

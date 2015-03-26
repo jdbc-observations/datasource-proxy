@@ -5,9 +5,9 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.hsqldb.jdbc.JDBCDataSource;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -29,7 +29,7 @@ public class StatementQueryTransformTest {
     private DataSource rawDatasource;
     private List<String> interceptedQueries = new ArrayList<String>();
 
-    @BeforeMethod
+    @Before
     public void setup() throws Exception {
         // real datasource
         JDBCDataSource rawDataSource = new JDBCDataSource();
@@ -47,7 +47,7 @@ public class StatementQueryTransformTest {
     }
 
 
-    @AfterMethod
+    @After
     public void teardown() throws Exception {
         TestUtils.shutdown(rawDatasource);
         interceptedQueries.clear();

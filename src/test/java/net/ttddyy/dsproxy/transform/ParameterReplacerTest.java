@@ -2,7 +2,7 @@ package net.ttddyy.dsproxy.transform;
 
 import net.ttddyy.dsproxy.proxy.ParameterOperationHolder;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.SortedMap;

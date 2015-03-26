@@ -6,8 +6,8 @@ import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.PreparedStatementProxyLogic;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.sql.CallableStatement;
@@ -25,7 +25,7 @@ public class TransformInfoForParametersTest {
 
     private TransformInfo transformInfo; // work around to pass obj in inner class
 
-    @BeforeMethod
+    @Before
     public void setUp() {
         this.transformInfo = null;
     }

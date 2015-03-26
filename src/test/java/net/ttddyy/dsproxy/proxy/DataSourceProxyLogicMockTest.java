@@ -4,7 +4,7 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
@@ -15,7 +15,6 @@ import java.sql.Connection;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.assertTrue;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -46,7 +45,7 @@ public class DataSourceProxyLogicMockTest {
     private void verifyConnection(Connection conn) {
         assertThat(conn, notNullValue());
 
-        assertTrue(Proxy.isProxyClass(conn.getClass()));
+        assertThat(Proxy.isProxyClass(conn.getClass()), is(true));
         InvocationHandler handler = Proxy.getInvocationHandler(conn);
         assertThat(handler, is(instanceOf(ConnectionInvocationHandler.class)));
 

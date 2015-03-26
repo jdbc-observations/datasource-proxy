@@ -4,19 +4,16 @@ import net.ttddyy.dsproxy.listener.ChainListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.testng.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -29,7 +26,7 @@ public class PreapareStatementQueryTest {
     private Connection connection;
 
 
-    @BeforeMethod
+    @Before
     public void setup() throws Exception {
         testListener = new TestListener();
         lastQueryListener = new LastQueryListener();
@@ -46,7 +43,7 @@ public class PreapareStatementQueryTest {
         connection = new JdkJdbcProxyFactory().createConnection(conn, interceptorHolder);
     }
 
-    @AfterMethod
+    @After
     public void teardown() throws Exception {
         TestUtils.shutdown(jdbcDataSource);
     }
@@ -63,31 +60,29 @@ public class PreapareStatementQueryTest {
         } catch (Exception e) {
             ex = e;
         }
-        assertNotNull(ex);
+        assertThat(ex).isNotNull();
 
-        assertEquals(testListener.beforeCount, 1);
-        assertEquals(testListener.afterCount, 1);
+        assertThat(testListener.beforeCount).isEqualTo(1);
+        assertThat(testListener.afterCount).isEqualTo(1);
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
-        assertNotNull(beforeQueries);
-        assertEquals(beforeQueries.size(), 1);
-        assertEquals(beforeQueries.get(0).getQuery(), query);
+        assertThat(beforeQueries).hasSize(1);
+        assertThat(beforeQueries.get(0).getQuery()).isEqualTo(query);
 
         ExecutionInfo beforeExec = lastQueryListener.getBeforeExecInfo();
-        assertNotNull(beforeExec);
-        assertNull(beforeExec.getThrowable());
+        assertThat(beforeExec).isNotNull();
+        assertThat(beforeExec.getThrowable()).isNull();
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
-        assertNotNull(afterQueries);
-        assertEquals(afterQueries.size(), 1);
-        assertEquals(afterQueries.get(0).getQuery(), query);
+        assertThat(afterQueries).hasSize(1);
+        assertThat(afterQueries.get(0).getQuery()).isEqualTo(query);
 
         ExecutionInfo afterExec = lastQueryListener.getAfterExecInfo();
-        Assert.assertNotNull(afterExec);
-        Assert.assertNotNull(afterExec.getThrowable());
+        assertThat(afterExec).isNotNull();
+        assertThat(afterExec.getThrowable()).isNotNull();
 
         Throwable thrownException = afterExec.getThrowable();
-        assertSame(thrownException, ex);
+        assertThat(thrownException).isSameAs(ex);
 
     }
 
@@ -97,20 +92,18 @@ public class PreapareStatementQueryTest {
         PreparedStatement stat = connection.prepareStatement(query);
         stat.executeQuery();
 
-        assertEquals(testListener.beforeCount, 1);
-        assertEquals(testListener.afterCount, 1);
+        assertThat(testListener.beforeCount).isEqualTo(1);
+        assertThat(testListener.afterCount).isEqualTo(1);
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
-        assertNotNull(beforeQueries);
-        assertEquals(beforeQueries.size(), 1);
-        assertEquals(beforeQueries.get(0).getQuery(), query);
-        assertTrue(beforeQueries.get(0).getQueryArgs().isEmpty());
+        assertThat(beforeQueries).hasSize(1);
+        assertThat(beforeQueries.get(0).getQuery()).isEqualTo(query);
+        assertThat(beforeQueries.get(0).getQueryArgs()).isEmpty();
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
-        assertNotNull(afterQueries);
-        assertEquals(afterQueries.size(), 1);
-        assertEquals(afterQueries.get(0).getQuery(), query);
-        assertTrue(afterQueries.get(0).getQueryArgs().isEmpty());
+        assertThat(afterQueries).hasSize(1);
+        assertThat(afterQueries.get(0).getQuery()).isEqualTo(query);
+        assertThat(afterQueries.get(0).getQueryArgs()).isEmpty();
     }
 
     @Test
@@ -120,26 +113,22 @@ public class PreapareStatementQueryTest {
         stat.setInt(1, 1);
         stat.executeQuery();
 
-        assertEquals(testListener.beforeCount, 1);
-        assertEquals(testListener.afterCount, 1);
+        assertThat(testListener.beforeCount).isEqualTo(1);
+        assertThat(testListener.afterCount).isEqualTo(1);
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
-        assertNotNull(beforeQueries);
-        assertEquals(beforeQueries.size(), 1);
+        assertThat(beforeQueries).hasSize(1);
         final QueryInfo beforeInfo = beforeQueries.get(0);
-        assertEquals(beforeInfo.getQuery(), query);
-        assertNotNull(beforeInfo.getQueryArgs());
-        assertEquals(beforeInfo.getQueryArgs().size(), 1);
-        assertEquals(beforeInfo.getQueryArgs().get(0), 1, "id=1");
+        assertThat(beforeInfo.getQuery()).isEqualTo(query);
+        assertThat(beforeInfo.getQueryArgs()).hasSize(1);
+        assertThat(beforeInfo.getQueryArgs().get(0)).as("id=1").isEqualTo(1);
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
-        assertNotNull(afterQueries);
-        assertEquals(afterQueries.size(), 1);
+        assertThat(afterQueries).hasSize(1);
         final QueryInfo afterInfo = afterQueries.get(0);
-        assertEquals(afterInfo.getQuery(), query);
-        assertNotNull(afterInfo.getQueryArgs());
-        assertEquals(afterInfo.getQueryArgs().size(), 1);
-        assertEquals(afterInfo.getQueryArgs().get(0), 1, "id=1");
+        assertThat(afterInfo.getQuery()).isEqualTo(query);
+        assertThat(afterInfo.getQueryArgs()).hasSize(1);
+        assertThat(afterInfo.getQueryArgs().get(0)).as("id=1").isEqualTo(1);
     }
 
     @Test
@@ -150,12 +139,11 @@ public class PreapareStatementQueryTest {
         stat.setInt(2, 1);
         stat.executeUpdate();
 
-        assertEquals(testListener.beforeCount, 1);
-        assertEquals(testListener.afterCount, 1);
+        assertThat(testListener.beforeCount).isEqualTo(1);
+        assertThat(testListener.afterCount).isEqualTo(1);
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
-        assertNotNull(beforeQueries);
-        assertEquals(beforeQueries.size(), 1);
+        assertThat(beforeQueries).hasSize(1);
         verifyQueryArgs(beforeQueries.get(0), query, "BAZ", 1);
     }
 
@@ -167,24 +155,22 @@ public class PreapareStatementQueryTest {
         stat.setInt(2, 1);
         stat.executeUpdate();
 
-        assertEquals(testListener.beforeCount, 1);
-        assertEquals(testListener.afterCount, 1);
+        assertThat(testListener.beforeCount).isEqualTo(1);
+        assertThat(testListener.afterCount).isEqualTo(1);
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
-        assertNotNull(beforeQueries);
-        assertEquals(beforeQueries.size(), 1);
+        assertThat(beforeQueries).hasSize(1);
         verifyQueryArgs(beforeQueries.get(0), query, "BAZ", 1);
 
         // reuse name="BAZ"
         stat.setInt(2, 2);
         stat.executeUpdate();
 
-        assertEquals(testListener.beforeCount, 2);
-        assertEquals(testListener.afterCount, 2);
+        assertThat(testListener.beforeCount).isEqualTo(2);
+        assertThat(testListener.afterCount).isEqualTo(2);
 
         beforeQueries = lastQueryListener.getBeforeQueries();
-        assertNotNull(beforeQueries);
-        assertEquals(beforeQueries.size(), 1);
+        assertThat(beforeQueries).hasSize(1);
         verifyQueryArgs(beforeQueries.get(0), query, "BAZ", 2);
     }
 
@@ -202,12 +188,11 @@ public class PreapareStatementQueryTest {
 
         stat.executeUpdate();
 
-        assertEquals(testListener.beforeCount, 1);
-        assertEquals(testListener.afterCount, 1);
+        assertThat(testListener.beforeCount).isEqualTo(1);
+        assertThat(testListener.afterCount).isEqualTo(1);
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
-        assertNotNull(beforeQueries);
-        assertEquals(beforeQueries.size(), 1);
+        assertThat(beforeQueries).hasSize(1);
         verifyQueryArgs(beforeQueries.get(0), query, "BAZ", 2);
     }
 
@@ -216,17 +201,16 @@ public class PreapareStatementQueryTest {
         final List<?> args = info.getQueryArgs();
 
         // verify query
-        assertEquals(actualQuery, expectedQuery);
+        assertThat(actualQuery).isEqualTo(expectedQuery);
 
         // verify args
         final int size = expectedValues.length;
-        assertNotNull(args);
-        assertEquals(args.size(), size);
+        assertThat(args).hasSize(size);
 
         for (int i = 0; i < size; i++) {
             Object expected = expectedValues[i];
             Object actual = args.get(i);
-            assertEquals(actual, expected);
+            assertThat(actual).isEqualTo(expected);
         }
     }
 
@@ -238,30 +222,26 @@ public class PreapareStatementQueryTest {
         stat.setInt(2, 1);
         stat.addBatch();
 
-        assertEquals(testListener.beforeCount, 0);
-        assertEquals(testListener.afterCount, 0);
+        assertThat(testListener.beforeCount).isEqualTo(0);
+        assertThat(testListener.afterCount).isEqualTo(0);
 
         stat.setString(1, "BAR");
         stat.setInt(2, 2);
         stat.addBatch();
 
-        assertEquals(testListener.beforeCount, 0);
-        assertEquals(testListener.afterCount, 0);
+        assertThat(testListener.beforeCount).isEqualTo(0);
+        assertThat(testListener.afterCount).isEqualTo(0);
 
         int[] updateCount = stat.executeBatch();
 
-        assertEquals(testListener.beforeCount, 1);
-        assertEquals(testListener.afterCount, 1);
+        assertThat(testListener.beforeCount).isEqualTo(1);
+        assertThat(testListener.afterCount).isEqualTo(1);
 
-        assertNotNull(updateCount);
-        assertEquals(updateCount.length, 2);
-        assertEquals(updateCount[0], 1);
-        assertEquals(updateCount[1], 1);
+        assertThat(updateCount).containsSequence(1, 1);
 
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
-        assertNotNull(beforeQueries);
-        assertEquals(beforeQueries.size(), 2);
+        assertThat(beforeQueries).hasSize(2);
         verifyQueryArgs(beforeQueries.get(0), query, "FOO", 1);
         verifyQueryArgs(beforeQueries.get(1), query, "BAR", 2);
 
@@ -299,25 +279,23 @@ public class PreapareStatementQueryTest {
         stat.executeBatch();  // 1st execution
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
-        assertThat(afterQueries, notNullValue());
-        assertThat("should pass two QueryInfo (FOO,BAR)", afterQueries, hasSize(2));
+        assertThat(afterQueries).as("should pass two QueryInfo (FOO,BAR)").hasSize(2);
 
         stat.setInt(1, 300);
         stat.setString(2, "BAZ");
         stat.addBatch();
 
         int[] updateCount = stat.executeBatch();  // 2nd execution
-        assertThat(updateCount, notNullValue());
-        assertThat(updateCount.length, is(1));
+        assertThat(updateCount).hasSize(1);
 
         // second execution should pass only one QueryInfo to listener
         afterQueries = lastQueryListener.getAfterQueries();
-        assertThat(afterQueries, notNullValue());
-        assertThat("should pass one QueryInfo (BAZ)", afterQueries, hasSize(1));
+        assertThat(afterQueries).isNotNull();
+        assertThat(afterQueries).as("should pass one QueryInfo (BAZ)").hasSize(1);
 
         // verify actual data. 3 rows must be inserted, in addition to original data(2rows)
         int count = TestUtils.countTable(jdbcDataSource, "emp");
-        assertThat("2 existing data(foo,bar) and 3 insert(FOO,BAR,BAZ).", count, is(5));
+        assertThat(count).isEqualTo(5).as("2 existing data(foo,bar) and 3 insert(FOO,BAR,BAZ).");
 
     }
 

@@ -20,9 +20,8 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 
 /**
@@ -211,7 +210,7 @@ public class StatementProxyLogicMockTest {
         Object result = logic.invoke(method, new Object[]{query});
 
         assertThat(result, is(instanceOf(boolean.class)));
-        assertTrue((Boolean) result);
+        assertThat((Boolean) result, is(true));
         verify(stat).execute(query);
         verifyListener(listener, "execute", query, query);
     }
@@ -250,7 +249,7 @@ public class StatementProxyLogicMockTest {
         Object result = logic.invoke(method, new Object[]{query, Statement.RETURN_GENERATED_KEYS});
 
         assertThat(result, is(instanceOf(boolean.class)));
-        assertTrue((Boolean) result);
+        assertThat((Boolean) result, is(true));
         verify(stat).execute(query, Statement.RETURN_GENERATED_KEYS);
         verifyListener(listener, "execute", query, query, Statement.RETURN_GENERATED_KEYS);
     }
@@ -291,7 +290,7 @@ public class StatementProxyLogicMockTest {
         Object result = logic.invoke(method, new Object[]{query, columnIndexes});
 
         assertThat(result, is(instanceOf(boolean.class)));
-        assertTrue((Boolean) result);
+        assertThat((Boolean) result, is(true));
         verify(stat).execute(query, columnIndexes);
         verifyListener(listener, "execute", query, query, columnIndexes);
     }
@@ -333,7 +332,7 @@ public class StatementProxyLogicMockTest {
         Object result = logic.invoke(method, new Object[]{query, columnNames});
 
         assertThat(result, is(instanceOf(boolean.class)));
-        assertTrue((Boolean) result);
+        assertThat((Boolean) result, is(true));
         verify(stat).execute(query, columnNames);
         verifyListener(listener, "execute", query, query, columnNames);
 
@@ -700,7 +699,7 @@ public class StatementProxyLogicMockTest {
         assertThat(result, is(instanceOf(Connection.class)));
         verify(stmt).getConnection();
 
-        assertTrue(Proxy.isProxyClass(result.getClass()));
+        assertThat(Proxy.isProxyClass(result.getClass()), is(true));
 
         InvocationHandler handler = Proxy.getInvocationHandler(result);
         assertThat(handler, is(instanceOf(ConnectionInvocationHandler.class)));
