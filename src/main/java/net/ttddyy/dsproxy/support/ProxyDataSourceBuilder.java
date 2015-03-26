@@ -31,6 +31,10 @@ public class ProxyDataSourceBuilder {
         return new ProxyDataSourceBuilder(dataSource);
     }
 
+    public static ProxyDataSourceBuilder create(String dataSourceName, DataSource dataSource) {
+        return new ProxyDataSourceBuilder(dataSource).name(dataSourceName);
+    }
+
     public ProxyDataSourceBuilder() {
     }
 
