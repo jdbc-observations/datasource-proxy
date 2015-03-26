@@ -19,15 +19,15 @@ public class QueryInfoBuilder {
         return this;
     }
 
-    public QueryInfoBuilder queryArgs(List<?> queryArgs) {
-        this.queryArgs = queryArgs;
-        return this;
-    }
+//    public QueryInfoBuilder queryArgs(List<?> queryArgs) {
+//        this.queryArgs = queryArgs;
+//        return this;
+//    }
 
     public QueryInfo build() {
         QueryInfo queryInfo = new QueryInfo();
         queryInfo.setQuery(query);
-        queryInfo.setQueryArgs(queryArgs);
+//        queryInfo.setQueryArgsList(queryArgs);
         return queryInfo;
     }
 }

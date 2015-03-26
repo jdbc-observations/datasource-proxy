@@ -376,8 +376,8 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
         assertThat(queryInfoList.size(), is(1));
 
-        assertThat(queryInfoList.get(0).getQueryArgs(), is(notNullValue()));
-        assertThat(queryInfoList.get(0).getQueryArgs().size(), is(0));
+        assertThat(queryInfoList.get(0).getQueryArgsList(), hasSize(1));
+        assertThat("Args should be empty", queryInfoList.get(0).getQueryArgsList().get(0), hasSize(0));
 
     }
 
@@ -650,7 +650,9 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery(), is(equalTo(query)));
 
-        List<?> queryArgs = queryInfo.getQueryArgs();
+        List<List<?>> queryArgsList = queryInfo.getQueryArgsList();
+        assertThat("non-batch exec should have only one params.", queryArgsList, hasSize(1));
+        List<?> queryArgs = queryArgsList.get(0);
         if (ParamStatus.NO_PARAM != paramStatus) {
             if (ParamStatus.BY_POSITION == paramStatus) {
                 assertThat(queryArgs.size(), is(PARAMS.size()));

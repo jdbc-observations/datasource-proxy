@@ -8,15 +8,21 @@ import java.util.List;
  */
 public class QueryInfo {
     private String query;
-    private List<?> queryArgs = new ArrayList<Object>();
+    private List<List<?>> queryArgsList = new ArrayList<List<?>>();
 
     public QueryInfo() {
     }
 
-    public QueryInfo(String query, List queryArgs) {
+    public QueryInfo(String query) {
         this.query = query;
-        if (queryArgs != null) {
-            this.queryArgs.addAll(queryArgs);
+    }
+
+    public QueryInfo(String query, List<?> firstArgs) {
+        this.query = query;
+        if (firstArgs != null) {
+            List<Object> args = new ArrayList<Object>(firstArgs.size());
+            args.addAll(firstArgs);
+            this.queryArgsList.add(args);
         }
     }
 
@@ -28,12 +34,12 @@ public class QueryInfo {
         this.query = query;
     }
 
-    public List<?> getQueryArgs() {
-        return queryArgs;
+    public List<List<?>> getQueryArgsList() {
+        return queryArgsList;
     }
 
-    public void setQueryArgs(List<?> queryArgs) {
-        this.queryArgs = queryArgs;
+    public void setQueryArgsList(List<List<?>> queryArgsList) {
+        this.queryArgsList = queryArgsList;
     }
 
 }

@@ -112,8 +112,8 @@ public class LoggingListenerTest {
 
         final InMemoryLog log = getInMemoryLog();
         verifyMessage(CommonsLogLevel.DEBUG, log, "update emp set name = ? where id = ?");
-        verifyMessage(CommonsLogLevel.DEBUG, log, "(FOO,1)");
-        verifyMessage(CommonsLogLevel.DEBUG, log, "(BAR,2)");
+        verifyMessage(CommonsLogLevel.DEBUG, log, "[FOO, 1]");
+        verifyMessage(CommonsLogLevel.DEBUG, log, "[BAR, 2]");
     }
 
     private InMemoryLog getInMemoryLog() {

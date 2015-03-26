@@ -164,12 +164,16 @@ public class PreparedStatementProxyLogicMockTest {
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
         assertThat(queryInfoList.size(), is(1));
         QueryInfo queryInfo = queryInfoList.get(0);
-        assertThat(queryInfo.getQuery(), is(equalTo(query)));
+        assertThat(queryInfo.getQuery(), is(query));
 
-        List<?> queryArgs = queryInfo.getQueryArgs();
-        assertThat(queryArgs.size(), is(expectedQueryArgs.length));
+        List<List<?>> queryArgsList = queryInfo.getQueryArgsList();
+        assertThat("non-batch query size is always 1", queryArgsList, hasSize(1));
 
-        for (int i = 0; i < queryArgs.size(); i++) {
+        List<?> queryArgs = queryArgsList.get(0);
+        int argsSize = queryArgs.size();
+        assertThat(argsSize, is(expectedQueryArgs.length));
+
+        for (int i = 0; i < argsSize; i++) {
             Object value = queryArgs.get(i);
             Object expected = expectedQueryArgs[i];
 
@@ -347,8 +351,8 @@ public class PreparedStatementProxyLogicMockTest {
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
         assertThat(queryInfoList.size(), is(1));
 
-        assertThat(queryInfoList.get(0).getQueryArgs(), is(notNullValue()));
-        assertThat(queryInfoList.get(0).getQueryArgs().size(), is(0));
+        assertThat(queryInfoList.get(0).getQueryArgsList(), hasSize(1));
+        assertThat("Args should be empty", queryInfoList.get(0).getQueryArgsList().get(0), hasSize(0));
 
 
     }

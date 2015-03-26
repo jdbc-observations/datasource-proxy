@@ -98,12 +98,16 @@ public class PreapareStatementQueryTest {
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
         assertThat(beforeQueries).hasSize(1);
         assertThat(beforeQueries.get(0).getQuery()).isEqualTo(query);
-        assertThat(beforeQueries.get(0).getQueryArgs()).isEmpty();
+        assertThat(beforeQueries.get(0).getQueryArgsList()).hasSize(1);
+        List<?> args = beforeQueries.get(0).getQueryArgsList().get(0);
+        assertThat(args).isEmpty();
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
         assertThat(afterQueries).hasSize(1);
         assertThat(afterQueries.get(0).getQuery()).isEqualTo(query);
-        assertThat(afterQueries.get(0).getQueryArgs()).isEmpty();
+        assertThat(afterQueries.get(0).getQueryArgsList()).hasSize(1);
+        args = afterQueries.get(0).getQueryArgsList().get(0);
+        assertThat(args).isEmpty();
     }
 
     @Test
@@ -120,15 +124,19 @@ public class PreapareStatementQueryTest {
         assertThat(beforeQueries).hasSize(1);
         final QueryInfo beforeInfo = beforeQueries.get(0);
         assertThat(beforeInfo.getQuery()).isEqualTo(query);
-        assertThat(beforeInfo.getQueryArgs()).hasSize(1);
-        assertThat(beforeInfo.getQueryArgs().get(0)).as("id=1").isEqualTo(1);
+        assertThat(beforeInfo.getQueryArgsList()).hasSize(1);
+        List<?> args = beforeInfo.getQueryArgsList().get(0);
+        assertThat(args).hasSize(1);
+        assertThat(args.get(0)).as("id=1").isEqualTo(1);
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
         assertThat(afterQueries).hasSize(1);
         final QueryInfo afterInfo = afterQueries.get(0);
         assertThat(afterInfo.getQuery()).isEqualTo(query);
-        assertThat(afterInfo.getQueryArgs()).hasSize(1);
-        assertThat(afterInfo.getQueryArgs().get(0)).as("id=1").isEqualTo(1);
+        assertThat(afterInfo.getQueryArgsList()).hasSize(1);
+        args = afterInfo.getQueryArgsList().get(0);
+        assertThat(args).hasSize(1);
+        assertThat(args.get(0)).as("id=1").isEqualTo(1);
     }
 
     @Test
@@ -198,16 +206,18 @@ public class PreapareStatementQueryTest {
 
     private void verifyQueryArgs(QueryInfo info, String expectedQuery, Object... expectedValues) {
         final String actualQuery = info.getQuery();
-        final List<?> args = info.getQueryArgs();
+        final List<List<?>> argsList = info.getQueryArgsList();
 
         // verify query
         assertThat(actualQuery).isEqualTo(expectedQuery);
 
         // verify args
-        final int size = expectedValues.length;
-        assertThat(args).hasSize(size);
+        assertThat(argsList).as("non-batch execution argsList should have size 1").hasSize(1);
+        final int expectedArgsSize = expectedValues.length;
+        List<?> args = argsList.get(0);
+        assertThat(args).hasSize(expectedArgsSize);
 
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < expectedArgsSize; i++) {
             Object expected = expectedValues[i];
             Object actual = args.get(i);
             assertThat(actual).isEqualTo(expected);
@@ -241,18 +251,21 @@ public class PreapareStatementQueryTest {
 
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
-        assertThat(beforeQueries).hasSize(2);
-        verifyQueryArgs(beforeQueries.get(0), query, "FOO", 1);
-        verifyQueryArgs(beforeQueries.get(1), query, "BAR", 2);
+        assertThat(beforeQueries).as("PreparedStatement batch execution will have always one query").hasSize(1);
+        QueryInfo queryInfo = beforeQueries.get(0);
 
-//        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
-//        assertNotNull(afterQueries);
-//        assertEquals(afterQueries.size(), 1);
-//        final QueryInfo afterInfo = afterQueries.get(0);
-//        assertEquals(afterInfo.getQuery(), query);
-//        assertNotNull(afterInfo.getQueryArgs());
-//        assertEquals(afterInfo.getQueryArgs().size(), 1);
-//        assertEquals(afterInfo.getQueryArgs().get(0), 1, "id=1");
+        assertThat(queryInfo.getQuery()).isEqualTo(query);
+        assertThat(queryInfo.getQueryArgsList()).hasSize(2);
+        assertThat(queryInfo.getQueryArgsList().get(0)).containsExactly("FOO", 1);
+        assertThat(queryInfo.getQueryArgsList().get(1)).containsExactly("BAR", 2);
+
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
+        assertThat(afterQueries).as("PreparedStatement batch execution will have always one query").hasSize(1);
+        queryInfo = afterQueries.get(0);
+        assertThat(queryInfo.getQuery()).isEqualTo(query);
+        assertThat(queryInfo.getQueryArgsList()).hasSize(2);
+        assertThat(queryInfo.getQueryArgsList().get(0)).containsExactly("FOO", 1);
+        assertThat(queryInfo.getQueryArgsList().get(1)).containsExactly("BAR", 2);
     }
 
     public void testExecuteBatchWithParamReuse() {
@@ -279,7 +292,9 @@ public class PreapareStatementQueryTest {
         stat.executeBatch();  // 1st execution
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
-        assertThat(afterQueries).as("should pass two QueryInfo (FOO,BAR)").hasSize(2);
+        assertThat(afterQueries).as("should has one query").hasSize(1);
+        QueryInfo queryInfo = afterQueries.get(0);
+        assertThat(queryInfo.getQueryArgsList()).as("should have two batch params").hasSize(2);
 
         stat.setInt(1, 300);
         stat.setString(2, "BAZ");
@@ -292,6 +307,8 @@ public class PreapareStatementQueryTest {
         afterQueries = lastQueryListener.getAfterQueries();
         assertThat(afterQueries).isNotNull();
         assertThat(afterQueries).as("should pass one QueryInfo (BAZ)").hasSize(1);
+        queryInfo = afterQueries.get(0);
+        assertThat(queryInfo.getQueryArgsList()).as("should have one batch params").hasSize(1);
 
         // verify actual data. 3 rows must be inserted, in addition to original data(2rows)
         int count = TestUtils.countTable(jdbcDataSource, "emp");

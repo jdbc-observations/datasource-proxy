@@ -135,7 +135,7 @@ public class StatementProxyLogic {
         if ("executeBatch".equals(methodName)) {
 
             for (String batchQuery : batchQueries) {
-                queries.add(new QueryInfo(batchQuery, null));
+                queries.add(new QueryInfo(batchQuery));
             }
             batchSize = batchQueries.size();
             batchQueries.clear();

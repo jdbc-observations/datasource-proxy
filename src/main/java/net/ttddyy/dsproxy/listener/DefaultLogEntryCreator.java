@@ -57,7 +57,7 @@ public class DefaultLogEntryCreator implements LogEntryCreator {
         sb.append("Params:[");
         for (QueryInfo queryInfo : queryInfoList) {
             sb.append("(");
-            for (Object arg : queryInfo.getQueryArgs()) {
+            for (Object arg : queryInfo.getQueryArgsList()) {
                 sb.append(arg);
                 sb.append(',');
             }

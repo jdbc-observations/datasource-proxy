@@ -136,9 +136,13 @@ public class PreparedStatementProxyLogic {
 
         if ("executeBatch".equals(methodName)) {
 
+            // one query with multiple parameters
+            QueryInfo queryInfo = new QueryInfo(this.query);
             for (ParameterOperationHolder params : batchParameters) {
-                queries.add(new QueryInfo(this.query, getQueryParameters(params)));
+                queryInfo.getQueryArgsList().add(getQueryParameters(params));
             }
+            queries.add(queryInfo);
+
             batchSize = batchParameters.size();
             batchParameters.clear();
             isBatchExecution = true;

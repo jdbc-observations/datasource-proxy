@@ -41,6 +41,8 @@ public class DefaultLogEntryCreatorTest {
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Statement, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[()]");
     }
 
+    // TODO: for batch execution (Statement and PreparedStatement)
+
     @Test
     public void statementType() throws Exception {
         ExecutionInfo executionInfo;
