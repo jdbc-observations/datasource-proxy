@@ -33,7 +33,7 @@ public class PreparedStatementProxyLogic {
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
     private StatementType statementType = StatementType.PREPARED;
 
-    private List<BatchQueryHolder> batchQueries = new ArrayList<BatchQueryHolder>();
+    private List<ParameterOperationHolder> batchParameters = new ArrayList<ParameterOperationHolder>();
 
     public PreparedStatementProxyLogic() {
     }
@@ -109,14 +109,17 @@ public class PreparedStatementProxyLogic {
                 // Batch parameter operation
                 if ("addBatch".equals(methodName)) {
 
-                    transformParameters(true, batchQueries.size());
+                    transformParameters(true, batchParameters.size());
 
-                    BatchQueryHolder queryHolder = new BatchQueryHolder();
-                    queryHolder.setQuery(query);
-                    queryHolder.setArgs(getQueryParameters(parameterOperationHolder));
-                    batchQueries.add(queryHolder);
+                    // copy values
+                    ParameterOperationHolder newParamOpHolder = new ParameterOperationHolder();
+                    newParamOpHolder.getParamsByIndex().putAll(parameterOperationHolder.getParamsByIndex());
+                    newParamOpHolder.getParamsByName().putAll(parameterOperationHolder.getParamsByName());
+
+                    batchParameters.add(newParamOpHolder);
+                    parameterOperationHolder.clear();
                 } else if ("clearBatch".equals(methodName)) {
-                    batchQueries.clear();
+                    batchParameters.clear();
                 }
             }
 
@@ -133,11 +136,11 @@ public class PreparedStatementProxyLogic {
 
         if ("executeBatch".equals(methodName)) {
 
-            for (BatchQueryHolder queryHolder : batchQueries) {
-                queries.add(new QueryInfo(queryHolder.getQuery(), queryHolder.getArgs()));
+            for (ParameterOperationHolder params : batchParameters) {
+                queries.add(new QueryInfo(this.query, getQueryParameters(params)));
             }
-            batchSize = batchQueries.size();
-            batchQueries.clear();
+            batchSize = batchParameters.size();
+            batchParameters.clear();
             isBatchExecution = true;
 
         } else if ("executeQuery".equals(methodName) || "executeUpdate".equals(methodName)
