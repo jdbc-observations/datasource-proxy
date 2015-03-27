@@ -15,7 +15,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Shared logic for {@link PreparedStatement} and {@link CallableStatement} invocation.
@@ -28,12 +30,12 @@ public class PreparedStatementProxyLogic {
     private PreparedStatement ps;
     private String query;
     private String dataSourceName;
-    private ParameterOperationHolder parameterOperationHolder = new ParameterOperationHolder();
+    private Map<Object, ParameterSetOperation> parameters = new LinkedHashMap<Object, ParameterSetOperation>();
     private InterceptorHolder interceptorHolder;
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
     private StatementType statementType = StatementType.PREPARED;
 
-    private List<ParameterOperationHolder> batchParameters = new ArrayList<ParameterOperationHolder>();
+    private List<Map<Object, ParameterSetOperation>> batchParameters = new ArrayList<Map<Object, ParameterSetOperation>>();
 
     public PreparedStatementProxyLogic() {
     }
@@ -94,14 +96,9 @@ public class PreparedStatementProxyLogic {
 
                 // operation to set or clear parameterOperationHolder
                 if ("clearParameters".equals(methodName)) {
-                    parameterOperationHolder.clear();
+                    parameters.clear();
                 } else {
-                    if (method.getDeclaringClass() == CallableStatement.class && args[0] instanceof String) {
-                        // Only CallableStatement uses param name(String)
-                        parameterOperationHolder.put((String) args[0], method, args);
-                    } else {
-                        parameterOperationHolder.put((Integer) args[0], method, args);
-                    }
+                    parameters.put(args[0], new ParameterSetOperation(method, args));
                 }
 
             } else if (StatementMethodNames.BATCH_PARAM_METHODS.contains(methodName)) {
@@ -109,15 +106,14 @@ public class PreparedStatementProxyLogic {
                 // Batch parameter operation
                 if ("addBatch".equals(methodName)) {
 
+                    // TODO: check
                     transformParameters(true, batchParameters.size());
 
                     // copy values
-                    ParameterOperationHolder newParamOpHolder = new ParameterOperationHolder();
-                    newParamOpHolder.getParamsByIndex().putAll(parameterOperationHolder.getParamsByIndex());
-                    newParamOpHolder.getParamsByName().putAll(parameterOperationHolder.getParamsByName());
+                    Map<Object, ParameterSetOperation> newParams = new LinkedHashMap<Object, ParameterSetOperation>(parameters);
+                    batchParameters.add(newParams);
 
-                    batchParameters.add(newParamOpHolder);
-                    parameterOperationHolder.clear();
+                    parameters.clear();
                 } else if ("clearBatch".equals(methodName)) {
                     batchParameters.clear();
                 }
@@ -138,7 +134,7 @@ public class PreparedStatementProxyLogic {
 
             // one query with multiple parameters
             QueryInfo queryInfo = new QueryInfo(this.query);
-            for (ParameterOperationHolder params : batchParameters) {
+            for (Map<Object, ParameterSetOperation> params : batchParameters) {
                 queryInfo.getQueryArgsList().add(getQueryParameters(params));
             }
             queries.add(queryInfo);
@@ -152,7 +148,7 @@ public class PreparedStatementProxyLogic {
 
             transformParameters(false, 0);
 
-            queries.add(new QueryInfo(query, getQueryParameters(parameterOperationHolder)));
+            queries.add(new QueryInfo(query, getQueryParameters(parameters)));
         }
 
         final QueryExecutionListener listener = interceptorHolder.getListener();
@@ -182,13 +178,9 @@ public class PreparedStatementProxyLogic {
         }
     }
 
-    private List<Object> getQueryParameters(ParameterOperationHolder parameterOperationHolder) {
-        final List<Object> queryParameters = new ArrayList<Object>(parameterOperationHolder.totalSize());
-
-        final List<ParameterSetOperation> operations = new ArrayList<ParameterSetOperation>(parameterOperationHolder.totalSize());
-        operations.addAll(parameterOperationHolder.getParamsByIndex().values());
-        operations.addAll(parameterOperationHolder.getParamsByName().values());
-        for (ParameterSetOperation parameterSetOperation : operations) {
+    private List<Object> getQueryParameters(Map<Object, ParameterSetOperation> params) {
+        List<Object> queryParameters = new ArrayList<Object>(params.size());
+        for (ParameterSetOperation parameterSetOperation : params.values()) {
             queryParameters.add(parameterSetOperation.getArgs()[1]);  // index=1 is always a value
         }
         return queryParameters;
@@ -197,7 +189,7 @@ public class PreparedStatementProxyLogic {
     private void transformParameters(boolean isBatch, int count) throws SQLException, IllegalAccessException, InvocationTargetException {
 
         // transform parameters
-        final ParameterReplacer parameterReplacer = new ParameterReplacer(parameterOperationHolder);
+        final ParameterReplacer parameterReplacer = new ParameterReplacer(this.parameters);
         final TransformInfo transformInfo = new TransformInfo(ps.getClass(), dataSourceName, query, isBatch, count);
         final ParameterTransformer parameterTransformer = interceptorHolder.getParameterTransformer();
         parameterTransformer.transformParameters(parameterReplacer, transformInfo);
@@ -207,20 +199,15 @@ public class PreparedStatementProxyLogic {
             ps.clearParameters();  // clear existing parameters
 
             // re-set parameters
-            final ParameterOperationHolder modifiedParameterOperationHolder = parameterReplacer.getModifiedParameters();
-            final int size = modifiedParameterOperationHolder.totalSize();
-            final List<ParameterSetOperation> operations = new ArrayList<ParameterSetOperation>(size);
-            operations.addAll(modifiedParameterOperationHolder.getParamsByIndex().values());
-            operations.addAll(modifiedParameterOperationHolder.getParamsByName().values());
-
-            for (ParameterSetOperation operation : operations) {
+            Map<Object, ParameterSetOperation> modifiedParameters = parameterReplacer.getModifiedParameters();
+            for (ParameterSetOperation operation : modifiedParameters.values()) {
                 final Method paramMethod = operation.getMethod();
                 final Object[] paramArgs = operation.getArgs();
                 paramMethod.invoke(ps, paramArgs);
             }
 
             // replace
-            parameterOperationHolder = modifiedParameterOperationHolder;
+            this.parameters = modifiedParameters;
         }
     }
 

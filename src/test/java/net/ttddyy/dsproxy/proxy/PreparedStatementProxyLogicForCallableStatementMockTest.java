@@ -679,12 +679,12 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
                 }
 
                 // sort by name
-                Collections.sort(paramsForStrIndex, new Comparator<Param>() {
-                    public int compare(Param left, Param right) {
-                        return left.strIndex.compareTo(right.strIndex);
-                    }
-                });
-
+//                Collections.sort(paramsForStrIndex, new Comparator<Param>() {
+//                    public int compare(Param left, Param right) {
+//                        return left.strIndex.compareTo(right.strIndex);
+//                    }
+//                });
+                // TODO: currently depending on the set operation order, find out better way of
 
                 assertThat(queryArgs.size(), is(argSize));
 

@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.transform;
 
-import net.ttddyy.dsproxy.proxy.ParameterOperationHolder;
+
+import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -9,6 +10,8 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
 import java.util.Calendar;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -16,32 +19,29 @@ import java.util.Calendar;
  */
 public class ParameterReplacer {
 
-    private ParameterOperationHolder parameterOperationHolder = new ParameterOperationHolder();
+    private Map<Object, ParameterSetOperation> parameters = new LinkedHashMap<Object, ParameterSetOperation>();
     private boolean modified = false;
 
     public ParameterReplacer() {
     }
 
-    public ParameterReplacer(ParameterOperationHolder parameterOperationHolder) {
+    public ParameterReplacer(Map<Object, ParameterSetOperation> parameters) {
         // make a copy
-        ParameterOperationHolder newParameters = new ParameterOperationHolder();
-        newParameters.getParamsByIndex().putAll(parameterOperationHolder.getParamsByIndex());
-        newParameters.getParamsByName().putAll(parameterOperationHolder.getParamsByName());
-        this.parameterOperationHolder = newParameters;
+        this.parameters.putAll(parameters);
     }
 
     @SuppressWarnings("unchecked")
     public <T> T getValue(int index) {
-        return (T) parameterOperationHolder.getParamsByIndex().get(index).getArgs()[1];  // index 1 in arguments is always value
+        return (T) this.parameters.get(index).getArgs()[1];  // index 1 in arguments is always value
     }
 
     @SuppressWarnings("unchecked")
     public <T> T getValue(String paramName) {
-        return (T) parameterOperationHolder.getParamsByName().get(paramName).getArgs()[1];  // index 1 in arguments is always value
+        return (T) this.parameters.get(paramName).getArgs()[1];  // index 1 in arguments is always value
     }
 
     public void clearParameters() {
-        parameterOperationHolder.clear();
+        this.parameters.clear();
         modified = true;
     }
 
@@ -54,12 +54,12 @@ public class ParameterReplacer {
     }
 
     private void record(int parameterIndex, Method paramMethod, Object... args) {
-        parameterOperationHolder.put(parameterIndex, paramMethod, args);
+        this.parameters.put(parameterIndex, new ParameterSetOperation(paramMethod, args));
         modified = true;
     }
 
     private void recordByName(String parameterName, Method paramMethod, Object... args) {
-        parameterOperationHolder.put(parameterName, paramMethod, args);
+        this.parameters.put(parameterName, new ParameterSetOperation(paramMethod, args));
         modified = true;
     }
 
@@ -67,8 +67,8 @@ public class ParameterReplacer {
         return modified;
     }
 
-    public ParameterOperationHolder getModifiedParameters() {
-        return this.parameterOperationHolder;
+    public Map<Object, ParameterSetOperation> getModifiedParameters() {
+        return this.parameters;
     }
 
 
