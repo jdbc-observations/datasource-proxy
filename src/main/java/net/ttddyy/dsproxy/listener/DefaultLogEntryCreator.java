@@ -5,6 +5,7 @@ import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -56,13 +57,17 @@ public class DefaultLogEntryCreator implements LogEntryCreator {
 
         sb.append("Params:[");
         for (QueryInfo queryInfo : queryInfoList) {
-            sb.append("(");
-            for (Object arg : queryInfo.getQueryArgsList()) {
-                sb.append(arg);
-                sb.append(',');
+            for (Map<Object, Object> paramMap : queryInfo.getQueryArgsList()) {
+                sb.append("(");
+                for (Map.Entry<Object, Object> paramEntry : paramMap.entrySet()) {
+                    sb.append(paramEntry.getKey());
+                    sb.append("=");
+                    sb.append(paramEntry.getValue());
+                    sb.append(",");
+                }
+                chompIfEndWith(sb, ',');
+                sb.append("),");
             }
-            chompIfEndWith(sb, ',');
-            sb.append("),");
         }
         chompIfEndWith(sb, ',');
         sb.append("]");

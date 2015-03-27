@@ -16,7 +16,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DefaultLogEntryCreatorTest {
 
     @Test
-    public void getLogEntry() throws Exception {
+    public void getLogEntryForStatement() throws Exception {
+        Method method = Object.class.getMethod("toString");
+        Object result = new Object();
+
+        ExecutionInfo executionInfo = ExecutionInfoBuilder
+                .create()
+                .dataSourceName("foo")
+                .elapsedTime(100)
+                .method(method)
+                .result(result)
+                .statementType(StatementType.STATEMENT)
+                .success(true)
+                .batch(false)
+                .batchSize(0)
+                .build();
+
+        QueryInfo queryInfo = QueryInfoBuilder.create().query("select 1").build();
+
+        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+
+
+        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Statement, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[()]");
+    }
+
+    @Test
+    public void getLogEntryForBatchStatement() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
@@ -32,16 +58,139 @@ public class DefaultLogEntryCreatorTest {
                 .batchSize(2)
                 .build();
 
-        QueryInfo queryInfo = QueryInfoBuilder.create().query("select 1").build();
+        QueryInfo queryInfo1 = QueryInfoBuilder.create().query("select 1").build();
+        QueryInfo queryInfo2 = QueryInfoBuilder.create().query("select 2").build();
+
+        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo1, queryInfo2), true);
+
+
+        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Statement, Batch:True, QuerySize:2, BatchSize:2, Query:[\"select 1\",\"select 2\"], Params:[(),()]");
+    }
+
+    @Test
+    public void getLogEntryForPreparedStatement() throws Exception {
+        Method method = Object.class.getMethod("toString");
+        Object result = new Object();
+
+        ExecutionInfo executionInfo = ExecutionInfoBuilder
+                .create()
+                .dataSourceName("foo")
+                .elapsedTime(100)
+                .method(method)
+                .result(result)
+                .statementType(StatementType.PREPARED)
+                .success(true)
+                .batch(false)
+                .batchSize(0)
+                .build();
+
+        QueryInfo queryInfo = QueryInfoBuilder.create()
+                .query("select 1")
+                .param(1, "foo")
+                .param(2, 100)
+                .build();
+
+        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+
+        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Prepared, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(1=foo,2=100)]");
+    }
+
+    @Test
+    public void getLogEntryForBatchPreparedStatement() throws Exception {
+        Method method = Object.class.getMethod("toString");
+        Object result = new Object();
+
+        ExecutionInfo executionInfo = ExecutionInfoBuilder
+                .create()
+                .dataSourceName("foo")
+                .elapsedTime(100)
+                .method(method)
+                .result(result)
+                .statementType(StatementType.PREPARED)
+                .success(true)
+                .batch(true)
+                .batchSize(2)
+                .build();
+
+        QueryInfo queryInfo = QueryInfoBuilder.create()
+                .query("select 1")
+                .batchParam(1, 1, "foo")
+                .batchParam(1, 2, 100)
+                .batchParam(2, 1, "bar")
+                .batchParam(2, 2, 200)
+                .build();
 
         DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
 
 
-        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Statement, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[()]");
+        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(1=foo,2=100),(1=bar,2=200)]");
     }
 
-    // TODO: for batch execution (Statement and PreparedStatement)
+    @Test
+    public void getLogEntryForCallableStatement() throws Exception {
+        Method method = Object.class.getMethod("toString");
+        Object result = new Object();
+
+        ExecutionInfo executionInfo = ExecutionInfoBuilder
+                .create()
+                .dataSourceName("foo")
+                .elapsedTime(100)
+                .method(method)
+                .result(result)
+                .statementType(StatementType.CALLABLE)
+                .success(true)
+                .batch(false)
+                .batchSize(0)
+                .build();
+
+        QueryInfo queryInfo = QueryInfoBuilder.create()
+                .query("select 1")
+                .param("name", "foo")
+                .param("id", 100)
+                .build();
+
+        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+
+        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Callable, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(name=foo,id=100)]");
+    }
+
+    @Test
+    public void getLogEntryForBatchCallableStatement() throws Exception {
+        Method method = Object.class.getMethod("toString");
+        Object result = new Object();
+
+        ExecutionInfo executionInfo = ExecutionInfoBuilder
+                .create()
+                .dataSourceName("foo")
+                .elapsedTime(100)
+                .method(method)
+                .result(result)
+                .statementType(StatementType.CALLABLE)
+                .success(true)
+                .batch(true)
+                .batchSize(2)
+                .build();
+
+        QueryInfo queryInfo = QueryInfoBuilder.create()
+                .query("select 1")
+                .batchParam(1, "name", "foo")
+                .batchParam(1, "id", 100)
+                .batchParam(2, "name", "bar")
+                .batchParam(2, "id", 200)
+                .build();
+
+        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+
+
+        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Callable, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(name=foo,id=100),(name=bar,id=200)]");
+    }
+
+    // TODO: test batch param order
 
     @Test
     public void statementType() throws Exception {
