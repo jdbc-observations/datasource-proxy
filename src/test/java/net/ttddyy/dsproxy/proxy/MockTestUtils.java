@@ -18,7 +18,7 @@ import java.util.Map;
 public class MockTestUtils {
     @SuppressWarnings("unchecked")
     public static void verifyListenerForBatch(QueryExecutionListener listener, String dataSourceName, String query,
-                                              Map<Object, Object>... expectedQueryParamsArray) {
+                                              Map<String, Object>... expectedQueryParamsArray) {
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
         ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
 
@@ -44,11 +44,11 @@ public class MockTestUtils {
         assertThat(queryInfo.getQueryArgsList(), hasSize(expectedBatchSize));
 
         for (int i = 0; i < expectedBatchSize; i++) {
-            Map<Object, Object> expectedQueryArgs = expectedQueryParamsArray[i];
-            Map<Object, Object> actualQueryArgs = queryInfo.getQueryArgsList().get(i);
+            Map<String, Object> expectedQueryArgs = expectedQueryParamsArray[i];
+            Map<String, Object> actualQueryArgs = queryInfo.getQueryArgsList().get(i);
 
             assertThat(actualQueryArgs, aMapWithSize(expectedQueryArgs.size()));
-            for (Map.Entry<Object, Object> entry : expectedQueryArgs.entrySet()) {
+            for (Map.Entry<String, Object> entry : expectedQueryArgs.entrySet()) {
                 assertThat(actualQueryArgs, hasEntry(entry.getKey(), entry.getValue()));
             }
         }

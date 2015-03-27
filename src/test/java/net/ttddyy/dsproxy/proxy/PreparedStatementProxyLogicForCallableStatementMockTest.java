@@ -260,17 +260,17 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
 
         logic.invoke(executeBatch, null);
 
-        Map<Object, Object> expectedArgs1 = new LinkedHashMap<Object, Object>();
-        expectedArgs1.put(1, "foo");
-        expectedArgs1.put(2, 10);
+        Map<String, Object> expectedArgs1 = new LinkedHashMap<String, Object>();
+        expectedArgs1.put("1", "foo");
+        expectedArgs1.put("2", 10);
 
-        Map<Object, Object> expectedArgs2 = new LinkedHashMap<Object, Object>();
-        expectedArgs2.put(1, "bar");
-        expectedArgs2.put(2, 20);
+        Map<String, Object> expectedArgs2 = new LinkedHashMap<String, Object>();
+        expectedArgs2.put("1", "bar");
+        expectedArgs2.put("2", 20);
 
-        Map<Object, Object> expectedArgs3 = new LinkedHashMap<Object, Object>();
-        expectedArgs3.put(1, "baz");
-        expectedArgs3.put(2, 30);
+        Map<String, Object> expectedArgs3 = new LinkedHashMap<String, Object>();
+        expectedArgs3.put("1", "baz");
+        expectedArgs3.put("2", 30);
 
 
         MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query, expectedArgs1, expectedArgs2, expectedArgs3);
@@ -312,9 +312,9 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         verify(stat).setInt(2, 20);
         verify(stat, times(2)).addBatch();
 
-        Map<Object, Object> expectedArgs = new LinkedHashMap<Object, Object>();
-        expectedArgs.put(1, "FOO");
-        expectedArgs.put(2, 20);
+        Map<String, Object> expectedArgs = new LinkedHashMap<String, Object>();
+        expectedArgs.put("1", "FOO");
+        expectedArgs.put("2", 20);
 
         MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query, expectedArgs);
     }
@@ -351,9 +351,9 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         verify(stat).setInt(2, 10);
         verify(stat).addBatch();
 
-        Map<Object, Object> expectedArgs = new LinkedHashMap<Object, Object>();
-        expectedArgs.put(1, "FOO");
-        expectedArgs.put(2, 10);
+        Map<String, Object> expectedArgs = new LinkedHashMap<String, Object>();
+        expectedArgs.put("1", "FOO");
+        expectedArgs.put("2", 10);
         MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query, expectedArgs);
 
     }
@@ -394,7 +394,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         assertThat(queryInfoList.size(), is(1));
 
         assertThat(queryInfoList.get(0).getQueryArgsList(), hasSize(1));
-        Map<Object, Object> firstArgs = queryInfoList.get(0).getQueryArgsList().get(0);
+        Map<String, Object> firstArgs = queryInfoList.get(0).getQueryArgsList().get(0);
         assertThat("Args should be empty", firstArgs, anEmptyMap());
 
     }
@@ -671,17 +671,17 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
 
         // TODO: clean up the comparison logic
 
-        List<Map<Object, Object>> queryArgsList = queryInfo.getQueryArgsList();
+        List<Map<String, Object>> queryArgsList = queryInfo.getQueryArgsList();
         assertThat("non-batch exec should have only one params.", queryArgsList, hasSize(1));
-        Map<Object, Object> queryArgs = queryArgsList.get(0);
+        Map<String, Object> queryArgs = queryArgsList.get(0);
         if (ParamStatus.NO_PARAM != paramStatus) {
             if (ParamStatus.BY_POSITION == paramStatus) {
                 assertThat(queryArgs.size(), is(PARAMS.size()));
 
                 for (int i = 0; i < PARAMS.size(); i++) {
                     Param param = PARAMS.get(i);
-                    int index = param.index;
-                    final Object value = queryArgs.get(index);
+                    String index = Integer.toString(param.index);  // param map key is String
+                    Object value = queryArgs.get(index);
 
                     assertThat(value, is(instanceOf(param.clazz)));
                     assertThat(value, is(param.value));

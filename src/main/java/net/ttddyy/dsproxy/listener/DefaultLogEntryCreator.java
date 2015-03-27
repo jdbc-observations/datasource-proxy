@@ -4,8 +4,7 @@ import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -57,9 +56,14 @@ public class DefaultLogEntryCreator implements LogEntryCreator {
 
         sb.append("Params:[");
         for (QueryInfo queryInfo : queryInfoList) {
-            for (Map<Object, Object> paramMap : queryInfo.getQueryArgsList()) {
+            for (Map<String, Object> paramMap : queryInfo.getQueryArgsList()) {
+
+                // sort
+                SortedMap<String, Object> sortedParamMap = new TreeMap<String, Object>(new StringAsIntegerComparator());
+                sortedParamMap.putAll(paramMap);
+
                 sb.append("(");
-                for (Map.Entry<Object, Object> paramEntry : paramMap.entrySet()) {
+                for (Map.Entry<String, Object> paramEntry : sortedParamMap.entrySet()) {
                     sb.append(paramEntry.getKey());
                     sb.append("=");
                     sb.append(paramEntry.getValue());
@@ -93,4 +97,31 @@ public class DefaultLogEntryCreator implements LogEntryCreator {
         }
     }
 
+    /**
+     * Comparator considering string as integer.
+     *
+     * When it has null, put it as first element(smaller).
+     * If string cannot be parsed to integer, it compared as string.
+     */
+    private static class StringAsIntegerComparator implements Comparator<String> {
+        @Override
+        public int compare(String left, String right) {
+            // make null first
+            if (left == null && right == null) {
+                return 0;
+            }
+            if (left == null) {
+                return -1; // right is greater
+            }
+            if (right == null) {
+                return 1; // left is greater;
+            }
+
+            try {
+                return Integer.compare(Integer.parseInt(left), Integer.parseInt(right));
+            } catch (NumberFormatException e) {
+                return left.compareTo(right);  // use String comparison
+            }
+        }
+    }
 }

@@ -155,7 +155,7 @@ public class DefaultLogEntryCreatorTest {
         DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
 
-        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Callable, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(name=foo,id=100)]");
+        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Callable, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(id=100,name=foo)]");
     }
 
     @Test
@@ -187,10 +187,75 @@ public class DefaultLogEntryCreatorTest {
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
 
 
-        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Callable, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(name=foo,id=100),(name=bar,id=200)]");
+        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Callable, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(id=100,name=foo),(id=200,name=bar)]");
     }
 
-    // TODO: test batch param order
+    @Test
+    public void getLogEntryParameterOrderWithIndex() throws Exception {
+        Method method = Object.class.getMethod("toString");
+        Object result = new Object();
+
+        ExecutionInfo executionInfo = ExecutionInfoBuilder
+                .create()
+                .dataSourceName("foo")
+                .elapsedTime(100)
+                .method(method)
+                .result(result)
+                .statementType(StatementType.PREPARED)
+                .success(true)
+                .batch(true)
+                .batchSize(2)
+                .build();
+
+        QueryInfo queryInfo = QueryInfoBuilder.create()
+                .query("select 1")
+                .batchParam(1, 2, 100)  // batch 1, index 2
+                .batchParam(1, 3, "FOO")  // batch 1, index 3
+                .batchParam(1, 1, "foo")  // batch 1, index 1
+                .batchParam(2, 1, "bar")  // batch 2, index 1
+                .batchParam(2, 3, "BAR")  // batch 2, index 3
+                .batchParam(2, 2, 200)  // batch 2, index 2
+                .build();
+
+        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+
+        assertThat(entry).containsOnlyOnce("Params:[(1=foo,2=100,3=FOO),(1=bar,2=200,3=BAR)]");
+    }
+
+    @Test
+    public void getLogEntryParameterOrderWithNamedParam() throws Exception {
+        Method method = Object.class.getMethod("toString");
+        Object result = new Object();
+
+        ExecutionInfo executionInfo = ExecutionInfoBuilder
+                .create()
+                .dataSourceName("foo")
+                .elapsedTime(100)
+                .method(method)
+                .result(result)
+                .statementType(StatementType.CALLABLE)
+                .success(true)
+                .batch(true)
+                .batchSize(2)
+                .build();
+
+        QueryInfo queryInfo = QueryInfoBuilder.create()
+                .query("select 1")
+                .batchParam(1, "c-idx", 100)
+                .batchParam(1, "b-idx", "FOO")
+                .batchParam(1, "a-idx", "foo")
+                .batchParam(2, "b-idx", "BAR")
+                .batchParam(2, "a-idx", "bar")
+                .batchParam(2, "c-idx", 200)
+                .build();
+
+        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+
+
+        assertThat(entry).containsOnlyOnce("Params:[(a-idx=foo,b-idx=FOO,c-idx=100),(a-idx=bar,b-idx=BAR,c-idx=200)]");
+    }
 
     @Test
     public void statementType() throws Exception {

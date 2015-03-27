@@ -10,10 +10,10 @@ import java.util.TreeMap;
  */
 public class QueryInfoBuilder {
     private String query;
-    private Map<Object, Object> queryArgs = new LinkedHashMap<Object, Object>();
+    private Map<String, Object> queryArgs = new LinkedHashMap<String, Object>();
 
     // key:batch-index, val: map of query args
-    private SortedMap<Integer, Map<Object, Object>> batchParams = new TreeMap<Integer, Map<Object, Object>>();
+    private SortedMap<Integer, Map<String, Object>> batchParams = new TreeMap<Integer, Map<String, Object>>();
 
     public static QueryInfoBuilder create() {
         return new QueryInfoBuilder();
@@ -24,18 +24,26 @@ public class QueryInfoBuilder {
         return this;
     }
 
-    public QueryInfoBuilder param(Object key, Object value) {
-        queryArgs.put(key, value);
+    public QueryInfoBuilder param(int parameterIndex, Object value) {
+        return this.param(Integer.toString(parameterIndex), value);
+    }
+
+    public QueryInfoBuilder param(String parameterName, Object value) {
+        queryArgs.put(parameterName, value);
         return this;
     }
 
-    public QueryInfoBuilder batchParam(int batchIndex, Object key, Object value) {
-        Map<Object, Object> args = batchParams.get(batchIndex);
+    public QueryInfoBuilder batchParam(int batchIndex, int parameterName, Object value) {
+        return this.batchParam(batchIndex, Integer.toString(parameterName), value);
+    }
+
+    public QueryInfoBuilder batchParam(int batchIndex, String parameterIndex, Object value) {
+        Map<String, Object> args = batchParams.get(batchIndex);
         if (args == null) {
-            args = new LinkedHashMap<Object, Object>();
+            args = new LinkedHashMap<String, Object>();
             batchParams.put(batchIndex, args);
         }
-        args.put(key, value);
+        args.put(parameterIndex, value);
         return this;
     }
 
@@ -46,7 +54,7 @@ public class QueryInfoBuilder {
         // query parameters
         if (!batchParams.isEmpty()) {  // consider it's batch mode
             // already ordered by batchIndex
-            for (Map<Object, Object> map : batchParams.values()) {
+            for (Map<String, Object> map : batchParams.values()) {
                 queryInfo.getQueryArgsList().add(map);
             }
         } else {

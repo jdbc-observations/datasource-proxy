@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class QueryInfo {
     private String query;
-    private List<Map<Object, Object>> queryArgsList = new ArrayList<Map<Object, Object>>();
+    private List<Map<String, Object>> queryArgsList = new ArrayList<Map<String, Object>>();
 
     public QueryInfo() {
     }
@@ -19,10 +19,10 @@ public class QueryInfo {
         this.query = query;
     }
 
-    public QueryInfo(String query, Map<Object, Object> firstArgs) {
+    public QueryInfo(String query, Map<String, Object> firstArgs) {
         this.query = query;
         if (firstArgs != null) {
-            this.queryArgsList.add(new LinkedHashMap<Object, Object>(firstArgs));
+            this.queryArgsList.add(new LinkedHashMap<String, Object>(firstArgs));
         }
     }
 
@@ -34,11 +34,11 @@ public class QueryInfo {
         this.query = query;
     }
 
-    public List<Map<Object, Object>> getQueryArgsList() {
+    public List<Map<String, Object>> getQueryArgsList() {
         return queryArgsList;
     }
 
-    public void setQueryArgsList(List<Map<Object, Object>> queryArgsList) {
+    public void setQueryArgsList(List<Map<String, Object>> queryArgsList) {
         this.queryArgsList = queryArgsList;
     }
 

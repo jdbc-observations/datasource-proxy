@@ -134,28 +134,28 @@ public class PreparedStatementProxyLogicMockTest {
         verify(stat).setURL(21, url);
         verify(stat).executeQuery();
 
-        Map<Object, Object> expectedQueryArgas = new LinkedHashMap<Object, Object>();
-        expectedQueryArgas.put(1, array);
-        expectedQueryArgas.put(2, inputStream);
-        expectedQueryArgas.put(3, bigDecimal);
-        expectedQueryArgas.put(4, binaryStream);
-        expectedQueryArgas.put(5, blob);
-        expectedQueryArgas.put(6, booleanValue);
-        expectedQueryArgas.put(7, reader);
-        expectedQueryArgas.put(8, clob);
-        expectedQueryArgas.put(9, date);
-        expectedQueryArgas.put(10, doubleValue);
-        expectedQueryArgas.put(11, floatValue);
-        expectedQueryArgas.put(12, intvalue);
-        expectedQueryArgas.put(13, longValue);
-        expectedQueryArgas.put(14, Types.VARCHAR);
-        expectedQueryArgas.put(15, object);
-        expectedQueryArgas.put(16, ref);
-        expectedQueryArgas.put(17, shortValue);
-        expectedQueryArgas.put(18, stringValue);
-        expectedQueryArgas.put(19, time);
-        expectedQueryArgas.put(20, timestamp);
-        expectedQueryArgas.put(21, url);
+        Map<String, Object> expectedQueryArgas = new LinkedHashMap<String, Object>();
+        expectedQueryArgas.put("1", array);
+        expectedQueryArgas.put("2", inputStream);
+        expectedQueryArgas.put("3", bigDecimal);
+        expectedQueryArgas.put("4", binaryStream);
+        expectedQueryArgas.put("5", blob);
+        expectedQueryArgas.put("6", booleanValue);
+        expectedQueryArgas.put("7", reader);
+        expectedQueryArgas.put("8", clob);
+        expectedQueryArgas.put("9", date);
+        expectedQueryArgas.put("10", doubleValue);
+        expectedQueryArgas.put("11", floatValue);
+        expectedQueryArgas.put("12", intvalue);
+        expectedQueryArgas.put("13", longValue);
+        expectedQueryArgas.put("14", Types.VARCHAR);
+        expectedQueryArgas.put("15", object);
+        expectedQueryArgas.put("16", ref);
+        expectedQueryArgas.put("17", shortValue);
+        expectedQueryArgas.put("18", stringValue);
+        expectedQueryArgas.put("19", time);
+        expectedQueryArgas.put("20", timestamp);
+        expectedQueryArgas.put("21", url);
 
         verifyListener(listener, "executeQuery", query, expectedQueryArgas);
 
@@ -167,7 +167,7 @@ public class PreparedStatementProxyLogicMockTest {
     }
 
     @SuppressWarnings("unchecked")
-    private void verifyListener(QueryExecutionListener listener, String methodName, String query, Map<Object, Object> expectedQueryArgs) {
+    private void verifyListener(QueryExecutionListener listener, String methodName, String query, Map<String, Object> expectedQueryArgs) {
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
         ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
 
@@ -189,12 +189,12 @@ public class PreparedStatementProxyLogicMockTest {
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery(), is(query));
 
-        List<Map<Object, Object>> queryArgsList = queryInfo.getQueryArgsList();
+        List<Map<String, Object>> queryArgsList = queryInfo.getQueryArgsList();
         assertThat("non-batch query size is always 1", queryArgsList, hasSize(1));
 
-        Map<Object, Object> queryArgs = queryArgsList.get(0);
+        Map<String, Object> queryArgs = queryArgsList.get(0);
         assertThat(queryArgs, aMapWithSize(expectedQueryArgs.size()));
-        for (Map.Entry<Object, Object> entry : expectedQueryArgs.entrySet()) {
+        for (Map.Entry<String, Object> entry : expectedQueryArgs.entrySet()) {
             assertThat(queryArgs, hasEntry(entry.getKey(), entry.getValue()));
         }
     }
@@ -243,17 +243,17 @@ public class PreparedStatementProxyLogicMockTest {
         verify(stat).setInt(2, 30);
         verify(stat, times(3)).addBatch();
 
-        Map<Object, Object> expectedArgs1 = new LinkedHashMap<Object, Object>();
-        expectedArgs1.put(1, "foo");
-        expectedArgs1.put(2, 10);
+        Map<String, Object> expectedArgs1 = new LinkedHashMap<String, Object>();
+        expectedArgs1.put("1", "foo");
+        expectedArgs1.put("2", 10);
 
-        Map<Object, Object> expectedArgs2 = new LinkedHashMap<Object, Object>();
-        expectedArgs2.put(1, "bar");
-        expectedArgs2.put(2, 20);
+        Map<String, Object> expectedArgs2 = new LinkedHashMap<String, Object>();
+        expectedArgs2.put("1", "bar");
+        expectedArgs2.put("2", 20);
 
-        Map<Object, Object> expectedArgs3 = new LinkedHashMap<Object, Object>();
-        expectedArgs3.put(1, "baz");
-        expectedArgs3.put(2, 30);
+        Map<String, Object> expectedArgs3 = new LinkedHashMap<String, Object>();
+        expectedArgs3.put("1", "baz");
+        expectedArgs3.put("2", 30);
 
         MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query, expectedArgs1, expectedArgs2, expectedArgs3);
 
@@ -300,9 +300,9 @@ public class PreparedStatementProxyLogicMockTest {
         verify(stat).setInt(2, 20);
         verify(stat, times(2)).addBatch();
 
-        Map<Object, Object> expectedArgs = new LinkedHashMap<Object, Object>();
-        expectedArgs.put(1, "FOO");
-        expectedArgs.put(2, 20);
+        Map<String, Object> expectedArgs = new LinkedHashMap<String, Object>();
+        expectedArgs.put("1", "FOO");
+        expectedArgs.put("2", 20);
 
         MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query, expectedArgs);
 
@@ -344,9 +344,9 @@ public class PreparedStatementProxyLogicMockTest {
         verify(stat).setInt(2, 10);
         verify(stat).addBatch();
 
-        Map<Object, Object> expectedArgs = new LinkedHashMap<Object, Object>();
-        expectedArgs.put(1, "FOO");
-        expectedArgs.put(2, 10);
+        Map<String, Object> expectedArgs = new LinkedHashMap<String, Object>();
+        expectedArgs.put("1", "FOO");
+        expectedArgs.put("2", 10);
 
         MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query, expectedArgs);
 
