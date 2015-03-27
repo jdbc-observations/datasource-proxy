@@ -1,14 +1,16 @@
 package net.ttddyy.dsproxy;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Tadaya Tsuyukubo
  */
 public class QueryInfo {
     private String query;
-    private List<List<?>> queryArgsList = new ArrayList<List<?>>();
+    private List<Map<Object, Object>> queryArgsList = new ArrayList<Map<Object, Object>>();
 
     public QueryInfo() {
     }
@@ -17,12 +19,10 @@ public class QueryInfo {
         this.query = query;
     }
 
-    public QueryInfo(String query, List<?> firstArgs) {
+    public QueryInfo(String query, Map<Object, Object> firstArgs) {
         this.query = query;
         if (firstArgs != null) {
-            List<Object> args = new ArrayList<Object>(firstArgs.size());
-            args.addAll(firstArgs);
-            this.queryArgsList.add(args);
+            this.queryArgsList.add(new LinkedHashMap<Object, Object>(firstArgs));
         }
     }
 
@@ -34,11 +34,11 @@ public class QueryInfo {
         this.query = query;
     }
 
-    public List<List<?>> getQueryArgsList() {
+    public List<Map<Object, Object>> getQueryArgsList() {
         return queryArgsList;
     }
 
-    public void setQueryArgsList(List<List<?>> queryArgsList) {
+    public void setQueryArgsList(List<Map<Object, Object>> queryArgsList) {
         this.queryArgsList = queryArgsList;
     }
 

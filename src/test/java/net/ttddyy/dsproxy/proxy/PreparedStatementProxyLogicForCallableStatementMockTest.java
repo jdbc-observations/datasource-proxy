@@ -17,10 +17,8 @@ import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.sql.Date;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -49,7 +47,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         Object result = logic.invoke(method, null);
 
         assertThat(result, is(instanceOf(boolean.class)));
-        assertThat((Boolean)result, is(Boolean.TRUE));
+        assertThat((Boolean) result, is(Boolean.TRUE));
         verifyListenerWithNoParam(listener, "execute", query);
     }
 
@@ -70,7 +68,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         Object result = logic.invoke(method, null);
 
         assertThat(result, is(instanceOf(boolean.class)));
-        assertThat((Boolean)result, is(Boolean.TRUE));
+        assertThat((Boolean) result, is(Boolean.TRUE));
         verifyParametersByPosition(stat);
 
         verifyListenerWithParamByPosition(listener, "execute", query);
@@ -93,7 +91,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         Object result = logic.invoke(method, null);
 
         assertThat(result, is(instanceOf(boolean.class)));
-        assertThat((Boolean)result, is(true));
+        assertThat((Boolean) result, is(true));
         verifyParametersByName(stat);
 
         verifyListenerWithParamByName(listener, "execute", query);
@@ -262,8 +260,20 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
 
         logic.invoke(executeBatch, null);
 
-        MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query,
-                new Object[][]{{"foo", 10}, {"bar", 20}, {"baz", 30}});
+        Map<Object, Object> expectedArgs1 = new LinkedHashMap<Object, Object>();
+        expectedArgs1.put(1, "foo");
+        expectedArgs1.put(2, 10);
+
+        Map<Object, Object> expectedArgs2 = new LinkedHashMap<Object, Object>();
+        expectedArgs2.put(1, "bar");
+        expectedArgs2.put(2, 20);
+
+        Map<Object, Object> expectedArgs3 = new LinkedHashMap<Object, Object>();
+        expectedArgs3.put(1, "baz");
+        expectedArgs3.put(2, 30);
+
+
+        MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query, expectedArgs1, expectedArgs2, expectedArgs3);
     }
 
     @Test
@@ -302,7 +312,11 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         verify(stat).setInt(2, 20);
         verify(stat, times(2)).addBatch();
 
-        MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query, new Object[][]{{"FOO", 20}});
+        Map<Object, Object> expectedArgs = new LinkedHashMap<Object, Object>();
+        expectedArgs.put(1, "FOO");
+        expectedArgs.put(2, 20);
+
+        MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query, expectedArgs);
     }
 
     @Test
@@ -337,7 +351,10 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         verify(stat).setInt(2, 10);
         verify(stat).addBatch();
 
-        MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query, new Object[][]{{"FOO", 10}});
+        Map<Object, Object> expectedArgs = new LinkedHashMap<Object, Object>();
+        expectedArgs.put(1, "FOO");
+        expectedArgs.put(2, 10);
+        MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query, expectedArgs);
 
     }
 
@@ -377,9 +394,11 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         assertThat(queryInfoList.size(), is(1));
 
         assertThat(queryInfoList.get(0).getQueryArgsList(), hasSize(1));
-        assertThat("Args should be empty", queryInfoList.get(0).getQueryArgsList().get(0), hasSize(0));
+        Map<Object, Object> firstArgs = queryInfoList.get(0).getQueryArgsList().get(0);
+        assertThat("Args should be empty", firstArgs, anEmptyMap());
 
     }
+
 
     private InterceptorHolder getInterceptorHolder(QueryExecutionListener listener) {
         return new InterceptorHolder(listener, QueryTransformer.DEFAULT);
@@ -650,51 +669,42 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery(), is(equalTo(query)));
 
-        List<List<?>> queryArgsList = queryInfo.getQueryArgsList();
+        // TODO: clean up the comparison logic
+
+        List<Map<Object, Object>> queryArgsList = queryInfo.getQueryArgsList();
         assertThat("non-batch exec should have only one params.", queryArgsList, hasSize(1));
-        List<?> queryArgs = queryArgsList.get(0);
+        Map<Object, Object> queryArgs = queryArgsList.get(0);
         if (ParamStatus.NO_PARAM != paramStatus) {
             if (ParamStatus.BY_POSITION == paramStatus) {
                 assertThat(queryArgs.size(), is(PARAMS.size()));
 
                 for (int i = 0; i < PARAMS.size(); i++) {
                     Param param = PARAMS.get(i);
-                    final Object value = queryArgs.get(i);
+                    int index = param.index;
+                    final Object value = queryArgs.get(index);
 
                     assertThat(value, is(instanceOf(param.clazz)));
                     assertThat(value, is(param.value));
-
                 }
 
             } else {
                 // By name
 
-                int argSize = 0;
-                List<Param> paramsForStrIndex = new ArrayList<Param>();
+                int totalSetParamCallForByName = 0;
                 for (Param param : PARAMS) {
-                    if (param.strIndex != null) {
-                        argSize++;
-                        paramsForStrIndex.add(param);
+                    String index = param.strIndex;
+                    if (index == null) {
+                        continue;  // some params are only for by position
                     }
-                }
+                    totalSetParamCallForByName++;
 
-                // sort by name
-//                Collections.sort(paramsForStrIndex, new Comparator<Param>() {
-//                    public int compare(Param left, Param right) {
-//                        return left.strIndex.compareTo(right.strIndex);
-//                    }
-//                });
-                // TODO: currently depending on the set operation order, find out better way of
-
-                assertThat(queryArgs.size(), is(argSize));
-
-                int i = 0;
-                for (Param param : paramsForStrIndex) {
-                    final Object value = queryArgs.get(i++);
+                    Object value = queryArgs.get(index);
 
                     assertThat(value, is(instanceOf(param.clazz)));
                     assertThat(value, is(param.value));
                 }
+
+                assertThat(queryArgs, aMapWithSize(totalSetParamCallForByName));
             }
         }
     }

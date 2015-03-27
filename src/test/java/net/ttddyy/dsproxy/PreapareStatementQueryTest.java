@@ -11,9 +11,12 @@ import org.junit.Test;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -99,7 +102,7 @@ public class PreapareStatementQueryTest {
         assertThat(beforeQueries).hasSize(1);
         assertThat(beforeQueries.get(0).getQuery()).isEqualTo(query);
         assertThat(beforeQueries.get(0).getQueryArgsList()).hasSize(1);
-        List<?> args = beforeQueries.get(0).getQueryArgsList().get(0);
+        Map<Object, Object> args = beforeQueries.get(0).getQueryArgsList().get(0);
         assertThat(args).isEmpty();
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
@@ -125,9 +128,9 @@ public class PreapareStatementQueryTest {
         final QueryInfo beforeInfo = beforeQueries.get(0);
         assertThat(beforeInfo.getQuery()).isEqualTo(query);
         assertThat(beforeInfo.getQueryArgsList()).hasSize(1);
-        List<?> args = beforeInfo.getQueryArgsList().get(0);
-        assertThat(args).hasSize(1);
-        assertThat(args.get(0)).as("id=1").isEqualTo(1);
+        Map<Object, Object> args = beforeInfo.getQueryArgsList().get(0);
+        assertThat(args).hasSize(1).containsKey(1);
+        assertThat(args.get(1)).as("id=1").isEqualTo(1);
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
         assertThat(afterQueries).hasSize(1);
@@ -135,8 +138,8 @@ public class PreapareStatementQueryTest {
         assertThat(afterInfo.getQuery()).isEqualTo(query);
         assertThat(afterInfo.getQueryArgsList()).hasSize(1);
         args = afterInfo.getQueryArgsList().get(0);
-        assertThat(args).hasSize(1);
-        assertThat(args.get(0)).as("id=1").isEqualTo(1);
+        assertThat(args).hasSize(1).containsKey(1);
+        assertThat(args.get(1)).as("id=1").isEqualTo(1);
     }
 
     @Test
@@ -152,7 +155,12 @@ public class PreapareStatementQueryTest {
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
         assertThat(beforeQueries).hasSize(1);
-        verifyQueryArgs(beforeQueries.get(0), query, "BAZ", 1);
+
+        Map<Object, Object> expectedQueryArgs = new LinkedHashMap<Object, Object>();
+        expectedQueryArgs.put(1, "BAZ");
+        expectedQueryArgs.put(2, 1);
+
+        verifyQueryArgs(beforeQueries.get(0), query, expectedQueryArgs);
     }
 
     @Test
@@ -168,7 +176,12 @@ public class PreapareStatementQueryTest {
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
         assertThat(beforeQueries).hasSize(1);
-        verifyQueryArgs(beforeQueries.get(0), query, "BAZ", 1);
+
+        Map<Object, Object> expectedQueryArgs = new LinkedHashMap<Object, Object>();
+        expectedQueryArgs.put(1, "BAZ");
+        expectedQueryArgs.put(2, 1);
+
+        verifyQueryArgs(beforeQueries.get(0), query, expectedQueryArgs);
 
         // reuse name="BAZ"
         stat.setInt(2, 2);
@@ -179,7 +192,12 @@ public class PreapareStatementQueryTest {
 
         beforeQueries = lastQueryListener.getBeforeQueries();
         assertThat(beforeQueries).hasSize(1);
-        verifyQueryArgs(beforeQueries.get(0), query, "BAZ", 2);
+
+        expectedQueryArgs = new LinkedHashMap<Object, Object>();
+        expectedQueryArgs.put(1, "BAZ");
+        expectedQueryArgs.put(2, 2);
+
+        verifyQueryArgs(beforeQueries.get(0), query, expectedQueryArgs);
     }
 
     @Test
@@ -201,27 +219,26 @@ public class PreapareStatementQueryTest {
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
         assertThat(beforeQueries).hasSize(1);
-        verifyQueryArgs(beforeQueries.get(0), query, "BAZ", 2);
+
+        Map<Object, Object> expectedQueryArgs = new LinkedHashMap<Object, Object>();
+        expectedQueryArgs.put(1, "BAZ");
+        expectedQueryArgs.put(2, 2);
+
+        verifyQueryArgs(beforeQueries.get(0), query, expectedQueryArgs);
     }
 
-    private void verifyQueryArgs(QueryInfo info, String expectedQuery, Object... expectedValues) {
+    private void verifyQueryArgs(QueryInfo info, String expectedQuery, Map<Object, Object> expectedQueryArgs) {
         final String actualQuery = info.getQuery();
-        final List<List<?>> argsList = info.getQueryArgsList();
+        final List<Map<Object, Object>> argsList = info.getQueryArgsList();
 
         // verify query
         assertThat(actualQuery).isEqualTo(expectedQuery);
 
         // verify args
         assertThat(argsList).as("non-batch execution argsList should have size 1").hasSize(1);
-        final int expectedArgsSize = expectedValues.length;
-        List<?> args = argsList.get(0);
-        assertThat(args).hasSize(expectedArgsSize);
-
-        for (int i = 0; i < expectedArgsSize; i++) {
-            Object expected = expectedValues[i];
-            Object actual = args.get(i);
-            assertThat(actual).isEqualTo(expected);
-        }
+        Map<Object, Object> args = argsList.get(0);
+        final int expectedArgsSize = expectedQueryArgs.size();
+        assertThat(args).hasSize(expectedArgsSize).isIn(expectedQueryArgs);
     }
 
     @Test
@@ -256,16 +273,16 @@ public class PreapareStatementQueryTest {
 
         assertThat(queryInfo.getQuery()).isEqualTo(query);
         assertThat(queryInfo.getQueryArgsList()).hasSize(2);
-        assertThat(queryInfo.getQueryArgsList().get(0)).containsExactly("FOO", 1);
-        assertThat(queryInfo.getQueryArgsList().get(1)).containsExactly("BAR", 2);
+        assertThat(queryInfo.getQueryArgsList().get(0)).containsExactly(entry(1, "FOO"), entry(2, 1));
+        assertThat(queryInfo.getQueryArgsList().get(1)).containsExactly(entry(1, "BAR"), entry(2, 2));
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
         assertThat(afterQueries).as("PreparedStatement batch execution will have always one query").hasSize(1);
         queryInfo = afterQueries.get(0);
         assertThat(queryInfo.getQuery()).isEqualTo(query);
         assertThat(queryInfo.getQueryArgsList()).hasSize(2);
-        assertThat(queryInfo.getQueryArgsList().get(0)).containsExactly("FOO", 1);
-        assertThat(queryInfo.getQueryArgsList().get(1)).containsExactly("BAR", 2);
+        assertThat(queryInfo.getQueryArgsList().get(0)).containsExactly(entry(1, "FOO"), entry(2, 1));
+        assertThat(queryInfo.getQueryArgsList().get(1)).containsExactly(entry(1, "BAR"), entry(2, 2));
     }
 
     public void testExecuteBatchWithParamReuse() {

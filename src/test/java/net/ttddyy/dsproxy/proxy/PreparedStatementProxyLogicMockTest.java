@@ -17,7 +17,9 @@ import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -132,9 +134,30 @@ public class PreparedStatementProxyLogicMockTest {
         verify(stat).setURL(21, url);
         verify(stat).executeQuery();
 
-        verifyListener(listener, "executeQuery", query, array, inputStream, bigDecimal, binaryStream, blob,
-                booleanValue, reader, clob, date, doubleValue, floatValue, intvalue, longValue, Types.VARCHAR,
-                object, ref, shortValue, stringValue, time, timestamp, url);
+        Map<Object, Object> expectedQueryArgas = new LinkedHashMap<Object, Object>();
+        expectedQueryArgas.put(1, array);
+        expectedQueryArgas.put(2, inputStream);
+        expectedQueryArgas.put(3, bigDecimal);
+        expectedQueryArgas.put(4, binaryStream);
+        expectedQueryArgas.put(5, blob);
+        expectedQueryArgas.put(6, booleanValue);
+        expectedQueryArgas.put(7, reader);
+        expectedQueryArgas.put(8, clob);
+        expectedQueryArgas.put(9, date);
+        expectedQueryArgas.put(10, doubleValue);
+        expectedQueryArgas.put(11, floatValue);
+        expectedQueryArgas.put(12, intvalue);
+        expectedQueryArgas.put(13, longValue);
+        expectedQueryArgas.put(14, Types.VARCHAR);
+        expectedQueryArgas.put(15, object);
+        expectedQueryArgas.put(16, ref);
+        expectedQueryArgas.put(17, shortValue);
+        expectedQueryArgas.put(18, stringValue);
+        expectedQueryArgas.put(19, time);
+        expectedQueryArgas.put(20, timestamp);
+        expectedQueryArgas.put(21, url);
+
+        verifyListener(listener, "executeQuery", query, expectedQueryArgas);
 
     }
 
@@ -144,7 +167,7 @@ public class PreparedStatementProxyLogicMockTest {
     }
 
     @SuppressWarnings("unchecked")
-    private void verifyListener(QueryExecutionListener listener, String methodName, String query, Object... expectedQueryArgs) {
+    private void verifyListener(QueryExecutionListener listener, String methodName, String query, Map<Object, Object> expectedQueryArgs) {
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
         ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
 
@@ -166,18 +189,13 @@ public class PreparedStatementProxyLogicMockTest {
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery(), is(query));
 
-        List<List<?>> queryArgsList = queryInfo.getQueryArgsList();
+        List<Map<Object, Object>> queryArgsList = queryInfo.getQueryArgsList();
         assertThat("non-batch query size is always 1", queryArgsList, hasSize(1));
 
-        List<?> queryArgs = queryArgsList.get(0);
-        int argsSize = queryArgs.size();
-        assertThat(argsSize, is(expectedQueryArgs.length));
-
-        for (int i = 0; i < argsSize; i++) {
-            Object value = queryArgs.get(i);
-            Object expected = expectedQueryArgs[i];
-
-            assertThat(value, is(expected));
+        Map<Object, Object> queryArgs = queryArgsList.get(0);
+        assertThat(queryArgs, aMapWithSize(expectedQueryArgs.size()));
+        for (Map.Entry<Object, Object> entry : expectedQueryArgs.entrySet()) {
+            assertThat(queryArgs, hasEntry(entry.getKey(), entry.getValue()));
         }
     }
 
@@ -225,8 +243,19 @@ public class PreparedStatementProxyLogicMockTest {
         verify(stat).setInt(2, 30);
         verify(stat, times(3)).addBatch();
 
+        Map<Object, Object> expectedArgs1 = new LinkedHashMap<Object, Object>();
+        expectedArgs1.put(1, "foo");
+        expectedArgs1.put(2, 10);
 
-        MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query, new Object[][]{{"foo", 10}, {"bar", 20}, {"baz", 30}});
+        Map<Object, Object> expectedArgs2 = new LinkedHashMap<Object, Object>();
+        expectedArgs2.put(1, "bar");
+        expectedArgs2.put(2, 20);
+
+        Map<Object, Object> expectedArgs3 = new LinkedHashMap<Object, Object>();
+        expectedArgs3.put(1, "baz");
+        expectedArgs3.put(2, 30);
+
+        MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query, expectedArgs1, expectedArgs2, expectedArgs3);
 
     }
 
@@ -271,7 +300,11 @@ public class PreparedStatementProxyLogicMockTest {
         verify(stat).setInt(2, 20);
         verify(stat, times(2)).addBatch();
 
-        MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query, new Object[][]{{"FOO", 20}});
+        Map<Object, Object> expectedArgs = new LinkedHashMap<Object, Object>();
+        expectedArgs.put(1, "FOO");
+        expectedArgs.put(2, 20);
+
+        MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query, expectedArgs);
 
     }
 
@@ -311,7 +344,11 @@ public class PreparedStatementProxyLogicMockTest {
         verify(stat).setInt(2, 10);
         verify(stat).addBatch();
 
-        MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query, new Object[][]{{"FOO", 10}});
+        Map<Object, Object> expectedArgs = new LinkedHashMap<Object, Object>();
+        expectedArgs.put(1, "FOO");
+        expectedArgs.put(2, 10);
+
+        MockTestUtils.verifyListenerForBatch(listener, DS_NAME, query, expectedArgs);
 
     }
 
@@ -352,7 +389,7 @@ public class PreparedStatementProxyLogicMockTest {
         assertThat(queryInfoList.size(), is(1));
 
         assertThat(queryInfoList.get(0).getQueryArgsList(), hasSize(1));
-        assertThat("Args should be empty", queryInfoList.get(0).getQueryArgsList().get(0), hasSize(0));
+        assertThat("Args should be empty", queryInfoList.get(0).getQueryArgsList().get(0), anEmptyMap());
 
 
     }

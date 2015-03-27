@@ -178,10 +178,11 @@ public class PreparedStatementProxyLogic {
         }
     }
 
-    private List<Object> getQueryParameters(Map<Object, ParameterSetOperation> params) {
-        List<Object> queryParameters = new ArrayList<Object>(params.size());
+    private Map<Object, Object> getQueryParameters(Map<Object, ParameterSetOperation> params) {
+        Map<Object, Object> queryParameters = new LinkedHashMap<Object, Object>(params.size());
         for (ParameterSetOperation parameterSetOperation : params.values()) {
-            queryParameters.add(parameterSetOperation.getArgs()[1]);  // index=1 is always a value
+            Object[] args = parameterSetOperation.getArgs();
+            queryParameters.put(args[0], args[1]);  // all set operation has index 0=key, 1=value
         }
         return queryParameters;
     }

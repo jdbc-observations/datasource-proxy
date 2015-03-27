@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -17,11 +18,14 @@ import java.util.List;
 public class MockTestUtils {
     @SuppressWarnings("unchecked")
     public static void verifyListenerForBatch(QueryExecutionListener listener, String dataSourceName, String query,
-                                              Object[]... expectedQueryArgsList) {
+                                              Map<Object, Object>... expectedQueryParamsArray) {
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
         ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
 
         verify(listener).afterQuery(executionInfoCaptor.capture(), queryInfoListCaptor.capture());
+
+
+        final int expectedBatchSize = expectedQueryParamsArray.length;
 
         ExecutionInfo execInfo = executionInfoCaptor.getValue();
         assertThat(execInfo.getMethod(), is(notNullValue()));
@@ -31,30 +35,22 @@ public class MockTestUtils {
         assertThat(execInfo.getDataSourceName(), is(dataSourceName));
         assertThat(execInfo.getThrowable(), is(nullValue()));
         assertThat(execInfo.isBatch(), is(true));
-        assertThat(execInfo.getBatchSize(), is(expectedQueryArgsList.length));
+        assertThat(execInfo.getBatchSize(), is(expectedBatchSize));
 
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
         assertThat("for prepared/callable statement, batch query size is always 1", queryInfoList.size(), is(1));
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery(), is(query));
-
-        final int expectedBatchSize = expectedQueryArgsList.length;
         assertThat(queryInfo.getQueryArgsList(), hasSize(expectedBatchSize));
 
         for (int i = 0; i < expectedBatchSize; i++) {
-            Object[] expectedQueryArgs = expectedQueryArgsList[i];
-            List<?> actualQueryArgs = queryInfo.getQueryArgsList().get(i);
+            Map<Object, Object> expectedQueryArgs = expectedQueryParamsArray[i];
+            Map<Object, Object> actualQueryArgs = queryInfo.getQueryArgsList().get(i);
 
-            int expectedQueryArgsSize = expectedQueryArgs.length;
-            assertThat(actualQueryArgs, hasSize(expectedQueryArgsSize));
-
-            for (int j = 0; j < expectedQueryArgs.length; j++) {
-                Object value = actualQueryArgs.get(j);
-                Object expected = expectedQueryArgs[j];
-
-                assertThat(value, is(expected));
+            assertThat(actualQueryArgs, aMapWithSize(expectedQueryArgs.size()));
+            for (Map.Entry<Object, Object> entry : expectedQueryArgs.entrySet()) {
+                assertThat(actualQueryArgs, hasEntry(entry.getKey(), entry.getValue()));
             }
-
         }
 
         // TODO: change
