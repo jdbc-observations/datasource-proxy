@@ -22,6 +22,7 @@ public class ProxyDataSourceBuilder {
     private boolean createSlf4jQueryListener;
     private SLF4JLogLevel slf4JLogLevel;
     private boolean createSysOutQueryListener;
+    private List<QueryExecutionListener> queryExecutionListeners = new ArrayList<QueryExecutionListener>();
 
     public static ProxyDataSourceBuilder create() {
         return new ProxyDataSourceBuilder();
@@ -74,6 +75,11 @@ public class ProxyDataSourceBuilder {
         return this;
     }
 
+    public ProxyDataSourceBuilder listener(QueryExecutionListener listener) {
+        this.queryExecutionListeners.add(listener);
+        return this;
+    }
+
     public ProxyDataSourceBuilder name(String dataSourceName) {
         this.dataSourceName = dataSourceName;
         return this;
@@ -109,6 +115,9 @@ public class ProxyDataSourceBuilder {
         }
         if (this.createSysOutQueryListener) {
             listeners.add(new SystemOutQueryLoggingListener());
+        }
+        for (QueryExecutionListener queryExecutionListener : this.queryExecutionListeners) {
+            listeners.add(queryExecutionListener);
         }
 
         if (!listeners.isEmpty()) {
