@@ -48,7 +48,7 @@ public class DataSourceQueryCountListener implements QueryExecutionListener {
 
         // increment db call
         count.incrementCall(); // num of db call
-        if (execInfo.getThrowable() != null) {
+        if (!execInfo.isSuccess()) {
             count.incrementFailure();
         }
 
