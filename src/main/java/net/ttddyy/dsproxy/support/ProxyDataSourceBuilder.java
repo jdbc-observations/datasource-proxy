@@ -22,6 +22,7 @@ public class ProxyDataSourceBuilder {
     private boolean createSlf4jQueryListener;
     private SLF4JLogLevel slf4JLogLevel;
     private boolean createSysOutQueryListener;
+    private boolean createDataSourceQueryCountListener;
     private List<QueryExecutionListener> queryExecutionListeners = new ArrayList<QueryExecutionListener>();
 
     public static ProxyDataSourceBuilder create() {
@@ -73,6 +74,17 @@ public class ProxyDataSourceBuilder {
     public ProxyDataSourceBuilder logQueryToSysOut() {
         this.createSysOutQueryListener = true;
         return this;
+
+    }
+
+    /**
+     * Create {@link net.ttddyy.dsproxy.listener.DataSourceQueryCountListener}.
+     *
+     * @return builder
+     */
+    public ProxyDataSourceBuilder countQuery() {
+        this.createDataSourceQueryCountListener = true;
+        return this;
     }
 
     public ProxyDataSourceBuilder listener(QueryExecutionListener listener) {
@@ -116,9 +128,14 @@ public class ProxyDataSourceBuilder {
         if (this.createSysOutQueryListener) {
             listeners.add(new SystemOutQueryLoggingListener());
         }
-        for (QueryExecutionListener queryExecutionListener : this.queryExecutionListeners) {
-            listeners.add(queryExecutionListener);
+
+        // countQuery listener
+        if (this.createDataSourceQueryCountListener) {
+            listeners.add(new DataSourceQueryCountListener());
         }
+
+        // explicitly added listeners
+        listeners.addAll(this.queryExecutionListeners);
 
         if (!listeners.isEmpty()) {
             if (listeners.size() == 1) {
