@@ -1,6 +1,8 @@
 package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.listener.*;
+import net.ttddyy.dsproxy.transform.ParameterTransformer;
+import net.ttddyy.dsproxy.transform.QueryTransformer;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -24,6 +26,9 @@ public class ProxyDataSourceBuilder {
     private boolean createSysOutQueryListener;
     private boolean createDataSourceQueryCountListener;
     private List<QueryExecutionListener> queryExecutionListeners = new ArrayList<QueryExecutionListener>();
+
+    private ParameterTransformer parameterTransformer;
+    private QueryTransformer queryTransformer;
 
     public static ProxyDataSourceBuilder create() {
         return new ProxyDataSourceBuilder();
@@ -97,6 +102,16 @@ public class ProxyDataSourceBuilder {
         return this;
     }
 
+    public ProxyDataSourceBuilder queryTransformer(QueryTransformer queryTransformer) {
+        this.queryTransformer = queryTransformer;
+        return this;
+    }
+
+    public ProxyDataSourceBuilder parameterTransformer(ParameterTransformer parameterTransformer) {
+        this.parameterTransformer = parameterTransformer;
+        return this;
+    }
+
     public ProxyDataSource build() {
         ProxyDataSource proxyDataSource = new ProxyDataSource();
 
@@ -145,6 +160,13 @@ public class ProxyDataSourceBuilder {
                 chainListener.getListeners().addAll(listeners);
                 proxyDataSource.setListener(chainListener);
             }
+        }
+
+        if (this.queryTransformer != null) {
+            proxyDataSource.getInterceptorHolder().setQueryTransformer(this.queryTransformer);
+        }
+        if (this.parameterTransformer != null) {
+            proxyDataSource.getInterceptorHolder().setParameterTransformer(this.parameterTransformer);
         }
 
         return proxyDataSource;
