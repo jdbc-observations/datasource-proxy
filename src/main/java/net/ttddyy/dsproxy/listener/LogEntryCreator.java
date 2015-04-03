@@ -15,4 +15,5 @@ public interface LogEntryCreator {
 
     String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName);
 
+    String getLogEntryAsJson(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName);
 }

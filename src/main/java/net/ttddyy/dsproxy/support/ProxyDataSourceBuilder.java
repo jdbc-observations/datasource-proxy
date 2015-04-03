@@ -25,6 +25,7 @@ public class ProxyDataSourceBuilder {
     private SLF4JLogLevel slf4JLogLevel;
     private boolean createSysOutQueryListener;
     private boolean createDataSourceQueryCountListener;
+    private boolean jsonFormat;
     private List<QueryExecutionListener> queryExecutionListeners = new ArrayList<QueryExecutionListener>();
 
     private ParameterTransformer parameterTransformer;
@@ -97,6 +98,11 @@ public class ProxyDataSourceBuilder {
         return this;
     }
 
+    public ProxyDataSourceBuilder asJson() {
+        this.jsonFormat = true;
+        return this;
+    }
+
     public ProxyDataSourceBuilder name(String dataSourceName) {
         this.dataSourceName = dataSourceName;
         return this;
@@ -131,6 +137,9 @@ public class ProxyDataSourceBuilder {
             if (this.commonsLogLevel != null) {
                 listener.setLogLevel(this.commonsLogLevel);
             }
+            if (this.jsonFormat) {
+                listener.setWriteAsJson(true);
+            }
             listeners.add(listener);
         }
         if (this.createSlf4jQueryListener) {
@@ -138,10 +147,17 @@ public class ProxyDataSourceBuilder {
             if (this.slf4JLogLevel != null) {
                 listener.setLogLevel(this.slf4JLogLevel);
             }
+            if (this.jsonFormat) {
+                listener.setWriteAsJson(true);
+            }
             listeners.add(listener);
         }
         if (this.createSysOutQueryListener) {
-            listeners.add(new SystemOutQueryLoggingListener());
+            SystemOutQueryLoggingListener listener = new SystemOutQueryLoggingListener();
+            if (this.jsonFormat) {
+                listener.setWriteAsJson(true);
+            }
+            listeners.add(listener);
         }
 
         // countQuery listener

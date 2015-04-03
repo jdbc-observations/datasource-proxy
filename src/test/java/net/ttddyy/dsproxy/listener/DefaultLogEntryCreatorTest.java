@@ -35,10 +35,12 @@ public class DefaultLogEntryCreatorTest {
         QueryInfo queryInfo = QueryInfoBuilder.create().query("select 1").build();
 
         DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-
-
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Statement, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[()]");
+
+        String jsonEntry = creator.getLogEntryAsJson(executionInfo, Lists.newArrayList(queryInfo), true);
+        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Statement\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{}]}");
     }
 
     @Test
@@ -62,10 +64,12 @@ public class DefaultLogEntryCreatorTest {
         QueryInfo queryInfo2 = QueryInfoBuilder.create().query("select 2").build();
 
         DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo1, queryInfo2), true);
-
-
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Statement, Batch:True, QuerySize:2, BatchSize:2, Query:[\"select 1\",\"select 2\"], Params:[(),()]");
+
+        String jsonEntry = creator.getLogEntryAsJson(executionInfo, Lists.newArrayList(queryInfo1, queryInfo2), true);
+        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Statement\", \"batch\":true, \"querySize\":2, \"batchSize\":2, \"query\":[\"select 1\",\"select 2\"], \"params\":[{},{}]}");
     }
 
     @Test
@@ -92,9 +96,12 @@ public class DefaultLogEntryCreatorTest {
                 .build();
 
         DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
-        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
 
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Prepared, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(1=foo,2=100)]");
+
+        String jsonEntry = creator.getLogEntryAsJson(executionInfo, Lists.newArrayList(queryInfo), true);
+        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Prepared\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{\"1\":\"foo\",\"2\":\"100\"}]}");
     }
 
     @Test
@@ -123,10 +130,12 @@ public class DefaultLogEntryCreatorTest {
                 .build();
 
         DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-
-
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(1=foo,2=100),(1=bar,2=200)]");
+
+        String jsonEntry = creator.getLogEntryAsJson(executionInfo, Lists.newArrayList(queryInfo), true);
+        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Prepared\", \"batch\":true, \"querySize\":1, \"batchSize\":2, \"query\":[\"select 1\"], \"params\":[{\"1\":\"foo\",\"2\":\"100\"},{\"1\":\"bar\",\"2\":\"200\"}]}");
     }
 
     @Test
@@ -153,9 +162,12 @@ public class DefaultLogEntryCreatorTest {
                 .build();
 
         DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
-        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
 
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Callable, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(id=100,name=foo)]");
+
+        String jsonEntry = creator.getLogEntryAsJson(executionInfo, Lists.newArrayList(queryInfo), true);
+        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Callable\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{\"id\":\"100\",\"name\":\"foo\"}]}");
     }
 
     @Test
@@ -184,10 +196,12 @@ public class DefaultLogEntryCreatorTest {
                 .build();
 
         DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-
-
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Callable, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(id=100,name=foo),(id=200,name=bar)]");
+
+        String jsonEntry = creator.getLogEntryAsJson(executionInfo, Lists.newArrayList(queryInfo), true);
+        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Callable\", \"batch\":true, \"querySize\":1, \"batchSize\":2, \"query\":[\"select 1\"], \"params\":[{\"id\":\"100\",\"name\":\"foo\"},{\"id\":\"200\",\"name\":\"bar\"}]}");
     }
 
     @Test
@@ -218,9 +232,12 @@ public class DefaultLogEntryCreatorTest {
                 .build();
 
         DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
-        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
 
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
         assertThat(entry).containsOnlyOnce("Params:[(1=foo,2=100,3=FOO),(1=bar,2=200,3=BAR)]");
+
+        String jsonEntry = creator.getLogEntryAsJson(executionInfo, Lists.newArrayList(queryInfo), true);
+        assertThat(jsonEntry).containsOnlyOnce("\"params\":[{\"1\":\"foo\",\"2\":\"100\",\"3\":\"FOO\"},{\"1\":\"bar\",\"2\":\"200\",\"3\":\"BAR\"}]");
     }
 
     @Test
@@ -251,16 +268,18 @@ public class DefaultLogEntryCreatorTest {
                 .build();
 
         DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-
-
         assertThat(entry).containsOnlyOnce("Params:[(a-idx=foo,b-idx=FOO,c-idx=100),(a-idx=bar,b-idx=BAR,c-idx=200)]");
+
+        String jsonEntry = creator.getLogEntryAsJson(executionInfo, Lists.newArrayList(queryInfo), true);
+        assertThat(jsonEntry).containsOnlyOnce("\"params\":[{\"a-idx\":\"foo\",\"b-idx\":\"FOO\",\"c-idx\":\"100\"},{\"a-idx\":\"bar\",\"b-idx\":\"BAR\",\"c-idx\":\"200\"}]");
     }
 
     @Test
     public void statementType() throws Exception {
         ExecutionInfo executionInfo;
-        String result;
+        String result, jsonResult;
 
         DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
 
@@ -268,16 +287,22 @@ public class DefaultLogEntryCreatorTest {
         executionInfo = ExecutionInfoBuilder.create().statementType(StatementType.STATEMENT).build();
         result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
         assertThat(result).containsOnlyOnce("Type:Statement");
+        jsonResult = creator.getLogEntryAsJson(executionInfo, new ArrayList<QueryInfo>(), true);
+        assertThat(jsonResult).containsOnlyOnce("\"type\":\"Statement\"");
 
         // PreparedStatement
         executionInfo = ExecutionInfoBuilder.create().statementType(StatementType.PREPARED).build();
         result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
         assertThat(result).containsOnlyOnce("Type:Prepared");
+        jsonResult = creator.getLogEntryAsJson(executionInfo, new ArrayList<QueryInfo>(), true);
+        assertThat(jsonResult).containsOnlyOnce("\"type\":\"Prepared\"");
 
         // CallableStatement
         executionInfo = ExecutionInfoBuilder.create().statementType(StatementType.CALLABLE).build();
         result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
         assertThat(result).containsOnlyOnce("Type:Callable");
+        jsonResult = creator.getLogEntryAsJson(executionInfo, new ArrayList<QueryInfo>(), true);
+        assertThat(jsonResult).containsOnlyOnce("\"type\":\"Callable\"");
     }
 
     @Test
@@ -288,15 +313,19 @@ public class DefaultLogEntryCreatorTest {
         QueryInfo select3 = QueryInfoBuilder.create().query("select 3").build();
 
         DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
-        String result;
+        String result, jsonResult;
 
         // single query
         result = creator.getLogEntry(executionInfo, Arrays.asList(select1), true);
         assertThat(result).containsOnlyOnce("Query:[\"select 1\"]");
+        jsonResult = creator.getLogEntryAsJson(executionInfo, Arrays.asList(select1), true);
+        assertThat(jsonResult).containsOnlyOnce("\"query\":[\"select 1\"]");
 
         // multiple query
         result = creator.getLogEntry(executionInfo, Arrays.asList(select1, select2, select3), true);
         assertThat(result).containsOnlyOnce("Query:[\"select 1\",\"select 2\",\"select 3\"]");
+        jsonResult = creator.getLogEntryAsJson(executionInfo, Arrays.asList(select1, select2, select3), true);
+        assertThat(jsonResult).containsOnlyOnce("\"query\":[\"select 1\",\"select 2\",\"select 3\"]");
     }
 
     @Test
@@ -307,21 +336,25 @@ public class DefaultLogEntryCreatorTest {
         QueryInfo select3 = QueryInfoBuilder.create().query("select 3").build();
 
         DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
-        String result;
+        String result, jsonResult;
 
         // single query
         result = creator.getLogEntry(executionInfo, Arrays.asList(select1), true);
         assertThat(result).containsOnlyOnce("QuerySize:1");
+        jsonResult = creator.getLogEntryAsJson(executionInfo, Arrays.asList(select1), true);
+        assertThat(jsonResult).containsOnlyOnce("\"querySize\":1");
 
         // multiple query
         result = creator.getLogEntry(executionInfo, Arrays.asList(select1, select2, select3), true);
         assertThat(result).containsOnlyOnce("QuerySize:3");
+        jsonResult = creator.getLogEntryAsJson(executionInfo, Arrays.asList(select1, select2, select3), true);
+        assertThat(jsonResult).containsOnlyOnce("\"querySize\":3");
     }
 
     @Test
     public void success() throws Exception {
         ExecutionInfo executionInfo;
-        String result;
+        String result, jsonResult;
 
         DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
 
@@ -329,18 +362,22 @@ public class DefaultLogEntryCreatorTest {
         executionInfo = ExecutionInfoBuilder.create().success(true).build();
         result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
         assertThat(result).containsOnlyOnce("Success:True");
+        jsonResult = creator.getLogEntryAsJson(executionInfo, new ArrayList<QueryInfo>(), true);
+        assertThat(jsonResult).containsOnlyOnce("\"success\":true");
 
         // fail
         executionInfo = ExecutionInfoBuilder.create().success(false).build();
         result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
         assertThat(result).containsOnlyOnce("Success:False");
+        jsonResult = creator.getLogEntryAsJson(executionInfo, new ArrayList<QueryInfo>(), true);
+        assertThat(jsonResult).containsOnlyOnce("\"success\":false");
 
     }
 
     @Test
     public void batch() throws Exception {
         ExecutionInfo executionInfo;
-        String result;
+        String result,jsonResult;
 
         DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
 
@@ -348,17 +385,21 @@ public class DefaultLogEntryCreatorTest {
         executionInfo = ExecutionInfoBuilder.create().batch(true).build();
         result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
         assertThat(result).containsOnlyOnce("Batch:True");
+        jsonResult = creator.getLogEntryAsJson(executionInfo, new ArrayList<QueryInfo>(), true);
+        assertThat(jsonResult).containsOnlyOnce("\"batch\":true");
 
         // fail
         executionInfo = ExecutionInfoBuilder.create().batch(false).build();
         result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
         assertThat(result).containsOnlyOnce("Batch:False");
+        jsonResult = creator.getLogEntryAsJson(executionInfo, new ArrayList<QueryInfo>(), true);
+        assertThat(jsonResult).containsOnlyOnce("\"batch\":false");
     }
 
     @Test
     public void batchSize() throws Exception {
         ExecutionInfo executionInfo;
-        String result;
+        String result,jsonResult;
 
         DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
 
@@ -366,10 +407,14 @@ public class DefaultLogEntryCreatorTest {
         executionInfo = ExecutionInfoBuilder.create().build();
         result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
         assertThat(result).containsOnlyOnce("BatchSize:0");
+        jsonResult = creator.getLogEntryAsJson(executionInfo, new ArrayList<QueryInfo>(), true);
+        assertThat(jsonResult).containsOnlyOnce("\"batchSize\":0");
 
         executionInfo = ExecutionInfoBuilder.create().batchSize(100).build();
         result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
         assertThat(result).containsOnlyOnce("BatchSize:100");
+        jsonResult = creator.getLogEntryAsJson(executionInfo, new ArrayList<QueryInfo>(), true);
+        assertThat(jsonResult).containsOnlyOnce("\"batchSize\":100");
     }
 
 }

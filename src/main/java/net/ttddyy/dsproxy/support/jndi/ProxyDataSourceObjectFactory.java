@@ -33,6 +33,7 @@ public class ProxyDataSourceObjectFactory implements ObjectFactory {
         String proxyDataSourceName = getContentFromReference(reference, "proxyName");
         String listenerNames = getContentFromReference(reference, "listeners");
         String logLevel = getContentFromReference(reference, "logLevel");
+        String foramt = getContentFromReference(reference, "format");
         String queryTransformer = getContentFromReference(reference, "queryTransformer");
         String parameterTransformer = getContentFromReference(reference, "parameterTransformer");
 
@@ -74,6 +75,10 @@ public class ProxyDataSourceObjectFactory implements ObjectFactory {
                     QueryExecutionListener listener = createNewInstance(QueryExecutionListener.class, listenerName);
                     builder.listener(listener);
                 }
+            }
+
+            if (foramt != null && "json".equals(foramt.toLowerCase())) {
+                builder.asJson();
             }
         }
 
