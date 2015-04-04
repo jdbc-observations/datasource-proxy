@@ -11,9 +11,9 @@ public class DefaultQueryCountLogFormatter implements QueryCountLogFormatter {
 
     public String getLogMessage(String datasourceName, QueryCount queryCount) {
         final StringBuilder sb = new StringBuilder();
-        sb.append("Name:");
+        sb.append("Name:\"");
         sb.append(datasourceName);
-        sb.append(", ");
+        sb.append("\", ");
 
         sb.append("Time:");
         sb.append(queryCount.getTime());
