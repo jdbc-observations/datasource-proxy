@@ -16,8 +16,9 @@ public class QueryCount {
     private int other;
 
     // num of database call
-    private int call;
+    private int total;
     private int failure;
+    private int success;
 
     private long elapsedTime;
 
@@ -60,8 +61,12 @@ public class QueryCount {
         other++;
     }
 
-    public void incrementCall() {
-        call++;
+    public void incrementTotal() {
+        total++;
+    }
+
+    public void incrementSuccess() {
+        success++;
     }
 
     public void incrementFailure() {
@@ -70,10 +75,6 @@ public class QueryCount {
 
     public void incrementElapsedTime(long delta) {
         elapsedTime += delta;
-    }
-
-    public int getTotalNumOfQuery() {
-        return select + insert + update + delete + other;
     }
 
     public int getSelect() {
@@ -116,12 +117,20 @@ public class QueryCount {
         this.other = other;
     }
 
-    public int getCall() {
-        return call;
+    public int getTotal() {
+        return total;
     }
 
-    public void setCall(int call) {
-        this.call = call;
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    public int getSuccess() {
+        return success;
+    }
+
+    public void setSuccess(int success) {
+        this.success = success;
     }
 
     public int getFailure() {

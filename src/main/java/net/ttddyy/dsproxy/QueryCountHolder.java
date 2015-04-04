@@ -34,7 +34,8 @@ public class QueryCountHolder {
             totalCount.setUpdate(totalCount.getUpdate() + queryCount.getUpdate());
             totalCount.setDelete(totalCount.getDelete() + queryCount.getDelete());
             totalCount.setOther(totalCount.getOther() + queryCount.getOther());
-            totalCount.setCall(totalCount.getCall() + queryCount.getCall());
+            totalCount.setTotal(totalCount.getTotal() + queryCount.getTotal());
+            totalCount.setSuccess(totalCount.getSuccess() + queryCount.getSuccess());
             totalCount.setFailure(totalCount.getFailure() + queryCount.getFailure());
             totalCount.setElapsedTime(totalCount.getElapsedTime() + queryCount.getElapsedTime());
         }

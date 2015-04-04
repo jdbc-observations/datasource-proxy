@@ -45,8 +45,10 @@ public class DataSourceQueryCountListener implements QueryExecutionListener {
         }
 
         // increment db call
-        count.incrementCall(); // num of db call
-        if (!execInfo.isSuccess()) {
+        count.incrementTotal();
+        if (execInfo.isSuccess()) {
+            count.incrementSuccess();
+        } else {
             count.incrementFailure();
         }
 
@@ -63,7 +65,7 @@ public class DataSourceQueryCountListener implements QueryExecutionListener {
 
     }
 
-    private QueryType getQueryType(String query) {
+    protected QueryType getQueryType(String query) {
         final String trimmedQuery = QueryUtils.removeCommentAndWhiteSpace(query);
         final char firstChar = trimmedQuery.charAt(0);
 

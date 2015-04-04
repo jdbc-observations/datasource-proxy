@@ -33,16 +33,16 @@
       <required>true</required>
       <description>
         metric to display.
-        Needs to be one of followings:
-          "select": num of select queries 
+        Needs to be one of the followings:
+          "select": num of select queries
           "insert": num of insert queries
           "update": num of update queries
           "delete": num of delete queries
           "other" : num of other queries
-          "call"  : num of stored procedure
-          "failure" : num of failed queries
-          "elapsedTime": query execution time 
-          "total": toal number of queries
+          "total"  : total num of queries
+          "success" : num of success queries
+          "failure" : num of failure queries
+          "time": query execution time
       </description>
     </attribute>
 

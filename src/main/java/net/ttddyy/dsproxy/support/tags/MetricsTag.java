@@ -46,14 +46,14 @@ public class MetricsTag extends SimpleTagSupport {
             sb.append(count.getDelete());
         } else if ("other".equalsIgnoreCase(metric)) {
             sb.append(count.getOther());
-        } else if ("call".equalsIgnoreCase(metric)) {
-            sb.append(count.getCall());
+        } else if ("total".equalsIgnoreCase(metric)) {
+            sb.append(count.getTotal());
+        } else if ("success".equalsIgnoreCase(metric)) {
+            sb.append(count.getSuccess());
         } else if ("failure".equalsIgnoreCase(metric)) {
             sb.append(count.getFailure());
-        } else if ("elapsedTime".equalsIgnoreCase(metric)) {
+        } else if ("time".equalsIgnoreCase(metric)) {
             sb.append(count.getElapsedTime());
-        } else if ("total".equalsIgnoreCase(metric)) {
-            sb.append(count.getTotalNumOfQuery());
         }
 
         final JspWriter writer = getJspContext().getOut();
