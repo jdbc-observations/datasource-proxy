@@ -1,27 +1,25 @@
 package net.ttddyy.dsproxy.listener;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryCount;
-import net.ttddyy.dsproxy.QueryCountHolder;
-import net.ttddyy.dsproxy.QueryInfo;
-import net.ttddyy.dsproxy.QueryType;
+import net.ttddyy.dsproxy.*;
 
 import java.util.List;
 
 /**
  * Update database access information to thread local value({@link net.ttddyy.dsproxy.QueryCount}).
- * <p/>
- * In web application lifecycle, one http request is handled by one thread.
+ *
+ * <p>In web application lifecycle, one http request is handled by one thread.
  * Storing database access information into a thread local value provides metrics
  * information per http request.
- * <p/>
- * Thread local value({@link net.ttddyy.dsproxy.QueryCount}) holds following information.
- * - datasource name
- * - number of database call
- * - total query execution time
- * - number of queries by type
- * <p/>
- * {@link net.ttddyy.dsproxy.QueryCount} can be retrieved by {@link net.ttddyy.dsproxy.QueryCountHolder#get(String)}.
+ *
+ * <p>Thread local value({@link net.ttddyy.dsproxy.QueryCount}) holds following data:
+ * <ul>
+ * <li> datasource name
+ * <li> number of database call
+ * <li> total query execution time
+ * <li> number of queries by type
+ * </ul>
+ *
+ * <p>{@link net.ttddyy.dsproxy.QueryCount} can be retrieved by {@link net.ttddyy.dsproxy.QueryCountHolder#get(String)}.
  *
  * @author Tadaya Tsuyukubo
  * @see net.ttddyy.dsproxy.QueryCount
