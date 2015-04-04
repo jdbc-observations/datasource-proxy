@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.listener;
 
+import net.ttddyy.dsproxy.support.SLF4JLogUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,23 +16,7 @@ public class SLF4JQueryLoggingListener extends AbstractQueryLoggingListener {
 
     @Override
     protected void writeLog(String message) {
-        switch (logLevel) {
-            case DEBUG:
-                logger.debug(message);
-                break;
-            case ERROR:
-                logger.error(message);
-                break;
-            case INFO:
-                logger.info(message);
-                break;
-            case TRACE:
-                logger.trace(message);
-                break;
-            case WARN:
-                logger.warn(message);
-                break;
-        }
+        SLF4JLogUtils.writeLog(logger, this.logLevel, message);
     }
 
     public void setLogLevel(SLF4JLogLevel logLevel) {

@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.listener;
 
+import net.ttddyy.dsproxy.support.CommonsLogUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -15,26 +16,7 @@ public class CommonsQueryLoggingListener extends AbstractQueryLoggingListener {
 
     @Override
     protected void writeLog(String message) {
-        switch (logLevel) {
-            case DEBUG:
-                log.debug(message);
-                break;
-            case ERROR:
-                log.error(message);
-                break;
-            case FATAL:
-                log.fatal(message);
-                break;
-            case INFO:
-                log.info(message);
-                break;
-            case TRACE:
-                log.trace(message);
-                break;
-            case WARN:
-                log.warn(message);
-                break;
-        }
+        CommonsLogUtils.writeLog(log, this.logLevel, message);
     }
 
     public void setLogLevel(CommonsLogLevel logLevel) {
