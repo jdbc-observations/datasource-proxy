@@ -19,11 +19,11 @@ import java.util.List;
 /**
  * Servlet Filter to log the query metrics during a http request lifecycle using Apache Commons Logging.
  *
- * Some application server reuse threads without cleaning thread local values. Default, this filter clear
+ * <p>Some application server reuse threads without cleaning thread local values. Default, this filter clear
  * the thread local value used to hold the query metrics. If you do not want to clear the thread local value,
  * set "clearQueryCounter", a servlet parameter, to false.
  *
- * Also, you can set a log level.  
+ * <p>Also, you can set a log level.
  *
  * @author Tadaya Tsuyukubo
  * @see CommonsQueryCountLoggingHandlerInterceptor
@@ -39,6 +39,13 @@ public class CommonsQueryCountLoggingFilter implements Filter {
     private boolean clearQueryCounter = true;
     private CommonsLogLevel logLevel = CommonsLogLevel.DEBUG;
     private QueryCountLogFormatter logFormatter = new DefaultQueryCountLogFormatter();
+
+    public CommonsQueryCountLoggingFilter() {
+    }
+
+    public CommonsQueryCountLoggingFilter(CommonsLogLevel logLevel) {
+        this.logLevel = logLevel;
+    }
 
     public void init(FilterConfig filterConfig) throws ServletException {
 

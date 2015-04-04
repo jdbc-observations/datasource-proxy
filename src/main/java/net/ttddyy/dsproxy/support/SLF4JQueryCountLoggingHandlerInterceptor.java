@@ -23,6 +23,13 @@ public class SLF4JQueryCountLoggingHandlerInterceptor extends HandlerInterceptor
     private SLF4JLogLevel logLevel = SLF4JLogLevel.DEBUG;
     private QueryCountLogFormatter logFormatter = new DefaultQueryCountLogFormatter();
 
+    public SLF4JQueryCountLoggingHandlerInterceptor() {
+    }
+
+    public SLF4JQueryCountLoggingHandlerInterceptor(SLF4JLogLevel logLevel) {
+        this.logLevel = logLevel;
+    }
+
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
 
