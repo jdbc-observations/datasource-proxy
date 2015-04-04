@@ -14,7 +14,7 @@ public class DefaultQueryCountLogFormatterTest {
     @Test
     public void logFormat() {
         QueryCount queryCount = new QueryCount();
-        queryCount.setElapsedTime(1);
+        queryCount.setTime(1);
         queryCount.setTotal(2);
         queryCount.setSuccess(3);
         queryCount.setFailure(4);

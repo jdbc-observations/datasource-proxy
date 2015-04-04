@@ -16,7 +16,7 @@ public class DefaultQueryCountLogFormatter implements QueryCountLogFormatter {
         sb.append(", ");
 
         sb.append("Time:");
-        sb.append(queryCount.getElapsedTime());
+        sb.append(queryCount.getTime());
         sb.append(", ");
 
         sb.append("Total:");

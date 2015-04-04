@@ -54,7 +54,7 @@ public class DataSourceQueryCountListener implements QueryExecutionListener {
 
         // increment elapsed time
         final long elapsedTime = execInfo.getElapsedTime();
-        count.incrementElapsedTime(elapsedTime);
+        count.incrementTime(elapsedTime);
 
         // increment query count
         for (QueryInfo queryInfo : queryInfoList) {

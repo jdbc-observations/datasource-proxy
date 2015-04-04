@@ -37,7 +37,7 @@ public class QueryCountHolder {
             totalCount.setTotal(totalCount.getTotal() + queryCount.getTotal());
             totalCount.setSuccess(totalCount.getSuccess() + queryCount.getSuccess());
             totalCount.setFailure(totalCount.getFailure() + queryCount.getFailure());
-            totalCount.setElapsedTime(totalCount.getElapsedTime() + queryCount.getElapsedTime());
+            totalCount.setTime(totalCount.getTime() + queryCount.getTime());
         }
         return totalCount;
     }

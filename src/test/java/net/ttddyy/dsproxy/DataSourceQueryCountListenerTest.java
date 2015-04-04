@@ -81,7 +81,7 @@ public class DataSourceQueryCountListenerTest {
     private void verifyQueryCount(int select, int insert, int update, int delete, int other) {
         QueryCount queryCount = QueryCountHolder.get("testDS");
         assertThat(queryCount).isNotNull().isInstanceOf(QueryCount.class);
-        assertThat(queryCount.getElapsedTime()).as("total time").isEqualTo(123L);
+        assertThat(queryCount.getTime()).as("total time").isEqualTo(123L);
         assertThat(queryCount.getSelect()).as("num of select").isEqualTo(select);
         assertThat(queryCount.getInsert()).as("num of insert").isEqualTo(insert);
         assertThat(queryCount.getUpdate()).as("num of update").isEqualTo(update);

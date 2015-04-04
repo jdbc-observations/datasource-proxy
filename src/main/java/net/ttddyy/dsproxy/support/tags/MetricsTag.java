@@ -53,7 +53,7 @@ public class MetricsTag extends SimpleTagSupport {
         } else if ("failure".equalsIgnoreCase(metric)) {
             sb.append(count.getFailure());
         } else if ("time".equalsIgnoreCase(metric)) {
-            sb.append(count.getElapsedTime());
+            sb.append(count.getTime());
         }
 
         final JspWriter writer = getJspContext().getOut();

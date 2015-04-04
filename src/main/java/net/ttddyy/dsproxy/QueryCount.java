@@ -20,7 +20,7 @@ public class QueryCount {
     private int failure;
     private int success;
 
-    private long elapsedTime;
+    private long time;
 
     public void increment(QueryType queryType) {
         switch (queryType) {
@@ -73,8 +73,8 @@ public class QueryCount {
         failure++;
     }
 
-    public void incrementElapsedTime(long delta) {
-        elapsedTime += delta;
+    public void incrementTime(long delta) {
+        time += delta;
     }
 
     public int getSelect() {
@@ -141,11 +141,11 @@ public class QueryCount {
         this.failure = failure;
     }
 
-    public long getElapsedTime() {
-        return elapsedTime;
+    public long getTime() {
+        return time;
     }
 
-    public void setElapsedTime(long elapsedTime) {
-        this.elapsedTime = elapsedTime;
+    public void setTime(long time) {
+        this.time = time;
     }
 }
