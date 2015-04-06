@@ -15,9 +15,8 @@ import java.util.List;
 /**
  * Spring {@link org.springframework.web.servlet.HandlerInterceptor} to log the query metrics during a http request
  * lifecycle using Apache Commons Logging.
-
- * @author Tadaya Tsuyukubo
  *
+ * @author Tadaya Tsuyukubo
  * @see CommonsQueryCountLoggingFilter
  * @see CommonsQueryCountLoggingRequestListener
  */
@@ -26,6 +25,7 @@ public class CommonsQueryCountLoggingHandlerInterceptor extends HandlerIntercept
     private Log log = LogFactory.getLog(CommonsQueryCountLoggingHandlerInterceptor.class);
 
     private boolean clearQueryCounter = true;
+    private boolean writeAsJson = false;
     private CommonsLogLevel logLevel = CommonsLogLevel.DEBUG;
     private QueryCountLogFormatter logFormatter = new DefaultQueryCountLogFormatter();
 
@@ -36,8 +36,13 @@ public class CommonsQueryCountLoggingHandlerInterceptor extends HandlerIntercept
         Collections.sort(dsNames);
 
         for (String dsName : dsNames) {
-            final QueryCount count = QueryCountHolder.get(dsName);
-            final String message = logFormatter.getLogMessage(dsName, count);
+            QueryCount count = QueryCountHolder.get(dsName);
+            String message;
+            if (this.writeAsJson) {
+                message = logFormatter.getLogMessageAsJson(dsName, count);
+            } else {
+                message = logFormatter.getLogMessage(dsName, count);
+            }
             CommonsLogUtils.writeLog(log, logLevel, message);
         }
 
@@ -58,5 +63,9 @@ public class CommonsQueryCountLoggingHandlerInterceptor extends HandlerIntercept
 
     public void setLogFormatter(QueryCountLogFormatter logFormatter) {
         this.logFormatter = logFormatter;
+    }
+
+    public void setWriteAsJson(boolean writeAsJson) {
+        this.writeAsJson = writeAsJson;
     }
 }

@@ -20,6 +20,7 @@ public class SLF4JQueryCountLoggingHandlerInterceptor extends HandlerInterceptor
     private Logger logger = LoggerFactory.getLogger(SLF4JQueryCountLoggingHandlerInterceptor.class);
 
     private boolean clearQueryCounter = true;
+    private boolean writeAsJson = false;
     private SLF4JLogLevel logLevel = SLF4JLogLevel.DEBUG;
     private QueryCountLogFormatter logFormatter = new DefaultQueryCountLogFormatter();
 
@@ -37,8 +38,13 @@ public class SLF4JQueryCountLoggingHandlerInterceptor extends HandlerInterceptor
         Collections.sort(dsNames);
 
         for (String dsName : dsNames) {
-            final QueryCount count = QueryCountHolder.get(dsName);
-            final String message = logFormatter.getLogMessage(dsName, count);
+            QueryCount count = QueryCountHolder.get(dsName);
+            String message;
+            if (this.writeAsJson) {
+                message = logFormatter.getLogMessageAsJson(dsName, count);
+            } else {
+                message = logFormatter.getLogMessage(dsName, count);
+            }
             SLF4JLogUtils.writeLog(logger, logLevel, message);
         }
 
@@ -58,5 +64,9 @@ public class SLF4JQueryCountLoggingHandlerInterceptor extends HandlerInterceptor
 
     public void setLogFormatter(QueryCountLogFormatter logFormatter) {
         this.logFormatter = logFormatter;
+    }
+
+    public boolean isWriteAsJson() {
+        return writeAsJson;
     }
 }

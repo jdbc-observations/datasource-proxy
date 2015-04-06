@@ -27,6 +27,7 @@ public class CommonsQueryCountLoggingRequestListener implements ServletRequestLi
 
     private Log log = LogFactory.getLog(CommonsQueryCountLoggingRequestListener.class);
     private QueryCountLogFormatter logFormatter = new DefaultQueryCountLogFormatter();
+    private boolean writeAsJson = false;
 
     public void requestInitialized(ServletRequestEvent sre) {
     }
@@ -43,8 +44,14 @@ public class CommonsQueryCountLoggingRequestListener implements ServletRequestLi
         Collections.sort(dsNames);
 
         for (String dsName : dsNames) {
-            final QueryCount count = QueryCountHolder.get(dsName);
-            final String message = logFormatter.getLogMessage(dsName, count);
+            QueryCount count = QueryCountHolder.get(dsName);
+            String message;
+            if (this.writeAsJson) {
+                message = logFormatter.getLogMessageAsJson(dsName, count);
+            } else {
+                message = logFormatter.getLogMessage(dsName, count);
+            }
+
             CommonsLogUtils.writeLog(log, logLevel, message);
         }
 
@@ -53,5 +60,9 @@ public class CommonsQueryCountLoggingRequestListener implements ServletRequestLi
 
     public void setLogFormatter(QueryCountLogFormatter logFormatter) {
         this.logFormatter = logFormatter;
+    }
+
+    public void setWriteAsJson(boolean writeAsJson) {
+        this.writeAsJson = writeAsJson;
     }
 }

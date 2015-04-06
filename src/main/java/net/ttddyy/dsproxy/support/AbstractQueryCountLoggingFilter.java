@@ -41,8 +41,10 @@ import java.util.List;
 public abstract class AbstractQueryCountLoggingFilter implements Filter {
     public static final String CLEAR_QUERY_COUNTER_PARAM = "clearQueryCounter";
     public static final String LOG_LEVEL_PARAM = "logLevel";
+    public static final String FORMAT_PARAM = "format";
 
     protected boolean clearQueryCounter = true;
+    protected boolean writeAsJson = false;
     protected QueryCountLogFormatter logFormatter = new DefaultQueryCountLogFormatter();
 
 
@@ -58,6 +60,12 @@ public abstract class AbstractQueryCountLoggingFilter implements Filter {
         if (logLevelParam != null) {
             initLogLevelFromFilterConfigIfSpecified(logLevelParam);
         }
+
+        String format = filterConfig.getInitParameter(FORMAT_PARAM);
+        if (format != null && "json".equalsIgnoreCase(format)) {
+            this.writeAsJson = true;
+        }
+
     }
 
     @Override
@@ -69,7 +77,12 @@ public abstract class AbstractQueryCountLoggingFilter implements Filter {
 
         for (String dsName : dsNames) {
             QueryCount count = QueryCountHolder.get(dsName);
-            String message = logFormatter.getLogMessage(dsName, count);
+            String message;
+            if (this.writeAsJson) {
+                message = this.logFormatter.getLogMessageAsJson(dsName, count);
+            } else {
+                message = this.logFormatter.getLogMessage(dsName, count);
+            }
             writeLog(message);
         }
 
@@ -94,4 +107,7 @@ public abstract class AbstractQueryCountLoggingFilter implements Filter {
         this.logFormatter = logFormatter;
     }
 
+    public void setWriteAsJson(boolean writeAsJson) {
+        this.writeAsJson = writeAsJson;
+    }
 }

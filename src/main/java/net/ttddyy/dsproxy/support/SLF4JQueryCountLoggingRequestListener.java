@@ -22,6 +22,7 @@ public class SLF4JQueryCountLoggingRequestListener implements ServletRequestList
 
     private Logger logger = LoggerFactory.getLogger(SLF4JQueryCountLoggingRequestListener.class);
     private QueryCountLogFormatter logFormatter = new DefaultQueryCountLogFormatter();
+    private boolean writeAsJson = false;
 
     public void requestInitialized(ServletRequestEvent sre) {
     }
@@ -39,8 +40,13 @@ public class SLF4JQueryCountLoggingRequestListener implements ServletRequestList
         Collections.sort(dsNames);
 
         for (String dsName : dsNames) {
-            final QueryCount count = QueryCountHolder.get(dsName);
-            final String message = logFormatter.getLogMessage(dsName, count);
+            QueryCount count = QueryCountHolder.get(dsName);
+            String message;
+            if (this.writeAsJson) {
+                message = logFormatter.getLogMessageAsJson(dsName, count);
+            } else {
+                message = logFormatter.getLogMessage(dsName, count);
+            }
             SLF4JLogUtils.writeLog(logger, logLevel, message);
         }
 
@@ -50,5 +56,9 @@ public class SLF4JQueryCountLoggingRequestListener implements ServletRequestList
 
     public void setLogFormatter(QueryCountLogFormatter logFormatter) {
         this.logFormatter = logFormatter;
+    }
+
+    public void setWriteAsJson(boolean writeAsJson) {
+        this.writeAsJson = writeAsJson;
     }
 }
