@@ -8,4 +8,5 @@ import net.ttddyy.dsproxy.QueryCount;
 public interface QueryCountLogFormatter {
 
     String getLogMessage(String datasourceName, QueryCount queryCount);
+    String getLogMessageAsJson(String datasourceName, QueryCount queryCount);
 }
