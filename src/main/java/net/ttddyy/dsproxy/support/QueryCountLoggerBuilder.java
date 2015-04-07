@@ -86,6 +86,7 @@ public class QueryCountLoggerBuilder {
         if (this.slf4jLogLevel != null) {
             filter.setLogLevel(this.slf4jLogLevel);
         }
+        filter.setWriteAsJson(this.writeAsJson);
         return filter;
     }
 
@@ -102,6 +103,7 @@ public class QueryCountLoggerBuilder {
         if (this.slf4jLogLevel != null) {
             handlerInterceptor.setLogLevel(this.slf4jLogLevel);
         }
+        handlerInterceptor.setWriteAsJson(this.writeAsJson);
         return handlerInterceptor;
     }
 
