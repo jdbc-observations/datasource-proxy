@@ -107,4 +107,17 @@ public class QueryCountLoggerBuilder {
         return handlerInterceptor;
     }
 
+    public SystemOutQueryCountLoggingFilter buildSysOutFilter() {
+        SystemOutQueryCountLoggingFilter filter = new SystemOutQueryCountLoggingFilter();
+        filter.setWriteAsJson(this.writeAsJson);
+        return filter;
+
+    }
+
+    public SystemOutQueryCountLoggingHandlerInterceptor buildSysOutHandlerInterceptor() {
+        SystemOutQueryCountLoggingHandlerInterceptor handlerInterceptor = new SystemOutQueryCountLoggingHandlerInterceptor();
+        handlerInterceptor.setWriteAsJson(this.writeAsJson);
+        return handlerInterceptor;
+    }
+
 }
