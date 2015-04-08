@@ -130,7 +130,7 @@ public class PreparedStatementProxyLogic {
         boolean isBatchExecution = false;
         int batchSize = 0;
 
-        if ("executeBatch".equals(methodName)) {
+        if (StatementMethodNames.BATCH_EXEC_METHODS.contains(methodName)) {
 
             // one query with multiple parameters
             QueryInfo queryInfo = new QueryInfo(this.query);
@@ -143,8 +143,7 @@ public class PreparedStatementProxyLogic {
             batchParameters.clear();
             isBatchExecution = true;
 
-        } else if ("executeQuery".equals(methodName) || "executeUpdate".equals(methodName)
-                || "execute".equals(methodName)) {
+        } else if (StatementMethodNames.QUERY_EXEC_METHODS.contains(methodName)) {
 
             transformParameters(false, 0);
 

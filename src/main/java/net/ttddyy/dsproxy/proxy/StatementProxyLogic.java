@@ -21,29 +21,13 @@ import java.util.*;
  */
 public class StatementProxyLogic {
 
-    private static final Set<String> BATCH_PARAM_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("addBatch", "clearBatch"))
-    );
-
-    private static final Set<String> EXEC_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("executeBatch", "executeQuery", "executeUpdate", "execute"))
-    );
-
-    private static final Set<String> JDBC4_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("unwrap", "isWrapperFor"))
-    );
-
-    private static final Set<String> GET_CONNECTION_METHOD = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("getConnection"))
-    );
-
     private static final Set<String> METHODS_TO_INTERCEPT = Collections.unmodifiableSet(
             new HashSet<String>() {
                 {
-                    addAll(BATCH_PARAM_METHODS);
-                    addAll(EXEC_METHODS);
-                    addAll(JDBC4_METHODS);
-                    addAll(GET_CONNECTION_METHOD);
+                    addAll(StatementMethodNames.BATCH_PARAM_METHODS);
+                    addAll(StatementMethodNames.EXEC_METHODS);
+                    addAll(StatementMethodNames.JDBC4_METHODS);
+                    addAll(StatementMethodNames.GET_CONNECTION_METHOD);
                     add("getDataSourceName");
                     add("toString");
                     add("getTarget"); // from ProxyJdbcObject
@@ -91,7 +75,7 @@ public class StatementProxyLogic {
             return stmt;
         }
 
-        if (JDBC4_METHODS.contains(methodName)) {
+        if (StatementMethodNames.JDBC4_METHODS.contains(methodName)) {
             final Class<?> clazz = (Class<?>) args[0];
             if ("unwrap".equals(methodName)) {
                 return stmt.unwrap(clazz);
@@ -100,7 +84,7 @@ public class StatementProxyLogic {
             }
         }
 
-        if (GET_CONNECTION_METHOD.contains(methodName)) {
+        if (StatementMethodNames.GET_CONNECTION_METHOD.contains(methodName)) {
             final Connection conn = (Connection) MethodUtils.proceedExecution(method, stmt, args);
             return jdbcProxyFactory.createConnection(conn, interceptorHolder, dataSourceName);
         }
@@ -132,7 +116,7 @@ public class StatementProxyLogic {
         boolean isBatchExecute = false;
         int batchSize = 0;
 
-        if ("executeBatch".equals(methodName)) {
+        if (StatementMethodNames.BATCH_EXEC_METHODS.contains(methodName)) {
 
             for (String batchQuery : batchQueries) {
                 queries.add(new QueryInfo(batchQuery));
@@ -141,8 +125,7 @@ public class StatementProxyLogic {
             batchQueries.clear();
             isBatchExecute = true;
 
-        } else if ("executeQuery".equals(methodName) || "executeUpdate".equals(methodName)
-                || "execute".equals(methodName)) {
+        } else if (StatementMethodNames.QUERY_EXEC_METHODS.contains(methodName)) {
 
             if (ObjectArrayUtils.isFirstArgString(args)) {
                 final QueryTransformer queryTransformer = interceptorHolder.getQueryTransformer();

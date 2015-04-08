@@ -402,6 +402,25 @@ public class StatementProxyLogicMockTest {
         verifyListenerForException(listener, "executeQuery", query, query);
     }
 
+    @Test
+    public void testExecuteLargeUpdate() throws Throwable {
+        final String query = "select * from emp";
+
+        Statement stat = mock(Statement.class);
+        when(stat.executeLargeUpdate(query)).thenReturn(100L);
+
+        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        StatementProxyLogic logic = getProxyLogic(stat, listener);
+
+        Method method = Statement.class.getMethod("executeLargeUpdate", String.class);
+        Object result = logic.invoke(method, new Object[]{query});
+
+        assertThat(result, is(instanceOf(long.class)));
+        assertThat((Long) result, is(100L));
+        verify(stat).executeLargeUpdate(query);
+        verifyListener(listener, "executeLargeUpdate", query, query);
+    }
+
     private StatementProxyLogic getProxyLogic(Statement statement, QueryExecutionListener listener) {
         InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
         return new StatementProxyLogic(statement, interceptorHolder, DS_NAME, new JdkJdbcProxyFactory());
@@ -488,9 +507,6 @@ public class StatementProxyLogicMockTest {
         final String queryC = "insert into emp (id, name) values (3, 'baz')";
 
         Statement stat = mock(Statement.class);
-        ResultSet rs = mock(ResultSet.class);
-        when(stat.executeQuery(queryA)).thenReturn(rs);
-
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener);
 
@@ -508,7 +524,7 @@ public class StatementProxyLogicMockTest {
         verify(stat).addBatch(queryB);
         verify(stat).addBatch(queryC);
         verify(stat).executeBatch();
-        verifyListenerForExecuteBatch(listener, queryA, queryB, queryC);
+        verifyListenerForBatchExecution("executeBatch", listener, queryA, queryB, queryC);
 
     }
 
@@ -552,9 +568,6 @@ public class StatementProxyLogicMockTest {
         final String queryC = "insert into emp (id, name) values (3, 'baz')";
 
         Statement stat = mock(Statement.class);
-        ResultSet rs = mock(ResultSet.class);
-        when(stat.executeQuery(queryA)).thenReturn(rs);
-
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener);
 
@@ -575,12 +588,39 @@ public class StatementProxyLogicMockTest {
         verify(stat).addBatch(queryB);
         verify(stat).addBatch(queryC);
         verify(stat).executeBatch();
-        verifyListenerForExecuteBatch(listener, queryB, queryC);
+        verifyListenerForBatchExecution("executeBatch", listener, queryB, queryC);
 
     }
 
+    @Test
+    public void testExecuteLargeBatch() throws Throwable {
+        final String queryA = "insert into emp (id, name) values (1, 'foo')";
+        final String queryB = "insert into emp (id, name) values (2, 'bar')";
+        final String queryC = "insert into emp (id, name) values (3, 'baz')";
+
+        Statement stat = mock(Statement.class);
+        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        StatementProxyLogic logic = getProxyLogic(stat, listener);
+
+        // run
+        Method method = Statement.class.getMethod("addBatch", String.class);
+        logic.invoke(method, new Object[]{queryA});
+        logic.invoke(method, new Object[]{queryB});
+        logic.invoke(method, new Object[]{queryC});
+
+        method = Statement.class.getMethod("executeLargeBatch");
+        Object result = logic.invoke(method, null);
+
+        assertThat(result, is(nullValue()));
+        verify(stat).addBatch(queryA);
+        verify(stat).addBatch(queryB);
+        verify(stat).addBatch(queryC);
+        verify(stat).executeLargeBatch();
+        verifyListenerForBatchExecution("executeLargeBatch", listener, queryA, queryB, queryC);
+    }
+
     @SuppressWarnings("unchecked")
-    private void verifyListenerForExecuteBatch(QueryExecutionListener listener, String... queries) {
+    private void verifyListenerForBatchExecution(String batchMethod, QueryExecutionListener listener, String... queries) {
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
         ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
 
@@ -588,7 +628,7 @@ public class StatementProxyLogicMockTest {
 
         ExecutionInfo execInfo = executionInfoCaptor.getValue();
         assertThat(execInfo.getMethod(), is(notNullValue()));
-        assertThat(execInfo.getMethod().getName(), is("executeBatch"));
+        assertThat(execInfo.getMethod().getName(), is(batchMethod));
         assertThat(execInfo.getDataSourceName(), is(DS_NAME));
         assertThat(execInfo.getMethodArgs(), is(nullValue()));
         assertThat(execInfo.isBatch(), is(true));

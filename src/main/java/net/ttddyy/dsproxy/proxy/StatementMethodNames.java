@@ -6,7 +6,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Method names that proxy logic classes have interested in.
+ *
  * @author Tadaya Tsuyukubo
+ * @see java.sql.Statement
+ * @see java.sql.PreparedStatement
+ * @see java.sql.CallableStatement
  * @since 1.2
  */
 public interface StatementMethodNames {
@@ -28,8 +33,25 @@ public interface StatementMethodNames {
             new HashSet<String>(Arrays.asList("addBatch", "clearBatch"))
     );
 
+    static final Set<String> BATCH_EXEC_METHODS = Collections.unmodifiableSet(
+            new HashSet<String>(Arrays.asList(
+                    "executeBatch",
+                    "executeLargeBatch"  // JDBC 4.2 (Java1.8)
+            ))
+    );
+    static final Set<String> QUERY_EXEC_METHODS = Collections.unmodifiableSet(
+            new HashSet<String>(Arrays.asList(
+                    "executeQuery", "executeUpdate", "execute",
+                    "executeLargeUpdate"  // JDBC 4.2 (Java1.8)
+            ))
+    );
     static final Set<String> EXEC_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("executeBatch", "executeQuery", "executeUpdate", "execute"))
+            new HashSet<String>() {
+                {
+                    addAll(BATCH_EXEC_METHODS);
+                    addAll(QUERY_EXEC_METHODS);
+                }
+            }
     );
 
     static final Set<String> JDBC4_METHODS = Collections.unmodifiableSet(
