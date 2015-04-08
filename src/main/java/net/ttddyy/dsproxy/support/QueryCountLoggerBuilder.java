@@ -11,6 +11,8 @@ import net.ttddyy.dsproxy.listener.SLF4JLogLevel;
  * @see net.ttddyy.dsproxy.support.CommonsQueryCountLoggingHandlerInterceptor
  * @see net.ttddyy.dsproxy.support.SLF4JQueryCountLoggingFilter
  * @see net.ttddyy.dsproxy.support.SLF4JQueryCountLoggingHandlerInterceptor
+ * @see net.ttddyy.dsproxy.support.SystemOutQueryCountLoggingFilter
+ * @see net.ttddyy.dsproxy.support.SystemOutQueryCountLoggingHandlerInterceptor
  * @since 1.3
  */
 public class QueryCountLoggerBuilder {
@@ -23,25 +25,53 @@ public class QueryCountLoggerBuilder {
         return new QueryCountLoggerBuilder();
     }
 
+    /**
+     * Set commons log level for query-count-logger.
+     *
+     * @param commonsLogLevel commons log level
+     * @return builder
+     */
     public QueryCountLoggerBuilder logLevel(CommonsLogLevel commonsLogLevel) {
         this.commonsLogLevel = commonsLogLevel;
         return this;
     }
 
+    /**
+     * Set slf4j log level for query-count-logger.
+     *
+     * @param slf4jLogLevel slf4j log level
+     * @return builder
+     */
     public QueryCountLoggerBuilder logLevel(SLF4JLogLevel slf4jLogLevel) {
         this.slf4jLogLevel = slf4jLogLevel;
         return this;
     }
 
+    /**
+     * Set query-count-logger format as JSON.
+     *
+     * @return builder
+     */
     public QueryCountLoggerBuilder asJson() {
         this.writeAsJson = true;
         return this;
     }
 
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.CommonsQueryCountLoggingFilter}.
+     *
+     * @return query-count-logger using commons
+     */
     public CommonsQueryCountLoggingFilter buildCommonsFilter() {
         return buildCommonsFilter(null);
     }
 
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.CommonsQueryCountLoggingFilter}.
+     *
+     * @param logLevel commons log level
+     * @return query-count-logger using commons
+     */
     public CommonsQueryCountLoggingFilter buildCommonsFilter(CommonsLogLevel logLevel) {
         if (logLevel != null) {
             this.commonsLogLevel = logLevel;
@@ -55,10 +85,21 @@ public class QueryCountLoggerBuilder {
         return filter;
     }
 
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.CommonsQueryCountLoggingHandlerInterceptor}.
+     *
+     * @return query-count-logger using commons
+     */
     public CommonsQueryCountLoggingHandlerInterceptor buildCommonsHandlerInterceptor() {
         return buildCommonsHandlerInterceptor(null);
     }
 
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.CommonsQueryCountLoggingHandlerInterceptor}.
+     *
+     * @param logLevel commons log level
+     * @return query-count-logger using commons
+     */
     public CommonsQueryCountLoggingHandlerInterceptor buildCommonsHandlerInterceptor(CommonsLogLevel logLevel) {
         if (logLevel != null) {
             this.commonsLogLevel = logLevel;
@@ -73,10 +114,21 @@ public class QueryCountLoggerBuilder {
     }
 
 
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.SLF4JQueryCountLoggingFilter}.
+     *
+     * @return query-count-logger using slf4j
+     */
     public SLF4JQueryCountLoggingFilter buildSlf4jFilter() {
         return buildSlf4jFilter(null);
     }
 
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.SLF4JQueryCountLoggingFilter}.
+     *
+     * @param logLevel slf4j log level
+     * @return query-count-logger using slf4j
+     */
     public SLF4JQueryCountLoggingFilter buildSlf4jFilter(SLF4JLogLevel logLevel) {
         if (logLevel != null) {
             this.slf4jLogLevel = logLevel;
@@ -90,10 +142,21 @@ public class QueryCountLoggerBuilder {
         return filter;
     }
 
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.SLF4JQueryCountLoggingHandlerInterceptor}.
+     *
+     * @return query-count-logger using slf4j
+     */
     public SLF4JQueryCountLoggingHandlerInterceptor buildSlf4jHandlerInterceptor() {
         return buildSlf4jHandlerInterceptor(null);
     }
 
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.SLF4JQueryCountLoggingHandlerInterceptor}.
+     *
+     * @param logLevel slf4j log level
+     * @return query-count-logger using slf4j
+     */
     public SLF4JQueryCountLoggingHandlerInterceptor buildSlf4jHandlerInterceptor(SLF4JLogLevel logLevel) {
         if (logLevel != null) {
             this.slf4jLogLevel = logLevel;
@@ -107,6 +170,11 @@ public class QueryCountLoggerBuilder {
         return handlerInterceptor;
     }
 
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.SystemOutQueryCountLoggingFilter}.
+     *
+     * @return query-count-logger using system.out
+     */
     public SystemOutQueryCountLoggingFilter buildSysOutFilter() {
         SystemOutQueryCountLoggingFilter filter = new SystemOutQueryCountLoggingFilter();
         filter.setWriteAsJson(this.writeAsJson);
@@ -114,6 +182,11 @@ public class QueryCountLoggerBuilder {
 
     }
 
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.SystemOutQueryCountLoggingHandlerInterceptor}.
+     *
+     * @return query-count-logger using system.out
+     */
     public SystemOutQueryCountLoggingHandlerInterceptor buildSysOutHandlerInterceptor() {
         SystemOutQueryCountLoggingHandlerInterceptor handlerInterceptor = new SystemOutQueryCountLoggingHandlerInterceptor();
         handlerInterceptor.setWriteAsJson(this.writeAsJson);

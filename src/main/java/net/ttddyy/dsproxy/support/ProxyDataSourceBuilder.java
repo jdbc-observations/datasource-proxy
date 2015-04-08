@@ -50,33 +50,66 @@ public class ProxyDataSourceBuilder {
         this.dataSource = dataSource;
     }
 
+    /**
+     * Set actual datasource.
+     *
+     * @param dataSource actual datasource
+     * @return builder
+     */
     public ProxyDataSourceBuilder dataSource(DataSource dataSource) {
         this.dataSource = dataSource;
         return this;
     }
 
+    /**
+     * Register {@link net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener}.
+     *
+     * @return builder
+     */
     public ProxyDataSourceBuilder logQueryByCommons() {
         this.createCommonsQueryListener = true;
         return this;
     }
 
+    /**
+     * Register {@link net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener}.
+     *
+     * @param logLevel log level for commons
+     * @return builder
+     */
     public ProxyDataSourceBuilder logQueryByCommons(CommonsLogLevel logLevel) {
         this.createCommonsQueryListener = true;
         this.commonsLogLevel = logLevel;
         return this;
     }
 
+    /**
+     * Register {@link net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener}.
+     *
+     * @return builder
+     */
     public ProxyDataSourceBuilder logQueryBySlf4j() {
         this.createSlf4jQueryListener = true;
         return this;
     }
 
+    /**
+     * Register {@link net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener}.
+     *
+     * @param logLevel log level for slf4j
+     * @return builder
+     */
     public ProxyDataSourceBuilder logQueryBySlf4j(SLF4JLogLevel logLevel) {
         this.createSlf4jQueryListener = true;
         this.slf4JLogLevel = logLevel;
         return this;
     }
 
+    /**
+     * Register {@link net.ttddyy.dsproxy.listener.SystemOutQueryLoggingListener}.
+     *
+     * @return builder
+     */
     public ProxyDataSourceBuilder logQueryToSysOut() {
         this.createSysOutQueryListener = true;
         return this;
@@ -93,26 +126,55 @@ public class ProxyDataSourceBuilder {
         return this;
     }
 
+    /**
+     * Register given listener.
+     *
+     * @param listener a listener to register
+     * @return builder
+     */
     public ProxyDataSourceBuilder listener(QueryExecutionListener listener) {
         this.queryExecutionListeners.add(listener);
         return this;
     }
 
+    /**
+     * Format logging output as JSON.
+     *
+     * @return builder
+     */
     public ProxyDataSourceBuilder asJson() {
         this.jsonFormat = true;
         return this;
     }
 
+    /**
+     * Set datasource name.
+     *
+     * @param dataSourceName datasource name
+     * @return builder
+     */
     public ProxyDataSourceBuilder name(String dataSourceName) {
         this.dataSourceName = dataSourceName;
         return this;
     }
 
+    /**
+     * Register {@link net.ttddyy.dsproxy.transform.QueryTransformer}.
+     *
+     * @param queryTransformer a query-transformer to register
+     * @return builder
+     */
     public ProxyDataSourceBuilder queryTransformer(QueryTransformer queryTransformer) {
         this.queryTransformer = queryTransformer;
         return this;
     }
 
+    /**
+     * Register {@link net.ttddyy.dsproxy.transform.ParameterTransformer}.
+     *
+     * @param parameterTransformer a query-parameter-transformer to register
+     * @return builder
+     */
     public ProxyDataSourceBuilder parameterTransformer(ParameterTransformer parameterTransformer) {
         this.parameterTransformer = parameterTransformer;
         return this;
