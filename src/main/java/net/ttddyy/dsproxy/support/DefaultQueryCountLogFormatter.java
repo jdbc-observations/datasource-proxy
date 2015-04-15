@@ -49,6 +49,18 @@ public class DefaultQueryCountLogFormatter implements QueryCountLogFormatter {
 
         sb.append("Other:");
         sb.append(queryCount.getOther());
+        sb.append(", ");
+
+        sb.append("Statement:");
+        sb.append(queryCount.getStatement());
+        sb.append(", ");
+
+        sb.append("Prepared:");
+        sb.append(queryCount.getPrepared());
+        sb.append(", ");
+
+        sb.append("Callable:");
+        sb.append(queryCount.getCallable());
 
         return sb.toString();
     }
@@ -101,6 +113,18 @@ public class DefaultQueryCountLogFormatter implements QueryCountLogFormatter {
 
         sb.append("\"other\":");
         sb.append(queryCount.getOther());
+        sb.append(", ");
+
+        sb.append("\"statement\":");
+        sb.append(queryCount.getStatement());
+        sb.append(", ");
+
+        sb.append("\"prepared\":");
+        sb.append(queryCount.getPrepared());
+        sb.append(", ");
+
+        sb.append("\"callable\":");
+        sb.append(queryCount.getCallable());
         sb.append("}");
         return sb.toString();
     }

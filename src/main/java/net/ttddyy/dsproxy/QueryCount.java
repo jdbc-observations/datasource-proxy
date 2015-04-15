@@ -15,6 +15,11 @@ public class QueryCount {
     private int delete;
     private int other;
 
+    // num of statement type
+    private int statement;
+    private int prepared;
+    private int callable;
+
     // num of database call
     private int total;
     private int failure;
@@ -41,6 +46,20 @@ public class QueryCount {
         }
     }
 
+    public void increment(StatementType statementType) {
+        switch (statementType) {
+            case STATEMENT:
+                incrementStatement();
+                break;
+            case PREPARED:
+                incrementPrepared();
+                break;
+            case CALLABLE:
+                incrementCallable();
+                break;
+        }
+    }
+
     public void incrementSelect() {
         select++;
     }
@@ -59,6 +78,18 @@ public class QueryCount {
 
     public void incrementOther() {
         other++;
+    }
+
+    public void incrementStatement() {
+        statement++;
+    }
+
+    public void incrementPrepared() {
+        prepared++;
+    }
+
+    public void incrementCallable() {
+        callable++;
     }
 
     public void incrementTotal() {
@@ -115,6 +146,30 @@ public class QueryCount {
 
     public void setOther(int other) {
         this.other = other;
+    }
+
+    public int getStatement() {
+        return statement;
+    }
+
+    public void setStatement(int statement) {
+        this.statement = statement;
+    }
+
+    public int getPrepared() {
+        return prepared;
+    }
+
+    public void setPrepared(int prepared) {
+        this.prepared = prepared;
+    }
+
+    public int getCallable() {
+        return callable;
+    }
+
+    public void setCallable(int callable) {
+        this.callable = callable;
     }
 
     public int getTotal() {

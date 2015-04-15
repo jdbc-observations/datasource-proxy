@@ -32,6 +32,7 @@ public class DataSourceQueryCountListenerTest {
         executionInfo = mock(ExecutionInfo.class);
         given(executionInfo.getDataSourceName()).willReturn("testDS");
         given(executionInfo.getElapsedTime()).willReturn(123L);
+        given(executionInfo.getStatementType()).willReturn(StatementType.STATEMENT);
 
 
         listener = new DataSourceQueryCountListener();
@@ -89,5 +90,37 @@ public class DataSourceQueryCountListenerTest {
         assertThat(queryCount.getOther()).as("num of other").isEqualTo(other);
     }
 
+    @Test
+    public void statement() {
+        given(queryInfo.getQuery()).willReturn("foo");
+        given(executionInfo.getStatementType()).willReturn(StatementType.STATEMENT);
+        listener.afterQuery(executionInfo, queryInfoList);
+
+        verifyStatementTypeCount(1, 0, 0);
+    }
+
+    @Test
+    public void prepared() {
+        given(queryInfo.getQuery()).willReturn("foo");
+        given(executionInfo.getStatementType()).willReturn(StatementType.PREPARED);
+        listener.afterQuery(executionInfo, queryInfoList);
+        verifyStatementTypeCount(0, 1, 0);
+    }
+
+    @Test
+    public void callable() {
+        given(queryInfo.getQuery()).willReturn("foo");
+        given(executionInfo.getStatementType()).willReturn(StatementType.CALLABLE);
+        listener.afterQuery(executionInfo, queryInfoList);
+        verifyStatementTypeCount(0, 0, 1);
+    }
+
+    private void verifyStatementTypeCount(int statement, int prepared, int callable) {
+        QueryCount queryCount = QueryCountHolder.get("testDS");
+        assertThat(queryCount).isNotNull().isInstanceOf(QueryCount.class);
+        assertThat(queryCount.getStatement()).as("num of statement").isEqualTo(statement);
+        assertThat(queryCount.getPrepared()).as("num of prepared").isEqualTo(prepared);
+        assertThat(queryCount.getCallable()).as("num of callable").isEqualTo(callable);
+    }
 
 }
