@@ -39,6 +39,9 @@
           "update": num of update queries
           "delete": num of delete queries
           "other" : num of other queries
+          "statement" : total num of statements
+          "prepared"  : total num of prepared statements
+          "callable"  : total num of callable statements
           "total"  : total num of queries
           "success" : num of success queries
           "failure" : num of failure queries

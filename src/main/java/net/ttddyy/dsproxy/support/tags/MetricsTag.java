@@ -46,6 +46,12 @@ public class MetricsTag extends SimpleTagSupport {
             sb.append(count.getDelete());
         } else if ("other".equalsIgnoreCase(metric)) {
             sb.append(count.getOther());
+        } else if ("statement".equalsIgnoreCase(metric)) {
+            sb.append(count.getStatement());
+        } else if ("prepared".equalsIgnoreCase(metric)) {
+            sb.append(count.getPrepared());
+        } else if ("callable".equalsIgnoreCase(metric)) {
+            sb.append(count.getCallable());
         } else if ("total".equalsIgnoreCase(metric)) {
             sb.append(count.getTotal());
         } else if ("success".equalsIgnoreCase(metric)) {
