@@ -13,7 +13,7 @@ import java.sql.Statement;
 /**
  * Spring NativeJdbcExtractor for our proxy classes.
  *
- * If delegating extractor is specified, after unwrapping our proxy, delegating
+ * <p>If delegating extractor is specified, after unwrapping our proxy, delegating
  * extractor will be applied.
  *
  * @author Tadaya Tsuyukubo

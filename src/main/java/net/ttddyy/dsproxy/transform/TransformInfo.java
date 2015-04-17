@@ -4,18 +4,17 @@ import java.sql.Statement;
 
 /**
  * Hold context information for {@link ParameterTransformer#transformParameters(ParameterReplacer, TransformInfo)}.
- * <p/>
+ *
  * <ul>
- * <li>clazz: calling class. {@link java.sql.PreparedStatement} or {@link java.sql.CallableStatement}</li>
- * <li>dataSourceName: datasource name</li>
- * <li>query: query string</li>
- * <li>isBatch: true when called in batch</li>
- * <li>count: current number of call in batch. 0 origin. 0 if call is not batched </li>
+ * <li>clazz: calling class. {@link java.sql.PreparedStatement} or {@link java.sql.CallableStatement}
+ * <li>dataSourceName: datasource name
+ * <li>query: query string
+ * <li>isBatch: true when called in batch
+ * <li>count: current number of call in batch. 0 origin. 0 if call is not batched
  * </ul>
- * <p/>
+ *
  * <b>Semantics of {@link #isBatch()}:</b>
- * <p/>
- * For {@link QueryTransformer},  {@link #isBatch()} is only true when {@link Statement#addBatch(String)} is called.
+ * <p>For {@link QueryTransformer},  {@link #isBatch()} is only true when {@link Statement#addBatch(String)} is called.
  * {@link #isBatch()} is always false for {@link java.sql.PreparedStatement} and {@link java.sql.CallableStatement}.
  * For {@link ParameterTransformer}, {@link #isBatch()} returns true when
  * {@link java.sql.PreparedStatement#addBatch()} or {@link java.sql.CallableStatement#addBatch()} is called.

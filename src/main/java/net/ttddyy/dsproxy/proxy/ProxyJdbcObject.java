@@ -2,8 +2,8 @@ package net.ttddyy.dsproxy.proxy;
 
 /**
  * Provide a method to unwrap the original jdbc object from proxy object.
- * <p/>
- * Proxy object created by {@link JdbcProxyFactory} implements this interface.
+ *
+ * <p>Proxy object created by {@link JdbcProxyFactory} implements this interface.
  *
  * @author Tadaya Tsuyukubo
  * @see JdbcProxyFactory
