@@ -1,10 +1,8 @@
 package net.ttddyy.dsproxy.proxy.jdk;
 
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.PreparedStatementProxyLogic;
-import net.ttddyy.dsproxy.transform.QueryTransformer;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -20,12 +18,6 @@ public class CallableStatementInvocationHandler implements InvocationHandler {
     private PreparedStatementProxyLogic delegate;
 
     public CallableStatementInvocationHandler() {
-    }
-
-    @Deprecated
-    public CallableStatementInvocationHandler(
-            CallableStatement cs, String query, QueryExecutionListener listener, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
-        delegate = new PreparedStatementProxyLogic(cs, query, new InterceptorHolder(listener, QueryTransformer.DEFAULT), dataSourceName, jdbcProxyFactory);
     }
 
     public CallableStatementInvocationHandler(

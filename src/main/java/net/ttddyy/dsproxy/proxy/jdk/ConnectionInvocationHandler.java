@@ -24,19 +24,6 @@ public class ConnectionInvocationHandler implements InvocationHandler {
         this.delegate = new ConnectionProxyLogic(connection, interceptorHolder, "", JdbcProxyFactory.DEFAULT);
     }
 
-    @Deprecated
-    public ConnectionInvocationHandler(Connection connection, QueryExecutionListener listener) {
-        final InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
-        this.delegate = new ConnectionProxyLogic(connection, interceptorHolder, "", JdbcProxyFactory.DEFAULT);
-    }
-
-    @Deprecated
-    public ConnectionInvocationHandler(
-            Connection connection, QueryExecutionListener listener, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
-        final InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
-        this.delegate = new ConnectionProxyLogic(connection, interceptorHolder, dataSourceName, jdbcProxyFactory);
-    }
-
     public ConnectionInvocationHandler(
             Connection connection, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
         this.delegate = new ConnectionProxyLogic(connection, interceptorHolder, dataSourceName, jdbcProxyFactory);

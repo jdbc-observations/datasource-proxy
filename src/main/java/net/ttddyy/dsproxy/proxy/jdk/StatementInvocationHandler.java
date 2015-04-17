@@ -24,19 +24,6 @@ public class StatementInvocationHandler implements InvocationHandler {
         delegate = new StatementProxyLogic(stmt, interceptors, "", JdbcProxyFactory.DEFAULT);
     }
 
-    @Deprecated
-    public StatementInvocationHandler(Statement stmt, QueryExecutionListener listener) {
-        final InterceptorHolder interceptors = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
-        delegate = new StatementProxyLogic(stmt, interceptors, "", JdbcProxyFactory.DEFAULT);
-    }
-
-    @Deprecated
-    public StatementInvocationHandler(
-            Statement stmt, QueryExecutionListener listener, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
-        final InterceptorHolder interceptors = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
-        delegate = new StatementProxyLogic(stmt, interceptors, dataSourceName, jdbcProxyFactory);
-    }
-
     public StatementInvocationHandler(
             Statement stmt, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
         delegate = new StatementProxyLogic(stmt, interceptorHolder, dataSourceName, jdbcProxyFactory);

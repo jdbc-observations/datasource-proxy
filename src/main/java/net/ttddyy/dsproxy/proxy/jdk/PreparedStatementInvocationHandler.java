@@ -23,17 +23,6 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
         delegate = new PreparedStatementProxyLogic(ps, query, new InterceptorHolder(QueryExecutionListener.DEFAULT, QueryTransformer.DEFAULT), "", JdbcProxyFactory.DEFAULT);
     }
 
-    @Deprecated
-    public PreparedStatementInvocationHandler(PreparedStatement ps, String query, QueryExecutionListener listener) {
-        delegate = new PreparedStatementProxyLogic(ps, query, new InterceptorHolder(listener, QueryTransformer.DEFAULT), "", JdbcProxyFactory.DEFAULT);
-    }
-
-    @Deprecated
-    public PreparedStatementInvocationHandler(
-            PreparedStatement ps, String query, QueryExecutionListener listener, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
-        delegate = new PreparedStatementProxyLogic(ps, query, new InterceptorHolder(listener, QueryTransformer.DEFAULT), dataSourceName, jdbcProxyFactory);
-    }
-
     public PreparedStatementInvocationHandler(
             PreparedStatement ps, String query, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
         delegate = new PreparedStatementProxyLogic(ps, query, interceptorHolder, dataSourceName, jdbcProxyFactory);

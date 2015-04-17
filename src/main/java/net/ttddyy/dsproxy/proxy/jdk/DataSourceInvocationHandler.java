@@ -1,10 +1,8 @@
 package net.ttddyy.dsproxy.proxy.jdk;
 
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.DataSourceProxyLogic;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
-import net.ttddyy.dsproxy.transform.QueryTransformer;
 
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
@@ -20,13 +18,6 @@ public class DataSourceInvocationHandler implements InvocationHandler {
     private DataSourceProxyLogic delegate;
 
     public DataSourceInvocationHandler() {
-    }
-
-    @Deprecated
-    public DataSourceInvocationHandler(DataSource dataSource, QueryExecutionListener listener, String dataSourceName,
-                                       JdbcProxyFactory jdbcProxyFactory) {
-        InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
-        delegate = new DataSourceProxyLogic(dataSource, interceptorHolder, dataSourceName, jdbcProxyFactory);
     }
 
     public DataSourceInvocationHandler(DataSource dataSource, InterceptorHolder interceptorHolder, String dataSourceName,
