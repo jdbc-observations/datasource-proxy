@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
  * lifecycle using Apache Commons Logging.
  *
  * @author Tadaya Tsuyukubo
- * @see CommonsQueryCountLoggingFilter
+ * @see CommonsQueryCountLoggingServletFilter
  * @see CommonsQueryCountLoggingRequestListener
  */
 public class CommonsQueryCountLoggingHandlerInterceptor extends AbstractQueryCountLoggingHandlerInterceptor {

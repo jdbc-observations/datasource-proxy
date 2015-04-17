@@ -24,7 +24,7 @@ import java.util.List;
  * @author Tadaya Tsuyukubo
  * @see net.ttddyy.dsproxy.QueryCount
  * @see net.ttddyy.dsproxy.QueryCountHolder
- * @see net.ttddyy.dsproxy.support.CommonsQueryCountLoggingFilter
+ * @see net.ttddyy.dsproxy.support.CommonsQueryCountLoggingServletFilter
  * @see net.ttddyy.dsproxy.support.CommonsQueryCountLoggingRequestListener
  * @see net.ttddyy.dsproxy.support.CommonsQueryCountLoggingHandlerInterceptor
  */

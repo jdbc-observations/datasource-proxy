@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class SLF4JQueryCountLoggingFilter extends AbstractQueryCountLoggingFilter {
+public class SLF4JQueryCountLoggingServletFilter extends AbstractQueryCountLoggingServletFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(SLF4JQueryCountLoggingFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(SLF4JQueryCountLoggingServletFilter.class);
     private SLF4JLogLevel logLevel = SLF4JLogLevel.DEBUG;
 
     @Override

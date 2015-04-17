@@ -6,7 +6,7 @@ package net.ttddyy.dsproxy.support;
  * @author Tadaya Tsuyukubo
  * @since 1.3
  */
-public class SystemOutQueryCountLoggingFilter extends AbstractQueryCountLoggingFilter {
+public class SystemOutQueryCountLoggingServletFilter extends AbstractQueryCountLoggingServletFilter {
     @Override
     protected void initLogLevelFromFilterConfigIfSpecified(String logLevelParam) {
         // NO-OP

@@ -34,11 +34,11 @@ import java.util.List;
  * </pre>
  *
  * @author Tadaya Tsuyukubo
- * @see net.ttddyy.dsproxy.support.CommonsQueryCountLoggingFilter
- * @see net.ttddyy.dsproxy.support.SLF4JQueryCountLoggingFilter
+ * @see CommonsQueryCountLoggingServletFilter
+ * @see SLF4JQueryCountLoggingServletFilter
  * @since 1.3
  */
-public abstract class AbstractQueryCountLoggingFilter implements Filter {
+public abstract class AbstractQueryCountLoggingServletFilter implements Filter {
     public static final String CLEAR_QUERY_COUNTER_PARAM = "clearQueryCounter";
     public static final String LOG_LEVEL_PARAM = "logLevel";
     public static final String FORMAT_PARAM = "format";

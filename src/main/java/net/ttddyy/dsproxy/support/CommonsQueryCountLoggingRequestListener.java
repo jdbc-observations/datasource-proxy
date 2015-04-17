@@ -12,7 +12,7 @@ import javax.servlet.ServletRequestEvent;
  * using Apache Commons Logging.
  *
  * @author Tadaya Tsuyukubo
- * @see CommonsQueryCountLoggingFilter
+ * @see CommonsQueryCountLoggingServletFilter
  * @see CommonsQueryCountLoggingHandlerInterceptor
  */
 public class CommonsQueryCountLoggingRequestListener extends AbstractQueryCountLoggingRequestListener {

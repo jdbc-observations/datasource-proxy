@@ -17,15 +17,15 @@ import org.apache.commons.logging.LogFactory;
  * @see CommonsQueryCountLoggingHandlerInterceptor
  * @see CommonsQueryCountLoggingRequestListener
  */
-public class CommonsQueryCountLoggingFilter extends AbstractQueryCountLoggingFilter {
+public class CommonsQueryCountLoggingServletFilter extends AbstractQueryCountLoggingServletFilter {
 
-    private static final Log log = LogFactory.getLog(CommonsQueryCountLoggingFilter.class);
+    private static final Log log = LogFactory.getLog(CommonsQueryCountLoggingServletFilter.class);
     private CommonsLogLevel logLevel = CommonsLogLevel.DEBUG;  // default
 
-    public CommonsQueryCountLoggingFilter() {
+    public CommonsQueryCountLoggingServletFilter() {
     }
 
-    public CommonsQueryCountLoggingFilter(CommonsLogLevel logLevel) {
+    public CommonsQueryCountLoggingServletFilter(CommonsLogLevel logLevel) {
         this.logLevel = logLevel;
     }
 
