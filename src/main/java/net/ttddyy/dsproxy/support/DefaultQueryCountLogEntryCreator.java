@@ -11,9 +11,9 @@ public class DefaultQueryCountLogEntryCreator implements QueryCountLogEntryCreat
 
     public String getLogMessage(String datasourceName, QueryCount queryCount) {
         final StringBuilder sb = new StringBuilder();
-        sb.append("Name:\"");
+        sb.append("Name:");
         sb.append(datasourceName == null ? "" : datasourceName);
-        sb.append("\", ");
+        sb.append(", ");
 
         sb.append("Time:");
         sb.append(queryCount.getTime());
