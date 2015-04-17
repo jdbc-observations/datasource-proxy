@@ -7,7 +7,7 @@
 
   <name>datasource-proxy</name>
   <description>Provide a datasource proxy that can inject your own logic into all queries.</description>
-  <url>http://code.google.com/p/datasource-proxy/</url>
+  <url>https://github.com/ttddyy/datasource-proxy/</url>
 
   <licenses>
     <license>
