@@ -10,7 +10,7 @@ import java.util.*;
  * @author Tadaya Tsuyukubo
  * @since 1.3
  */
-public class DefaultLogEntryCreator implements LogEntryCreator {
+public class DefaultQueryLogEntryCreator implements QueryLogEntryCreator {
 
     protected static final Map<Character, String> JSON_SPECIAL_CHARS = new HashMap<Character, String>();
 

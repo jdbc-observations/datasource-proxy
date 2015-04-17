@@ -17,7 +17,7 @@ public abstract class AbstractQueryCountLoggingHandlerInterceptor extends Handle
 
     private boolean clearQueryCounter = true;
     private boolean writeAsJson = false;
-    private QueryCountLogFormatter logFormatter = new DefaultQueryCountLogFormatter();
+    private QueryCountLogEntryCreator logFormatter = new DefaultQueryCountLogEntryCreator();
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
@@ -49,7 +49,7 @@ public abstract class AbstractQueryCountLoggingHandlerInterceptor extends Handle
         this.clearQueryCounter = clearQueryCounter;
     }
 
-    public void setLogFormatter(QueryCountLogFormatter logFormatter) {
+    public void setLogFormatter(QueryCountLogEntryCreator logFormatter) {
         this.logFormatter = logFormatter;
     }
 

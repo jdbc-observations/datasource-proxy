@@ -13,7 +13,7 @@ import java.util.List;
  * @since 1.3
  */
 public abstract class AbstractQueryCountLoggingRequestListener implements ServletRequestListener {
-    private QueryCountLogFormatter logFormatter = new DefaultQueryCountLogFormatter();
+    private QueryCountLogEntryCreator logFormatter = new DefaultQueryCountLogEntryCreator();
     private boolean writeAsJson = false;
 
     @Override
@@ -43,7 +43,7 @@ public abstract class AbstractQueryCountLoggingRequestListener implements Servle
 
     protected abstract void writeLog(ServletRequestEvent servletRequestEvent, String logEntry);
 
-    public void setLogFormatter(QueryCountLogFormatter logFormatter) {
+    public void setLogFormatter(QueryCountLogEntryCreator logFormatter) {
         this.logFormatter = logFormatter;
     }
 

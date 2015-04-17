@@ -11,7 +11,7 @@ import java.util.List;
  * @author Tadaya Tsuyukubo
  * @since 1.3
  */
-public interface LogEntryCreator {
+public interface QueryLogEntryCreator {
 
     String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName);
 

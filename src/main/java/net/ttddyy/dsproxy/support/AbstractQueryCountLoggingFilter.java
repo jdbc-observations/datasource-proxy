@@ -45,7 +45,7 @@ public abstract class AbstractQueryCountLoggingFilter implements Filter {
 
     protected boolean clearQueryCounter = true;
     protected boolean writeAsJson = false;
-    protected QueryCountLogFormatter logFormatter = new DefaultQueryCountLogFormatter();
+    protected QueryCountLogEntryCreator logFormatter = new DefaultQueryCountLogEntryCreator();
 
 
     @Override
@@ -103,7 +103,7 @@ public abstract class AbstractQueryCountLoggingFilter implements Filter {
         this.clearQueryCounter = clearQueryCounter;
     }
 
-    public void setLogFormatter(QueryCountLogFormatter logFormatter) {
+    public void setLogFormatter(QueryCountLogEntryCreator logFormatter) {
         this.logFormatter = logFormatter;
     }
 

@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class DefaultLogEntryCreatorTest {
+public class DefaultQueryLogEntryCreatorTest {
 
     @Test
     public void getLogEntryForStatement() throws Exception {
@@ -34,7 +34,7 @@ public class DefaultLogEntryCreatorTest {
 
         QueryInfo queryInfo = QueryInfoBuilder.create().query("select 1").build();
 
-        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Statement, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[()]");
@@ -63,7 +63,7 @@ public class DefaultLogEntryCreatorTest {
         QueryInfo queryInfo1 = QueryInfoBuilder.create().query("select 1").build();
         QueryInfo queryInfo2 = QueryInfoBuilder.create().query("select 2").build();
 
-        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo1, queryInfo2), true);
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Statement, Batch:True, QuerySize:2, BatchSize:2, Query:[\"select 1\",\"select 2\"], Params:[(),()]");
@@ -95,7 +95,7 @@ public class DefaultLogEntryCreatorTest {
                 .param(2, 100)
                 .build();
 
-        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Prepared, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(1=foo,2=100)]");
@@ -129,7 +129,7 @@ public class DefaultLogEntryCreatorTest {
                 .batchParam(2, 2, 200)
                 .build();
 
-        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(1=foo,2=100),(1=bar,2=200)]");
@@ -161,7 +161,7 @@ public class DefaultLogEntryCreatorTest {
                 .param("id", 100)
                 .build();
 
-        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Callable, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(id=100,name=foo)]");
@@ -195,7 +195,7 @@ public class DefaultLogEntryCreatorTest {
                 .batchParam(2, "id", 200)
                 .build();
 
-        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Callable, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(id=100,name=foo),(id=200,name=bar)]");
@@ -231,7 +231,7 @@ public class DefaultLogEntryCreatorTest {
                 .batchParam(2, 2, 200)  // batch 2, index 2
                 .build();
 
-        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
         assertThat(entry).containsOnlyOnce("Params:[(1=foo,2=100,3=FOO),(1=bar,2=200,3=BAR)]");
@@ -267,7 +267,7 @@ public class DefaultLogEntryCreatorTest {
                 .batchParam(2, "c-idx", 200)
                 .build();
 
-        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
         assertThat(entry).containsOnlyOnce("Params:[(a-idx=foo,b-idx=FOO,c-idx=100),(a-idx=bar,b-idx=BAR,c-idx=200)]");
@@ -281,7 +281,7 @@ public class DefaultLogEntryCreatorTest {
         ExecutionInfo executionInfo;
         String result, jsonResult;
 
-        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
         // Statement
         executionInfo = ExecutionInfoBuilder.create().statementType(StatementType.STATEMENT).build();
@@ -312,7 +312,7 @@ public class DefaultLogEntryCreatorTest {
         QueryInfo select2 = QueryInfoBuilder.create().query("select 2").build();
         QueryInfo select3 = QueryInfoBuilder.create().query("select 3").build();
 
-        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
         String result, jsonResult;
 
         // single query
@@ -335,7 +335,7 @@ public class DefaultLogEntryCreatorTest {
         QueryInfo select2 = QueryInfoBuilder.create().query("select 2").build();
         QueryInfo select3 = QueryInfoBuilder.create().query("select 3").build();
 
-        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
         String result, jsonResult;
 
         // single query
@@ -356,7 +356,7 @@ public class DefaultLogEntryCreatorTest {
         ExecutionInfo executionInfo;
         String result, jsonResult;
 
-        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
         // success
         executionInfo = ExecutionInfoBuilder.create().success(true).build();
@@ -379,7 +379,7 @@ public class DefaultLogEntryCreatorTest {
         ExecutionInfo executionInfo;
         String result,jsonResult;
 
-        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
         // success
         executionInfo = ExecutionInfoBuilder.create().batch(true).build();
@@ -401,7 +401,7 @@ public class DefaultLogEntryCreatorTest {
         ExecutionInfo executionInfo;
         String result,jsonResult;
 
-        DefaultLogEntryCreator creator = new DefaultLogEntryCreator();
+        DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
         // default
         executionInfo = ExecutionInfoBuilder.create().build();

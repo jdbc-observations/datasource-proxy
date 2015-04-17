@@ -3,11 +3,11 @@ package net.ttddyy.dsproxy.support;
 import net.ttddyy.dsproxy.QueryCount;
 
 /**
- * Default implementation of {@code QueryCountLogFormatter}.
+ * Default implementation of {@link QueryCountLogEntryCreator}.
  *
  * @author Tadaya Tsuyukubo
  */
-public class DefaultQueryCountLogFormatter implements QueryCountLogFormatter {
+public class DefaultQueryCountLogEntryCreator implements QueryCountLogEntryCreator {
 
     public String getLogMessage(String datasourceName, QueryCount queryCount) {
         final StringBuilder sb = new StringBuilder();

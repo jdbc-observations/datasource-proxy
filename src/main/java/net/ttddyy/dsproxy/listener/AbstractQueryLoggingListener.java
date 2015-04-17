@@ -11,7 +11,7 @@ import java.util.List;
  */
 public abstract class AbstractQueryLoggingListener implements QueryExecutionListener {
 
-    protected LogEntryCreator logEntryCreator = new DefaultLogEntryCreator();
+    protected QueryLogEntryCreator queryLogEntryCreator = new DefaultQueryLogEntryCreator();
     protected boolean writeDataSourceName = true;
     protected boolean writeAsJson = false;
 
@@ -27,17 +27,17 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
 
     protected String getEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
         if (this.writeAsJson) {
-            return this.logEntryCreator.getLogEntryAsJson(execInfo, queryInfoList, this.writeDataSourceName);
+            return this.queryLogEntryCreator.getLogEntryAsJson(execInfo, queryInfoList, this.writeDataSourceName);
         } else {
-            return this.logEntryCreator.getLogEntry(execInfo, queryInfoList, this.writeDataSourceName);
+            return this.queryLogEntryCreator.getLogEntry(execInfo, queryInfoList, this.writeDataSourceName);
         }
     }
 
     protected abstract void writeLog(String message);
 
 
-    public void setLogEntryCreator(LogEntryCreator logEntryCreator) {
-        this.logEntryCreator = logEntryCreator;
+    public void setQueryLogEntryCreator(QueryLogEntryCreator queryLogEntryCreator) {
+        this.queryLogEntryCreator = queryLogEntryCreator;
     }
 
     public void setWriteDataSourceName(boolean writeDataSourceName) {
