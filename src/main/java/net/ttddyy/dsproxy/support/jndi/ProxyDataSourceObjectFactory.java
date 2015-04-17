@@ -15,12 +15,49 @@ import java.util.Hashtable;
 import java.util.Set;
 
 /**
- * TODO: documentation
+ * JNDI ObjectFactory to create {@link net.ttddyy.dsproxy.support.ProxyDataSource}.
+ *
+ * <pre>{@code
+ * <Resource name="jdbc/global/myProxy"
+ *           auth="Container"
+ *           type="net.ttddyy.dsproxy.support.ProxyDataSource"
+ *           factory="net.ttddyy.dsproxy.support.jndi.ProxyDataSourceObjectFactory"
+ *           description="ds"
+ *           listeners="count,sysout,org.example.SampleListener"
+ *           proxyName="DS-PROXY"
+ *           format="json"
+ *           dataSource="[REFERENCE_TO_ACTUAL_DATASOURCE_RESOURCE]"  <!-- ex: java:jdbc/global/myDS -->
+ * />
+ * }</pre>
+ *
+ * Parameters:
+ * <ul>
+ * <li> <i>dataSource</i> <b>(required)</b>: Reference to actual datasource resource.  ex: java:jdbc/global/myDS
+ * <li> <i>proxyName</i>:             ProxyDataSource name
+ * <li> <i>logLevel</i>:              Loglevel for commons-logging or slf4j. ex: DEBUG, INFO, etc.
+ * <li> <i>listeners</i>:             Fully qualified class name of `QueryExecutionListener` implementation class,or predefined values below. Can be comma delimited.
+ * <li> <i>queryTransformer</i>:      Fully qualified class name of `QueryTransformer` implementation class.
+ * <li> <i>parameterTransformer</i>:  Fully qualified class name of `ParameterTransformer` implementation class.
+ * </ul>
+ *
+ * <i>listeners</i> parameter:
+ * <ul>
+ * <li> <i>sysout</i>:   alias to `net.ttddyy.dsproxy.listener.SystemOutQueryLoggingListener`
+ * <li> <i>commons</i>:  alias to `net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener`
+ * <li> <i>slf4j</i>:    alias to `net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener`
+ * <li> <i>count</i>:    alias to `net.ttddyy.dsproxy.listener.DataSourceQueryCountListener`
+ * <li> <i>x.y.z.MyQueryExecutionListener</i>: Fully qualified class name of `QueryExecutionListener` implementation
+ * </ul>
+ *
+ * <i>format</i> parameter:
+ * <ul>
+ * <li> <i>json</i>: set logging output format as JSON
  *
  * @author Tadaya Tsuyukubo
  * @since 1.3
  */
 public class ProxyDataSourceObjectFactory implements ObjectFactory {
+
     @Override
     public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment) throws Exception {
 
