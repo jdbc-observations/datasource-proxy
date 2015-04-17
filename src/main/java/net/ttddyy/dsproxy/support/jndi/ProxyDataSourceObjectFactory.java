@@ -52,6 +52,7 @@ import java.util.Set;
  * <i>format</i> parameter:
  * <ul>
  * <li> <i>json</i>: set logging output format as JSON
+ * </ul>
  *
  * @author Tadaya Tsuyukubo
  * @since 1.3
