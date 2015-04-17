@@ -32,26 +32,26 @@ import java.util.Set;
  *
  * Parameters:
  * <ul>
- * <li> <i>dataSource</i> <b>(required)</b>: Reference to actual datasource resource.  ex: java:jdbc/global/myDS
- * <li> <i>proxyName</i>:             ProxyDataSource name
- * <li> <i>logLevel</i>:              Loglevel for commons-logging or slf4j. ex: DEBUG, INFO, etc.
- * <li> <i>listeners</i>:             Fully qualified class name of `QueryExecutionListener` implementation class,or predefined values below. Can be comma delimited.
- * <li> <i>queryTransformer</i>:      Fully qualified class name of `QueryTransformer` implementation class.
- * <li> <i>parameterTransformer</i>:  Fully qualified class name of `ParameterTransformer` implementation class.
+ * <li> <b>dataSource <i>(required)</i></b>: Reference to actual datasource resource.  ex: java:jdbc/global/myDS
+ * <li> <b>proxyName</b>:             ProxyDataSource name
+ * <li> <b>logLevel</b>:              Loglevel for commons-logging or slf4j. ex: DEBUG, INFO, etc.
+ * <li> <b>listeners</b>:             Fully qualified class name of `QueryExecutionListener` implementation class,or predefined values below. Can be comma delimited.
+ * <li> <b>queryTransformer</b>:      Fully qualified class name of `QueryTransformer` implementation class.
+ * <li> <b>parameterTransformer</b>:  Fully qualified class name of `ParameterTransformer` implementation class.
  * </ul>
  *
  * <i>listeners</i> parameter:
  * <ul>
- * <li> <i>sysout</i>:   alias to `net.ttddyy.dsproxy.listener.SystemOutQueryLoggingListener`
- * <li> <i>commons</i>:  alias to `net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener`
- * <li> <i>slf4j</i>:    alias to `net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener`
- * <li> <i>count</i>:    alias to `net.ttddyy.dsproxy.listener.DataSourceQueryCountListener`
- * <li> <i>x.y.z.MyQueryExecutionListener</i>: Fully qualified class name of `QueryExecutionListener` implementation
+ * <li> <b>sysout</b>:   alias to `net.ttddyy.dsproxy.listener.SystemOutQueryLoggingListener`
+ * <li> <b>commons</b>:  alias to `net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener`
+ * <li> <b>slf4j</b>:    alias to `net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener`
+ * <li> <b>count</b>:    alias to `net.ttddyy.dsproxy.listener.DataSourceQueryCountListener`
+ * <li> <b>x.y.z.MyQueryExecutionListener</b>: Fully qualified class name of `QueryExecutionListener` implementation
  * </ul>
  *
  * <i>format</i> parameter:
  * <ul>
- * <li> <i>json</i>: set logging output format as JSON
+ * <li> <b>json</b>: set logging output format as JSON
  * </ul>
  *
  * @author Tadaya Tsuyukubo
