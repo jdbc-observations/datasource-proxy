@@ -177,4 +177,4 @@ Example projects: https://github.com/ttddyy/datasource-proxy-examples
 
 - [Documentation] (https://github.com/ttddyy/datasource-proxy/wiki/_pages)
 - **[Javadoc (API)](https://github.com/ttddyy/datasource-proxy/wiki/Javadoc)**
-- [Change Log](./CHANGELOG)
+- [Change Log](./CHANGELOG.md)
