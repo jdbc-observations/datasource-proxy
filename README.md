@@ -1,17 +1,62 @@
+
+[![Build Status](https://travis-ci.org/ttddyy/datasource-proxy.svg?branch=master)](https://travis-ci.org/ttddyy/datasource-proxy)
+
 # datasource-proxy
 
 ## about
 
 Provide proxy classes for JDBC API to intercept executing queries.
 
-## features
+## feature
 
-- [logging support](https://github.com/ttddyy/datasource-proxy/wiki/Feature#wiki-feature_1)
-- [collect query metrics](https://github.com/ttddyy/datasource-proxy/wiki/Feature#wiki-feature_2)
-- [web application support](https://github.com/ttddyy/datasource-proxy/wiki/Feature#wiki-feature_3)
-- [spring-framework friendly](https://github.com/ttddyy/datasource-proxy/wiki/Feature#wiki-feature_4)
-- [inject custom logic before/after query execution](https://github.com/ttddyy/datasource-proxy/wiki/Feature#wiki-feature_5)
-- [query and parameter replacement (since 1.2)](https://github.com/ttddyy/datasource-proxy/wiki/Feature#wiki-feature_6)
+- Query and Parameter Logging  
+  You can log executing database queries and parameters with choice of your logging framework(commons, slf4j, sysout).
+  Output can be formatted as JSON.
+
+- Query Metrics  
+  You can collect statistics of executed query such as total time, number of select, insert, update, delete queries, etc.
+  Output can be formatted as JSON.
+
+- Custom Logic Injection for Query Execution  
+  You can write own `QueryExecutionListener` and they can get called before/after query execution. 
+
+- Web Application Support  
+  `ProxyDataSource` can be configured via JNDI.   
+  Query metrics information are available per web request basis(request-response lifecycle).  
+  For UI with JSP, custom tag to access metrics(`<dsp:metrics/>`) is available as well.
+   
+- Query and parameter replacement
+  `QueryTransformer` and `ParameterTransformer` allows you to modify executing query and parameters right before 
+  calling the database.
+
+
+## log example
+
+
+Query execution:
+
+```sql
+Name:MyProxy, Time:1, Success:True, Type:Statement, Batch:False, QuerySize:1, BatchSize:0, Query:["CREATE TABLE users(id INT, name VARCHAR(255))"], Params:[]
+Name:MyProxy, Time:1, Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:["INSERT INTO users (id, name) VALUES (?, ?)"], Params:[(1=1,2=foo),(1=2,2=bar)]
+```
+
+```json
+// JSON output
+{"name":"MyProxy", "time":1, "success":true, "type":"Statement", "batch":false, "querySize":1, "batchSize":0, "query":["CREATE TABLE users(id INT, name VARCHAR(255))"], "params":[]}
+{"name":"MyProxy", "time":0, "success":true, "type":"Prepared", "batch":true, "querySize":1, "batchSize":3, "query":["INSERT INTO users (id, name) VALUES (?, ?)"], "params":[{"1":"1","2":"foo"},{"1":"2","2":"bar"},{"1":"3","2":"baz"}]}
+```
+
+Query metrics:
+
+```sql
+Name:"MyProxy", Time:6, Total:1, Success:1, Failure:0, Select:1, Insert:0, Update:0, Delete:0, Other:0
+```
+
+```json
+// JSON output
+{"name":"MyProxy", "time":10, "total":3, "success":3, "failure":0, "select":1, "insert":2, "update":0, "delete":0, "other":0}
+```
+
 
 ## maven
 
@@ -19,41 +64,37 @@ Provide proxy classes for JDBC API to intercept executing queries.
 <dependency>
   <groupId>net.ttddyy</groupId>
   <artifactId>datasource-proxy</artifactId>
-  <version>1.2.1</version>
+  <version>1.3</version>
 </dependency>
 ```
 
 - No dependencies to other libraries, everything is optional.
-    - For example, if you use SLF4JQueryLoggingListener, then you need slf4j library.
+    - For example, if you want to use slf4j logger with `SLF4JQueryLoggingListener`, then you need slf4j library.
+
+- requires jdk1.6+
 
 
-*[>> application setup sample](https://github.com/ttddyy/datasource-proxy/wiki/Application-Setup-Sample)*
+### download
 
-*[>> What's New](https://github.com/ttddyy/datasource-proxy/wiki/What's-New)*
+Available in [maven central repo](http://search.maven.org/#search|ga|1|datasource-proxy).
 
 
-## docs
+## how to use
 
-- [Features](https://github.com/ttddyy/datasource-proxy/wiki/Feature)
+Create `ProxyDataSource` class and pass it as a `DataSource` to your application.
+ 
+**Java based**  
 
-- [Sample Configuration](https://github.com/ttddyy/datasource-proxy/wiki/Application-Setup-Sample)
+```java
+DataSource dataSource = 
+    ProxyDataSourceBuilder
+        .create(actualDataSource)
+        .logQueryByCommons(INFO)    // logQueryBySlf4j(), logQueryToSysOut()
+        .countQuery()
+        .build();
+```
 
-- [Detailed Configuration](https://github.com/ttddyy/datasource-proxy/wiki/Detailed-Configuration)
-
-- [Documentation] (https://github.com/ttddyy/datasource-proxy/wiki/_pages)
-
-- **[Javadoc (API)](https://github.com/ttddyy/datasource-proxy/wiki/Javadoc)**
-
-- [What's New](https://github.com/ttddyy/datasource-proxy/wiki/What's-New)
-
-## download
-
-They are available in [maven central repo](http://search.maven.org/#search|ga|1|datasource-proxy).
-
----
-# how to use
-
-## spring
+**Spring (XML)**  
 
 ```xml
 <bean id="dataSource" class="net.ttddyy.dsproxy.support.ProxyDataSource">
@@ -74,27 +115,37 @@ They are available in [maven central repo](http://search.maven.org/#search|ga|1|
 </bean>
 ```
 
-## programmatic
+**JNDI**  
 
-**DataSource**
-
-```java
-DataSource dataSource = (DataSource)((new InitialContext()).lookup("java:comp/env/ref/ds"));
-
-ProxyDataSource proxyDS = new ProxyDataSource();
-proxyDS.setDataSource(dataSource);
-proxyDS.setListener(new CommonsQueryLoggingListener());
-proxyDS.setDataSourceName("MyDataSource");
+```xml
+<Resource name="jdbc/global/myProxy" 
+          auth="Container"
+          type="net.ttddyy.dsproxy.support.ProxyDataSource"
+          factory="net.ttddyy.dsproxy.support.jndi.ProxyDataSourceObjectFactory"
+          description="ds"
+          listeners="commons,count"
+          proxyName="MyProxy"
+          dataSource="[REFERENCE_TO_ACTUAL_DATASOURCE_RESOURCE]"  <!-- ex: java:jdbc/global/myDS --> 
+/>
 ```
 
+**(optional)** For logging query metrics, add one of the followings to your application:
 
-**DriverManager**
+**By Servlet Filter (`javax.servlet.Filter`):**  
+- `CommonsQueryCountLoggingServletFilter` 
+- `SLF4JQueryCountLoggingServletFilter` 
+- `SystemOutQueryCountLoggingServletFilter` 
 
-```java
-Class.forName("org.hsqldb.jdbcDriver");
-Connection realConnection = DriverManager.getConnection("jdbc:hsqldb:mem:aname");
-Connection proxyConnection = JdbcProxyFactory.createConnection(realConnection, new CommonsQueryLoggingListener());
-```
+**By Servlet Request Listener (`javax.servlet.ServletRequestListener`):**
+- `CommonsQueryCountLoggingRequestListener`
+- `SLF4JQueryCountLoggingRequestListener`
+  
+**By Spring HandlerInterceptor (`org.springframework.web.servlet.HandlerInterceptor`):**
+- `CommonsQueryCountLoggingHandlerInterceptor`
+- `SLF4JQueryCountLoggingHandlerInterceptor`
+- `SystemOutQueryCountLoggingHandlerInterceptor`
+
+
 
 
 ## taglib (optional)
@@ -106,37 +157,24 @@ Connection proxyConnection = JdbcProxyFactory.createConnection(realConnection, n
 <dsp:metrics metric="update" dataSource="FOO" />  - Num of update queries for datasource FOO
 <dsp:metrics metric="total"/>  - Total Queries
 <dsp:metrics metric="call"/>  - Num of DB Call
-<dsp:metrics metric="elapsedTime"/>  - Total TIme
+<dsp:metrics metric="time"/>  - Total TIme
 ```
 
 
-# log output sample
+## examples
 
-## query statistics metrics
-
-```sql
-DataSource:MyDatasourceA ElapsedTime:13 Call:7 Query:7 (Select:3 Insert:2 Update:1 Delete:0 Other:1)
-DataSource:MyDatasourceB ElapsedTime:1 Call:1 Query:1 (Select:1 Insert:0 Update:0 Delete:0 Other:0)
-```
-
-
-## query execution
-
-```sql
-Time:13, Num:1, Query:{[create table emp ( id integer primary key, name varchar(10) );][]}
-Time:10, Num:1, Query:{[insert into emp ( id, name )values (?, ?);][1, foo]}
-Time:1, Num:1, Query:{[select this_.id as id0_0_, this_.name as name0_0_, this_.value as value0_0_ from emp this_ where (this_.id=? and this_.name=?)][1,bar]}
-```
+Example projects: https://github.com/ttddyy/datasource-proxy-examples
 
 
 ---
 
-# architecture
+# docs
 
-![architecture diaglam](https://docs.google.com/drawings/pub?id=1KLaKmlp02c3lyQN1a_xhfG98AteyTIIVKSlnQW-aqsg&w=640&h=480&nonsense=architecture.png "architecture diaglam")
+- [Getting Started](https://github.com/ttddyy/datasource-proxy/wiki/Getting-Started)
+- [Detail](https://github.com/ttddyy/datasource-proxy/wiki/Detail)
+- [Configuration](https://github.com/ttddyy/datasource-proxy/wiki/Configuration)
+- [How To Guide](https://github.com/ttddyy/datasource-proxy/wiki/How-To-Guide)
 
----
-
-# Development
-
-[![Build Status](https://travis-ci.org/ttddyy/datasource-proxy.svg?branch=master)](https://travis-ci.org/ttddyy/datasource-proxy)
+- [Documentation] (https://github.com/ttddyy/datasource-proxy/wiki/_pages)
+- **[Javadoc (API)](https://github.com/ttddyy/datasource-proxy/wiki/Javadoc)**
+- [Change Log](./CHANGELOG)
