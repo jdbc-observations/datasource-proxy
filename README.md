@@ -1,5 +1,6 @@
 
 [![Build Status](https://travis-ci.org/ttddyy/datasource-proxy.svg?branch=master)](https://travis-ci.org/ttddyy/datasource-proxy)
+[ LATEST VERSION = 1.3 ] 
 
 # datasource-proxy
 
@@ -129,7 +130,7 @@ DataSource dataSource =
 />
 ```
 
-**(optional)** For logging query metrics, add one of the followings to your application:
+**(optional)** To log query metrics(not query execution), add one of the followings to your application:
 
 **By Servlet Filter (`javax.servlet.Filter`):**  
 - `CommonsQueryCountLoggingServletFilter` 
