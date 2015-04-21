@@ -1,8 +1,9 @@
+# datasource-proxy
 
 [![Build Status](https://travis-ci.org/ttddyy/datasource-proxy.svg?branch=master)](https://travis-ci.org/ttddyy/datasource-proxy)
-[ LATEST VERSION = 1.3 ] 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.ttddyy/datasource-proxy/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.ttddyy/datasource-proxy/)
+[![Download](https://api.bintray.com/packages/ttddyy/maven/datasource-proxy/images/download.svg) ](https://bintray.com/ttddyy/maven/datasource-proxy/_latestVersion)
 
-# datasource-proxy
 
 ## about
 
