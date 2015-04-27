@@ -26,6 +26,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 /**
+ * TODO: cleanup/refactoring
+ *
  * @author Tadaya Tsuyukubo
  */
 public class PreparedStatementProxyLogicForCallableStatementMockTest {
@@ -431,7 +433,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
     private static final Param<Float> PARAM_FLOAT;
     private static final Param<Integer> PARAM_INT;
     private static final Param<Long> PARAM_LONG;
-    private static final Param<Integer> PARAM_NULL;
+//    private static final Param<Integer> PARAM_NULL;
     private static final Param<Object> PARAM_OBJECT;
     private static final Param<Ref> PARAM_REF;
     private static final Param<Short> PARAM_SHORT;
@@ -454,7 +456,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         PARAM_FLOAT = new Param<Float>(Float.class, 20f, 11, "float");
         PARAM_INT = new Param<Integer>(int.class, 30, 12, "int");
         PARAM_LONG = new Param<Long>(long.class, 40L, 13, "long");
-        PARAM_NULL = new Param<Integer>(int.class, Types.VARCHAR, 14, "null");
+//        PARAM_NULL = new Param<Integer>(int.class, Types.VARCHAR, 14, "null");
         PARAM_OBJECT = new Param<Object>(Object.class, mock(Object.class), 15, "object");
         PARAM_REF = new Param<Ref>(Ref.class, mock(Ref.class), 16, null);
         PARAM_SHORT = new Param<Short>(short.class, (short) 50, 17, "short");
@@ -484,7 +486,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
             add(PARAM_FLOAT);
             add(PARAM_INT);
             add(PARAM_LONG);
-            add(PARAM_NULL);
+//            add(PARAM_NULL);
             add(PARAM_OBJECT);
             add(PARAM_REF);
             add(PARAM_SHORT);
@@ -533,7 +535,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         logic.invoke(setFloat, new Object[]{PARAM_FLOAT.index, PARAM_FLOAT.value});
         logic.invoke(setInt, new Object[]{PARAM_INT.index, PARAM_INT.value});
         logic.invoke(setLong, new Object[]{PARAM_LONG.index, PARAM_LONG.value});
-        logic.invoke(setNull, new Object[]{PARAM_NULL.index, PARAM_NULL.value});
+//        logic.invoke(setNull, new Object[]{PARAM_NULL.index, PARAM_NULL.value});
         logic.invoke(setObject, new Object[]{PARAM_OBJECT.index, PARAM_OBJECT.value});
         logic.invoke(setRef, new Object[]{PARAM_REF.index, PARAM_REF.value});
         logic.invoke(setShort, new Object[]{PARAM_SHORT.index, PARAM_SHORT.value});
@@ -578,7 +580,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         logic.invoke(setFloat, new Object[]{PARAM_FLOAT.strIndex, PARAM_FLOAT.value});
         logic.invoke(setInt, new Object[]{PARAM_INT.strIndex, PARAM_INT.value});
         logic.invoke(setLong, new Object[]{PARAM_LONG.strIndex, PARAM_LONG.value});
-        logic.invoke(setNull, new Object[]{PARAM_NULL.strIndex, PARAM_NULL.value});
+//        logic.invoke(setNull, new Object[]{PARAM_NULL.strIndex, PARAM_NULL.value});
         logic.invoke(setObject, new Object[]{PARAM_OBJECT.strIndex, PARAM_OBJECT.value});
         logic.invoke(setShort, new Object[]{PARAM_SHORT.strIndex, PARAM_SHORT.value});
         logic.invoke(setString, new Object[]{PARAM_STRING.strIndex, PARAM_STRING.value});
@@ -601,7 +603,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         verify(mockStatement).setFloat(PARAM_FLOAT.index, PARAM_FLOAT.value);
         verify(mockStatement).setInt(PARAM_INT.index, PARAM_INT.value);
         verify(mockStatement).setLong(PARAM_LONG.index, PARAM_LONG.value);
-        verify(mockStatement).setNull(PARAM_NULL.index, PARAM_NULL.value);
+//        verify(mockStatement).setNull(PARAM_NULL.index, PARAM_NULL.value);
         verify(mockStatement).setObject(PARAM_OBJECT.index, PARAM_OBJECT.value);
         verify(mockStatement).setRef(PARAM_REF.index, PARAM_REF.value);
         verify(mockStatement).setShort(PARAM_SHORT.index, PARAM_SHORT.value);
@@ -624,7 +626,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         verify(mockStatement).setFloat(PARAM_FLOAT.strIndex, PARAM_FLOAT.value);
         verify(mockStatement).setInt(PARAM_INT.strIndex, PARAM_INT.value);
         verify(mockStatement).setLong(PARAM_LONG.strIndex, PARAM_LONG.value);
-        verify(mockStatement).setNull(PARAM_NULL.strIndex, PARAM_NULL.value);
+//        verify(mockStatement).setNull(PARAM_NULL.strIndex, PARAM_NULL.value);
         verify(mockStatement).setObject(PARAM_OBJECT.strIndex, PARAM_OBJECT.value);
         verify(mockStatement).setShort(PARAM_SHORT.strIndex, PARAM_SHORT.value);
         verify(mockStatement).setString(PARAM_STRING.strIndex, PARAM_STRING.value);

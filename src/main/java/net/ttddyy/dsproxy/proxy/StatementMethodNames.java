@@ -16,12 +16,15 @@ import java.util.Set;
  */
 public interface StatementMethodNames {
 
+    static final String PARAMETER_METHOD_SET_NULL = "setNull";
+
     static final Set<String> PARAMETER_METHODS = Collections.unmodifiableSet(
             new HashSet<String>(Arrays.asList("setArray", "setAsciiStream", "setBigDecimal",
                     "setBinaryStream", "setBlob", "setBoolean", "setByte",
                     "setBytes", "setCharacterStream", "setClob", "setDate",
                     "setDouble", "setFloat", "setInt", "setLong",
-                    "setNull", "setObject", "setRef", "setShort",
+                    PARAMETER_METHOD_SET_NULL,
+                    "setObject", "setRef", "setShort",
                     "setString", "setTime", "setTimestamp", "setUnicodeStream", "setURL",
                     "setRowId", "setNString", "setNCharacterStream", "setNClob", "setSQLXML",
                     "clearParameters",

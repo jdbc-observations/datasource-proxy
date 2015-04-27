@@ -180,11 +180,9 @@ public class PreparedStatementProxyLogic {
     private Map<String, Object> getQueryParameters(Map<Object, ParameterSetOperation> params) {
         Map<String, Object> queryParameters = new LinkedHashMap<String, Object>(params.size());
         for (ParameterSetOperation parameterSetOperation : params.values()) {
-            Object[] args = parameterSetOperation.getArgs();
-
-            Object key = args[0];  // key is either int(parameterIndex) or string(parameterName)
-            String keyAsString = key instanceof String ? (String) key : key.toString();
-            queryParameters.put(keyAsString, args[1]);  // all set operation has index 0=key, 1=value
+            String key = parameterSetOperation.getParameterNameOrIndexAsString();
+            Object value = parameterSetOperation.getParameterValue();
+            queryParameters.put(key, value);
         }
         return queryParameters;
     }
