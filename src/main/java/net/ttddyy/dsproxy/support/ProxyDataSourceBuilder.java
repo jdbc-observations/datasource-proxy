@@ -23,6 +23,7 @@ public class ProxyDataSourceBuilder {
     private CommonsLogLevel commonsLogLevel;
     private boolean createSlf4jQueryListener;
     private SLF4JLogLevel slf4JLogLevel;
+    private String loggerName;
     private boolean createSysOutQueryListener;
     private boolean createDataSourceQueryCountListener;
     private boolean jsonFormat;
@@ -84,6 +85,34 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
+     * Register {@link net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener}.
+     *
+     * @param loggerName logger name
+     * @return builder
+     * @since 1.3.1
+     */
+    public ProxyDataSourceBuilder logQueryByCommons(String loggerName) {
+        this.createCommonsQueryListener = true;
+        this.loggerName = loggerName;
+        return this;
+    }
+
+    /**
+     * Register {@link net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener}.
+     *
+     * @param logLevel log level for commons
+     * @param loggerName  logger name
+     * @return builder
+     * @since 1.3.1
+     */
+    public ProxyDataSourceBuilder logQueryByCommons(CommonsLogLevel logLevel, String loggerName) {
+        this.createCommonsQueryListener = true;
+        this.commonsLogLevel = logLevel;
+        this.loggerName = loggerName;
+        return this;
+    }
+
+    /**
      * Register {@link net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener}.
      *
      * @return builder
@@ -102,6 +131,34 @@ public class ProxyDataSourceBuilder {
     public ProxyDataSourceBuilder logQueryBySlf4j(SLF4JLogLevel logLevel) {
         this.createSlf4jQueryListener = true;
         this.slf4JLogLevel = logLevel;
+        return this;
+    }
+
+    /**
+     * Register {@link net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener}.
+     *
+     * @param loggerName logger name
+     * @return builder
+     * @since 1.3.1
+     */
+    public ProxyDataSourceBuilder logQueryBySlf4j(String loggerName) {
+        this.createSlf4jQueryListener = true;
+        this.loggerName = loggerName;
+        return this;
+    }
+
+    /**
+     * Register {@link net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener}.
+     *
+     * @param logLevel log level for commons
+     * @param loggerName  logger name
+     * @return builder
+     * @since 1.3.1
+     */
+    public ProxyDataSourceBuilder logQueryBySlf4j(SLF4JLogLevel logLevel, String loggerName) {
+        this.createSlf4jQueryListener = true;
+        this.slf4JLogLevel = logLevel;
+        this.loggerName = loggerName;
         return this;
     }
 
@@ -199,6 +256,9 @@ public class ProxyDataSourceBuilder {
             if (this.commonsLogLevel != null) {
                 listener.setLogLevel(this.commonsLogLevel);
             }
+            if (this.loggerName != null && !this.loggerName.isEmpty()) {
+                listener.setLoggerName(this.loggerName);
+            }
             if (this.jsonFormat) {
                 listener.setWriteAsJson(true);
             }
@@ -208,6 +268,9 @@ public class ProxyDataSourceBuilder {
             SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener();
             if (this.slf4JLogLevel != null) {
                 listener.setLogLevel(this.slf4JLogLevel);
+            }
+            if (this.loggerName != null && !this.loggerName.isEmpty()) {
+                listener.setLoggerName(this.loggerName);
             }
             if (this.jsonFormat) {
                 listener.setWriteAsJson(true);

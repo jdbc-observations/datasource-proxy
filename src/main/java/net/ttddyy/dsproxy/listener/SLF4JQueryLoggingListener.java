@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SLF4JQueryLoggingListener extends AbstractQueryLoggingListener {
 
-    protected static final Logger logger = LoggerFactory.getLogger(SLF4JQueryLoggingListener.class);
+    protected Logger logger = LoggerFactory.getLogger(SLF4JQueryLoggingListener.class);
     protected SLF4JLogLevel logLevel = SLF4JLogLevel.DEBUG; // default DEBUG
 
     @Override
@@ -23,4 +23,8 @@ public class SLF4JQueryLoggingListener extends AbstractQueryLoggingListener {
         this.logLevel = logLevel;
     }
 
+    @Override
+    protected void resetLogger(String loggerName) {
+        this.logger = LoggerFactory.getLogger(loggerName);
+    }
 }

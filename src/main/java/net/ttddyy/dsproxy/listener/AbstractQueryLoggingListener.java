@@ -35,6 +35,26 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
 
     protected abstract void writeLog(String message);
 
+    /**
+     * Specify logger name.
+     *
+     * @param loggerName logger name
+     * @since 1.3.1
+     */
+    public void setLoggerName(String loggerName) {
+        resetLogger(loggerName);
+    }
+
+    /**
+     * Callback method to reset the logger object in concrete class when log name is specified.
+     *
+     * TODO: may change to abstract method
+     *
+     * @param loggerName logger name
+     * @since 1.3.1
+     */
+    protected void resetLogger(String loggerName) {
+    }
 
     public void setQueryLogEntryCreator(QueryLogEntryCreator queryLogEntryCreator) {
         this.queryLogEntryCreator = queryLogEntryCreator;
@@ -47,4 +67,5 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
     public void setWriteAsJson(boolean writeAsJson) {
         this.writeAsJson = writeAsJson;
     }
+
 }

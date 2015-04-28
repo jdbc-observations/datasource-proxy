@@ -11,7 +11,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class CommonsQueryLoggingListener extends AbstractQueryLoggingListener {
 
-    protected static final Log log = LogFactory.getLog(CommonsQueryLoggingListener.class);
+    protected Log log = LogFactory.getLog(CommonsQueryLoggingListener.class);
     protected CommonsLogLevel logLevel = CommonsLogLevel.DEBUG; // default DEBUG
 
     @Override
@@ -23,4 +23,8 @@ public class CommonsQueryLoggingListener extends AbstractQueryLoggingListener {
         this.logLevel = logLevel;
     }
 
+    @Override
+    protected void resetLogger(String loggerName) {
+        this.log = LogFactory.getLog(loggerName);
+    }
 }

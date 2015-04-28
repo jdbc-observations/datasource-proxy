@@ -71,6 +71,7 @@ public class ProxyDataSourceObjectFactory implements ObjectFactory {
         String proxyDataSourceName = getContentFromReference(reference, "proxyName");
         String listenerNames = getContentFromReference(reference, "listeners");
         String logLevel = getContentFromReference(reference, "logLevel");
+        String loggerName = getContentFromReference(reference, "loggerName");
         String foramt = getContentFromReference(reference, "format");
         String queryTransformer = getContentFromReference(reference, "queryTransformer");
         String parameterTransformer = getContentFromReference(reference, "parameterTransformer");
@@ -94,14 +95,26 @@ public class ProxyDataSourceObjectFactory implements ObjectFactory {
         if (listenerNames != null) {
             for (String listenerName : getListenerNames(listenerNames)) {
                 if ("commons".equalsIgnoreCase(listenerName)) {
-                    if (logLevel != null) {
+                    boolean hasLogLevel = logLevel != null;
+                    boolean hasLoggerName = loggerName != null;
+                    if (hasLogLevel && hasLoggerName) {
+                        builder.logQueryByCommons(CommonsLogLevel.valueOf(logLevel.toUpperCase()), loggerName);
+                    } else if (hasLogLevel) {
                         builder.logQueryByCommons(CommonsLogLevel.valueOf(logLevel.toUpperCase()));
+                    } else if (hasLoggerName) {
+                        builder.logQueryByCommons(loggerName);
                     } else {
                         builder.logQueryByCommons();
                     }
                 } else if ("slf4j".equalsIgnoreCase(listenerName)) {
-                    if (logLevel != null) {
+                    boolean hasLogLevel = logLevel != null;
+                    boolean hasLogName = loggerName != null;
+                    if (hasLogLevel && hasLogName) {
+                        builder.logQueryBySlf4j(SLF4JLogLevel.valueOf(logLevel.toUpperCase()), loggerName);
+                    } else if (hasLogLevel) {
                         builder.logQueryBySlf4j(SLF4JLogLevel.valueOf(logLevel.toUpperCase()));
+                    } else if (hasLogName) {
+                        builder.logQueryBySlf4j(loggerName);
                     } else {
                         builder.logQueryBySlf4j();
                     }
