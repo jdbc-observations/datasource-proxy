@@ -115,6 +115,13 @@ public class ExecutionInfo {
         this.batchSize = batchSize;
     }
 
+    /**
+     * Returns {@link java.sql.Statement}, {@link java.sql.PreparedStatement}, or {@link java.sql.CallableStatement}
+     * used by the execution.
+     *
+     * @return statement/prepared/callable object
+     * @since 1.3.1
+     */
     public Statement getStatement() {
         return statement;
     }
