@@ -45,6 +45,7 @@ public class ParameterSetOperation {
      * ParameterIndex from PreparedStatement or ParameterName from CallableStatement (first argument).
      * <p> <em>NOTE:</em> This method is a quick fix for logging "setNull" value.
      * This method will be modified or removed soon.
+     *
      * @return parameterIndex or parameterName as String
      * @since 1.3.1
      */
@@ -65,8 +66,9 @@ public class ParameterSetOperation {
     public Object getParameterValue() {
         Object value = this.args[1];
 
-        // quick hack for setNull operation
-        if (StatementMethodNames.PARAMETER_METHOD_SET_NULL.equals(method.getName())) {
+        String methodName = method.getName();
+        // quick hack for "setNull" and "registerOutParameter" operation
+        if (StatementMethodNames.PARAMETER_METHOD_SET_NULL.equals(methodName)) {
             // second arg for setNull is always int
             Integer sqlType = (Integer) value;
             String sqlTypeName = SQL_TYPE_NAME_BY_CODE.get(sqlType);
@@ -76,6 +78,21 @@ public class ParameterSetOperation {
             } else {
                 value = "NULL";  // for unrecognized code
             }
+        } else if (StatementMethodNames.PARAMETER_METHOD_REGISTER_OUT_PARAMETER.equals(methodName)) {
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("OUTPUT(");
+            // for the second argument, it is either int or SQLType(in JDBC 4.2)
+            if (value instanceof Integer) {
+                Integer sqlType = (Integer) value;
+                String sqlTypeName = SQL_TYPE_NAME_BY_CODE.get(sqlType);
+                sb.append(sqlTypeName != null ? sqlTypeName : sqlType);
+            } else {
+                sb.append(value);
+            }
+
+            sb.append(")");
+            value = sb.toString();
         }
         return value;
     }

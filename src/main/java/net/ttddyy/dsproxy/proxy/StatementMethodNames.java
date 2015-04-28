@@ -17,6 +17,7 @@ import java.util.Set;
 public interface StatementMethodNames {
 
     static final String PARAMETER_METHOD_SET_NULL = "setNull";
+    static final String PARAMETER_METHOD_REGISTER_OUT_PARAMETER = "registerOutParameter";
 
     static final Set<String> PARAMETER_METHODS = Collections.unmodifiableSet(
             new HashSet<String>(Arrays.asList("setArray", "setAsciiStream", "setBigDecimal",
@@ -28,7 +29,7 @@ public interface StatementMethodNames {
                     "setString", "setTime", "setTimestamp", "setUnicodeStream", "setURL",
                     "setRowId", "setNString", "setNCharacterStream", "setNClob", "setSQLXML",
                     "clearParameters",
-                    "registerOutParameter"  // CallableStatement output parameter
+                    PARAMETER_METHOD_REGISTER_OUT_PARAMETER  // CallableStatement output parameter
             ))
     );
 
