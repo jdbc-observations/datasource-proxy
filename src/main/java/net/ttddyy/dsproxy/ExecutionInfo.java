@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy;
 
 import java.lang.reflect.Method;
+import java.sql.Statement;
 
 /**
  * Contains query execution information.
@@ -18,17 +19,20 @@ public class ExecutionInfo {
     private boolean isSuccess;
     private boolean isBatch;
     private int batchSize;
+    private Statement statement;
 
     public ExecutionInfo() {
     }
 
-    public ExecutionInfo(String dataSourceName, StatementType statementType, boolean isBatch, int batchSize, Method method, Object[] methodArgs) {
+    public ExecutionInfo(String dataSourceName, Statement statement, boolean isBatch, int batchSize, Method method, Object[] methodArgs) {
         this.dataSourceName = dataSourceName;
-        this.statementType = statementType;
+        this.statement = statement;
         this.isBatch = isBatch;
         this.batchSize = batchSize;
         this.method = method;
         this.methodArgs = methodArgs;
+
+        this.statementType = StatementType.valueOf(statement);
     }
 
     public Method getMethod() {
@@ -109,5 +113,13 @@ public class ExecutionInfo {
 
     public void setBatchSize(int batchSize) {
         this.batchSize = batchSize;
+    }
+
+    public Statement getStatement() {
+        return statement;
+    }
+
+    public void setStatement(Statement statement) {
+        this.statement = statement;
     }
 }

@@ -2,7 +2,6 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
-import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.transform.ParameterReplacer;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
@@ -33,7 +32,6 @@ public class PreparedStatementProxyLogic {
     private Map<Object, ParameterSetOperation> parameters = new LinkedHashMap<Object, ParameterSetOperation>();
     private InterceptorHolder interceptorHolder;
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
-    private StatementType statementType = StatementType.PREPARED;
 
     private List<Map<Object, ParameterSetOperation>> batchParameters = new ArrayList<Map<Object, ParameterSetOperation>>();
 
@@ -46,9 +44,6 @@ public class PreparedStatementProxyLogic {
         this.interceptorHolder = interceptorHolder;
         this.dataSourceName = dataSourceName;
         this.jdbcProxyFactory = jdbcProxyFactory;
-        if (ps instanceof CallableStatement) {
-            this.statementType = StatementType.CALLABLE;
-        }
     }
 
     public Object invoke(Method method, Object[] args) throws Throwable {
@@ -151,10 +146,10 @@ public class PreparedStatementProxyLogic {
         }
 
         final QueryExecutionListener listener = interceptorHolder.getListener();
-        listener.beforeQuery(new ExecutionInfo(dataSourceName, this.statementType, isBatchExecution, batchSize, method, args), queries);
+        listener.beforeQuery(new ExecutionInfo(dataSourceName, this.ps, isBatchExecution, batchSize, method, args), queries);
 
         // Invoke method on original Statement.
-        final ExecutionInfo execInfo = new ExecutionInfo(dataSourceName, this.statementType, isBatchExecution, batchSize, method, args);
+        final ExecutionInfo execInfo = new ExecutionInfo(dataSourceName, this.ps, isBatchExecution, batchSize, method, args);
 
         try {
             final long beforeTime = System.currentTimeMillis();
