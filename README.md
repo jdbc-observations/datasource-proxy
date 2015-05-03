@@ -66,7 +66,7 @@ Name:"MyProxy", Time:6, Total:1, Success:1, Failure:0, Select:1, Insert:0, Updat
 <dependency>
   <groupId>net.ttddyy</groupId>
   <artifactId>datasource-proxy</artifactId>
-  <version>1.3</version>
+  <version>1.3.1</version>
 </dependency>
 ```
 
