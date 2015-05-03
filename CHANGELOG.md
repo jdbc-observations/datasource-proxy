@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.3.1
+
+- make logger name configurable in `CommonsQueryLoggingListener` and `SLF4JQueryLoggingListener`  
+- `setNull` and `registerOutParameter` receives descriptive string value in `QueryInfo#getQueryArgsList` (temporal implementation)
+- `ExecutionInfo` will have access to the statement/prepared/callable object used by the execution
+
 ## 1.3
 
 - update minimum jdk to java6+
