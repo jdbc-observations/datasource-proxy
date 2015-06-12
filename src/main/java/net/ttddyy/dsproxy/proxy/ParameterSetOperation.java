@@ -78,21 +78,6 @@ public class ParameterSetOperation {
             } else {
                 value = "NULL";  // for unrecognized code
             }
-        } else if (StatementMethodNames.PARAMETER_METHOD_REGISTER_OUT_PARAMETER.equals(methodName)) {
-
-            StringBuilder sb = new StringBuilder();
-            sb.append("OUTPUT(");
-            // for the second argument, it is either int or SQLType(in JDBC 4.2)
-            if (value instanceof Integer) {
-                Integer sqlType = (Integer) value;
-                String sqlTypeName = SQL_TYPE_NAME_BY_CODE.get(sqlType);
-                sb.append(sqlTypeName != null ? sqlTypeName : sqlType);
-            } else {
-                sb.append(value);
-            }
-
-            sb.append(")");
-            value = sb.toString();
         }
         return value;
     }
