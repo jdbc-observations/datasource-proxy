@@ -11,11 +11,11 @@ import java.util.List;
 /**
  * @author Parikshit Navgire (navgire@optymyze.com)
  */
-public class OracleOutputParameterLoggingListner extends  AbstractQueryLoggingListener{
+public class CommonsOracleOutputParameterLoggingListener extends AbstractQueryLoggingListener {
 
-    protected Log log = LogFactory.getLog(OracleOutputParameterLoggingListner.class);
+    protected Log log = LogFactory.getLog(CommonsOracleOutputParameterLoggingListener.class);
 
-    public OracleOutputParameterLoggingListner() {
+    public CommonsOracleOutputParameterLoggingListener() {
         setQueryLogEntryCreator(new OracleOutputParameterLogEntryCreator());
     }
 
