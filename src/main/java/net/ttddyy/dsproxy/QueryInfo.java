@@ -11,6 +11,8 @@ import java.util.Map;
 public class QueryInfo {
     private String query;
     private List<Map<String, Object>> queryArgsList = new ArrayList<Map<String, Object>>();
+    private List<Integer> outParamIndexes = new ArrayList<Integer>();
+    private List<String> outParamNames = new ArrayList<String>();
 
     public QueryInfo() {
     }
@@ -42,4 +44,11 @@ public class QueryInfo {
         this.queryArgsList = queryArgsList;
     }
 
+    public List<Integer> getOutParamIndexes() {
+        return outParamIndexes;
+    }
+
+    public List<String> getOutParamNames() {
+        return outParamNames;
+    }
 }
