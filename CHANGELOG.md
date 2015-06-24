@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 1.3.2
+
+- add new listener for oracle to log output params. `CommonsOracleOutputParameterLoggingListener`
+
 ## 1.3.1
 
 - make logger name configurable in `CommonsQueryLoggingListener` and `SLF4JQueryLoggingListener`  
