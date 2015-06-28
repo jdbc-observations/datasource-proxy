@@ -3,7 +3,7 @@
   <groupId>net.ttddyy</groupId>
   <artifactId>datasource-proxy</artifactId>
   <packaging>jar</packaging>
-  <version>1.3.2</version>
+  <version>1.4-SNAPSHOT</version>
 
   <name>datasource-proxy</name>
   <description>Provide a datasource proxy that can inject your own logic into all queries.</description>
