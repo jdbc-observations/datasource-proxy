@@ -1,18 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>net.ttddyy</groupId>
-  <artifactId>datasource-proxy-parent</artifactId>
-  <packaging>pom</packaging>
-  <version>1.4-SNAPSHOT</version>
 
+  <parent>
+    <groupId>net.ttddyy</groupId>
+    <artifactId>datasource-proxy-parent</artifactId>
+    <version>1.4-SNAPSHOT</version>
+    <relativePath>../</relativePath>
+  </parent>
+
+  <artifactId>datasource-proxy-test</artifactId>
+  <packaging>jar</packaging>
+
+  <name>datasource-proxy-test</name>
   <description>Provide a datasource proxy that can inject your own logic into all queries.</description>
   <url>https://github.com/ttddyy/datasource-proxy/</url>
-
-  <modules>
-    <module>datasource-proxy</module>
-    <module>datasource-proxy-test</module>
-  </modules>
 
   <licenses>
     <license>
@@ -44,41 +46,14 @@
     </developer>
   </developers>
 
-  <properties>
-    <surefire.version>2.18.1</surefire.version>
-  </properties>
 
+  <dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-          <testSource>1.8</testSource>
-          <testTarget>1.8</testTarget>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${surefire.version}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+    <dependency>
+      <groupId>net.ttddyy</groupId>
+      <artifactId>datasource-proxy</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
+  </dependencies>
 </project>
