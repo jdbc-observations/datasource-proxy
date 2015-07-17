@@ -41,6 +41,8 @@ public class StatementBatchExecutionMatcherTest {
         assertThat(sbe, queries(hasItem("foo")));
         assertThat(sbe, queries(hasItems("foo", "bar")));
         assertThat(sbe, queries(hasItems(startsWith("f"), is("bar"))));
+
+        assertThat(sbe, queries(hasSize(3)));
     }
 
 }

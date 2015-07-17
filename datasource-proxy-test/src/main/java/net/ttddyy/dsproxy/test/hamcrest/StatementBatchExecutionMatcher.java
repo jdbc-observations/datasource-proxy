@@ -4,6 +4,8 @@ import net.ttddyy.dsproxy.test.StatementBatchExecution;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 
+import java.util.Collection;
+
 /**
  * @author Tadaya Tsuyukubo
  * @since 1.4
@@ -20,10 +22,10 @@ public class StatementBatchExecutionMatcher {
         };
     }
 
-    public static Matcher<StatementBatchExecution> queries(Matcher<? super Iterable<String>> collectionMatcher) {
-        return new FeatureMatcher<StatementBatchExecution, Iterable<String>>(collectionMatcher, "queries", "queries") {
+    public static Matcher<StatementBatchExecution> queries(Matcher<? super Collection<String>> collectionMatcher) {
+        return new FeatureMatcher<StatementBatchExecution, Collection<String>>(collectionMatcher, "queries", "queries") {
             @Override
-            protected Iterable<String> featureValueOf(StatementBatchExecution actual) {
+            protected Collection<String> featureValueOf(StatementBatchExecution actual) {
                 return actual.getQueries();
             }
         };
