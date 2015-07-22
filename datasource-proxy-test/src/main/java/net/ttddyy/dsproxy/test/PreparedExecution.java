@@ -9,7 +9,7 @@ import java.util.Map;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class PreparedExecution {
+public class PreparedExecution extends BaseQueryExecution {
 
     public String query;
 
