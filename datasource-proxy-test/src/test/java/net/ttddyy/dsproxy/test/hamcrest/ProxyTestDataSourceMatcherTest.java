@@ -1,15 +1,21 @@
 package net.ttddyy.dsproxy.test.hamcrest;
 
 import net.ttddyy.dsproxy.test.ProxyTestDataSource;
+import net.ttddyy.dsproxy.test.StatementBatchExecution;
 import net.ttddyy.dsproxy.test.StatementExecution;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static net.ttddyy.dsproxy.test.hamcrest.ExecutionTypeMatcher.statement;
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceMatcher.executions;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceMatcher.firstBatchStatement;
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceMatcher.firstStatement;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionMatcher.fail;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionMatcher.success;
+import static net.ttddyy.dsproxy.test.hamcrest.StatementBatchExecutionMatcher.queries;
 import static net.ttddyy.dsproxy.test.hamcrest.StatementExecutionMatcher.query;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -71,4 +77,21 @@ public class ProxyTestDataSourceMatcherTest {
     }
 
     // TODO: test for fistStatement when there is no StatementExecution
+
+    @Test
+    public void testFirstBatchStatement() {
+        StatementBatchExecution sbe1 = new StatementBatchExecution();
+        sbe1.setQueries(Arrays.asList("query1-1", "query1-2"));
+        StatementBatchExecution sbe2 = new StatementBatchExecution();
+        sbe2.setQueries(Arrays.asList("query2-1", "query2-2"));
+
+        ProxyTestDataSource ds = new ProxyTestDataSource();
+        ds.getQueryExecutions().add(sbe1);
+        ds.getQueryExecutions().add(sbe2);
+
+        assertThat(ds, firstBatchStatement(queries(hasItems("query1-1", "query1-2"))));
+        assertThat(ds, firstBatchStatement(is(queries(hasItems("query1-1", "query1-2")))));
+    }
+
+    // TODO: test for fistBatchStatement when there is no StatementExecution
 }

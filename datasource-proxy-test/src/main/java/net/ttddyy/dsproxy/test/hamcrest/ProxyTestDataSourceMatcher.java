@@ -2,13 +2,12 @@ package net.ttddyy.dsproxy.test.hamcrest;
 
 import net.ttddyy.dsproxy.test.ProxyTestDataSource;
 import net.ttddyy.dsproxy.test.QueryExecution;
+import net.ttddyy.dsproxy.test.StatementBatchExecution;
 import net.ttddyy.dsproxy.test.StatementExecution;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -46,6 +45,19 @@ public class ProxyTestDataSourceMatcher {
         };
     }
 
+    public static Matcher<ProxyTestDataSource> firstBatchStatement(Matcher<StatementBatchExecution> statementBatchMatcher) {
+        String msg = "first batch statement";  // TODO: check message
+        return new FeatureMatcher<ProxyTestDataSource, StatementBatchExecution>(statementBatchMatcher, msg, msg) {
+            @Override
+            protected StatementBatchExecution featureValueOf(ProxyTestDataSource actual) {
+                List<QueryExecution> queryExecutions = actual.getQueryExecutions();
+                QueryExecution queryExecution = findFirstByType(queryExecutions, StatementBatchExecution.class);
+                // TODO: if not exist
+                return (StatementBatchExecution) queryExecution;
+            }
+        };
+    }
+
     @SuppressWarnings("unchecked")
     private static <T extends QueryExecution> T findFirstByType(List<QueryExecution> executions, Class<T> type) {
         for (QueryExecution execution : executions) {
@@ -55,14 +67,6 @@ public class ProxyTestDataSourceMatcher {
         }
         return null;
     }
-
-    public static void main(String[] args) {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("a", "AA");
-        map.put("a", "BB");
-        System.out.println(map.get("a"));
-    }
-
 
     public static Matcher<ProxyTestDataSource> executions(int index, ExecutionType executionType) {
         return executions(index, new ExecutionTypeMatcher(executionType));
