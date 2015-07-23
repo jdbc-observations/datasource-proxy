@@ -2,10 +2,13 @@ package net.ttddyy.dsproxy.test.hamcrest;
 
 import net.ttddyy.dsproxy.test.ProxyTestDataSource;
 import net.ttddyy.dsproxy.test.QueryExecution;
+import net.ttddyy.dsproxy.test.StatementExecution;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -29,6 +32,37 @@ public class ProxyTestDataSourceMatcher {
     // assertThat(ds, executions(0, is(success()))));
     // assertThat(ds, firstStatement(query(...)));
     // assertThat(ds, firstBatchStatement(query(...)));
+
+    public static Matcher<ProxyTestDataSource> firstStatement(Matcher<StatementExecution> statementMatcher) {
+        String msg = "first statement";  // TODO: check message
+        return new FeatureMatcher<ProxyTestDataSource, StatementExecution>(statementMatcher, msg, msg) {
+            @Override
+            protected StatementExecution featureValueOf(ProxyTestDataSource actual) {
+                List<QueryExecution> queryExecutions = actual.getQueryExecutions();
+                QueryExecution queryExecution = findFirstByType(queryExecutions, StatementExecution.class);
+                // TODO: if not exist
+                return (StatementExecution) queryExecution;
+            }
+        };
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends QueryExecution> T findFirstByType(List<QueryExecution> executions, Class<T> type) {
+        for (QueryExecution execution : executions) {
+            if (type.isAssignableFrom(execution.getClass())) {
+                return (T) execution;
+            }
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("a", "AA");
+        map.put("a", "BB");
+        System.out.println(map.get("a"));
+    }
+
 
     public static Matcher<ProxyTestDataSource> executions(int index, ExecutionType executionType) {
         return executions(index, new ExecutionTypeMatcher(executionType));
