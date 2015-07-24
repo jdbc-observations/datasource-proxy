@@ -5,9 +5,6 @@ import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.rules.ExternalResource;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-
-import static org.junit.Assert.fail;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -16,36 +13,27 @@ public class DatabaseTestRule extends ExternalResource {
 
     public DataSource dataSource;
 
+    private Flyway flyway;
+
     @Override
     protected void before() throws Throwable {
+
+        // prepare ds
         JDBCDataSource ds = new JDBCDataSource();
         ds.setDatabase("jdbc:hsqldb:mem:aname");
         ds.setUser("sa");
-
-        Flyway flyway = new Flyway();
-        flyway.setDataSource(ds);
-        flyway.migrate();
-
         this.dataSource = ds;
+
+        // populate data
+        this.flyway = new Flyway();
+        this.flyway.setDataSource(ds);
+        this.flyway.migrate();
+
     }
 
     @Override
     protected void after() {
-        try {
-            executeQuery(dataSource, "shutdown;");
-        } catch (Exception e) {
-            fail("Failed to shutdown database");
-        }
+        flyway.clean();
     }
-
-    private static void executeQuery(DataSource dataSource, String... queries) throws Exception {
-        Connection conn = dataSource.getConnection();
-        java.sql.Statement stmt = conn.createStatement();
-        for (String query : queries) {
-            stmt.execute(query);
-        }
-        conn.close();
-    }
-
 
 }
