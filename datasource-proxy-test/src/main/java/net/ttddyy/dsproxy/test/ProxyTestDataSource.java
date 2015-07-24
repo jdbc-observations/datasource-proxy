@@ -1,7 +1,12 @@
 package net.ttddyy.dsproxy.test;
 
+import net.ttddyy.dsproxy.ExecutionInfo;
+import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.StatementType;
+import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +17,28 @@ import java.util.List;
 public class ProxyTestDataSource extends ProxyDataSource {
 
     private List<QueryExecution> queryExecutions = new ArrayList<QueryExecution>();
+
+
+    public ProxyTestDataSource() {
+        initialize();
+    }
+
+    public ProxyTestDataSource(DataSource dataSource) {
+        super(dataSource);
+        initialize();
+    }
+
+    private void initialize() {
+        // TODO: clean up
+        QueryExecutionFactoryListener listener = new QueryExecutionFactoryListener(this.queryExecutions);
+        this.getInterceptorHolder().setListener(listener);
+    }
+
+    @Override
+    public void setListener(QueryExecutionListener listener) {
+        // TODO: add logic for when use tries to add listener
+        super.setListener(listener);
+    }
 
     public List<StatementExecution> getStatements() {
         return getQueryExecutionsFilteredBy(StatementExecution.class);
