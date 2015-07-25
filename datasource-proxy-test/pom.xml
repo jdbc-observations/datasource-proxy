@@ -51,6 +51,7 @@
     <flyway-maven-plugin.version>3.0</flyway-maven-plugin.version>
     <flyway.version>3.2.1</flyway.version>
     <h2.version>1.4.177</h2.version>
+    <guava.version>18.0</guava.version>
 
     <!-- Probably better to use H2 due to the lock problem-->
     <!--<test-db.url>jdbc:hsqldb:mem:aname</test-db.url>-->
@@ -98,6 +99,12 @@
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
       <version>${flyway.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
       <scope>test</scope>
     </dependency>
 
