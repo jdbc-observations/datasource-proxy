@@ -24,7 +24,7 @@ public class PreparedExecutionMatcher {
 
 
     public static Matcher<PreparedExecution> params(final Matcher<Map<? extends String, ?>> mapMatcher) {
-        return new FeatureMatcher<PreparedExecution, Map<String, Object>>(mapMatcher, "params", "params") {
+        return new FeatureMatcher<PreparedExecution, Map<String, Object>>(mapMatcher, "paramsByName", "paramsByName") {
             @Override
             protected Map<String, Object> featureValueOf(PreparedExecution actual) {
                 return actual.getParams();
@@ -33,7 +33,7 @@ public class PreparedExecutionMatcher {
     }
 
     public static Matcher<PreparedExecution> paramKeys(Matcher<? super Collection<String>> collectionMatcher) {
-        return new FeatureMatcher<PreparedExecution, Collection<String>>(collectionMatcher, "paramKeys", "paramKeys") {
+        return new FeatureMatcher<PreparedExecution, Collection<String>>(collectionMatcher, "paramNames", "paramNames") {
             @Override
             protected Collection<String> featureValueOf(PreparedExecution actual) {
                 return actual.getParamKeys();
@@ -43,7 +43,7 @@ public class PreparedExecutionMatcher {
     }
 
     public static Matcher<PreparedExecution> paramValue(final String key, Matcher<Object> matcher) {
-        return new FeatureMatcher<PreparedExecution, Object>(matcher, "paramKeys", "paramKeys") {
+        return new FeatureMatcher<PreparedExecution, Object>(matcher, "paramNames", "paramNames") {
             @Override
             protected Object featureValueOf(PreparedExecution actual) {
                 // TODO: null check
@@ -53,7 +53,7 @@ public class PreparedExecutionMatcher {
     }
 
     public static <T> Matcher<PreparedExecution> paramValue(final String key, final Class<T> clazz, Matcher<? super T> matcher) {
-        return new FeatureMatcher<PreparedExecution, T>(matcher, "paramKeys", "paramKeys") {
+        return new FeatureMatcher<PreparedExecution, T>(matcher, "paramNames", "paramNames") {
             @Override
             protected T featureValueOf(PreparedExecution actual) {
                 // TODO: null check
@@ -68,6 +68,17 @@ public class PreparedExecutionMatcher {
         };
 
     }
+
+
+    // TODO: alias methods
+    // preparedParams
+    // preparedParamKeys
+    // preparedParamValue
+
+    public static Matcher<PreparedExecution> preparedQuery(Matcher<String> stringMatcher) {
+        return query(stringMatcher);
+    }
+
 
     // paramValue(String key, matcher
     // paramValue(String key, Class, matcher
