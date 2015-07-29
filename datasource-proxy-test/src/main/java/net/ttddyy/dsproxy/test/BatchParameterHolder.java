@@ -6,8 +6,6 @@ import java.util.List;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public interface BatchExecutionEntry extends ParameterHolder {
-
-    List<Object> getParamValues();
-
+public interface BatchParameterHolder {
+    List<BatchExecutionEntry> getBatchExecutionEntries();
 }

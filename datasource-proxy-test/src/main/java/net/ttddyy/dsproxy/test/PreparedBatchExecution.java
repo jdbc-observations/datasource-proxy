@@ -8,9 +8,9 @@ import java.util.Map;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class PreparedBatchExecution {
+public class PreparedBatchExecution implements BatchParameterHolder {
 
-    public static class PreparedBatchExecutionEntry implements BatchExecutionEntry {
+    public static class PreparedBatchExecutionEntry implements BatchExecutionEntry, ParameterByIndexHolder {
 
         public Map<String, Object> paramsByName = new LinkedHashMap<String, Object>();
         public Map<Integer, Object> paramsByIndex = new LinkedHashMap<Integer, Object>();
@@ -24,7 +24,7 @@ public class PreparedBatchExecution {
             this.paramsByIndex = paramsByIndex;
         }
 
-        @Override
+        //        @Override
         public Map<String, Object> getParamsByName() {
             return paramsByName;
         }
@@ -34,7 +34,7 @@ public class PreparedBatchExecution {
             return paramsByIndex;
         }
 
-        @Override
+        //        @Override
         public List<String> getParamNames() {
             return new ArrayList<String>(this.paramsByName.keySet());
         }
@@ -67,6 +67,7 @@ public class PreparedBatchExecution {
         return query;
     }
 
+    @Override
     public List<BatchExecutionEntry> getBatchExecutionEntries() {
         return batchExecutionEntries;
     }
