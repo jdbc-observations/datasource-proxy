@@ -7,20 +7,13 @@ import org.hamcrest.Matcher;
 import java.util.Collection;
 import java.util.Map;
 
+import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.query;
+
 /**
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
 public class PreparedExecutionMatcher {
-
-    public static Matcher<PreparedExecution> query(final Matcher<String> stringMatcher) {
-        return new FeatureMatcher<PreparedExecution, String>(stringMatcher, "query", "query") {
-            @Override
-            protected String featureValueOf(PreparedExecution actual) {
-                return actual.getQuery();
-            }
-        };
-    }
 
 
     public static Matcher<PreparedExecution> params(final Matcher<Map<? extends String, ?>> mapMatcher) {
@@ -75,7 +68,7 @@ public class PreparedExecutionMatcher {
     // preparedParamKeys
     // preparedParamValue
 
-    public static Matcher<PreparedExecution> preparedQuery(Matcher<String> stringMatcher) {
+    public static Matcher<? super PreparedExecution> preparedQuery(Matcher<String> stringMatcher) {
         return query(stringMatcher);
     }
 

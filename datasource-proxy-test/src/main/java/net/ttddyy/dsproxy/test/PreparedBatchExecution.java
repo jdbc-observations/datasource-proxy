@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class PreparedBatchExecution implements BatchParameterHolder {
+public class PreparedBatchExecution implements QueryHolder, BatchParameterHolder {
 
     public static class PreparedBatchExecutionEntry implements BatchExecutionEntry, ParameterByIndexHolder {
 
@@ -63,6 +63,7 @@ public class PreparedBatchExecution implements BatchParameterHolder {
         this.query = query;
     }
 
+    @Override
     public String getQuery() {
         return query;
     }

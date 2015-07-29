@@ -7,7 +7,7 @@ import java.util.List;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class CallableBatchExecution implements BatchParameterHolder {
+public class CallableBatchExecution implements BatchParameterHolder, QueryHolder {
 
     // TODO: implement CallableBatchExecutionEntry
 
@@ -20,6 +20,7 @@ public class CallableBatchExecution implements BatchParameterHolder {
         this.query = query;
     }
 
+    @Override
     public String getQuery() {
         return query;
     }

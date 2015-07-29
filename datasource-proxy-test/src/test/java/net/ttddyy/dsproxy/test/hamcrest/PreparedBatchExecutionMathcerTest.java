@@ -16,7 +16,7 @@ import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsB
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsByName;
 import static net.ttddyy.dsproxy.test.hamcrest.PreparedBatchExecutionMatcher.batch;
 import static net.ttddyy.dsproxy.test.hamcrest.PreparedBatchExecutionMatcher.batchSize;
-import static net.ttddyy.dsproxy.test.hamcrest.PreparedBatchExecutionMatcher.query;
+import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.query;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;

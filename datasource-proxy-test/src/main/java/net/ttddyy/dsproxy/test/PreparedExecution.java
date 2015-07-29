@@ -9,12 +9,13 @@ import java.util.Map;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class PreparedExecution extends BaseQueryExecution {
+public class PreparedExecution extends BaseQueryExecution implements QueryHolder {
 
     public String query;
 
     public Map<String, Object> params = new LinkedHashMap<String, Object>();
 
+    @Override
     public String getQuery() {
         return query;
     }

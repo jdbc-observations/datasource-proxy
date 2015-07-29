@@ -36,15 +36,6 @@ public class PreparedBatchExecutionMatcher {
     //  assertThat(pbe, batch(0, argValuesAsString(hasItems("foo")));
     //  assertThat(pbe, batch(0, argValuesAs(String.class, hasItems("foo")));
 
-    public static Matcher<PreparedBatchExecution> query(final Matcher<String> stringMatcher) {
-        return new FeatureMatcher<PreparedBatchExecution, String>(stringMatcher, "query", "query") {
-            @Override
-            protected String featureValueOf(PreparedBatchExecution actual) {
-                return actual.getQuery();
-            }
-        };
-    }
-
     public static Matcher<PreparedBatchExecution> batchSize(final int batchSize) {
         return new FeatureMatcher<PreparedBatchExecution, Integer>(equalTo(batchSize), "batchSize", "batchSize") {
             @Override
