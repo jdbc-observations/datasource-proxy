@@ -8,14 +8,12 @@ import org.junit.Test;
 import java.util.Map;
 
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramIndexes;
-import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramNames;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramValue;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramValueAsInteger;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramValueAsString;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsByIndex;
-import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsByName;
-import static net.ttddyy.dsproxy.test.hamcrest.PreparedBatchExecutionMatcher.batch;
-import static net.ttddyy.dsproxy.test.hamcrest.PreparedBatchExecutionMatcher.batchSize;
+import static net.ttddyy.dsproxy.test.hamcrest.BatchParameterHolderAssertions.batch;
+import static net.ttddyy.dsproxy.test.hamcrest.BatchParameterHolderAssertions.batchSize;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.query;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItem;

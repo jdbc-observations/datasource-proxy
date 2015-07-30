@@ -16,7 +16,7 @@ import static org.hamcrest.Matchers.equalTo;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class PreparedBatchExecutionMatcher {
+public class BatchParameterHolderAssertions {
 
     // TODO: rename classes. they are not actually matchers, just providing static methods.
 
@@ -36,10 +36,10 @@ public class PreparedBatchExecutionMatcher {
     //  assertThat(pbe, batch(0, argValuesAsString(hasItems("foo")));
     //  assertThat(pbe, batch(0, argValuesAs(String.class, hasItems("foo")));
 
-    public static Matcher<PreparedBatchExecution> batchSize(final int batchSize) {
-        return new FeatureMatcher<PreparedBatchExecution, Integer>(equalTo(batchSize), "batchSize", "batchSize") {
+    public static Matcher<? super BatchParameterHolder> batchSize(final int batchSize) {
+        return new FeatureMatcher<BatchParameterHolder, Integer>(equalTo(batchSize), "batchSize", "batchSize") {
             @Override
-            protected Integer featureValueOf(PreparedBatchExecution actual) {
+            protected Integer featureValueOf(BatchParameterHolder actual) {
                 return actual.getBatchExecutionEntries().size();
             }
         };
