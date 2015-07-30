@@ -9,10 +9,8 @@ import java.util.Arrays;
 
 import static net.ttddyy.dsproxy.test.hamcrest.ExecutionTypeMatcher.statement;
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceMatcher.executions;
-import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceMatcher.firstBatchStatement;
-import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceMatcher.firstStatement;
-import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionMatcher.fail;
-import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionMatcher.success;
+import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.fail;
+import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.success;
 import static net.ttddyy.dsproxy.test.hamcrest.StatementBatchExecutionMatcher.queries;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;

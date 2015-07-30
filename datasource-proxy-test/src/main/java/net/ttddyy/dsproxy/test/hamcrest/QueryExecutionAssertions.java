@@ -9,7 +9,7 @@ import org.hamcrest.TypeSafeMatcher;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class QueryExecutionMatcher {
+public class QueryExecutionAssertions {
 
     public static Matcher<QueryExecution> success() {
         return new TypeSafeMatcher<QueryExecution>() {
