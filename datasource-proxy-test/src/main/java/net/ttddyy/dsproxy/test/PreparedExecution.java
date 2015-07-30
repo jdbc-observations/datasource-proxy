@@ -14,8 +14,6 @@ public class PreparedExecution extends BaseQueryExecution implements QueryHolder
     public String query;
     public Map<Integer, Object> paramsByIndex = new LinkedHashMap<Integer, Object>();
 
-    public Map<String, Object> params = new LinkedHashMap<String, Object>();
-
     @Override
     public String getQuery() {
         return query;
@@ -23,22 +21,6 @@ public class PreparedExecution extends BaseQueryExecution implements QueryHolder
 
     public void setQuery(String query) {
         this.query = query;
-    }
-
-    public Map<String, Object> getParams() {
-        return params;
-    }
-
-    public void setParams(Map<String, Object> params) {
-        this.params = params;
-    }
-
-    public List<String> getParamKeys() {
-        return new ArrayList<String>(this.params.keySet());
-    }
-
-    public List<Object> getParamValues() {
-        return new ArrayList<Object>(this.params.values());
     }
 
     @Override
