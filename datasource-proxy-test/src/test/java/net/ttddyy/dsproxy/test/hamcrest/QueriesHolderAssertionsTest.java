@@ -3,7 +3,7 @@ package net.ttddyy.dsproxy.test.hamcrest;
 import net.ttddyy.dsproxy.test.StatementBatchExecution;
 import org.junit.Test;
 
-import static net.ttddyy.dsproxy.test.hamcrest.StatementBatchExecutionMatcher.queries;
+import static net.ttddyy.dsproxy.test.hamcrest.QueriesHolderAssertions.queries;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -11,7 +11,7 @@ import static org.junit.Assert.assertThat;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class StatementBatchExecutionMatcherTest {
+public class QueriesHolderAssertionsTest {
 
 
     @Test
