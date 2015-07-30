@@ -87,7 +87,7 @@ public class ParameterHolderAssertions {
         return new ParameterHolderMatcher.ParameterByIndexMatcher<Object>(matcher) {
             @Override
             public Object featureValueOf(ParameterByIndexHolder actual) {
-                return actual.getParamIndexes().get(index);
+                return actual.getParamsByIndex().get(index);
             }
 
             @Override

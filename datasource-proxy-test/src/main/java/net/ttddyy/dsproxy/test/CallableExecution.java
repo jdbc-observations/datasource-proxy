@@ -10,7 +10,7 @@ public class CallableExecution extends BaseQueryExecution implements QueryHolder
 
     @Override
     public String getQuery() {
-        return null;
+        return this.query;
     }
 
     public void setQuery(String query) {

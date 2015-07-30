@@ -9,9 +9,10 @@ import java.util.Map;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class PreparedExecution extends BaseQueryExecution implements QueryHolder {
+public class PreparedExecution extends BaseQueryExecution implements QueryHolder, ParameterByIndexHolder {
 
     public String query;
+    public Map<Integer, Object> paramsByIndex = new LinkedHashMap<Integer, Object>();
 
     public Map<String, Object> params = new LinkedHashMap<String, Object>();
 
@@ -40,4 +41,13 @@ public class PreparedExecution extends BaseQueryExecution implements QueryHolder
         return new ArrayList<Object>(this.params.values());
     }
 
+    @Override
+    public Map<Integer, Object> getParamsByIndex() {
+        return this.paramsByIndex;
+    }
+
+    @Override
+    public List<Integer> getParamIndexes() {
+        return new ArrayList<Integer>(this.paramsByIndex.keySet());
+    }
 }

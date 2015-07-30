@@ -5,9 +5,6 @@ import net.ttddyy.dsproxy.test.PreparedExecution;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import static net.ttddyy.dsproxy.test.hamcrest.PreparedExecutionMatcher.paramKeys;
-import static net.ttddyy.dsproxy.test.hamcrest.PreparedExecutionMatcher.paramValue;
-import static net.ttddyy.dsproxy.test.hamcrest.PreparedExecutionMatcher.params;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
