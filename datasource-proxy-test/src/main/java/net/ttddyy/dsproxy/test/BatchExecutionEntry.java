@@ -8,6 +8,7 @@ import java.util.List;
  */
 public interface BatchExecutionEntry extends ParameterHolder {
 
+    // TODO: implement values matcher??
     List<Object> getParamValues();
 
 }
