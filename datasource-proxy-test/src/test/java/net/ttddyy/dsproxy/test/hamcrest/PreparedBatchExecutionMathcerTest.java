@@ -7,13 +7,13 @@ import org.junit.Test;
 
 import java.util.Map;
 
+import static net.ttddyy.dsproxy.test.hamcrest.BatchParameterHolderAssertions.batch;
+import static net.ttddyy.dsproxy.test.hamcrest.BatchParameterHolderAssertions.batchSize;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramIndexes;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramValue;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramValueAsInteger;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramValueAsString;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsByIndex;
-import static net.ttddyy.dsproxy.test.hamcrest.BatchParameterHolderAssertions.batch;
-import static net.ttddyy.dsproxy.test.hamcrest.BatchParameterHolderAssertions.batchSize;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.query;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItem;
@@ -40,14 +40,14 @@ public class PreparedBatchExecutionMathcerTest {
 
     @Test
     public void testBatchSize() {
-        Map<String, Object> params1 = ImmutableMap.<String, Object>of("foo1", "FOO", "bar1", "BAR");
-        Map<String, Object> params2 = ImmutableMap.<String, Object>of("foo2", "FOO", "bar2", "BAR");
+        Map<Integer, Object> params1 = ImmutableMap.<Integer, Object>of(10, "FOO", 11, "BAR");
+        Map<Integer, Object> params2 = ImmutableMap.<Integer, Object>of(20, "FOO", 21, "BAR");
 
         PreparedBatchExecution.PreparedBatchExecutionEntry entry1 = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry1.setParamsByName(params1);
+        entry1.setParamsByIndex(params1);
 
         PreparedBatchExecution.PreparedBatchExecutionEntry entry2 = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry2.setParamsByName(params2);
+        entry2.setParamsByIndex(params2);
 
         PreparedBatchExecution pbe = new PreparedBatchExecution();
         pbe.getBatchExecutionEntries().add(entry1);
@@ -59,26 +59,26 @@ public class PreparedBatchExecutionMathcerTest {
     @Test
     public void testBatch() {
 
-        Map<String, Object> params = ImmutableMap.<String, Object>of("foo", "FOO", "bar", "BAR", "number", 100);
+        Map<Integer, Object> params = ImmutableMap.<Integer, Object>of(1, "FOO", 2, "BAR", 10, 100);
 
         PreparedBatchExecution.PreparedBatchExecutionEntry entry = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry.setParamsByName(params);
+        entry.setParamsByIndex(params);
 
         PreparedBatchExecution pbe = new PreparedBatchExecution();
         pbe.getBatchExecutionEntries().add(entry);
 
-//        assertThat(pbe, batch(0, paramsByName(hasEntry("bar", (Object) "BAR"))));
-//        assertThat(pbe, batch(0, paramsByName(hasEntry("number", (Object) 100))));
-//        assertThat(pbe, batch(0, paramNames(hasItem("foo"))));
-//        assertThat(pbe, batch(0, paramNames(hasItems("foo", "bar"))));
-//
-//        assertThat(pbe, batch(0, paramValue("foo", is((Object) "FOO"))));
-//        assertThat(pbe, batch(0, paramValue("foo", (Matcher) startsWith("FOO"))));
-//        assertThat(pbe, batch(0, paramValue("number", is((Object) 100))));
-//
-//        assertThat(pbe, batch(0, paramValue("foo", String.class, is("FOO"))));
-//        assertThat(pbe, batch(0, paramValue("foo", String.class, startsWith("FOO"))));
-//        assertThat(pbe, batch(0, paramValue("number", Integer.class, is(100))));
+        assertThat(pbe, batch(0, paramsByIndex(hasEntry(2, (Object) "BAR"))));
+        assertThat(pbe, batch(0, paramsByIndex(hasEntry(10, (Object) 100))));
+        assertThat(pbe, batch(0, paramIndexes(hasItem(1))));
+        assertThat(pbe, batch(0, paramIndexes(hasItems(1, 2))));
+
+        assertThat(pbe, batch(0, paramValue(1, is((Object) "FOO"))));
+        assertThat(pbe, batch(0, paramValue(1, (Matcher) startsWith("FOO"))));
+        assertThat(pbe, batch(0, paramValue(10, is((Object) 100))));
+
+        assertThat(pbe, batch(0, paramValue(1, String.class, is("FOO"))));
+        assertThat(pbe, batch(0, paramValue(1, String.class, startsWith("FOO"))));
+        assertThat(pbe, batch(0, paramValue(10, Integer.class, is(100))));
 
     }
 

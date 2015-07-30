@@ -12,31 +12,15 @@ public class PreparedBatchExecution implements QueryHolder, BatchParameterHolder
 
     public static class PreparedBatchExecutionEntry implements BatchExecutionEntry, ParameterByIndexHolder {
 
-        public Map<String, Object> paramsByName = new LinkedHashMap<String, Object>();
         public Map<Integer, Object> paramsByIndex = new LinkedHashMap<Integer, Object>();
-
-
-        public void setParamsByName(Map<String, Object> paramsByName) {
-            this.paramsByName = paramsByName;
-        }
 
         public void setParamsByIndex(Map<Integer, Object> paramsByIndex) {
             this.paramsByIndex = paramsByIndex;
         }
 
-        //        @Override
-        public Map<String, Object> getParamsByName() {
-            return paramsByName;
-        }
-
         @Override
         public Map<Integer, Object> getParamsByIndex() {
             return paramsByIndex;
-        }
-
-        //        @Override
-        public List<String> getParamNames() {
-            return new ArrayList<String>(this.paramsByName.keySet());
         }
 
         @Override
@@ -48,10 +32,8 @@ public class PreparedBatchExecution implements QueryHolder, BatchParameterHolder
         public List<Object> getParamValues() {
             List<Object> list = new ArrayList<Object>();
             list.addAll(this.paramsByIndex.values());
-            list.addAll(this.paramsByName.values());
             return list;
         }
-
 
     }
 
