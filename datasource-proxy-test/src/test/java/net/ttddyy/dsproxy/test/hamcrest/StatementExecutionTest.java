@@ -12,7 +12,7 @@ import static org.junit.Assert.assertThat;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class StatementExecutionMatcherTest {
+public class StatementExecutionTest {
 
     @Test
     public void testQuery() {
