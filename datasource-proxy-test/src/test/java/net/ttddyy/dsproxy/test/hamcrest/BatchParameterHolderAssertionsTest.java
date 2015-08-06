@@ -13,8 +13,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.fail;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 /**
@@ -31,7 +31,7 @@ public class BatchParameterHolderAssertionsTest {
         entries.add(entry);
 
         BatchParameterHolder holder = mock(BatchParameterHolder.class);
-        when(holder.getBatchExecutionEntries()).thenReturn(entries);
+        given(holder.getBatchExecutionEntries()).willReturn(entries);
 
         Assert.assertThat(holder, BatchParameterHolderAssertions.batchSize(1));
     }
@@ -39,7 +39,7 @@ public class BatchParameterHolderAssertionsTest {
     @Test
     public void testBatchSizeFailure() {
         BatchParameterHolder holder = mock(BatchParameterHolder.class);
-        when(holder.getBatchExecutionEntries()).thenReturn(new ArrayList<BatchExecutionEntry>());  // empty list
+        given(holder.getBatchExecutionEntries()).willReturn(new ArrayList<BatchExecutionEntry>());  // empty list
 
 
         try {
@@ -53,11 +53,11 @@ public class BatchParameterHolderAssertionsTest {
     @Test
     public void testBatch() {
         ParameterByIndexHolder entry = mock(ParameterByIndexHolder.class, withSettings().extraInterfaces(BatchExecutionEntry.class));
-        when(entry.getParamIndexes()).thenReturn(Arrays.asList(100));
+        given(entry.getParamIndexes()).willReturn(Arrays.asList(100));
         List<BatchExecutionEntry> entries = Arrays.asList((BatchExecutionEntry) entry);
 
         BatchParameterHolder holder = mock(BatchParameterHolder.class);
-        when(holder.getBatchExecutionEntries()).thenReturn(entries);
+        given(holder.getBatchExecutionEntries()).willReturn(entries);
 
 
         Assert.assertThat(holder, BatchParameterHolderAssertions.batch(0, ParameterHolderAssertions.paramIndexes(hasItem(100))));
@@ -66,7 +66,7 @@ public class BatchParameterHolderAssertionsTest {
     @Test
     public void testBatchOutOfIndex() {
         BatchParameterHolder holder = mock(BatchParameterHolder.class);
-        when(holder.getBatchExecutionEntries()).thenReturn(new ArrayList<BatchExecutionEntry>());  // empty list
+        given(holder.getBatchExecutionEntries()).willReturn(new ArrayList<BatchExecutionEntry>());  // empty list
 
 
         try {
@@ -81,11 +81,11 @@ public class BatchParameterHolderAssertionsTest {
     @Test
     public void testBatchUnmatchMessage() {
         ParameterByIndexHolder entry = mock(ParameterByIndexHolder.class, withSettings().extraInterfaces(BatchExecutionEntry.class));
-        when(entry.getParamIndexes()).thenReturn(Arrays.asList(100));
+        given(entry.getParamIndexes()).willReturn(Arrays.asList(100));
         List<BatchExecutionEntry> entries = Arrays.asList((BatchExecutionEntry) entry);
 
         BatchParameterHolder holder = mock(BatchParameterHolder.class);
-        when(holder.getBatchExecutionEntries()).thenReturn(entries);
+        given(holder.getBatchExecutionEntries()).willReturn(entries);
 
 
         try {
