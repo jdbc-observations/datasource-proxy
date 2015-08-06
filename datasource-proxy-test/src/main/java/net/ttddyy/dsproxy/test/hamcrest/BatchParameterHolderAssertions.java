@@ -3,7 +3,7 @@ package net.ttddyy.dsproxy.test.hamcrest;
 import net.ttddyy.dsproxy.test.BatchExecutionEntry;
 import net.ttddyy.dsproxy.test.BatchParameterHolder;
 import net.ttddyy.dsproxy.test.ParameterHolder;
-import net.ttddyy.dsproxy.test.PreparedBatchExecution;
+import org.hamcrest.Description;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 
@@ -46,17 +46,33 @@ public class BatchParameterHolderAssertions {
     }
 
 
-    public static Matcher<? super BatchParameterHolder> batch(final int index, final Matcher<? super ParameterHolder> preparedExecutionMatcher) {
-        // TODO: update text
-        return new FeatureMatcher<BatchParameterHolder, ParameterHolder>(preparedExecutionMatcher, "query", "query") {
+    public static Matcher<? super BatchParameterHolder> batch(final int index, final Matcher<? super ParameterHolder> parameterHolderMatcher) {
+        return new CompositeMatcher<BatchParameterHolder, ParameterHolder>(parameterHolderMatcher) {
             @Override
-            protected ParameterHolder featureValueOf(BatchParameterHolder actual) {
-                List<BatchExecutionEntry> entries = actual.getBatchExecutionEntries();
-                // TODO: index check
-                BatchExecutionEntry entry = entries.get(index);
+            protected boolean validateByThisMatcher(BatchParameterHolder item, Description expected, Description actual) {
+                List<BatchExecutionEntry> entries = item.getBatchExecutionEntries();
+                int size = entries.size();
+                if (size - 1 < index) {
+                    expected.appendText("batch[" + index + "] exists");
+                    actual.appendText("batch[] size was " + size);
+                    return false;
+                }
+
+                return true;
+            }
+
+            @Override
+            public ParameterHolder getValue(BatchParameterHolder actual) {
+                BatchExecutionEntry entry = actual.getBatchExecutionEntries().get(index);
                 return entry;
             }
+
+            @Override
+            public String getSubMatcherFailureDescriptionPrefix() {
+                return "batch[" + index + "] ";
+            }
         };
+
     }
 
 
