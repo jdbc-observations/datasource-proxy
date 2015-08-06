@@ -20,7 +20,12 @@ public class QueryExecutionAssertions {
 
             @Override
             public void describeTo(Description description) {
-                // TODO: impl
+                description.appendText("success");
+            }
+
+            @Override
+            protected void describeMismatchSafely(QueryExecution item, Description mismatchDescription) {
+                mismatchDescription.appendText("was failure");
             }
         };
     }
@@ -34,7 +39,12 @@ public class QueryExecutionAssertions {
 
             @Override
             public void describeTo(Description description) {
-                // TODO: impl
+                description.appendText("failure");
+            }
+
+            @Override
+            protected void describeMismatchSafely(QueryExecution item, Description mismatchDescription) {
+                mismatchDescription.appendText("was success");
             }
         };
     }
