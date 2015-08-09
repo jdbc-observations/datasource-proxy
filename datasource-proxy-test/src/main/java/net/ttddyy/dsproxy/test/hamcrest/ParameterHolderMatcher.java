@@ -14,8 +14,10 @@ import org.hamcrest.StringDescription;
  */
 public abstract class ParameterHolderMatcher<S> extends BaseMatcher<ParameterHolder> {
 
+    // TODO: implement validation messages
+
     protected static enum MatchBy {
-        INDEX, NAME
+        INDEX, NAME, OUTPARAM
     }
 
     private final Matcher<? super S> subMatcher;
