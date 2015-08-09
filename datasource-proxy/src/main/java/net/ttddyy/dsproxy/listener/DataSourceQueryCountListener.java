@@ -1,6 +1,10 @@
 package net.ttddyy.dsproxy.listener;
 
-import net.ttddyy.dsproxy.*;
+import net.ttddyy.dsproxy.ExecutionInfo;
+import net.ttddyy.dsproxy.QueryCount;
+import net.ttddyy.dsproxy.QueryCountHolder;
+import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.QueryType;
 
 import java.util.List;
 
@@ -62,38 +66,10 @@ public class DataSourceQueryCountListener implements QueryExecutionListener {
         // increment query count
         for (QueryInfo queryInfo : queryInfoList) {
             final String query = queryInfo.getQuery();
-            final QueryType type = getQueryType(query);
+            final QueryType type = QueryUtils.getQueryType(query);
             count.increment(type);
         }
 
-    }
-
-    protected QueryType getQueryType(String query) {
-        final String trimmedQuery = QueryUtils.removeCommentAndWhiteSpace(query);
-        final char firstChar = trimmedQuery.charAt(0);
-
-        final QueryType type;
-        switch (firstChar) {
-            case 'S':
-            case 's':
-                type = QueryType.SELECT;
-                break;
-            case 'I':
-            case 'i':
-                type = QueryType.INSERT;
-                break;
-            case 'U':
-            case 'u':
-                type = QueryType.UPDATE;
-                break;
-            case 'D':
-            case 'd':
-                type = QueryType.DELETE;
-                break;
-            default:
-                type = QueryType.OTHER;
-        }
-        return type;
     }
 
 }
