@@ -72,7 +72,7 @@ public class ProxyTestDataSourceMatcher {
         return executions(index, new ExecutionTypeMatcher(executionType));
     }
 
-    public static Matcher<ProxyTestDataSource> executions(final int index, Matcher<QueryExecution> queryExecutionMatcher) {
+    public static Matcher<ProxyTestDataSource> executions(final int index, Matcher<? super QueryExecution> queryExecutionMatcher) {
         // TODO: check message
         String msg = "queryExecutions[" + index + "]";
         return new FeatureMatcher<ProxyTestDataSource, QueryExecution>(queryExecutionMatcher, msg, msg) {
