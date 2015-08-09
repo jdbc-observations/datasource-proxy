@@ -4,8 +4,10 @@ import net.ttddyy.dsproxy.test.ProxyTestDataSource;
 import net.ttddyy.dsproxy.test.QueryExecution;
 import net.ttddyy.dsproxy.test.StatementBatchExecution;
 import net.ttddyy.dsproxy.test.StatementExecution;
+import org.hamcrest.Description;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 
 import java.util.List;
 
@@ -86,5 +88,27 @@ public class ProxyTestDataSourceAssertions {
         };
     }
 
+
+    public static Matcher<ProxyTestDataSource> count(final int count) {
+        return new TypeSafeMatcher<ProxyTestDataSource>() {
+            @Override
+            protected boolean matchesSafely(ProxyTestDataSource item) {
+                return item.getQueryExecutions().size() == count;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                // expected clause
+                description.appendText(count + " query executions");
+            }
+
+            @Override
+            protected void describeMismatchSafely(ProxyTestDataSource item, Description mismatchDescription) {
+                // but was clause
+                int actualSize = item.getQueryExecutions().size();
+                mismatchDescription.appendText("was " + actualSize + " query executions");
+            }
+        };
+    }
 
 }

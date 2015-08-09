@@ -1,18 +1,26 @@
 package net.ttddyy.dsproxy.test.hamcrest;
 
 import net.ttddyy.dsproxy.test.ProxyTestDataSource;
+import net.ttddyy.dsproxy.test.QueryExecution;
 import net.ttddyy.dsproxy.test.StatementBatchExecution;
 import net.ttddyy.dsproxy.test.StatementExecution;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static net.ttddyy.dsproxy.test.hamcrest.ExecutionTypeMatcher.statement;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.count;
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.executions;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.failure;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.success;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.fail;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 
 /**
@@ -56,6 +64,32 @@ public class ProxyTestDataSourceAssertionsTest {
         Assert.assertThat(ds, executions(0, failure()));
         Assert.assertThat(ds, executions(0, is(failure())));
     }
+
+    @Test
+    public void testCount() {
+        List<QueryExecution> list = mock(List.class);
+        given(list.size()).willReturn(4);
+
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getQueryExecutions()).willReturn(list);
+
+        Assert.assertThat(ds, count(4));
+    }
+
+    @Test
+    public void testCountAssertionMessage() {
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getQueryExecutions()).willReturn(new ArrayList<QueryExecution>());  // return empty list
+
+        try {
+            Assert.assertThat(ds, count(4));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: 4 query executions\n     but: was 0 query executions");
+        }
+
+    }
+
 
     @Test
     public void testFirstStatement() {
