@@ -8,7 +8,7 @@ import org.junit.Test;
 import java.util.Arrays;
 
 import static net.ttddyy.dsproxy.test.hamcrest.ExecutionTypeMatcher.statement;
-import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceMatcher.executions;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.executions;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.fail;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.success;
 import static net.ttddyy.dsproxy.test.hamcrest.QueriesHolderAssertions.queries;
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertThat;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class ProxyTestDataSourceMatcherTest {
+public class ProxyTestDataSourceAssertionsTest {
 
     @Test
     public void testExecutions() {

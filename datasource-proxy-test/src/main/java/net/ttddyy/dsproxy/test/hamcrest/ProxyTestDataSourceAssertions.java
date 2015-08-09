@@ -13,7 +13,7 @@ import java.util.List;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class ProxyTestDataSourceMatcher {
+public class ProxyTestDataSourceAssertions {
 
     // TODO: create ExecutionTypeMatcher:  executions(0, is(batch())) && executions(0, batch())
 
