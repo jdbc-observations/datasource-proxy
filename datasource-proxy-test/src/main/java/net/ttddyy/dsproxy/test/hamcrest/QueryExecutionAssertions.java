@@ -30,7 +30,7 @@ public class QueryExecutionAssertions {
         };
     }
 
-    public static Matcher<QueryExecution> fail() {
+    public static Matcher<QueryExecution> failure() {
         return new TypeSafeMatcher<QueryExecution>() {
             @Override
             protected boolean matchesSafely(QueryExecution item) {

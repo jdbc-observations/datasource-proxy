@@ -2,11 +2,12 @@ package net.ttddyy.dsproxy.test.hamcrest;
 
 import net.ttddyy.dsproxy.test.QueryExecution;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.fail;
+import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.failure;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.success;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -15,6 +16,9 @@ import static org.mockito.Mockito.when;
  * @since 1.4
  */
 public class QueryExecutionAssertionsTest {
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void testSuccess() {
@@ -29,20 +33,19 @@ public class QueryExecutionAssertionsTest {
         QueryExecution qe = mock(QueryExecution.class);
         when(qe.isSuccess()).thenReturn(false);
 
-        try {
-            Assert.assertThat(qe, success());
-        } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpected: success\n     but: was failure");
-        }
+
+        expectedException.expect(AssertionError.class);
+        expectedException.expectMessage("\nExpected: success\n     but: was failure");
+        Assert.assertThat(qe, success());
     }
 
 
     @Test
-    public void testFail() {
+    public void testFailure() {
         QueryExecution qe = mock(QueryExecution.class);
         when(qe.isSuccess()).thenReturn(false);
 
-        Assert.assertThat(qe, fail());
+        Assert.assertThat(qe, failure());
     }
 
     @Test
@@ -50,10 +53,8 @@ public class QueryExecutionAssertionsTest {
         QueryExecution qe = mock(QueryExecution.class);
         when(qe.isSuccess()).thenReturn(true);
 
-        try {
-            Assert.assertThat(qe, fail());
-        } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpected: failure\n     but: was success");
-        }
+        expectedException.expect(AssertionError.class);
+        expectedException.expectMessage("\nExpected: failure\n     but: was success");
+        Assert.assertThat(qe, failure());
     }
 }

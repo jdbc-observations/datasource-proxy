@@ -3,18 +3,17 @@ package net.ttddyy.dsproxy.test.hamcrest;
 import net.ttddyy.dsproxy.test.ProxyTestDataSource;
 import net.ttddyy.dsproxy.test.StatementBatchExecution;
 import net.ttddyy.dsproxy.test.StatementExecution;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
 
 import static net.ttddyy.dsproxy.test.hamcrest.ExecutionTypeMatcher.statement;
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.executions;
-import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.fail;
+import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.failure;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.success;
-import static net.ttddyy.dsproxy.test.hamcrest.QueriesHolderAssertions.queries;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+
 
 /**
  * @author Tadaya Tsuyukubo
@@ -29,9 +28,9 @@ public class ProxyTestDataSourceAssertionsTest {
         ProxyTestDataSource ds = new ProxyTestDataSource();
         ds.getQueryExecutions().add(se);
 
-        assertThat(ds, executions(0, ExecutionType.IS_STATEMENT));
-        assertThat(ds, executions(0, statement()));
-        assertThat(ds, executions(0, is(statement())));
+        Assert.assertThat(ds, executions(0, ExecutionType.IS_STATEMENT));
+        Assert.assertThat(ds, executions(0, statement()));
+        Assert.assertThat(ds, executions(0, is(statement())));
     }
 
     @Test
@@ -42,8 +41,8 @@ public class ProxyTestDataSourceAssertionsTest {
         ProxyTestDataSource ds = new ProxyTestDataSource();
         ds.getQueryExecutions().add(se);
 
-        assertThat(ds, executions(0, success()));
-        assertThat(ds, executions(0, is(success())));
+        Assert.assertThat(ds, executions(0, success()));
+        Assert.assertThat(ds, executions(0, is(success())));
     }
 
     @Test
@@ -54,8 +53,8 @@ public class ProxyTestDataSourceAssertionsTest {
         ProxyTestDataSource ds = new ProxyTestDataSource();
         ds.getQueryExecutions().add(se);
 
-        assertThat(ds, executions(0, fail()));
-        assertThat(ds, executions(0, is(fail())));
+        Assert.assertThat(ds, executions(0, failure()));
+        Assert.assertThat(ds, executions(0, is(failure())));
     }
 
     @Test
