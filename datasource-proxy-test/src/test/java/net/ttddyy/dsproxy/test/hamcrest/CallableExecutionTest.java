@@ -4,6 +4,8 @@ import net.ttddyy.dsproxy.test.CallableExecution;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
+import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramIndexes;
+import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.param;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsByIndex;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsByName;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.query;
@@ -52,29 +54,50 @@ public class CallableExecutionTest {
         assertThat(ce, paramsByIndex(hasEntry(10, (Object) 100)));
     }
 
-    // TODO: implement rest of tests
-//
-//    @Test
-//    public void testParamKeys() {
-//        PreparedExecution pe = new PreparedExecution();
-//        pe.getParams().put("foo", "FOO");
-//        pe.getParams().put("bar", "BAR");
-//        pe.getParams().put("baz", "BAZ");
-//        assertThat(pe, paramKeys(hasItem("foo")));
-//        assertThat(pe, paramKeys(hasSize(3)));
-//    }
-//
-//    @Test
-//    public void testParamValue() {
-//        PreparedExecution pe = new PreparedExecution();
-//        pe.getParams().put("foo", "FOO");
-//        pe.getParams().put("number", 100);
-//
-//        assertThat(pe, paramValue("foo", is((Object) "FOO")));
-//
-//        assertThat(pe, paramValue("foo", (Matcher) startsWith("FOO")));
-//        assertThat(pe, paramValue("number", is((Object) 100)));
-//    }
+
+    @Test
+    public void testParamNames() {
+        CallableExecution ce = new CallableExecution();
+        ce.getParamsByName().put("foo", "FOO");
+        ce.getParamsByName().put("bar", "BAR");
+        ce.getParamsByName().put("baz", "BAZ");
+        assertThat(ce, param(hasItem("foo")));
+        assertThat(ce, param(hasSize(3)));
+    }
+
+    @Test
+    public void testParamIndexes() {
+        CallableExecution ce = new CallableExecution();
+        ce.getParamsByIndex().put(1, "FOO");
+        ce.getParamsByIndex().put(2, "BAR");
+        ce.getParamsByIndex().put(3, "BAZ");
+        assertThat(ce, paramIndexes(hasItem(1)));
+        assertThat(ce, paramIndexes(hasSize(3)));
+    }
+
+    @Test
+    public void testParamValueByName() {
+        CallableExecution ce = new CallableExecution();
+        ce.getParamsByName().put("foo", "FOO");
+        ce.getParamsByName().put("number", 100);
+
+        assertThat(ce, ParameterHolderAssertions.param("foo", is((Object) "FOO")));
+
+        assertThat(ce, ParameterHolderAssertions.param("foo", (Matcher) startsWith("FOO")));
+        assertThat(ce, ParameterHolderAssertions.param("number", is((Object) 100)));
+    }
+
+    @Test
+    public void testParamValueByIndex() {
+        CallableExecution ce = new CallableExecution();
+        ce.getParamsByIndex().put(1, "FOO");
+        ce.getParamsByIndex().put(2, 100);
+
+        assertThat(ce, ParameterHolderAssertions.param(1, is((Object) "FOO")));
+
+        assertThat(ce, ParameterHolderAssertions.param(1, (Matcher) startsWith("FOO")));
+        assertThat(ce, ParameterHolderAssertions.param(2, is((Object) 100)));
+    }
 //
 //    @Test
 //    public void testParamValueWithClass() {

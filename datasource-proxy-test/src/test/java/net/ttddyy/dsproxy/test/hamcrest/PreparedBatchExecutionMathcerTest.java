@@ -9,10 +9,10 @@ import java.util.Map;
 
 import static net.ttddyy.dsproxy.test.hamcrest.BatchParameterHolderAssertions.batch;
 import static net.ttddyy.dsproxy.test.hamcrest.BatchParameterHolderAssertions.batchSize;
+import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.param;
+import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramAsInteger;
+import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramAsString;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramIndexes;
-import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramValue;
-import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramValueAsInteger;
-import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramValueAsString;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsByIndex;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.query;
 import static org.hamcrest.Matchers.hasEntry;
@@ -72,13 +72,13 @@ public class PreparedBatchExecutionMathcerTest {
         assertThat(pbe, batch(0, paramIndexes(hasItem(1))));
         assertThat(pbe, batch(0, paramIndexes(hasItems(1, 2))));
 
-        assertThat(pbe, batch(0, paramValue(1, is((Object) "FOO"))));
-        assertThat(pbe, batch(0, paramValue(1, (Matcher) startsWith("FOO"))));
-        assertThat(pbe, batch(0, paramValue(10, is((Object) 100))));
+        assertThat(pbe, batch(0, param(1, is((Object) "FOO"))));
+        assertThat(pbe, batch(0, param(1, (Matcher) startsWith("FOO"))));
+        assertThat(pbe, batch(0, param(10, is((Object) 100))));
 
-        assertThat(pbe, batch(0, paramValue(1, String.class, is("FOO"))));
-        assertThat(pbe, batch(0, paramValue(1, String.class, startsWith("FOO"))));
-        assertThat(pbe, batch(0, paramValue(10, Integer.class, is(100))));
+        assertThat(pbe, batch(0, param(1, String.class, is("FOO"))));
+        assertThat(pbe, batch(0, param(1, String.class, startsWith("FOO"))));
+        assertThat(pbe, batch(0, param(10, Integer.class, is(100))));
 
     }
 
@@ -100,16 +100,16 @@ public class PreparedBatchExecutionMathcerTest {
         assertThat(pbe, batch(0, paramIndexes(1)));
         assertThat(pbe, batch(0, paramIndexes(1, 2)));
 
-        assertThat(pbe, batch(0, paramValue(1, is((Object) "FOO"))));
-        assertThat(pbe, batch(0, paramValue(1, (Matcher) startsWith("FOO"))));
-        assertThat(pbe, batch(0, paramValue(3, is((Object) 100))));
+        assertThat(pbe, batch(0, param(1, is((Object) "FOO"))));
+        assertThat(pbe, batch(0, param(1, (Matcher) startsWith("FOO"))));
+        assertThat(pbe, batch(0, param(3, is((Object) 100))));
 
-        assertThat(pbe, batch(0, paramValue(1, String.class, is("FOO"))));
-        assertThat(pbe, batch(0, paramValue(1, String.class, startsWith("FOO"))));
-        assertThat(pbe, batch(0, paramValue(3, Integer.class, is(100))));
+        assertThat(pbe, batch(0, param(1, String.class, is("FOO"))));
+        assertThat(pbe, batch(0, param(1, String.class, startsWith("FOO"))));
+        assertThat(pbe, batch(0, param(3, Integer.class, is(100))));
 
-        assertThat(pbe, batch(0, paramValueAsString(1, is("FOO"))));
-        assertThat(pbe, batch(0, paramValueAsInteger(3, is(100))));
+        assertThat(pbe, batch(0, paramAsString(1, is("FOO"))));
+        assertThat(pbe, batch(0, paramAsInteger(3, is(100))));
 
     }
 }

@@ -4,8 +4,8 @@ import net.ttddyy.dsproxy.test.PreparedExecution;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
+import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.param;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramIndexes;
-import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramValue;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsByIndex;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.query;
 import static org.hamcrest.Matchers.hasEntry;
@@ -58,10 +58,10 @@ public class PreparedExecutionTest {
         pe.getParamsByIndex().put(1, "foo");
         pe.getParamsByIndex().put(100, 100);
 
-        assertThat(pe, paramValue(1, is((Object) "foo")));
+        assertThat(pe, param(1, is((Object) "foo")));
 
-        assertThat(pe, paramValue(1, (Matcher) startsWith("foo")));
-        assertThat(pe, paramValue(100, is((Object) 100)));
+        assertThat(pe, param(1, (Matcher) startsWith("foo")));
+        assertThat(pe, param(100, is((Object) 100)));
     }
 
     @Test
@@ -70,8 +70,8 @@ public class PreparedExecutionTest {
         pe.getParamsByIndex().put(1, "foo");
         pe.getParamsByIndex().put(100, 100);
 
-        assertThat(pe, paramValue(1, String.class, is("foo")));
-        assertThat(pe, paramValue(1, String.class, startsWith("foo")));
-        assertThat(pe, paramValue(100, Integer.class, is(100)));
+        assertThat(pe, param(1, String.class, is("foo")));
+        assertThat(pe, param(1, String.class, startsWith("foo")));
+        assertThat(pe, param(100, Integer.class, is(100)));
     }
 }
