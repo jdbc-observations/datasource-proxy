@@ -7,8 +7,9 @@ import java.util.Map;
 
 /**
  * @author Tadaya Tsuyukubo
+ * @since 1.4
  */
-public class PreparedBatchExecution implements QueryHolder, BatchParameterHolder {
+public class PreparedBatchExecution extends BaseQueryExecution implements QueryHolder, BatchParameterHolder, BatchExecution {
 
     public static class PreparedBatchExecutionEntry implements BatchExecutionEntry, ParameterByIndexHolder {
 
@@ -40,6 +41,11 @@ public class PreparedBatchExecution implements QueryHolder, BatchParameterHolder
     public String query;
 
     public List<BatchExecutionEntry> batchExecutionEntries = new ArrayList<BatchExecutionEntry>();
+
+    @Override
+    public boolean isBatch() {
+        return true;
+    }
 
     public void setQuery(String query) {
         this.query = query;

@@ -9,12 +9,18 @@ import java.util.Map;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class CallableExecution extends BaseQueryExecution implements QueryHolder, ParameterByIndexHolder, ParameterByNameHolder {
+public class CallableExecution extends BaseQueryExecution implements QueryHolder, ParameterByIndexHolder, ParameterByNameHolder, OutParameterHolder {
 
     public String query;
     public Map<String, Object> paramsByName = new LinkedHashMap<String, Object>();
     public Map<Integer, Object> paramsByIndex = new LinkedHashMap<Integer, Object>();
+    public Map<String, Object> outParamsByName = new LinkedHashMap<String, Object>();
+    public Map<Integer, Object> outParamsByIndex = new LinkedHashMap<Integer, Object>();
 
+    @Override
+    public boolean isBatch() {
+        return false;
+    }
 
     @Override
     public String getQuery() {
@@ -53,4 +59,23 @@ public class CallableExecution extends BaseQueryExecution implements QueryHolder
         return new ArrayList<Integer>(this.paramsByIndex.keySet());
     }
 
+    @Override
+    public Map<Integer, Object> getOutParamsByIndex() {
+        return outParamsByIndex;
+    }
+
+    @Override
+    public Map<String, Object> getOutParamsByName() {
+        return outParamsByName;
+    }
+
+    @Override
+    public List<Integer> getOutParamIndexes() {
+        return new ArrayList<Integer>(this.outParamsByIndex.keySet());
+    }
+
+    @Override
+    public List<String> getOutParamNames() {
+        return new ArrayList<String>(this.outParamsByName.keySet());
+    }
 }

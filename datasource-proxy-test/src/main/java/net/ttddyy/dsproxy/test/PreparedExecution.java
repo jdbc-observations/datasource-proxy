@@ -15,6 +15,11 @@ public class PreparedExecution extends BaseQueryExecution implements QueryHolder
     public Map<Integer, Object> paramsByIndex = new LinkedHashMap<Integer, Object>();
 
     @Override
+    public boolean isBatch() {
+        return false;
+    }
+
+    @Override
     public String getQuery() {
         return query;
     }

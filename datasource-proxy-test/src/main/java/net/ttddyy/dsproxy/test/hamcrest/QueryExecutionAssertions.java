@@ -48,4 +48,90 @@ public class QueryExecutionAssertions {
             }
         };
     }
+
+
+    // TODO: see ExecutionTypeMatcher for implementation
+    // TODO: impl
+    public static Matcher<? super QueryExecution> batch() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> statement() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> batchStatement() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> statementOrBatchStatement() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> prepared() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> batchPrepared() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> preparedOrBatchPrepared() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> callable() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> batchCallable() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> callabledOrBatchCallable() {
+        return null;
+    }
+
+    // TODO: impl
+    // alias of batch()
+    public static Matcher<? super QueryExecution> isBatch() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> isStatement() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> isBatchStatement() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> isStatementOrBatchStatement() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> isPrepared() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> isBatchPrepared() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> isPreparedOrBatchPrepared() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> isCallable() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> isBatchCallable() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> isCallabledOrBatchCallable() {
+        return null;
+    }
+
 }

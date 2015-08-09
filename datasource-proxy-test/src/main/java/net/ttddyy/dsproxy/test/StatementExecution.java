@@ -9,6 +9,11 @@ public class StatementExecution extends BaseQueryExecution implements QueryHolde
     private String query;
 
     @Override
+    public boolean isBatch() {
+        return false;
+    }
+
+    @Override
     public String getQuery() {
         return query;
     }
