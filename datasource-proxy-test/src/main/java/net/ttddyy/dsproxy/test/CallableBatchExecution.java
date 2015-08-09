@@ -9,12 +9,14 @@ import java.util.Map;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class CallableBatchExecution implements BatchParameterHolder, QueryHolder {
+public class CallableBatchExecution extends BaseQueryExecution implements BatchParameterHolder, QueryHolder, BatchExecution {
 
-    public static class CallableBatchExecutionEntry implements BatchExecutionEntry, ParameterByIndexHolder, ParameterByNameHolder {
+    public static class CallableBatchExecutionEntry implements BatchExecutionEntry, ParameterByIndexHolder, ParameterByNameHolder, OutParameterHolder {
 
         public Map<String, Object> paramsByName = new LinkedHashMap<String, Object>();
         public Map<Integer, Object> paramsByIndex = new LinkedHashMap<Integer, Object>();
+        public Map<String, Object> outParamsByName = new LinkedHashMap<String, Object>();
+        public Map<Integer, Object> outParamsByIndex = new LinkedHashMap<Integer, Object>();
 
         public void setParamsByName(Map<String, Object> paramsByName) {
             this.paramsByName = paramsByName;
@@ -52,12 +54,36 @@ public class CallableBatchExecution implements BatchParameterHolder, QueryHolder
             return list;
         }
 
+        @Override
+        public Map<Integer, Object> getOutParamsByIndex() {
+            return this.outParamsByIndex;
+        }
+
+        @Override
+        public Map<String, Object> getOutParamsByName() {
+            return this.outParamsByName;
+        }
+
+        @Override
+        public List<Integer> getOutParamIndexes() {
+            return new ArrayList<Integer>(this.outParamsByIndex.keySet());
+        }
+
+        @Override
+        public List<String> getOutParamNames() {
+            return new ArrayList<String>(this.outParamsByName.keySet());
+        }
     }
 
 
     public String query;
 
     public List<BatchExecutionEntry> batchExecutionEntries = new ArrayList<BatchExecutionEntry>();
+
+    @Override
+    public boolean isBatch() {
+        return true;
+    }
 
     public void setQuery(String query) {
         this.query = query;
