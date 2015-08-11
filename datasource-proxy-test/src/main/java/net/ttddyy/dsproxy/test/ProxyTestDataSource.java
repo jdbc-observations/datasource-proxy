@@ -64,6 +64,55 @@ public class ProxyTestDataSource extends ProxyDataSource {
         return getLastQueryExecution(StatementBatchExecution.class);
     }
 
+    public List<PreparedExecution> getPrepareds() {
+        return getQueryExecutionsFilteredBy(PreparedExecution.class);
+    }
+
+    public PreparedExecution getFirstPrepared() {
+        return getFirstQueryExecution(PreparedExecution.class);
+    }
+
+    public PreparedExecution getLastPrepared() {
+        return getLastQueryExecution(PreparedExecution.class);
+    }
+
+    public List<PreparedBatchExecution> getBatchPrepareds() {
+        return getQueryExecutionsFilteredBy(PreparedBatchExecution.class);
+    }
+
+    public PreparedBatchExecution getFirstBatchPrepared() {
+        return getFirstQueryExecution(PreparedBatchExecution.class);
+    }
+
+    public PreparedBatchExecution getLastBatchPrepared() {
+        return getLastQueryExecution(PreparedBatchExecution.class);
+    }
+
+    public List<CallableExecution> getCallables() {
+        return getQueryExecutionsFilteredBy(CallableExecution.class);
+    }
+
+    public CallableExecution getFirstCallable() {
+        return getFirstQueryExecution(CallableExecution.class);
+    }
+
+    public CallableExecution getLastCallable() {
+        return getLastQueryExecution(CallableExecution.class);
+    }
+
+    public List<CallableBatchExecution> getBatchCallables() {
+        return getQueryExecutionsFilteredBy(CallableBatchExecution.class);
+    }
+
+    public CallableBatchExecution getFirstBatchCallable() {
+        return getFirstQueryExecution(CallableBatchExecution.class);
+    }
+
+    public CallableBatchExecution getLastBatchCallable() {
+        return getLastQueryExecution(CallableBatchExecution.class);
+    }
+
+
     @SuppressWarnings("unchecked")
     private <T extends QueryExecution> List<T> getQueryExecutionsFilteredBy(Class<T> classToFilter) {
         List<T> result = new ArrayList<T>();
