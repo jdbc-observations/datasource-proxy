@@ -91,6 +91,26 @@ public class QueryExecutionAssertions {
     public static Matcher<? super QueryExecution> callabledOrBatchCallable() {
         return null;
     }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> select() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> insert() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> update() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> delete() {
+        return null;
+    }
+    // TODO: impl
+    public static Matcher<? super QueryExecution> other() {
+        return null;
+    }
 
     // TODO: impl
     // alias of batch()

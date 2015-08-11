@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.test.hamcrest;
 
+import net.ttddyy.dsproxy.QueryType;
 import net.ttddyy.dsproxy.test.ProxyTestDataSource;
 import net.ttddyy.dsproxy.test.QueryExecution;
 import net.ttddyy.dsproxy.test.StatementBatchExecution;
@@ -12,8 +13,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import static net.ttddyy.dsproxy.test.hamcrest.ExecutionTypeMatcher.statement;
-import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.count;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.deleteCount;
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.executions;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.insertCount;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.otherCount;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.selectCount;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.totalCount;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.updateCount;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.failure;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.success;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,28 +72,183 @@ public class ProxyTestDataSourceAssertionsTest {
     }
 
     @Test
-    public void testCount() {
+    public void testTotalCount() {
         List<QueryExecution> list = mock(List.class);
         given(list.size()).willReturn(4);
 
         ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
         given(ds.getQueryExecutions()).willReturn(list);
 
-        Assert.assertThat(ds, count(4));
+        Assert.assertThat(ds, totalCount(4));
     }
 
     @Test
-    public void testCountAssertionMessage() {
+    public void testTotalCountAssertionMessage() {
         ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
         given(ds.getQueryExecutions()).willReturn(new ArrayList<QueryExecution>());  // return empty list
 
         try {
-            Assert.assertThat(ds, count(4));
+            Assert.assertThat(ds, totalCount(4));
             fail("AssertionError should be thrown");
         } catch (AssertionError e) {
             assertThat(e).hasMessage("\nExpected: 4 query executions\n     but: was 0 query executions");
         }
 
+    }
+
+    @Test
+    public void testSelectCount() {
+        QueryExecution select1 = mock(QueryExecution.class);
+        given(select1.getQueryType()).willReturn(QueryType.SELECT);
+        QueryExecution select2 = mock(QueryExecution.class);
+        given(select2.getQueryType()).willReturn(QueryType.SELECT);
+        QueryExecution delete = mock(QueryExecution.class);
+        given(delete.getQueryType()).willReturn(QueryType.DELETE);
+
+        List<QueryExecution> queryExecutions = new ArrayList<QueryExecution>();
+        queryExecutions.addAll(Arrays.asList(select1, delete, select2));
+
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getQueryExecutions()).willReturn(queryExecutions);
+
+        Assert.assertThat(ds, selectCount(2));
+    }
+
+    @Test
+    public void testSelectCountAssertionMessage() {
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getQueryExecutions()).willReturn(new ArrayList<QueryExecution>());  // return empty list
+
+        try {
+            Assert.assertThat(ds, selectCount(4));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: 4 SELECT query executions\n     but: was 0 SELECT query executions");
+        }
+    }
+
+    @Test
+    public void testInsertCount() {
+        QueryExecution insert1 = mock(QueryExecution.class);
+        given(insert1.getQueryType()).willReturn(QueryType.INSERT);
+        QueryExecution insert2 = mock(QueryExecution.class);
+        given(insert2.getQueryType()).willReturn(QueryType.INSERT);
+        QueryExecution delete = mock(QueryExecution.class);
+        given(delete.getQueryType()).willReturn(QueryType.DELETE);
+
+        List<QueryExecution> queryExecutions = new ArrayList<QueryExecution>();
+        queryExecutions.addAll(Arrays.asList(insert1, delete, insert2));
+
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getQueryExecutions()).willReturn(queryExecutions);
+
+        Assert.assertThat(ds, insertCount(2));
+    }
+
+    @Test
+    public void testInsertCountAssertionMessage() {
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getQueryExecutions()).willReturn(new ArrayList<QueryExecution>());  // return empty list
+
+        try {
+            Assert.assertThat(ds, insertCount(4));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: 4 INSERT query executions\n     but: was 0 INSERT query executions");
+        }
+    }
+
+    @Test
+    public void testUpdateCount() {
+        QueryExecution update1 = mock(QueryExecution.class);
+        given(update1.getQueryType()).willReturn(QueryType.UPDATE);
+        QueryExecution update2 = mock(QueryExecution.class);
+        given(update2.getQueryType()).willReturn(QueryType.UPDATE);
+        QueryExecution delete = mock(QueryExecution.class);
+        given(delete.getQueryType()).willReturn(QueryType.DELETE);
+
+        List<QueryExecution> queryExecutions = new ArrayList<QueryExecution>();
+        queryExecutions.addAll(Arrays.asList(update1, delete, update2));
+
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getQueryExecutions()).willReturn(queryExecutions);
+
+        Assert.assertThat(ds, updateCount(2));
+    }
+
+    @Test
+    public void testUpdateCountAssertionMessage() {
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getQueryExecutions()).willReturn(new ArrayList<QueryExecution>());  // return empty list
+
+        try {
+            Assert.assertThat(ds, updateCount(4));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: 4 UPDATE query executions\n     but: was 0 UPDATE query executions");
+        }
+    }
+
+    @Test
+    public void testDeleteCount() {
+        QueryExecution delete1 = mock(QueryExecution.class);
+        given(delete1.getQueryType()).willReturn(QueryType.DELETE);
+        QueryExecution delete2 = mock(QueryExecution.class);
+        given(delete2.getQueryType()).willReturn(QueryType.DELETE);
+        QueryExecution select = mock(QueryExecution.class);
+        given(select.getQueryType()).willReturn(QueryType.SELECT);
+
+        List<QueryExecution> queryExecutions = new ArrayList<QueryExecution>();
+        queryExecutions.addAll(Arrays.asList(delete1, select, delete2));
+
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getQueryExecutions()).willReturn(queryExecutions);
+
+        Assert.assertThat(ds, deleteCount(2));
+    }
+
+    @Test
+    public void testDeleteCountAssertionMessage() {
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getQueryExecutions()).willReturn(new ArrayList<QueryExecution>());  // return empty list
+
+        try {
+            Assert.assertThat(ds, deleteCount(4));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: 4 DELETE query executions\n     but: was 0 DELETE query executions");
+        }
+    }
+
+    @Test
+    public void testOtherCount() {
+        QueryExecution other1 = mock(QueryExecution.class);
+        given(other1.getQueryType()).willReturn(QueryType.OTHER);
+        QueryExecution other2 = mock(QueryExecution.class);
+        given(other2.getQueryType()).willReturn(QueryType.OTHER);
+        QueryExecution delete = mock(QueryExecution.class);
+        given(delete.getQueryType()).willReturn(QueryType.DELETE);
+
+        List<QueryExecution> queryExecutions = new ArrayList<QueryExecution>();
+        queryExecutions.addAll(Arrays.asList(other1, delete, other2));
+
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getQueryExecutions()).willReturn(queryExecutions);
+
+        Assert.assertThat(ds, otherCount(2));
+    }
+
+    @Test
+    public void testOtherCountAssertionMessage() {
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getQueryExecutions()).willReturn(new ArrayList<QueryExecution>());  // return empty list
+
+        try {
+            Assert.assertThat(ds, otherCount(4));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: 4 OTHER query executions\n     but: was 0 OTHER query executions");
+        }
     }
 
 

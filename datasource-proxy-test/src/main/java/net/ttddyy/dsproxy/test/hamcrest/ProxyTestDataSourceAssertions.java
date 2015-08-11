@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.test.hamcrest;
 
+import net.ttddyy.dsproxy.QueryType;
 import net.ttddyy.dsproxy.test.ProxyTestDataSource;
 import net.ttddyy.dsproxy.test.QueryExecution;
 import net.ttddyy.dsproxy.test.StatementBatchExecution;
@@ -89,7 +90,7 @@ public class ProxyTestDataSourceAssertions {
     }
 
 
-    public static Matcher<ProxyTestDataSource> count(final int count) {
+    public static Matcher<ProxyTestDataSource> totalCount(final int count) {
         return new TypeSafeMatcher<ProxyTestDataSource>() {
             @Override
             protected boolean matchesSafely(ProxyTestDataSource item) {
@@ -109,6 +110,63 @@ public class ProxyTestDataSourceAssertions {
                 mismatchDescription.appendText("was " + actualSize + " query executions");
             }
         };
+    }
+
+    public static Matcher<ProxyTestDataSource> selectCount(final int count) {
+        return new QueryTypeMatcher(QueryType.SELECT, count);
+    }
+
+    public static Matcher<ProxyTestDataSource> insertCount(final int count) {
+        return new QueryTypeMatcher(QueryType.INSERT, count);
+    }
+
+    public static Matcher<ProxyTestDataSource> updateCount(final int count) {
+        return new QueryTypeMatcher(QueryType.UPDATE, count);
+    }
+
+    public static Matcher<ProxyTestDataSource> deleteCount(final int count) {
+        return new QueryTypeMatcher(QueryType.DELETE, count);
+    }
+
+    public static Matcher<ProxyTestDataSource> otherCount(final int count) {
+        return new QueryTypeMatcher(QueryType.OTHER, count);
+    }
+
+    private static class QueryTypeMatcher extends TypeSafeMatcher<ProxyTestDataSource> {
+
+        private QueryType expectedQueryType;
+        private int matchedCount = 0;
+        private int expectedCount = 0;
+
+        private QueryTypeMatcher(QueryType expectedQueryType, int expectedCount) {
+            this.expectedQueryType = expectedQueryType;
+            this.expectedCount = expectedCount;
+        }
+
+        @Override
+        protected boolean matchesSafely(ProxyTestDataSource item) {
+            for (QueryExecution queryExecution : item.getQueryExecutions()) {
+                if (this.expectedQueryType.equals(queryExecution.getQueryType())) {
+                    this.matchedCount++;
+                }
+            }
+            return this.matchedCount == this.expectedCount;
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            // expected clause
+            String msg = this.expectedCount + " " + this.expectedQueryType + " query executions";
+            description.appendText(msg);
+        }
+
+        @Override
+        protected void describeMismatchSafely(ProxyTestDataSource item, Description mismatchDescription) {
+            // but was clause
+            String msg = "was " + this.matchedCount + " " + this.expectedQueryType + " query executions";
+            mismatchDescription.appendText(msg);
+        }
+
     }
 
 }
