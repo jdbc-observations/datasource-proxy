@@ -28,7 +28,7 @@ public class ExecutionTypeMatcherTest {
             Assert.assertThat(se, matcher);
             fail("assertion should fail");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpected: callable <1>\n     but: was statement");
+            assertThat(e).hasMessage("\nExpected: callable\n     but: was statement");
         }
     }
 }
