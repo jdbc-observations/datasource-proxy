@@ -9,8 +9,8 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 
-import static net.ttddyy.dsproxy.test.hamcrest.ExecutionTypeMatcher.statement;
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.executions;
+import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.statement;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.query;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static net.ttddyy.dsproxy.test.hamcrest.ExecutionTypeMatcher.statement;
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.deleteCount;
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.executions;
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.insertCount;
@@ -35,17 +34,6 @@ import static org.mockito.Mockito.mock;
  */
 public class ProxyTestDataSourceAssertionsTest {
 
-    @Test
-    public void testExecutions() {
-        StatementExecution se = new StatementExecution();
-
-        ProxyTestDataSource ds = new ProxyTestDataSource();
-        ds.getQueryExecutions().add(se);
-
-        Assert.assertThat(ds, executions(0, ExecutionType.IS_STATEMENT));
-        Assert.assertThat(ds, executions(0, statement()));
-        Assert.assertThat(ds, executions(0, is(statement())));
-    }
 
     @Test
     public void testExecutionSuccess() {
