@@ -31,7 +31,6 @@ public class QueryHolderAssertions {
                 String query = item.getQuery();
                 QueryType actualType = QueryUtils.getQueryType(query);
                 if (expectedType != actualType) {
-
                     return false;
                 }
                 return true;

@@ -16,23 +16,6 @@ import java.util.List;
  */
 public class ProxyTestDataSourceAssertions {
 
-    // TODO: create ExecutionTypeMatcher:  executions(0, is(batch())) && executions(0, batch())
-
-    // assertThat(ds, executions(0, batch()));
-    // assertThat(ds, executions(0, is(batch())));
-    // assertThat(ds, executions(0, statement()));
-    // assertThat(ds, executions(0, batchStatement()));
-    // assertThat(ds, executions(0, statementOrBatchStatement()));
-    // assertThat(ds, executions(0, prepared()));
-    // assertThat(ds, executions(0, batchPrepared()));
-    // assertThat(ds, executions(0, preparedOrBatchPrepared()));
-    // assertThat(ds, executions(0, callable()));
-    // assertThat(ds, executions(0, batchCallable()));
-    // assertThat(ds, executions(0, preparedOrBatchCallable()));
-    // assertThat(ds, executions(0, is(success()))));
-    // assertThat(ds, firstStatement(query(...)));
-    // assertThat(ds, firstBatchStatement(query(...)));
-
     public static Matcher<ProxyTestDataSource> executions(int index, ExecutionType executionType) {
         return executions(index, new ExecutionTypeMatcher(executionType));
     }
