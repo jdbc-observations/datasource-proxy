@@ -75,32 +75,32 @@ public class ProxyTestDataSourceAssertions {
     }
 
     public static Matcher<ProxyTestDataSource> selectCount(final int count) {
-        return new QueryTypeMatcher(QueryType.SELECT, count);
+        return new QueryTypeCountMatcher(QueryType.SELECT, count);
     }
 
     public static Matcher<ProxyTestDataSource> insertCount(final int count) {
-        return new QueryTypeMatcher(QueryType.INSERT, count);
+        return new QueryTypeCountMatcher(QueryType.INSERT, count);
     }
 
     public static Matcher<ProxyTestDataSource> updateCount(final int count) {
-        return new QueryTypeMatcher(QueryType.UPDATE, count);
+        return new QueryTypeCountMatcher(QueryType.UPDATE, count);
     }
 
     public static Matcher<ProxyTestDataSource> deleteCount(final int count) {
-        return new QueryTypeMatcher(QueryType.DELETE, count);
+        return new QueryTypeCountMatcher(QueryType.DELETE, count);
     }
 
     public static Matcher<ProxyTestDataSource> otherCount(final int count) {
-        return new QueryTypeMatcher(QueryType.OTHER, count);
+        return new QueryTypeCountMatcher(QueryType.OTHER, count);
     }
 
-    private static class QueryTypeMatcher extends TypeSafeMatcher<ProxyTestDataSource> {
+    private static class QueryTypeCountMatcher extends TypeSafeMatcher<ProxyTestDataSource> {
 
         private QueryType expectedQueryType;
         private int matchedCount = 0;
         private int expectedCount = 0;
 
-        private QueryTypeMatcher(QueryType expectedQueryType, int expectedCount) {
+        private QueryTypeCountMatcher(QueryType expectedQueryType, int expectedCount) {
             this.expectedQueryType = expectedQueryType;
             this.expectedCount = expectedCount;
         }
