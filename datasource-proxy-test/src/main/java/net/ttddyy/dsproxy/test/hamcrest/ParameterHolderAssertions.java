@@ -8,6 +8,7 @@ import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,6 +51,23 @@ public class ParameterHolderAssertions {
     // paramIndexes(1,2,3)
     public static Matcher<? super ParameterHolder> paramIndexes(Integer... indexes) {
         return paramIndexes(Matchers.hasItems(indexes));
+    }
+
+    // paramNames(hasItem("foo"), hasItem("bar"))
+    public static Matcher<? super ParameterHolder> paramNames(Matcher<? super Collection<String>> collectionMatcher) {
+        return new ParameterHolderMatcher.ParameterByNameMatcher<Collection<String>>(collectionMatcher) {
+            @Override
+            public Collection<String> featureValueOf(ParameterByNameHolder actual) {
+                List<String> paramNames = actual.getParamNames();
+                descForExpected.appendText("parameter names as ");
+                return paramNames;
+            }
+        };
+    }
+
+    // paramNames("foo","bar","baz")
+    public static Matcher<? super ParameterHolder> paramNames(String... names) {
+        return paramNames(Matchers.hasItems(names));
     }
 
     // param(hasItem("foo"), hasItem("bar"))

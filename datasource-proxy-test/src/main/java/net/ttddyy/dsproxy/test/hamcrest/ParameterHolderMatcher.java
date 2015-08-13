@@ -23,8 +23,8 @@ public abstract class ParameterHolderMatcher<S> extends BaseMatcher<ParameterHol
     private final Matcher<? super S> subMatcher;
     private MatchBy matchBy;
 
-    private Description descForExpected = new StringDescription();
-    private Description descForFailure = new StringDescription();
+    protected Description descForExpected = new StringDescription();
+    protected Description descForFailure = new StringDescription();
 
     protected ParameterHolderMatcher(Matcher<? super S> subMatcher, MatchBy matchBy) {
         this.subMatcher = subMatcher;
