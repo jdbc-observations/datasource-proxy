@@ -8,7 +8,6 @@ import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,6 +42,7 @@ public class ParameterHolderAssertions {
         return new ParameterHolderMatcher.ParameterByIndexMatcher<Collection<Integer>>(collectionMatcher) {
             @Override
             public Collection<Integer> featureValueOf(ParameterByIndexHolder actual) {
+                descForExpected.appendText("parameter indexes as ");
                 return actual.getParamIndexes();
             }
         };
@@ -58,9 +58,8 @@ public class ParameterHolderAssertions {
         return new ParameterHolderMatcher.ParameterByNameMatcher<Collection<String>>(collectionMatcher) {
             @Override
             public Collection<String> featureValueOf(ParameterByNameHolder actual) {
-                List<String> paramNames = actual.getParamNames();
                 descForExpected.appendText("parameter names as ");
-                return paramNames;
+                return actual.getParamNames();
             }
         };
     }
@@ -179,12 +178,15 @@ public class ParameterHolderAssertions {
     public static Matcher<? super ParameterHolder> paramAsInteger(final Integer index, Matcher<? super Integer> matcher) {
         return param(index, Integer.class, matcher);
     }
+
     public static Matcher<? super ParameterHolder> paramAsLong(final Integer index, Matcher<? super Long> matcher) {
         return param(index, Long.class, matcher);
     }
+
     public static Matcher<? super ParameterHolder> paramAsDouble(final Integer index, Matcher<? super Double> matcher) {
         return param(index, Double.class, matcher);
     }
+
     public static Matcher<? super ParameterHolder> paramAsShort(final Integer index, Matcher<? super Short> matcher) {
         return param(index, Short.class, matcher);
     }
