@@ -71,15 +71,6 @@ public class ParameterHolderAssertions {
         return paramNames(Matchers.hasItems(names));
     }
 
-    // param(hasItem("foo"), hasItem("bar"))
-    public static Matcher<? super ParameterHolder> param(Matcher<? super Collection<String>> collectionMatcher) {
-        return new ParameterHolderMatcher.ParameterByNameMatcher<Collection<String>>(collectionMatcher) {
-            @Override
-            public Collection<String> featureValueOf(ParameterByNameHolder actual) {
-                return actual.getParamNames();
-            }
-        };
-    }
 
     // param("foo", is((Object) "FOO"))
     public static Matcher<? super ParameterHolder> param(final String name, Matcher<Object> matcher) {
@@ -116,6 +107,8 @@ public class ParameterHolderAssertions {
                     descForFailure.appendText("parameter index " + index + " doesn't exist.");
                     return false;
                 }
+                descForExpected.appendText("params[" + index + "] ");
+                descForFailure.appendText("params[" + index + "] ");
                 return true;
             }
         };

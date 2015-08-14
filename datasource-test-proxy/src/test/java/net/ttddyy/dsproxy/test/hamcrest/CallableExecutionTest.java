@@ -5,7 +5,7 @@ import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramIndexes;
-import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.param;
+import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramNames;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsByIndex;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsByName;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.query;
@@ -61,8 +61,8 @@ public class CallableExecutionTest {
         ce.getParamsByName().put("foo", "FOO");
         ce.getParamsByName().put("bar", "BAR");
         ce.getParamsByName().put("baz", "BAZ");
-        assertThat(ce, param(hasItem("foo")));
-        assertThat(ce, param(hasSize(3)));
+        assertThat(ce, paramNames(hasItem("foo")));
+        assertThat(ce, paramNames(hasSize(3)));
     }
 
     @Test
