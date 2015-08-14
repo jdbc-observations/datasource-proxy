@@ -32,6 +32,7 @@ public class ParameterHolderAssertions {
         return new ParameterHolderMatcher.ParameterByIndexMatcher<Map<? extends Integer, ?>>(mapMatcher) {
             @Override
             public Map<? extends Integer, ?> featureValueOf(ParameterByIndexHolder actual) {
+                this.descForExpected.appendText("parameters as a ");
                 return actual.getParamsByIndex();
             }
         };

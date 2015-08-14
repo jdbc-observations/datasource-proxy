@@ -11,6 +11,7 @@ import java.util.Map;
 
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramIndexes;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramNames;
+import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsByIndex;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsByName;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
@@ -97,6 +98,34 @@ public class ParameterHolderAssertionsTest {
             fail("assertion should fail");
         } catch (AssertionError e) {
             assertThat(e).hasMessage("\nExpected: parameters as a map containing [\"BAZ\"-><10>]\n     but: map was [<bar=200>, <foo=100>]");
+
+        }
+    }
+
+    @Test
+    public void testParamsByIndex() {
+        Map<Integer, Object> map = new HashMap<Integer, Object>();
+        map.put(10, 100);
+
+        ParameterByIndexHolder holder = mock(ParameterByIndexHolder.class);
+        given(holder.getParamsByIndex()).willReturn(map);
+
+        Assert.assertThat(holder, paramsByIndex(hasEntry(10, (Object) 100)));
+    }
+
+    @Test
+    public void testParamsByIndexUnmatchedMessage() {
+        Map<Integer, Object> map = new HashMap<Integer, Object>();
+        map.put(10, 100);
+
+        ParameterByIndexHolder holder = mock(ParameterByIndexHolder.class);
+        given(holder.getParamsByIndex()).willReturn(map);
+
+        try {
+            Assert.assertThat(holder, paramsByIndex(hasEntry(30, (Object) 10)));
+            fail("assertion should fail");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: parameters as a map containing [<30>-><10>]\n     but: map was [<10=100>]");
 
         }
     }
