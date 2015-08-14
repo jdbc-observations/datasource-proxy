@@ -6,10 +6,14 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramIndexes;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramNames;
+import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsByName;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.fail;
 import static org.mockito.BDDMockito.given;
@@ -66,4 +70,35 @@ public class ParameterHolderAssertionsTest {
 
         }
     }
+
+
+    @Test
+    public void testParamsByName() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("foo", 100);
+
+        ParameterByNameHolder holder = mock(ParameterByNameHolder.class);
+        given(holder.getParamsByName()).willReturn(map);
+
+        Assert.assertThat(holder, paramsByName(hasEntry("foo", (Object) 100)));
+    }
+
+    @Test
+    public void testParamsByNameUnmatchedMessage() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("foo", 100);
+        map.put("bar", 200);
+
+        ParameterByNameHolder holder = mock(ParameterByNameHolder.class);
+        given(holder.getParamsByName()).willReturn(map);
+
+        try {
+            Assert.assertThat(holder, paramsByName(hasEntry("BAZ", (Object) 10)));
+            fail("assertion should fail");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: parameters as a map containing [\"BAZ\"-><10>]\n     but: map was [<bar=200>, <foo=100>]");
+
+        }
+    }
+
 }

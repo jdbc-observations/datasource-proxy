@@ -21,6 +21,7 @@ public class ParameterHolderAssertions {
         return new ParameterHolderMatcher.ParameterByNameMatcher<Map<? extends String, ?>>(mapMatcher) {
             @Override
             public Map<? extends String, ?> featureValueOf(ParameterByNameHolder actual) {
+                this.descForExpected.appendText("parameters as a ");
                 return actual.getParamsByName();
             }
         };
