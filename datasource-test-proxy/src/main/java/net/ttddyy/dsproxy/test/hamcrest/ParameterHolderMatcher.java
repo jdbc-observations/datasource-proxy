@@ -59,9 +59,6 @@ public abstract class ParameterHolderMatcher<S> extends BaseMatcher<ParameterHol
             }
             ParameterByNameHolder byNameHolder = (ParameterByNameHolder) holder;
             if (!validateParameterByName(byNameHolder, this.descForExpected, this.descForFailure)) {
-                return false;
-            }
-            if (!validateParameterByName(byNameHolder, this.descForExpected, this.descForFailure)) {
                 return false;  // validation failure
             }
             featureValue = getFeatureValue(byNameHolder);

@@ -163,4 +163,34 @@ public class ParameterHolderAssertionsTest {
         }
     }
 
+    @Test
+    public void paramWithName() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("foo", 100);
+
+        ParameterByNameHolder holder = mock(ParameterByNameHolder.class);
+        given(holder.getParamsByName()).willReturn(map);
+        given(holder.getParamNames()).willReturn(new ArrayList<String>(map.keySet()));
+
+        Assert.assertThat(holder, param("foo", is((Object) 100)));
+    }
+
+    @Test
+    public void paramWithNameUnmatchedMessage() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("foo", 100);
+
+        ParameterByNameHolder holder = mock(ParameterByNameHolder.class);
+        given(holder.getParamsByName()).willReturn(map);
+        given(holder.getParamNames()).willReturn(new ArrayList<String>(map.keySet()));
+
+        try {
+            Assert.assertThat(holder, param("foo", is((Object) 101)));
+            fail("assertion should fail");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: params[foo] is <101>\n     but: params[foo] was <100>");
+
+        }
+    }
+
 }

@@ -87,6 +87,8 @@ public class ParameterHolderAssertions {
                     descForFailure.appendText("parameter name " + name + " doesn't exist.");
                     return false;
                 }
+                descForExpected.appendText("params[" + name + "] ");
+                descForFailure.appendText("params[" + name + "] ");
                 return true;
             }
         };
