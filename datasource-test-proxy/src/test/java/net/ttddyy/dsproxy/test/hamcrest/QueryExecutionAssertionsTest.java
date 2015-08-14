@@ -16,7 +16,7 @@ import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.batchCal
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.batchPrepared;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.batchStatement;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.callable;
-import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.callabledOrBatchCallable;
+import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.callableOrBatchCallable;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.delete;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.failure;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.insert;
@@ -107,8 +107,8 @@ public class QueryExecutionAssertionsTest {
 
         Assert.assertThat(ce, callable());
         Assert.assertThat(cbe, batchCallable());
-        Assert.assertThat(ce, callabledOrBatchCallable());
-        Assert.assertThat(cbe, callabledOrBatchCallable());
+        Assert.assertThat(ce, callableOrBatchCallable());
+        Assert.assertThat(cbe, callableOrBatchCallable());
 
         Assert.assertThat(sbe, batch());
         Assert.assertThat(pbe, batch());

@@ -87,7 +87,7 @@ public class QueryExecutionAssertions {
         return new ExecutionTypeMatcher(ExecutionType.IS_BATCH_CALLABLE);
     }
 
-    public static Matcher<? super QueryExecution> callabledOrBatchCallable() {
+    public static Matcher<? super QueryExecution> callableOrBatchCallable() {
         return new ExecutionTypeMatcher(ExecutionType.IS_CALLABLE_OR_BATCH_CALLABLE);
     }
 
@@ -193,7 +193,7 @@ public class QueryExecutionAssertions {
     }
 
     // TODO: impl
-    public static Matcher<? super QueryExecution> isCallabledOrBatchCallable() {
+    public static Matcher<? super QueryExecution> isCallableOrBatchCallable() {
         return null;
     }
 
