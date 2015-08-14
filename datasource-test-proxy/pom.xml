@@ -9,10 +9,10 @@
     <relativePath>../</relativePath>
   </parent>
 
-  <artifactId>datasource-proxy-test</artifactId>
+  <artifactId>datasource-test-proxy</artifactId>
   <packaging>jar</packaging>
 
-  <name>datasource-proxy-test</name>
+  <name>datasource-test-proxy</name>
   <description>Provide a datasource proxy that can inject your own logic into all queries.</description>
   <url>https://github.com/ttddyy/datasource-proxy/</url>
 

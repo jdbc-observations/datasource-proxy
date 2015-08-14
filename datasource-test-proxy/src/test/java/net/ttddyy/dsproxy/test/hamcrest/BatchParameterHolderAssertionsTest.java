@@ -92,7 +92,7 @@ public class BatchParameterHolderAssertionsTest {
             Assert.assertThat(holder, BatchParameterHolderAssertions.batch(0, ParameterHolderAssertions.paramIndexes(hasItem(50))));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpected: batch[0] a collection containing <50>\n     but: batch[0] mismatches were: [was <100>]");
+            assertThat(e).hasMessage("\nExpected: batch[0] parameter indexes as a collection containing <50>\n     but: batch[0] mismatches were: [was <100>]");
         }
 
     }

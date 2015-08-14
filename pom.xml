@@ -11,7 +11,7 @@
 
   <modules>
     <module>datasource-proxy</module>
-    <module>datasource-proxy-test</module>
+    <module>datasource-test-proxy</module>
   </modules>
 
   <licenses>
