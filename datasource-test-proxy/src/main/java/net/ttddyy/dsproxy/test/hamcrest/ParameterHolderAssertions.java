@@ -117,26 +117,28 @@ public class ParameterHolderAssertions {
     }
 
     //param("foo", String.class, is("FOO"))
-    public static <T> Matcher<? super ParameterHolder> param(final String key, final Class<T> clazz, Matcher<? super T> matcher) {
+    public static <T> Matcher<? super ParameterHolder> param(final String name, final Class<T> clazz, Matcher<? super T> matcher) {
         return new ParameterHolderMatcher.ParameterByNameMatcher<T>(matcher) {
             @Override
             @SuppressWarnings("unchecked")
             public T featureValueOf(ParameterByNameHolder actual) {
-                return (T) actual.getParamsByName().get(key);
+                return (T) actual.getParamsByName().get(name);
             }
 
             @Override
             public boolean validateParameterByName(ParameterByNameHolder actual, Description descForExpected, Description descForFailure) {
-                Object value = actual.getParamsByName().get(key);
+                Object value = actual.getParamsByName().get(name);
                 if (value == null) {
-                    descForExpected.appendText("parameter name " + key);
-                    descForFailure.appendText("parameter name " + key + " doesn't exist.");
+                    descForExpected.appendText("parameter name " + name);
+                    descForFailure.appendText("parameter name " + name + " doesn't exist.");
                     return false;
                 } else if (!clazz.isAssignableFrom(value.getClass())) {
                     descForExpected.appendText("parameter can cast to " + clazz.getSimpleName());
                     descForFailure.appendText("parameter can not cast to" + clazz.getSimpleName());
                     return false;
                 }
+                descForExpected.appendText("params[" + name + "] ");
+                descForFailure.appendText("params[" + name + "] ");
                 return true;
             }
         };
@@ -163,6 +165,8 @@ public class ParameterHolderAssertions {
                     descForFailure.appendText("parameter can not cast to" + clazz.getSimpleName());
                     return false;
                 }
+                descForExpected.appendText("params[" + index + "] ");
+                descForFailure.appendText("params[" + index + "] ");
                 return true;
             }
         };

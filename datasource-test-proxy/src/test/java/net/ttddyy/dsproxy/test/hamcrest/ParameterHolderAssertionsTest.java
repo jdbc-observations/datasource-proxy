@@ -193,4 +193,64 @@ public class ParameterHolderAssertionsTest {
         }
     }
 
+    @Test
+    public void paramWithIndexAndType() {
+        Map<Integer, Object> map = new HashMap<Integer, Object>();
+        map.put(10, 100);
+
+        ParameterByIndexHolder holder = mock(ParameterByIndexHolder.class);
+        given(holder.getParamsByIndex()).willReturn(map);
+        given(holder.getParamIndexes()).willReturn(new ArrayList<Integer>(map.keySet()));
+
+        Assert.assertThat(holder, param(10, Integer.class, is(100)));
+    }
+
+    @Test
+    public void paramWithIndexAndTypeUnmatchedMessage() {
+        Map<Integer, Object> map = new HashMap<Integer, Object>();
+        map.put(10, 100);
+
+        ParameterByIndexHolder holder = mock(ParameterByIndexHolder.class);
+        given(holder.getParamsByIndex()).willReturn(map);
+        given(holder.getParamIndexes()).willReturn(new ArrayList<Integer>(map.keySet()));
+
+        try {
+            Assert.assertThat(holder, param(10, Integer.class, is(101)));
+            fail("assertion should fail");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: params[10] is <101>\n     but: params[10] was <100>");
+
+        }
+    }
+
+    @Test
+    public void paramWithNameAndType() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("foo", 100);
+
+        ParameterByNameHolder holder = mock(ParameterByNameHolder.class);
+        given(holder.getParamsByName()).willReturn(map);
+        given(holder.getParamNames()).willReturn(new ArrayList<String>(map.keySet()));
+
+        Assert.assertThat(holder, param("foo", Integer.class, is(100)));
+    }
+
+    @Test
+    public void paramWithNameAndTypeUnmatchedMessage() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("foo", 100);
+
+        ParameterByNameHolder holder = mock(ParameterByNameHolder.class);
+        given(holder.getParamsByName()).willReturn(map);
+        given(holder.getParamNames()).willReturn(new ArrayList<String>(map.keySet()));
+
+        try {
+            Assert.assertThat(holder, param("foo", Integer.class, is(101)));
+            fail("assertion should fail");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: params[foo] is <101>\n     but: params[foo] was <100>");
+
+        }
+    }
+
 }
