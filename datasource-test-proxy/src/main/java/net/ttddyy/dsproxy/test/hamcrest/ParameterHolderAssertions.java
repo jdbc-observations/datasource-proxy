@@ -7,6 +7,11 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
+import java.math.BigDecimal;
+import java.sql.Array;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Map;
 
@@ -192,10 +197,45 @@ public class ParameterHolderAssertions {
         return param(index, Short.class, matcher);
     }
 
-    // TODO: handle setNull
-    // String, Boolean, Byte, Short, Int, Long, Float, Double, BigDecimal, byte[](Bytes), Date, Time,TimeStamp, (Object),
-    // Array,Blob, Clob, NClob, java.net.URL
+    public static Matcher<? super ParameterHolder> paramAsBoolean(final Integer index, Matcher<? super Boolean> matcher) {
+        return param(index, Boolean.class, matcher);
+    }
 
-    // TODO more impl of paramValuAs...
+    public static Matcher<? super ParameterHolder> paramAsByte(final Integer index, Matcher<? super Byte> matcher) {
+        return param(index, Byte.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsFloat(final Integer index, Matcher<? super Float> matcher) {
+        return param(index, Float.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsBigDecimal(final Integer index, Matcher<? super BigDecimal> matcher) {
+        return param(index, BigDecimal.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsBytes(final Integer index, Matcher<? super byte[]> matcher) {
+        return param(index, byte[].class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsDate(final Integer index, Matcher<? super Date> matcher) {
+        return param(index, Date.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsTime(final Integer index, Matcher<? super Time> matcher) {
+        return param(index, Time.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsTimestamp(final Integer index, Matcher<? super Timestamp> matcher) {
+        return param(index, Timestamp.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsArray(final Integer index, Matcher<? super Array> matcher) {
+        return param(index, Array.class, matcher);
+    }
+
+    // TODO: handle setNull
+    // Blob, Clob, NClob, java.net.URL
+    // TOOD: paramAs...(String name, ...)
+
 
 }
