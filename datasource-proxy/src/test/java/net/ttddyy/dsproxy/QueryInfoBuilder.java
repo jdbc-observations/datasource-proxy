@@ -1,6 +1,11 @@
 package net.ttddyy.dsproxy;
 
+import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -9,6 +14,17 @@ import java.util.TreeMap;
  * @author Tadaya Tsuyukubo
  */
 public class QueryInfoBuilder {
+
+    private static final Method DUMMY_METHOD;
+
+    static {
+        try {
+            DUMMY_METHOD = Object.class.getMethod("toString");
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Failed to register dummy method", e);
+        }
+    }
+
     private String query;
     private Map<String, Object> queryArgs = new LinkedHashMap<String, Object>();
 
@@ -55,10 +71,24 @@ public class QueryInfoBuilder {
         if (!batchParams.isEmpty()) {  // consider it's batch mode
             // already ordered by batchIndex
             for (Map<String, Object> map : batchParams.values()) {
-                queryInfo.getQueryArgsList().add(map);
+                List<ParameterSetOperation> params = new ArrayList<ParameterSetOperation>();
+                for (Map.Entry<String, Object> entry : map.entrySet()) {
+                    ParameterSetOperation param = new ParameterSetOperation();
+                    param.setArgs(new Object[]{entry.getKey(), entry.getValue()});
+                    param.setMethod(DUMMY_METHOD);
+                    params.add(param);
+                }
+                queryInfo.getParametersList().add(params);
             }
         } else {
-            queryInfo.getQueryArgsList().add(queryArgs);
+            List<ParameterSetOperation> params = new ArrayList<ParameterSetOperation>();
+            for (Map.Entry<String, Object> entry : queryArgs.entrySet()) {
+                ParameterSetOperation param = new ParameterSetOperation();
+                param.setArgs(new Object[]{entry.getKey(), entry.getValue()});
+                param.setMethod(DUMMY_METHOD);
+                params.add(param);
+            }
+            queryInfo.getParametersList().add(params);
         }
 
         return queryInfo;

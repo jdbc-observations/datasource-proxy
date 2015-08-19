@@ -33,6 +33,8 @@ import static org.mockito.Mockito.*;
 public class PreparedStatementProxyLogicForCallableStatementMockTest {
     private static final String DS_NAME = "myDS";
 
+    // TODO: enable test for setNull
+
     @Test
     public void testExecuteWithNoParam() throws Throwable {
         final String query = "{call procedure_name}";
@@ -395,9 +397,9 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
         assertThat(queryInfoList.size(), is(1));
 
-        assertThat(queryInfoList.get(0).getQueryArgsList(), hasSize(1));
-        Map<String, Object> firstArgs = queryInfoList.get(0).getQueryArgsList().get(0);
-        assertThat("Args should be empty", firstArgs, anEmptyMap());
+        assertThat(queryInfoList.get(0).getParametersList(), hasSize(1));
+        List<ParameterSetOperation> firstArgs = queryInfoList.get(0).getParametersList().get(0);
+        assertThat("Args should be empty", firstArgs, empty());
 
     }
 
@@ -673,9 +675,14 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
 
         // TODO: clean up the comparison logic
 
-        List<Map<String, Object>> queryArgsList = queryInfo.getQueryArgsList();
+        List<List<ParameterSetOperation>> queryArgsList = queryInfo.getParametersList();
         assertThat("non-batch exec should have only one params.", queryArgsList, hasSize(1));
-        Map<String, Object> queryArgs = queryArgsList.get(0);
+
+        Map<String, Object> queryArgs = new HashMap<String, Object>();
+        for (ParameterSetOperation operation  : queryArgsList.get(0)) {
+            Object[] args = operation.getArgs();
+            queryArgs.put(args[0].toString(), args[1]);
+        }
         if (ParamStatus.NO_PARAM != paramStatus) {
             if (ParamStatus.BY_POSITION == paramStatus) {
                 assertThat(queryArgs.size(), is(PARAMS.size()));

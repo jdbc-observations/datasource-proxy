@@ -132,7 +132,7 @@ public class StatementProxyLogic {
                 final TransformInfo transformInfo = new TransformInfo(Statement.class, dataSourceName, query, false, 0);
                 final String transformedQuery = queryTransformer.transformQuery(transformInfo);
                 args[0] = transformedQuery; // replace to the new query
-                queries.add(new QueryInfo(transformedQuery, null));
+                queries.add(new QueryInfo(transformedQuery));
             }
         }
 

@@ -2,90 +2,133 @@ package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 
 import java.sql.CallableStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Arrays;
 import java.util.List;
 
 /**
+ * In addition to {@link DefaultQueryLogEntryCreator}, append output parameter values to the log for {@link CallableStatement}.
+ *
  * @author Parikshit Navgire (navgire@optymyze.com)
+ * @author Tadaya Tsuyukubo
+ * @since 1.3.2
  */
-public class OracleOutputParameterLogEntryCreator implements QueryLogEntryCreator {
-
-    private DefaultQueryLogEntryCreator logEntryCreator = new DefaultQueryLogEntryCreator();
+public class OracleOutputParameterLogEntryCreator extends DefaultQueryLogEntryCreator {
 
     @Override
     public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName) {
         final StringBuilder sb = new StringBuilder();
+        sb.append(super.getLogEntry(execInfo, queryInfoList, writeDataSourceName));
+
+        sb.append(", OutParams:[");
+
         for (QueryInfo queryInfo : queryInfoList) {
-            sb.append(logEntryCreator.getLogEntry(execInfo, Arrays.asList(queryInfo), writeDataSourceName));
-            if (hasOutputParameters(queryInfo)) {
-                sb.append(getOutputParametersInDefaultFormat(queryInfo, execInfo.getStatement(), " = "));
+            for (List<ParameterSetOperation> parameters : queryInfo.getParametersList()) {
+                sb.append("(");
+                if (hasOutputParameters(parameters)) {
+                    String str = getOutputParameters(parameters, (CallableStatement) execInfo.getStatement(), false);
+                    sb.append(str);
+                }
+                sb.append("),");
             }
         }
+
+        chompIfEndWith(sb, ',');
+        sb.append("]");
         return sb.toString();
     }
 
     @Override
     public String getLogEntryAsJson(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName) {
         final StringBuilder sb = new StringBuilder();
+        sb.append(super.getLogEntryAsJson(execInfo, queryInfoList, writeDataSourceName));
+
+        chompIfEndWith(sb, '}');  // hack to remove closing curly bracket from returned json string
+
+        sb.append(",\"outParams\":[");
+
+
         for (QueryInfo queryInfo : queryInfoList) {
-            sb.append(logEntryCreator.getLogEntryAsJson(execInfo, Arrays.asList(queryInfo), writeDataSourceName));
-            if (hasOutputParameters(queryInfo)) {
-                sb.append(getOutputParametersInJsonFormat(queryInfo, execInfo.getStatement(), " : "));
+            for (List<ParameterSetOperation> parameters : queryInfo.getParametersList()) {
+                sb.append("{");
+                if (hasOutputParameters(parameters)) {
+                    String str = getOutputParameters(parameters, (CallableStatement) execInfo.getStatement(), true);
+                    sb.append(str);
+                }
+                sb.append("},");
             }
         }
+
+        chompIfEndWith(sb, ',');
+        sb.append("]");
+        sb.append("}");
+
         return sb.toString();
     }
 
-    private String getOutputParametersInDefaultFormat(QueryInfo queryInfo, Statement st, String seperator) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(", Out Params:[(");
-        sb.append(getOutputParameters(queryInfo, (CallableStatement) st, seperator));
-        sb.append(")]");
+
+    private String getOutputParameters(List<ParameterSetOperation> params, CallableStatement st, boolean isJson) {
+
+        StringBuilder sb = new StringBuilder();
+        for (ParameterSetOperation param : params) {
+            if (!ParameterSetOperation.isRegisterOutParameterOperation(param)) {
+                continue;
+            }
+
+            Object key = param.getArgs()[0];
+            Object value = getOutputValueForDisplay(key, st);
+
+            if (isJson) {
+                sb.append("\"");
+                sb.append(escapeSpecialCharacterForJson(key.toString()));
+                sb.append("\":");
+
+                if (value == null) {
+                    sb.append("null");
+                } else {
+                    sb.append("\"");
+                    sb.append(value);
+                    sb.append("\"");
+                }
+                sb.append(",");
+
+            } else {
+                sb.append(key);
+                sb.append("=");
+                sb.append(value);
+                sb.append(",");
+            }
+
+        }
+        chompIfEndWith(sb, ',');
+
         return sb.toString();
     }
 
-    private String getOutputParametersInJsonFormat(QueryInfo queryInfo, Statement st, String seperator) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(", Out Params:[{");
-        sb.append(getOutputParameters(queryInfo, (CallableStatement) st, seperator));
-        sb.append("}]");
-        return sb.toString();
-    }
-
-    private String getOutputParameters(QueryInfo queryInfo, CallableStatement st, String seperator) {
-        final StringBuilder sb = new StringBuilder();
+    protected Object getOutputValueForDisplay(Object key, CallableStatement cs) {
+        Object value;
         try {
-            for (Integer index : queryInfo.getOutParamIndexes()) {
-                sb.append(index);
-                sb.append(seperator);
-                sb.append(st.getObject(index));
-                sb.append(", ");
-            }
-            if (!queryInfo.getOutParamIndexes().isEmpty()) {
-                sb.deleteCharAt(sb.length() - 1);
-            }
-            for (String paramName : queryInfo.getOutParamNames()) {
-                sb.append(paramName);
-                sb.append(seperator);
-                sb.append(st.getObject(paramName));
-                sb.append(", ");
-            }
-            if (!queryInfo.getOutParamNames().isEmpty()) {
-                sb.deleteCharAt(sb.length() - 1);
+            if (key instanceof String) {
+                value = cs.getObject((String) key);  // access by name
+            } else {
+                value = cs.getObject((Integer) key);  // access by index
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            return "[FAILED TO RETRIEVE]";
         }
-
-        return sb.toString();
+        return value;
     }
 
-    private boolean hasOutputParameters(QueryInfo queryInfo) {
-        return !queryInfo.getOutParamNames().isEmpty() || !queryInfo.getOutParamIndexes().isEmpty();
+    private boolean hasOutputParameters(List<ParameterSetOperation> params) {
+        for (ParameterSetOperation param : params) {
+            if (ParameterSetOperation.isRegisterOutParameterOperation(param)) {
+                return true;
+            }
+        }
+        return false;
     }
+
 
 }

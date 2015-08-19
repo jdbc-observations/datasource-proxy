@@ -16,15 +16,36 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.*;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.Ref;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.aMapWithSize;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -148,7 +169,7 @@ public class PreparedStatementProxyLogicMockTest {
         expectedQueryArgas.put("11", floatValue);
         expectedQueryArgas.put("12", intvalue);
         expectedQueryArgas.put("13", longValue);
-        expectedQueryArgas.put("14", "NULL(VARCHAR)");
+        expectedQueryArgas.put("14", Types.VARCHAR);  // TODO: check for setNull
         expectedQueryArgas.put("15", object);
         expectedQueryArgas.put("16", ref);
         expectedQueryArgas.put("17", shortValue);
@@ -189,10 +210,15 @@ public class PreparedStatementProxyLogicMockTest {
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery(), is(query));
 
-        List<Map<String, Object>> queryArgsList = queryInfo.getQueryArgsList();
+        List<List<ParameterSetOperation>> queryArgsList = queryInfo.getParametersList();
         assertThat("non-batch query size is always 1", queryArgsList, hasSize(1));
 
-        Map<String, Object> queryArgs = queryArgsList.get(0);
+        Map<String, Object> queryArgs = new HashMap<String, Object>();
+        for (ParameterSetOperation operation : queryArgsList.get(0)) {
+            Object[] args = operation.getArgs();
+            queryArgs.put(args[0].toString(), args[1]);
+        }
+
         assertThat(queryArgs, aMapWithSize(expectedQueryArgs.size()));
         for (Map.Entry<String, Object> entry : expectedQueryArgs.entrySet()) {
             assertThat(queryArgs, hasEntry(entry.getKey(), entry.getValue()));
@@ -388,8 +414,8 @@ public class PreparedStatementProxyLogicMockTest {
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
         assertThat(queryInfoList.size(), is(1));
 
-        assertThat(queryInfoList.get(0).getQueryArgsList(), hasSize(1));
-        assertThat("Args should be empty", queryInfoList.get(0).getQueryArgsList().get(0), anEmptyMap());
+        assertThat(queryInfoList.get(0).getParametersList(), hasSize(1));
+        assertThat("Args should be empty", queryInfoList.get(0).getParametersList().get(0), empty());
 
 
     }

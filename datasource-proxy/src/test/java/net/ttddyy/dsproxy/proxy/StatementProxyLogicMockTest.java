@@ -643,8 +643,8 @@ public class StatementProxyLogicMockTest {
             String expectedQuery = queries[i];
             QueryInfo queryInfo = queryInfoList.get(i);
             assertThat(queryInfo.getQuery(), is(expectedQuery));
-            assertThat(queryInfo.getQueryArgsList(), is(notNullValue()));
-            assertThat(queryInfo.getQueryArgsList().size(), is(0));
+            assertThat(queryInfo.getParametersList(), is(notNullValue()));
+            assertThat(queryInfo.getParametersList().size(), is(0));
         }
     }
 
@@ -674,8 +674,8 @@ public class StatementProxyLogicMockTest {
             String expectedQuery = queries[i];
             QueryInfo queryInfo = queryInfoList.get(i);
             assertThat(queryInfo.getQuery(), is(expectedQuery));
-            assertThat(queryInfo.getQueryArgsList(), is(notNullValue()));
-            assertThat(queryInfo.getQueryArgsList().size(), is(0));
+            assertThat(queryInfo.getParametersList(), is(notNullValue()));
+            assertThat(queryInfo.getParametersList().size(), is(0));
         }
 
     }

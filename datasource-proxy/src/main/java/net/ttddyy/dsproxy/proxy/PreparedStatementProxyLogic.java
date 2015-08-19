@@ -28,9 +28,10 @@ public class PreparedStatementProxyLogic {
 
     private PreparedStatement ps;
     private String query;
-    private List<Integer> outParamIndexes= new ArrayList<Integer>();
-    private List<String> outParamNames= new ArrayList<String>();
     private String dataSourceName;
+
+    // when same key(index/name) is used for parameter set operation, old value will be replaced. To implement that logic
+    // using a map, so that putting same key will override the entry.
     private Map<Object, ParameterSetOperation> parameters = new LinkedHashMap<Object, ParameterSetOperation>();
     private InterceptorHolder interceptorHolder;
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
@@ -94,13 +95,8 @@ public class PreparedStatementProxyLogic {
                 // operation to set or clear parameterOperationHolder
                 if ("clearParameters".equals(methodName)) {
                     parameters.clear();
-                } else if(StatementMethodNames.PARAMETER_METHOD_REGISTER_OUT_PARAMETER.equals(methodName)){
-                    if(args[0] instanceof Integer){
-                        outParamIndexes.add((Integer)args[0]);
-                    }else{
-                        outParamNames.add((String)args[0]);
-                    }
-                }else {
+                } else {
+                    // when same key is specified, old value will be overridden
                     parameters.put(args[0], new ParameterSetOperation(method, args));
                 }
 
@@ -119,8 +115,6 @@ public class PreparedStatementProxyLogic {
                     parameters.clear();
                 } else if ("clearBatch".equals(methodName)) {
                     batchParameters.clear();
-                    outParamIndexes.clear();
-                    outParamNames.clear();
                 }
             }
 
@@ -140,9 +134,7 @@ public class PreparedStatementProxyLogic {
             // one query with multiple parameters
             QueryInfo queryInfo = new QueryInfo(this.query);
             for (Map<Object, ParameterSetOperation> params : batchParameters) {
-                queryInfo.getQueryArgsList().add(getQueryParameters(params));
-                queryInfo.getOutParamIndexes().addAll(outParamIndexes);
-                queryInfo.getOutParamNames().addAll(outParamNames);
+                queryInfo.getParametersList().add(new ArrayList<ParameterSetOperation>(params.values()));
             }
             queries.add(queryInfo);
 
@@ -153,9 +145,7 @@ public class PreparedStatementProxyLogic {
         } else if (StatementMethodNames.QUERY_EXEC_METHODS.contains(methodName)) {
             transformParameters(false, 0);
             QueryInfo queryInfo = new QueryInfo(this.query);
-            queryInfo.getQueryArgsList().add(getQueryParameters(parameters));
-            queryInfo.getOutParamIndexes().addAll(outParamIndexes);
-            queryInfo.getOutParamNames().addAll(outParamNames);
+            queryInfo.getParametersList().add(new ArrayList<ParameterSetOperation>(parameters.values()));
             queries.add(queryInfo);
         }
 
@@ -186,15 +176,6 @@ public class PreparedStatementProxyLogic {
         }
     }
 
-    private Map<String, Object> getQueryParameters(Map<Object, ParameterSetOperation> params) {
-        Map<String, Object> queryParameters = new LinkedHashMap<String, Object>(params.size());
-        for (ParameterSetOperation parameterSetOperation : params.values()) {
-            String key = parameterSetOperation.getParameterNameOrIndexAsString();
-            Object value = parameterSetOperation.getParameterValue();
-            queryParameters.put(key, value);
-        }
-        return queryParameters;
-    }
 
     private void transformParameters(boolean isBatch, int count) throws SQLException, IllegalAccessException, InvocationTargetException {
 

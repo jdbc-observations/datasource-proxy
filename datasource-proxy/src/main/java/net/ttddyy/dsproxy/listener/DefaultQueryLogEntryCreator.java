@@ -3,6 +3,8 @@ package net.ttddyy.dsproxy.listener;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
+import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
+import net.ttddyy.dsproxy.proxy.StatementMethodNames;
 
 import java.util.*;
 
@@ -24,6 +26,9 @@ public class DefaultQueryLogEntryCreator implements QueryLogEntryCreator {
         JSON_SPECIAL_CHARS.put('\r', "\\r");   // carriage return
         JSON_SPECIAL_CHARS.put('\t', "\\t");   // horizontal tab
     }
+
+    protected ParameterValueConverter setNullParameterValueConverter = new SetNullParameterValueConverter();
+    protected ParameterValueConverter registerOutParameterValueConverter = new RegisterOutParameterValueConverter();
 
     @Override
     public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName) {
@@ -71,14 +76,12 @@ public class DefaultQueryLogEntryCreator implements QueryLogEntryCreator {
 
         sb.append("Params:[");
         for (QueryInfo queryInfo : queryInfoList) {
-            for (Map<String, Object> paramMap : queryInfo.getQueryArgsList()) {
+            for (List<ParameterSetOperation> parameters : queryInfo.getParametersList()) {
 
-                // sort
-                SortedMap<String, Object> sortedParamMap = new TreeMap<String, Object>(new StringAsIntegerComparator());
-                sortedParamMap.putAll(paramMap);
+                Map<String, String> paramMap = getParametersToDisplay(parameters);
 
                 sb.append("(");
-                for (Map.Entry<String, Object> paramEntry : sortedParamMap.entrySet()) {
+                for (Map.Entry<String, String> paramEntry : paramMap.entrySet()) {
                     sb.append(paramEntry.getKey());
                     sb.append("=");
                     sb.append(paramEntry.getValue());
@@ -93,6 +96,7 @@ public class DefaultQueryLogEntryCreator implements QueryLogEntryCreator {
 
         return sb.toString();
     }
+
 
     @Override
     public String getLogEntryAsJson(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName) {
@@ -141,16 +145,15 @@ public class DefaultQueryLogEntryCreator implements QueryLogEntryCreator {
 
         sb.append("\"params\":[");
         for (QueryInfo queryInfo : queryInfoList) {
-            for (Map<String, Object> paramMap : queryInfo.getQueryArgsList()) {
 
-                // sort
-                SortedMap<String, Object> sortedParamMap = new TreeMap<String, Object>(new StringAsIntegerComparator());
-                sortedParamMap.putAll(paramMap);
+            for (List<ParameterSetOperation> parameters : queryInfo.getParametersList()) {
+
+                Map<String, String> paramMap = getParametersToDisplay(parameters);
 
                 sb.append("{");
-                for (Map.Entry<String, Object> paramEntry : sortedParamMap.entrySet()) {
+                for (Map.Entry<String, String> paramEntry : paramMap.entrySet()) {
                     String key = paramEntry.getKey();
-                    Object value = paramEntry.getValue();
+                    String value = paramEntry.getValue();
                     sb.append("\"");
                     sb.append(escapeSpecialCharacterForJson(key));
                     sb.append("\":");
@@ -158,7 +161,7 @@ public class DefaultQueryLogEntryCreator implements QueryLogEntryCreator {
                         sb.append("null");
                     } else {
                         sb.append("\"");
-                        sb.append(escapeSpecialCharacterForJson(value.toString()));
+                        sb.append(escapeSpecialCharacterForJson(value));
                         sb.append("\"");
                     }
                     sb.append(",");
@@ -203,6 +206,94 @@ public class DefaultQueryLogEntryCreator implements QueryLogEntryCreator {
             sb.append(value != null ? value : c);
         }
         return sb.toString();
+    }
+
+    /**
+     * populate param map with sorted by key.
+     *
+     * @param params list of ParameterSetOperation
+     * @return a map: key=index/name as string,  value=first value
+     * @since 1.4
+     */
+    protected Map<String, String> getParametersToDisplay(List<ParameterSetOperation> params) {
+        // populate param map with sorted by key: key=index/name, value=first value
+        Map<String, String> paramMap = new TreeMap<String, String>(new StringAsIntegerComparator());
+        for (ParameterSetOperation param : params) {
+            String key = getParameterKeyToDisplay(param);
+            String value = getParameterValueToDisplay(param);
+            paramMap.put(key, value);
+        }
+        return paramMap;
+    }
+
+    /**
+     * @return parameterIndex or parameterName as String
+     * @since 1.4
+     */
+    public String getParameterKeyToDisplay(ParameterSetOperation param) {
+        Object key = param.getArgs()[0];  // either int(parameterIndex) or string(parameterName)
+        return key instanceof String ? (String) key : key.toString();
+    }
+
+    protected String getParameterValueToDisplay(ParameterSetOperation param) {
+
+        String value;
+
+        String methodName = param.getMethod().getName();
+        if (StatementMethodNames.PARAMETER_METHOD_SET_NULL.equals(methodName)) {
+            // for setNull
+            value = getDisplayValueForSetNull(param);
+        } else if (StatementMethodNames.PARAMETER_METHOD_REGISTER_OUT_PARAMETER.equals(methodName)) {
+            // for registerOutParameter
+            value = getDisplayValueForRegisterOutParameter(param);
+        } else {
+            value = getDisplayValue(param);
+        }
+        return value;
+    }
+
+
+    /**
+     * @param param
+     * @return value to display
+     * @since 1.4
+     */
+    public String getDisplayValueForSetNull(ParameterSetOperation param) {
+        return this.setNullParameterValueConverter.getValue(param);
+    }
+
+    /**
+     * @param param
+     * @return value to display
+     * @since 1.4
+     */
+    public String getDisplayValueForRegisterOutParameter(ParameterSetOperation param) {
+        return this.registerOutParameterValueConverter.getValue(param);
+    }
+
+    /**
+     * @param param
+     * @return value to display
+     * @since 1.4
+     */
+    public String getDisplayValue(ParameterSetOperation param) {
+        return param.getArgs()[1].toString();
+    }
+
+    /**
+     * @param setNullParameterValueConverter
+     * @since 1.4
+     */
+    public void setSetNullParameterValueConverter(ParameterValueConverter setNullParameterValueConverter) {
+        this.setNullParameterValueConverter = setNullParameterValueConverter;
+    }
+
+    /**
+     * @param registerOutParameterValueConverter
+     * @since 1.4
+     */
+    public void setRegisterOutParameterValueConverter(ParameterValueConverter registerOutParameterValueConverter) {
+        this.registerOutParameterValueConverter = registerOutParameterValueConverter;
     }
 
     /**
