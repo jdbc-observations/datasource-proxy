@@ -169,7 +169,7 @@ public class PreparedStatementProxyLogicMockTest {
         expectedQueryArgas.put("11", floatValue);
         expectedQueryArgas.put("12", intvalue);
         expectedQueryArgas.put("13", longValue);
-        expectedQueryArgas.put("14", Types.VARCHAR);  // TODO: check for setNull
+        expectedQueryArgas.put("14", Types.VARCHAR);
         expectedQueryArgas.put("15", object);
         expectedQueryArgas.put("16", ref);
         expectedQueryArgas.put("17", shortValue);
