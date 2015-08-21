@@ -39,7 +39,7 @@ public class QueryHolderAssertions {
             @Override
             public void describeTo(Description description) {
                 // expected clause
-                description.appendText("query type is \"" + expectedType + "\"");
+                description.appendText("query type \"" + expectedType + "\"");
             }
 
             @Override

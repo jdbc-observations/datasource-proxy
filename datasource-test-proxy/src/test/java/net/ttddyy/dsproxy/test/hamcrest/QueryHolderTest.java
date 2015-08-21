@@ -79,7 +79,7 @@ public class QueryHolderTest {
             Assert.assertThat(queryHolder, queryType(QueryType.SELECT));
             fail("assertion should fail");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpected: query type is \"SELECT\"\n     but: query type was \"INSERT\" (insert into)");
+            assertThat(e).hasMessage("\nExpected: query type \"SELECT\"\n     but: query type was \"INSERT\" (insert into)");
         }
 
     }

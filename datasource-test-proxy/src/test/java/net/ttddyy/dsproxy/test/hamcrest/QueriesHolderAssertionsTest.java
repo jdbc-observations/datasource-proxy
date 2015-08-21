@@ -117,7 +117,7 @@ public class QueriesHolderAssertionsTest {
             Assert.assertThat(sbe, queryTypes(0, update()));
             fail("assertion should fail");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpected: queries[0] query type is \"UPDATE\"\n     but: queries[0] query type was \"SELECT\" (SELECT)");
+            assertThat(e).hasMessage("\nExpected: queries[0] query type \"UPDATE\"\n     but: queries[0] query type was \"SELECT\" (SELECT)");
         }
     }
 
