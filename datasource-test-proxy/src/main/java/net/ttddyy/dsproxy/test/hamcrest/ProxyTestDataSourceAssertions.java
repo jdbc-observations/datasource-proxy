@@ -1,10 +1,12 @@
 package net.ttddyy.dsproxy.test.hamcrest;
 
 import net.ttddyy.dsproxy.QueryType;
+import net.ttddyy.dsproxy.listener.QueryUtils;
 import net.ttddyy.dsproxy.test.ProxyTestDataSource;
+import net.ttddyy.dsproxy.test.QueriesHolder;
 import net.ttddyy.dsproxy.test.QueryExecution;
+import net.ttddyy.dsproxy.test.QueryHolder;
 import org.hamcrest.Description;
-import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
@@ -21,15 +23,28 @@ public class ProxyTestDataSourceAssertions {
     }
 
     public static Matcher<ProxyTestDataSource> executions(final int index, Matcher<? super QueryExecution> queryExecutionMatcher) {
-        // TODO: check message
-        String msg = "queryExecutions[" + index + "]";
-        return new FeatureMatcher<ProxyTestDataSource, QueryExecution>(queryExecutionMatcher, msg, msg) {
+        return new CompositeMatcher<ProxyTestDataSource, QueryExecution>(queryExecutionMatcher) {
+
             @Override
-            protected QueryExecution featureValueOf(ProxyTestDataSource actual) {
-                List<QueryExecution> queryExecutions = actual.getQueryExecutions();
-                // TODO: list size check, and use try-catch
-                QueryExecution queryExecution = queryExecutions.get(index);
-                return queryExecution;
+            protected boolean validateByThisMatcher(ProxyTestDataSource item, Description expected, Description actual) {
+                List<QueryExecution> queryExecutions = item.getQueryExecutions();
+                int size = queryExecutions.size();
+                if (size - 1 < index) {
+                    expected.appendText("queryExecutions[" + index + "] exists");
+                    actual.appendText("queryExecutions[] size was " + size);
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public QueryExecution getValue(ProxyTestDataSource actual) {
+                return actual.getQueryExecutions().get(index);
+            }
+
+            @Override
+            public String getSubMatcherFailureDescriptionPrefix() {
+                return "queryExecutions[" + index + "] ";
             }
         };
     }
@@ -39,7 +54,8 @@ public class ProxyTestDataSourceAssertions {
         return new TypeSafeMatcher<ProxyTestDataSource>() {
             @Override
             protected boolean matchesSafely(ProxyTestDataSource item) {
-                return item.getQueryExecutions().size() == count;
+                int actualSize = countQueries(item);
+                return count == actualSize;
             }
 
             @Override
@@ -51,8 +67,20 @@ public class ProxyTestDataSourceAssertions {
             @Override
             protected void describeMismatchSafely(ProxyTestDataSource item, Description mismatchDescription) {
                 // but was clause
-                int actualSize = item.getQueryExecutions().size();
+                int actualSize = countQueries(item);
                 mismatchDescription.appendText("was " + actualSize + " query executions");
+            }
+
+            private int countQueries(ProxyTestDataSource ds) {
+                int count = 0;
+                for (QueryExecution queryExecution : ds.getQueryExecutions()) {
+                    if (queryExecution instanceof QueryHolder) {
+                        count++;
+                    } else if (queryExecution instanceof QueriesHolder) {
+                        count += ((QueriesHolder) queryExecution).getQueries().size();
+                    }
+                }
+                return count;
             }
         };
     }
@@ -91,9 +119,22 @@ public class ProxyTestDataSourceAssertions {
         @Override
         protected boolean matchesSafely(ProxyTestDataSource item) {
             for (QueryExecution queryExecution : item.getQueryExecutions()) {
-                if (this.expectedQueryType.equals(queryExecution.getQueryType())) {
-                    this.matchedCount++;
+                if (queryExecution instanceof QueryHolder) {
+                    String query = ((QueryHolder) queryExecution).getQuery();
+                    QueryType queryType = QueryUtils.getQueryType(query);
+                    if (this.expectedQueryType.equals(queryType)) {
+                        this.matchedCount++;
+                    }
+                } else if (queryExecution instanceof QueriesHolder) {
+                    // for StatementBatchExecution
+                    for (String query : ((QueriesHolder) queryExecution).getQueries()) {
+                        QueryType queryType = QueryUtils.getQueryType(query);
+                        if (this.expectedQueryType.equals(queryType)) {
+                            this.matchedCount++;
+                        }
+                    }
                 }
+
             }
             return this.matchedCount == this.expectedCount;
         }

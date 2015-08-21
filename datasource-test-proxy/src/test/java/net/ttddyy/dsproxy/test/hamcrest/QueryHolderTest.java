@@ -5,8 +5,13 @@ import net.ttddyy.dsproxy.test.QueryHolder;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.delete;
+import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.insert;
+import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.other;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.query;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.queryType;
+import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.select;
+import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.update;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
@@ -77,6 +82,26 @@ public class QueryHolderTest {
             assertThat(e).hasMessage("\nExpected: query type is \"SELECT\"\n     but: query type was \"INSERT\" (insert into)");
         }
 
+    }
+
+    @Test
+    public void testSpecificQueryType() {
+        QueryHolder select = mock(QueryHolder.class);
+        QueryHolder insert = mock(QueryHolder.class);
+        QueryHolder update = mock(QueryHolder.class);
+        QueryHolder delete = mock(QueryHolder.class);
+        QueryHolder other = mock(QueryHolder.class);
+        given(select.getQuery()).willReturn("SELECT...");
+        given(insert.getQuery()).willReturn("INSERT...");
+        given(update.getQuery()).willReturn("UPDATE...");
+        given(delete.getQuery()).willReturn("DELETE...");
+        given(other.getQuery()).willReturn("OTHER...");
+
+        Assert.assertThat(select, select());
+        Assert.assertThat(insert, insert());
+        Assert.assertThat(update, update());
+        Assert.assertThat(delete, delete());
+        Assert.assertThat(other, other());
     }
 
 }

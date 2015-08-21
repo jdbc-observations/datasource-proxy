@@ -1,8 +1,8 @@
 package net.ttddyy.dsproxy.test.hamcrest;
 
-import net.ttddyy.dsproxy.QueryType;
 import net.ttddyy.dsproxy.test.ProxyTestDataSource;
 import net.ttddyy.dsproxy.test.QueryExecution;
+import net.ttddyy.dsproxy.test.QueryHolder;
 import net.ttddyy.dsproxy.test.StatementBatchExecution;
 import net.ttddyy.dsproxy.test.StatementExecution;
 import org.junit.Assert;
@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 
 /**
@@ -60,14 +61,51 @@ public class ProxyTestDataSourceAssertionsTest {
     }
 
     @Test
+    public void executionsAssertionMessage() {
+        StatementExecution se = new StatementExecution();
+        se.setSuccess(false);
+
+        ProxyTestDataSource ds = new ProxyTestDataSource();
+        ds.getQueryExecutions().add(se);
+
+        try {
+            Assert.assertThat(ds, executions(0, success()));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: queryExecutions[0] success\n     but: queryExecutions[0] was failure");
+        }
+    }
+
+    @Test
+    public void executionsAssertionMessageForOutOfIndex() {
+        StatementExecution se = new StatementExecution();
+        se.setSuccess(false);
+
+        ProxyTestDataSource ds = new ProxyTestDataSource();
+        ds.getQueryExecutions().add(se);
+
+        try {
+            Assert.assertThat(ds, executions(10, success()));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: queryExecutions[10] exists\n     but: queryExecutions[] size was 1");
+        }
+    }
+
+
+    @Test
     public void testTotalCount() {
-        List<QueryExecution> list = mock(List.class);
-        given(list.size()).willReturn(4);
+        List<QueryExecution> queryExecutions = new ArrayList<QueryExecution>();
+        queryExecutions.add(getMockSelectQueryExecution());  // select
+        queryExecutions.add(getMockSelectQueryExecution());  // select
+        queryExecutions.add(getMockInsertQueryExecution());  // insert
+        queryExecutions.add(getMockUpdateQueryExecution());  // update
+        queryExecutions.add(getMockDeleteQueryExecution());  // delete
 
         ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
-        given(ds.getQueryExecutions()).willReturn(list);
+        given(ds.getQueryExecutions()).willReturn(queryExecutions);
 
-        Assert.assertThat(ds, totalCount(4));
+        Assert.assertThat(ds, totalCount(5));
     }
 
     @Test
@@ -86,15 +124,10 @@ public class ProxyTestDataSourceAssertionsTest {
 
     @Test
     public void testSelectCount() {
-        QueryExecution select1 = mock(QueryExecution.class);
-        given(select1.getQueryType()).willReturn(QueryType.SELECT);
-        QueryExecution select2 = mock(QueryExecution.class);
-        given(select2.getQueryType()).willReturn(QueryType.SELECT);
-        QueryExecution delete = mock(QueryExecution.class);
-        given(delete.getQueryType()).willReturn(QueryType.DELETE);
-
         List<QueryExecution> queryExecutions = new ArrayList<QueryExecution>();
-        queryExecutions.addAll(Arrays.asList(select1, delete, select2));
+        queryExecutions.add(getMockSelectQueryExecution());  // select
+        queryExecutions.add(getMockSelectQueryExecution());  // select
+        queryExecutions.add(getMockDeleteQueryExecution());  // delete
 
         ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
         given(ds.getQueryExecutions()).willReturn(queryExecutions);
@@ -117,15 +150,11 @@ public class ProxyTestDataSourceAssertionsTest {
 
     @Test
     public void testInsertCount() {
-        QueryExecution insert1 = mock(QueryExecution.class);
-        given(insert1.getQueryType()).willReturn(QueryType.INSERT);
-        QueryExecution insert2 = mock(QueryExecution.class);
-        given(insert2.getQueryType()).willReturn(QueryType.INSERT);
-        QueryExecution delete = mock(QueryExecution.class);
-        given(delete.getQueryType()).willReturn(QueryType.DELETE);
-
         List<QueryExecution> queryExecutions = new ArrayList<QueryExecution>();
-        queryExecutions.addAll(Arrays.asList(insert1, delete, insert2));
+        queryExecutions.add(getMockInsertQueryExecution());  // insert
+        queryExecutions.add(getMockInsertQueryExecution());  // insert
+        queryExecutions.add(getMockDeleteQueryExecution());  // delete
+
 
         ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
         given(ds.getQueryExecutions()).willReturn(queryExecutions);
@@ -148,15 +177,10 @@ public class ProxyTestDataSourceAssertionsTest {
 
     @Test
     public void testUpdateCount() {
-        QueryExecution update1 = mock(QueryExecution.class);
-        given(update1.getQueryType()).willReturn(QueryType.UPDATE);
-        QueryExecution update2 = mock(QueryExecution.class);
-        given(update2.getQueryType()).willReturn(QueryType.UPDATE);
-        QueryExecution delete = mock(QueryExecution.class);
-        given(delete.getQueryType()).willReturn(QueryType.DELETE);
-
         List<QueryExecution> queryExecutions = new ArrayList<QueryExecution>();
-        queryExecutions.addAll(Arrays.asList(update1, delete, update2));
+        queryExecutions.add(getMockUpdateQueryExecution());  // update
+        queryExecutions.add(getMockUpdateQueryExecution());  // update
+        queryExecutions.add(getMockSelectQueryExecution());  // select
 
         ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
         given(ds.getQueryExecutions()).willReturn(queryExecutions);
@@ -179,15 +203,12 @@ public class ProxyTestDataSourceAssertionsTest {
 
     @Test
     public void testDeleteCount() {
-        QueryExecution delete1 = mock(QueryExecution.class);
-        given(delete1.getQueryType()).willReturn(QueryType.DELETE);
-        QueryExecution delete2 = mock(QueryExecution.class);
-        given(delete2.getQueryType()).willReturn(QueryType.DELETE);
-        QueryExecution select = mock(QueryExecution.class);
-        given(select.getQueryType()).willReturn(QueryType.SELECT);
 
         List<QueryExecution> queryExecutions = new ArrayList<QueryExecution>();
-        queryExecutions.addAll(Arrays.asList(delete1, select, delete2));
+        queryExecutions.add(getMockDeleteQueryExecution());  // delete
+        queryExecutions.add(getMockDeleteQueryExecution());  // delete
+        queryExecutions.add(getMockSelectQueryExecution());  // select
+
 
         ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
         given(ds.getQueryExecutions()).willReturn(queryExecutions);
@@ -210,15 +231,10 @@ public class ProxyTestDataSourceAssertionsTest {
 
     @Test
     public void testOtherCount() {
-        QueryExecution other1 = mock(QueryExecution.class);
-        given(other1.getQueryType()).willReturn(QueryType.OTHER);
-        QueryExecution other2 = mock(QueryExecution.class);
-        given(other2.getQueryType()).willReturn(QueryType.OTHER);
-        QueryExecution delete = mock(QueryExecution.class);
-        given(delete.getQueryType()).willReturn(QueryType.DELETE);
-
         List<QueryExecution> queryExecutions = new ArrayList<QueryExecution>();
-        queryExecutions.addAll(Arrays.asList(other1, delete, other2));
+        queryExecutions.add(getMockOtherQueryExecution());  // other
+        queryExecutions.add(getMockOtherQueryExecution());  // other
+        queryExecutions.add(getMockDeleteQueryExecution());  // delete
 
         ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
         given(ds.getQueryExecutions()).willReturn(queryExecutions);
@@ -273,4 +289,53 @@ public class ProxyTestDataSourceAssertionsTest {
     }
 
     // TODO: test for fistBatchStatement when there is no StatementExecution
+
+    @Test
+    public void withStatementBatchExecution() {
+        StatementExecution se = new StatementExecution();
+        se.setQuery("SELECT");
+
+        // for batch statement, each query is counted
+        StatementBatchExecution sbe = new StatementBatchExecution();
+        sbe.setQueries(Arrays.asList("SELECT", "UPDATE"));
+
+        ProxyTestDataSource ds = new ProxyTestDataSource();
+        ds.getQueryExecutions().add(se);
+        ds.getQueryExecutions().add(sbe);
+
+        Assert.assertThat(ds, totalCount(3));
+        Assert.assertThat(ds, selectCount(2));
+        Assert.assertThat(ds, updateCount(1));
+    }
+
+
+    private QueryExecution getMockSelectQueryExecution() {
+        QueryHolder select = mock(QueryHolder.class, withSettings().extraInterfaces(QueryExecution.class));
+        given(select.getQuery()).willReturn("SELECT...");
+        return (QueryExecution) select;
+    }
+
+    private QueryExecution getMockInsertQueryExecution() {
+        QueryHolder insert = mock(QueryHolder.class, withSettings().extraInterfaces(QueryExecution.class));
+        given(insert.getQuery()).willReturn("INSERT...");
+        return (QueryExecution) insert;
+    }
+
+    private QueryExecution getMockUpdateQueryExecution() {
+        QueryHolder update = mock(QueryHolder.class, withSettings().extraInterfaces(QueryExecution.class));
+        given(update.getQuery()).willReturn("UPDATE...");
+        return (QueryExecution) update;
+    }
+
+    private QueryExecution getMockDeleteQueryExecution() {
+        QueryHolder delete = mock(QueryHolder.class, withSettings().extraInterfaces(QueryExecution.class));
+        given(delete.getQuery()).willReturn("DELETE...");
+        return (QueryExecution) delete;
+    }
+
+    private QueryExecution getMockOtherQueryExecution() {
+        QueryHolder other = mock(QueryHolder.class, withSettings().extraInterfaces(QueryExecution.class));
+        given(other.getQuery()).willReturn("OTHER...");
+        return (QueryExecution) other;
+    }
 }

@@ -54,4 +54,24 @@ public class QueryHolderAssertions {
         };
     }
 
+    public static Matcher<? super QueryHolder> select() {
+        return queryType(QueryType.SELECT);
+    }
+
+    public static Matcher<? super QueryHolder> insert() {
+        return queryType(QueryType.INSERT);
+    }
+
+    public static Matcher<? super QueryHolder> update() {
+        return queryType(QueryType.UPDATE);
+    }
+
+    public static Matcher<? super QueryHolder> delete() {
+        return queryType(QueryType.DELETE);
+    }
+
+    public static Matcher<? super QueryHolder> other() {
+        return queryType(QueryType.OTHER);
+    }
+
 }
