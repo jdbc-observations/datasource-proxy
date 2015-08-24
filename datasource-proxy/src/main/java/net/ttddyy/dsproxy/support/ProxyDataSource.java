@@ -76,9 +76,14 @@ public class ProxyDataSource implements DataSource {
      * Set {@link QueryExecutionListener} with default(NoOp) {@link QueryTransformer}.
      *
      * @param listener a lister
+     * @deprecated
      */
     public void setListener(QueryExecutionListener listener) {
         this.interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
+    }
+
+    public void addListener(QueryExecutionListener listener) {
+        this.interceptorHolder.addListener(listener);
     }
 
     public void setDataSourceName(String dataSourceName) {

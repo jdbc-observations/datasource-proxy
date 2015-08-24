@@ -1,6 +1,5 @@
 package net.ttddyy.dsproxy.test;
 
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 
 import javax.sql.DataSource;
@@ -15,7 +14,7 @@ public class ProxyTestDataSource extends ProxyDataSource {
 
     // TODO: add clear() or reset() method
 
-    private QueryExecutionFactoryListener listener = new QueryExecutionFactoryListener();
+    private QueryExecutionFactoryListener queryExecutionFactoryListener = new QueryExecutionFactoryListener();
 
 
     public ProxyTestDataSource() {
@@ -28,15 +27,7 @@ public class ProxyTestDataSource extends ProxyDataSource {
     }
 
     private void initialize() {
-        // TODO: check how to populate
-        QueryExecutionFactoryListener listener = new QueryExecutionFactoryListener();
-        this.getInterceptorHolder().setListener(listener);
-    }
-
-    @Override
-    public void setListener(QueryExecutionListener listener) {
-        // TODO: add logic for when use tries to add listener
-        super.setListener(listener);
+        this.getInterceptorHolder().addListener(this.queryExecutionFactoryListener);
     }
 
     public List<StatementExecution> getStatements() {
@@ -136,10 +127,10 @@ public class ProxyTestDataSource extends ProxyDataSource {
     }
 
     public List<QueryExecution> getQueryExecutions() {
-        return this.listener.getQueryExecutions();
+        return this.queryExecutionFactoryListener.getQueryExecutions();
     }
 
-    public QueryExecutionFactoryListener getListener() {
-        return listener;
+    public QueryExecutionFactoryListener getQueryExecutionFactoryListener() {
+        return queryExecutionFactoryListener;
     }
 }

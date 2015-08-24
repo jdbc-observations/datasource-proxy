@@ -1,6 +1,12 @@
 package net.ttddyy.dsproxy.support;
 
-import net.ttddyy.dsproxy.listener.*;
+import net.ttddyy.dsproxy.listener.CommonsLogLevel;
+import net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener;
+import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
+import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.SLF4JLogLevel;
+import net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener;
+import net.ttddyy.dsproxy.listener.SystemOutQueryLoggingListener;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 
@@ -100,8 +106,8 @@ public class ProxyDataSourceBuilder {
     /**
      * Register {@link net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener}.
      *
-     * @param logLevel log level for commons
-     * @param loggerName  logger name
+     * @param logLevel   log level for commons
+     * @param loggerName logger name
      * @return builder
      * @since 1.3.1
      */
@@ -150,8 +156,8 @@ public class ProxyDataSourceBuilder {
     /**
      * Register {@link net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener}.
      *
-     * @param logLevel log level for commons
-     * @param loggerName  logger name
+     * @param logLevel   log level for commons
+     * @param loggerName logger name
      * @return builder
      * @since 1.3.1
      */
@@ -293,14 +299,8 @@ public class ProxyDataSourceBuilder {
         // explicitly added listeners
         listeners.addAll(this.queryExecutionListeners);
 
-        if (!listeners.isEmpty()) {
-            if (listeners.size() == 1) {
-                proxyDataSource.setListener(listeners.get(0));
-            } else {
-                ChainListener chainListener = new ChainListener();
-                chainListener.getListeners().addAll(listeners);
-                proxyDataSource.setListener(chainListener);
-            }
+        for (QueryExecutionListener listener : listeners) {
+            proxyDataSource.addListener(listener);
         }
 
         if (this.queryTransformer != null) {

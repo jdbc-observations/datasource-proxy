@@ -1,9 +1,7 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.listener.ChainListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
-import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,8 +12,11 @@ import java.sql.Statement;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 
 
 /**
@@ -33,10 +34,10 @@ public class StatementInvocationHandlerTest {
         testListener = new TestListener();
         lastQueryListener = new LastQueryListener();
 
-        ChainListener chainListener = new ChainListener();
-        chainListener.addListener(testListener);
-        chainListener.addListener(lastQueryListener);
-        InterceptorHolder interceptorHolder = new InterceptorHolder(chainListener, QueryTransformer.DEFAULT);
+        InterceptorHolder interceptorHolder = new InterceptorHolder();
+        interceptorHolder.addListener(testListener);
+        interceptorHolder.addListener(lastQueryListener);
+
 
         // real datasource
         jdbcDataSource = TestUtils.getDataSourceWithData();
@@ -84,7 +85,7 @@ public class StatementInvocationHandlerTest {
         assertThat(afterExec.getThrowable(), is(notNullValue()));
 
         Throwable thrownException = afterExec.getThrowable();
-        assertThat(thrownException, sameInstance((Throwable)ex));
+        assertThat(thrownException, sameInstance((Throwable) ex));
 
     }
 

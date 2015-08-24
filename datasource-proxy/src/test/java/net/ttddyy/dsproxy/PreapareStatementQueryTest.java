@@ -1,10 +1,8 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.listener.ChainListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
-import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,10 +30,9 @@ public class PreapareStatementQueryTest {
         testListener = new TestListener();
         lastQueryListener = new LastQueryListener();
 
-        ChainListener chainListener = new ChainListener();
-        chainListener.addListener(testListener);
-        chainListener.addListener(lastQueryListener);
-        InterceptorHolder interceptorHolder = new InterceptorHolder(chainListener, QueryTransformer.DEFAULT);
+        InterceptorHolder interceptorHolder = new InterceptorHolder();
+        interceptorHolder.addListener(testListener);
+        interceptorHolder.addListener(lastQueryListener);
 
         // real datasource
         jdbcDataSource = TestUtils.getDataSourceWithData();
