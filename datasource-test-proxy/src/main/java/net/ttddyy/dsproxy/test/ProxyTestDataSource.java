@@ -1,8 +1,5 @@
 package net.ttddyy.dsproxy.test;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryInfo;
-import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 
@@ -16,7 +13,9 @@ import java.util.List;
  */
 public class ProxyTestDataSource extends ProxyDataSource {
 
-    private List<QueryExecution> queryExecutions = new ArrayList<QueryExecution>();
+    // TODO: add clear() or reset() method
+
+    private QueryExecutionFactoryListener listener = new QueryExecutionFactoryListener();
 
 
     public ProxyTestDataSource() {
@@ -29,8 +28,8 @@ public class ProxyTestDataSource extends ProxyDataSource {
     }
 
     private void initialize() {
-        // TODO: clean up
-        QueryExecutionFactoryListener listener = new QueryExecutionFactoryListener(this.queryExecutions);
+        // TODO: check how to populate
+        QueryExecutionFactoryListener listener = new QueryExecutionFactoryListener();
         this.getInterceptorHolder().setListener(listener);
     }
 
@@ -116,7 +115,7 @@ public class ProxyTestDataSource extends ProxyDataSource {
     @SuppressWarnings("unchecked")
     private <T extends QueryExecution> List<T> getQueryExecutionsFilteredBy(Class<T> classToFilter) {
         List<T> result = new ArrayList<T>();
-        for (QueryExecution queryExecution : this.queryExecutions) {
+        for (QueryExecution queryExecution : getQueryExecutions()) {
             if (classToFilter.isAssignableFrom(queryExecution.getClass())) {
                 result.add((T) queryExecution);
             }
@@ -137,6 +136,10 @@ public class ProxyTestDataSource extends ProxyDataSource {
     }
 
     public List<QueryExecution> getQueryExecutions() {
-        return queryExecutions;
+        return this.listener.getQueryExecutions();
+    }
+
+    public QueryExecutionFactoryListener getListener() {
+        return listener;
     }
 }
