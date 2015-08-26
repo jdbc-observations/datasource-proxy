@@ -7,10 +7,13 @@ import net.ttddyy.dsproxy.test.QueriesHolder;
 import net.ttddyy.dsproxy.test.QueryExecution;
 import net.ttddyy.dsproxy.test.QueryHolder;
 import org.hamcrest.Description;
+import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
 import java.util.List;
+
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -50,7 +53,112 @@ public class ProxyTestDataSourceAssertions {
     }
 
 
-    public static Matcher<ProxyTestDataSource> totalCount(final int count) {
+    public static Matcher<ProxyTestDataSource> executionCount(int count) {
+        String msg = "queryExecutions size";
+        return new FeatureMatcher<ProxyTestDataSource, Integer>(equalTo(count), msg, msg) {
+            @Override
+            protected Integer featureValueOf(ProxyTestDataSource actual) {
+                return actual.getQueryExecutions().size();
+            }
+        };
+    }
+
+    public static Matcher<ProxyTestDataSource> statementCount(int count) {
+        String msg = "StatementExecution size";
+        return new FeatureMatcher<ProxyTestDataSource, Integer>(equalTo(count), msg, msg) {
+            @Override
+            protected Integer featureValueOf(ProxyTestDataSource actual) {
+                return actual.getStatements().size();
+            }
+        };
+    }
+
+    public static Matcher<ProxyTestDataSource> batchStatementCount(int count) {
+        String msg = "StatementBatchExecution size";
+        return new FeatureMatcher<ProxyTestDataSource, Integer>(equalTo(count), msg, msg) {
+            @Override
+            protected Integer featureValueOf(ProxyTestDataSource actual) {
+                return actual.getBatchStatements().size();
+            }
+        };
+    }
+
+    public static Matcher<ProxyTestDataSource> statementOrBatchStatementCount(int count) {
+        String msg = "StatementExecution or StatementBatchExecution size";
+        return new FeatureMatcher<ProxyTestDataSource, Integer>(equalTo(count), msg, msg) {
+            @Override
+            protected Integer featureValueOf(ProxyTestDataSource actual) {
+                return actual.getStatements().size() + actual.getBatchStatements().size();
+            }
+        };
+    }
+
+    public static Matcher<ProxyTestDataSource> preparedCount(int count) {
+        String msg = "PreparedExecution size";
+        return new FeatureMatcher<ProxyTestDataSource, Integer>(equalTo(count), msg, msg) {
+            @Override
+            protected Integer featureValueOf(ProxyTestDataSource actual) {
+                return actual.getPrepareds().size();
+            }
+        };
+    }
+
+    public static Matcher<ProxyTestDataSource> batchPreparedCount(int count) {
+        String msg = "PreparedBatchExecution size";
+        return new FeatureMatcher<ProxyTestDataSource, Integer>(equalTo(count), msg, msg) {
+            @Override
+            protected Integer featureValueOf(ProxyTestDataSource actual) {
+                return actual.getBatchPrepareds().size();
+            }
+        };
+    }
+
+    public static Matcher<ProxyTestDataSource> preparedOrBatchPreparedCount(int count) {
+        String msg = "PreparedExecution or PreparedBatchExecution size";
+        return new FeatureMatcher<ProxyTestDataSource, Integer>(equalTo(count), msg, msg) {
+            @Override
+            protected Integer featureValueOf(ProxyTestDataSource actual) {
+                return actual.getPrepareds().size() + actual.getBatchPrepareds().size();
+            }
+        };
+    }
+
+    public static Matcher<ProxyTestDataSource> callableCount(int count) {
+        String msg = "CallableExecution size";
+        return new FeatureMatcher<ProxyTestDataSource, Integer>(equalTo(count), msg, msg) {
+            @Override
+            protected Integer featureValueOf(ProxyTestDataSource actual) {
+                return actual.getCallables().size();
+            }
+        };
+
+    }
+
+    public static Matcher<ProxyTestDataSource> batchCallableCount(int count) {
+        String msg = "CallableBatchExecution size";
+        return new FeatureMatcher<ProxyTestDataSource, Integer>(equalTo(count), msg, msg) {
+            @Override
+            protected Integer featureValueOf(ProxyTestDataSource actual) {
+                return actual.getBatchCallables().size();
+            }
+        };
+
+    }
+
+    public static Matcher<ProxyTestDataSource> callableOrBatchCallableCount(int count) {
+        String msg = "CallableExecution or CallableBatchExecution size";
+        return new FeatureMatcher<ProxyTestDataSource, Integer>(equalTo(count), msg, msg) {
+            @Override
+            protected Integer featureValueOf(ProxyTestDataSource actual) {
+                return actual.getCallables().size() + actual.getBatchCallables().size();
+            }
+        };
+    }
+
+
+    // TODO: document difference of executionCount()  (BatchPrepared)
+
+    public static Matcher<ProxyTestDataSource> totalQueryCount(final int count) {
         return new TypeSafeMatcher<ProxyTestDataSource>() {
             @Override
             protected boolean matchesSafely(ProxyTestDataSource item) {

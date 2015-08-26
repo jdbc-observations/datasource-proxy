@@ -1,5 +1,9 @@
 package net.ttddyy.dsproxy.test.hamcrest;
 
+import net.ttddyy.dsproxy.test.CallableBatchExecution;
+import net.ttddyy.dsproxy.test.CallableExecution;
+import net.ttddyy.dsproxy.test.PreparedBatchExecution;
+import net.ttddyy.dsproxy.test.PreparedExecution;
 import net.ttddyy.dsproxy.test.ProxyTestDataSource;
 import net.ttddyy.dsproxy.test.QueryExecution;
 import net.ttddyy.dsproxy.test.QueryHolder;
@@ -12,12 +16,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.batchCallableCount;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.batchPreparedCount;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.batchStatementCount;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.callableCount;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.callableOrBatchCallableCount;
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.deleteCount;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.executionCount;
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.executions;
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.insertCount;
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.otherCount;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.preparedCount;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.preparedOrBatchPreparedCount;
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.selectCount;
-import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.totalCount;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.statementCount;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.statementOrBatchStatementCount;
+import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.totalQueryCount;
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.updateCount;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.failure;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.success;
@@ -105,7 +119,7 @@ public class ProxyTestDataSourceAssertionsTest {
         ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
         given(ds.getQueryExecutions()).willReturn(queryExecutions);
 
-        Assert.assertThat(ds, totalCount(5));
+        Assert.assertThat(ds, totalQueryCount(5));
     }
 
     @Test
@@ -114,7 +128,7 @@ public class ProxyTestDataSourceAssertionsTest {
         given(ds.getQueryExecutions()).willReturn(new ArrayList<QueryExecution>());  // return empty list
 
         try {
-            Assert.assertThat(ds, totalCount(4));
+            Assert.assertThat(ds, totalQueryCount(4));
             fail("AssertionError should be thrown");
         } catch (AssertionError e) {
             assertThat(e).hasMessage("\nExpected: 4 query executions\n     but: was 0 query executions");
@@ -303,7 +317,7 @@ public class ProxyTestDataSourceAssertionsTest {
         ds.getQueryExecutions().add(se);
         ds.getQueryExecutions().add(sbe);
 
-        Assert.assertThat(ds, totalCount(3));
+        Assert.assertThat(ds, totalQueryCount(3));
         Assert.assertThat(ds, selectCount(2));
         Assert.assertThat(ds, updateCount(1));
     }
@@ -338,4 +352,171 @@ public class ProxyTestDataSourceAssertionsTest {
         given(other.getQuery()).willReturn("OTHER...");
         return (QueryExecution) other;
     }
+
+
+    @Test
+    public void queryExecutionCount() {
+        List<QueryExecution> queryExecutions = new ArrayList<QueryExecution>();
+        queryExecutions.add(new StatementExecution());
+        queryExecutions.add(new StatementBatchExecution());
+        queryExecutions.add(new PreparedExecution());
+        queryExecutions.add(new PreparedBatchExecution());
+        queryExecutions.add(new CallableExecution());
+        queryExecutions.add(new CallableBatchExecution());
+
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getQueryExecutions()).willReturn(queryExecutions);
+
+        Assert.assertThat(ds, executionCount(6));
+
+        try {
+            Assert.assertThat(ds, executionCount(10));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: queryExecutions size <10>\n     but: queryExecutions size was <6>");
+        }
+    }
+
+
+    @Test
+    public void testStatementCount() {
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getStatements()).willReturn(Arrays.asList(new StatementExecution()));
+
+        Assert.assertThat(ds, statementCount(1));
+
+        try {
+            Assert.assertThat(ds, statementCount(10));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: StatementExecution size <10>\n     but: StatementExecution size was <1>");
+        }
+    }
+
+
+    @Test
+    public void testBatchStatementCount() {
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getBatchStatements()).willReturn(Arrays.asList(new StatementBatchExecution()));
+
+        Assert.assertThat(ds, batchStatementCount(1));
+
+        try {
+            Assert.assertThat(ds, batchStatementCount(10));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: StatementBatchExecution size <10>\n     but: StatementBatchExecution size was <1>");
+        }
+    }
+
+
+    @Test
+    public void testStatementOrBatchStatementCount() {
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getStatements()).willReturn(Arrays.asList(new StatementExecution()));
+        given(ds.getBatchStatements()).willReturn(Arrays.asList(new StatementBatchExecution()));
+
+        Assert.assertThat(ds, statementOrBatchStatementCount(2));
+
+        try {
+            Assert.assertThat(ds, statementOrBatchStatementCount(10));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: StatementExecution or StatementBatchExecution size <10>\n     but: StatementExecution or StatementBatchExecution size was <2>");
+        }
+    }
+
+
+    @Test
+    public void testPreparedCount() {
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getPrepareds()).willReturn(Arrays.asList(new PreparedExecution()));
+
+        Assert.assertThat(ds, preparedCount(1));
+
+        try {
+            Assert.assertThat(ds, preparedCount(10));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: PreparedExecution size <10>\n     but: PreparedExecution size was <1>");
+        }
+    }
+
+    @Test
+    public void testBatchPreparedCount() {
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getBatchPrepareds()).willReturn(Arrays.asList(new PreparedBatchExecution()));
+
+        Assert.assertThat(ds, batchPreparedCount(1));
+        try {
+            Assert.assertThat(ds, batchPreparedCount(10));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: PreparedBatchExecution size <10>\n     but: PreparedBatchExecution size was <1>");
+        }
+    }
+
+    @Test
+    public void testPreparedOrBatchPreparedCount() {
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getPrepareds()).willReturn(Arrays.asList(new PreparedExecution()));
+        given(ds.getBatchPrepareds()).willReturn(Arrays.asList(new PreparedBatchExecution()));
+
+        Assert.assertThat(ds, preparedOrBatchPreparedCount(2));
+
+        try {
+            Assert.assertThat(ds, preparedOrBatchPreparedCount(10));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: PreparedExecution or PreparedBatchExecution size <10>\n     but: PreparedExecution or PreparedBatchExecution size was <2>");
+        }
+
+    }
+
+    @Test
+    public void testCallableCount() {
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getCallables()).willReturn(Arrays.asList(new CallableExecution()));
+
+        Assert.assertThat(ds, callableCount(1));
+
+        try {
+            Assert.assertThat(ds, callableCount(10));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: CallableExecution size <10>\n     but: CallableExecution size was <1>");
+        }
+    }
+
+    @Test
+    public void testBatchCallableCount() {
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getBatchCallables()).willReturn(Arrays.asList(new CallableBatchExecution()));
+
+        Assert.assertThat(ds, batchCallableCount(1));
+        try {
+            Assert.assertThat(ds, batchCallableCount(10));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: CallableBatchExecution size <10>\n     but: CallableBatchExecution size was <1>");
+        }
+    }
+
+    @Test
+    public void testCallableOrBatchCallableCount() {
+        ProxyTestDataSource ds = mock(ProxyTestDataSource.class);
+        given(ds.getCallables()).willReturn(Arrays.asList(new CallableExecution()));
+        given(ds.getBatchCallables()).willReturn(Arrays.asList(new CallableBatchExecution()));
+
+        Assert.assertThat(ds, callableOrBatchCallableCount(2));
+
+        try {
+            Assert.assertThat(ds, callableOrBatchCallableCount(10));
+            fail("AssertionError should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: CallableExecution or CallableBatchExecution size <10>\n     but: CallableExecution or CallableBatchExecution size was <2>");
+        }
+
+    }
+
 }
