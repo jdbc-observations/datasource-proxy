@@ -298,7 +298,7 @@ public class ProxyTestDataSourceAssertions {
      * Example:
      * <pre> assertThat(ds, selectCount(3)); </pre>
      */
-    public static Matcher<ProxyTestDataSource> selectCount(final int count) {
+    public static Matcher<ProxyTestDataSource> selectCount(int count) {
         return new QueryTypeCountMatcher(QueryType.SELECT, count);
     }
 
@@ -308,7 +308,7 @@ public class ProxyTestDataSourceAssertions {
      * Example:
      * <pre> assertThat(ds, insertCount(3)); </pre>
      */
-    public static Matcher<ProxyTestDataSource> insertCount(final int count) {
+    public static Matcher<ProxyTestDataSource> insertCount(int count) {
         return new QueryTypeCountMatcher(QueryType.INSERT, count);
     }
 
@@ -318,7 +318,7 @@ public class ProxyTestDataSourceAssertions {
      * Example:
      * <pre> assertThat(ds, updateCount(3)); </pre>
      */
-    public static Matcher<ProxyTestDataSource> updateCount(final int count) {
+    public static Matcher<ProxyTestDataSource> updateCount(int count) {
         return new QueryTypeCountMatcher(QueryType.UPDATE, count);
     }
 
@@ -329,7 +329,7 @@ public class ProxyTestDataSourceAssertions {
      * Example:
      * <pre> assertThat(ds, deleteCount(3)); </pre>
      */
-    public static Matcher<ProxyTestDataSource> deleteCount(final int count) {
+    public static Matcher<ProxyTestDataSource> deleteCount(int count) {
         return new QueryTypeCountMatcher(QueryType.DELETE, count);
     }
 
@@ -339,7 +339,7 @@ public class ProxyTestDataSourceAssertions {
      * Example:
      * <pre> assertThat(ds, otherCount(3)); </pre>
      */
-    public static Matcher<ProxyTestDataSource> otherCount(final int count) {
+    public static Matcher<ProxyTestDataSource> otherCount(int count) {
         return new QueryTypeCountMatcher(QueryType.OTHER, count);
     }
 
