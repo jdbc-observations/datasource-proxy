@@ -30,6 +30,10 @@ public class ProxyTestDataSource extends ProxyDataSource {
         this.getInterceptorHolder().addListener(this.queryExecutionFactoryListener);
     }
 
+    public void reset() {
+        this.queryExecutionFactoryListener.reset();
+    }
+
     public List<StatementExecution> getStatements() {
         return getQueryExecutionsFilteredBy(StatementExecution.class);
     }

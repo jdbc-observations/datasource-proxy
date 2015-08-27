@@ -137,4 +137,20 @@ public class ProxyTestDataSourceTest {
 
     }
 
+    @Test
+    public void reset() throws Exception {
+        ProxyTestDataSource ds = new ProxyTestDataSource(this.databaseTestRule.dataSource);
+
+        Connection conn = ds.getConnection();
+        Statement stmt = conn.createStatement();
+        stmt.executeQuery("SELECT id FROM emp");
+
+        List<QueryExecution> queryExecutions = ds.getQueryExecutions();
+        assertThat(queryExecutions).hasSize(1);
+
+        ds.reset();
+
+        assertThat(ds.getQueryExecutions()).isEmpty();
+    }
+
 }
