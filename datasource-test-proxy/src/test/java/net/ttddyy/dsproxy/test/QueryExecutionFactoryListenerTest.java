@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 
 /**
@@ -272,5 +273,17 @@ public class QueryExecutionFactoryListenerTest {
         assertThat(batchEntry2.getOutParamsByIndex()).hasSize(1).containsEntry(20, 2000);
         assertThat(batchEntry2.getOutParamsByName()).hasSize(1).containsEntry("bar-out", 2000);
 
+    }
+
+    @Test
+    public void reset() {
+        QueryExecutionFactoryListener listener = new QueryExecutionFactoryListener();
+
+        QueryExecution qe = mock(QueryExecution.class);
+        listener.getQueryExecutions().add(qe);
+
+        listener.reset();
+
+        assertThat(listener.getQueryExecutions()).isEmpty();
     }
 }

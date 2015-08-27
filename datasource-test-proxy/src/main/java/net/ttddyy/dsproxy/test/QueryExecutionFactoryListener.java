@@ -215,4 +215,9 @@ public class QueryExecutionFactoryListener implements QueryExecutionListener {
     public List<QueryExecution> getQueryExecutions() {
         return queryExecutions;
     }
+
+    public void reset() {
+        this.queryExecutions.clear();
+    }
+
 }
