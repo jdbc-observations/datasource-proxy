@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 
 /**
  * @author Tadaya Tsuyukubo
+ * @since 1.4
  */
 public class DatabaseTestRule extends ExternalResource {
 
