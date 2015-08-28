@@ -13,6 +13,7 @@ public class PreparedExecution extends BaseQueryExecution implements QueryHolder
 
     public String query;
     public Map<Integer, Object> paramsByIndex = new LinkedHashMap<Integer, Object>();
+    public Map<Integer, Integer> setNullByIndex = new LinkedHashMap<Integer, Integer>();
 
     @Override
     public boolean isBatch() {
@@ -34,7 +35,15 @@ public class PreparedExecution extends BaseQueryExecution implements QueryHolder
     }
 
     @Override
+    public Map<Integer, Integer> getSetNullParamsByIndex() {
+        return this.setNullByIndex;
+    }
+
+    @Override
     public List<Integer> getParamIndexes() {
-        return new ArrayList<Integer>(this.paramsByIndex.keySet());
+        List<Integer> indexes = new ArrayList<Integer>();
+        indexes.addAll(this.paramsByIndex.keySet());
+        indexes.addAll(this.setNullByIndex.keySet());
+        return indexes;
     }
 }

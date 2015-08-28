@@ -12,6 +12,13 @@ public interface ParameterByIndexHolder extends ParameterHolder {
     Map<Integer, Object> getParamsByIndex();
 
     /**
+     * setNull operations.
+     *
+     * @return key is index, value is {@link java.sql.Types} (int).
+     */
+    Map<Integer, Integer> getSetNullParamsByIndex();
+
+    /**
      * Keys of parameters.
      *
      * @return Integer keys.

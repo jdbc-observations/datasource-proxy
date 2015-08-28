@@ -15,6 +15,8 @@ public class CallableBatchExecution extends BaseQueryExecution implements BatchP
 
         public Map<String, Object> paramsByName = new LinkedHashMap<String, Object>();
         public Map<Integer, Object> paramsByIndex = new LinkedHashMap<Integer, Object>();
+        public Map<String, Integer> setNullByName = new LinkedHashMap<String, Integer>();
+        public Map<Integer, Integer> setNullByIndex = new LinkedHashMap<Integer, Integer>();
         public Map<String, Object> outParamsByName = new LinkedHashMap<String, Object>();
         public Map<Integer, Object> outParamsByIndex = new LinkedHashMap<Integer, Object>();
 
@@ -37,13 +39,29 @@ public class CallableBatchExecution extends BaseQueryExecution implements BatchP
         }
 
         @Override
+        public Map<String, Integer> getSetNullParamsByName() {
+            return this.setNullByName;
+        }
+
+        @Override
+        public Map<Integer, Integer> getSetNullParamsByIndex() {
+            return this.setNullByIndex;
+        }
+
+        @Override
         public List<String> getParamNames() {
-            return new ArrayList<String>(this.paramsByName.keySet());
+            List<String> names = new ArrayList<String>();
+            names.addAll(this.paramsByName.keySet());
+            names.addAll(this.setNullByName.keySet());
+            return names;
         }
 
         @Override
         public List<Integer> getParamIndexes() {
-            return new ArrayList<Integer>(this.paramsByIndex.keySet());
+            List<Integer> indexes = new ArrayList<Integer>();
+            indexes.addAll(this.paramsByIndex.keySet());
+            indexes.addAll(this.setNullByIndex.keySet());
+            return indexes;
         }
 
         @Override

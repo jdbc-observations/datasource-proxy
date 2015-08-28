@@ -14,6 +14,7 @@ public class PreparedBatchExecution extends BaseQueryExecution implements QueryH
     public static class PreparedBatchExecutionEntry implements BatchExecutionEntry, ParameterByIndexHolder {
 
         public Map<Integer, Object> paramsByIndex = new LinkedHashMap<Integer, Object>();
+        public Map<Integer, Integer> setNullByIndex = new LinkedHashMap<Integer, Integer>();
 
         public void setParamsByIndex(Map<Integer, Object> paramsByIndex) {
             this.paramsByIndex = paramsByIndex;
@@ -21,12 +22,20 @@ public class PreparedBatchExecution extends BaseQueryExecution implements QueryH
 
         @Override
         public Map<Integer, Object> getParamsByIndex() {
-            return paramsByIndex;
+            return this.paramsByIndex;
+        }
+
+        @Override
+        public Map<Integer, Integer> getSetNullParamsByIndex() {
+            return this.setNullByIndex;
         }
 
         @Override
         public List<Integer> getParamIndexes() {
-            return new ArrayList<Integer>(this.paramsByIndex.keySet());
+            List<Integer> indexes = new ArrayList<Integer>();
+            indexes.addAll(this.paramsByIndex.keySet());
+            indexes.addAll(this.setNullByIndex.keySet());
+            return indexes;
         }
 
         @Override

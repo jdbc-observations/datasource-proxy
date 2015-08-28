@@ -9,6 +9,9 @@ import java.util.List;
 public interface BatchExecutionEntry {
 
     // TODO: implement values matcher??
+    /**
+     * This doesn't include values for "setNull" operations
+     */
     List<Object> getParamValues();
 
 }

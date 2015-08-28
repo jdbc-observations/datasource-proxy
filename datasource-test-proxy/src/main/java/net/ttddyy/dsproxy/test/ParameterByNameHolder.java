@@ -11,6 +11,8 @@ public interface ParameterByNameHolder extends ParameterHolder {
 
     Map<String, Object> getParamsByName();
 
+    Map<String, Integer> getSetNullParamsByName();
+
     /**
      * Keys of parameters.
      *
