@@ -9,11 +9,19 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
 /**
+ * Hamcrest matchers for {@link QueryHolder}.
+ *
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
 public class QueryHolderAssertions {
 
+    /**
+     * Matcher to examine the query with given {@link String} matcher.
+     *
+     * Example:
+     * <pre> assertThat(qe, query(startsWith("select"))); </pre>
+     */
     public static Matcher<? super QueryHolder> query(final Matcher<String> stringMatcher) {
         return new FeatureMatcher<QueryHolder, String>(stringMatcher, "query", "query") {
             @Override
@@ -23,6 +31,12 @@ public class QueryHolderAssertions {
         };
     }
 
+    /**
+     * Matcher to examine the query type.
+     *
+     * Example:
+     * <pre> assertThat(qe, queryType(SELECT)); </pre>
+     */
     public static Matcher<? super QueryHolder> queryType(final QueryType expectedType) {
 
         return new TypeSafeMatcher<QueryHolder>() {
@@ -54,22 +68,52 @@ public class QueryHolderAssertions {
         };
     }
 
+    /**
+     * Matcher to examine the query type is SELECT.
+     *
+     * Example:
+     * <pre> assertThat(qe, select()); </pre>
+     */
     public static Matcher<? super QueryHolder> select() {
         return queryType(QueryType.SELECT);
     }
 
+    /**
+     * Matcher to examine the query type is SELECT.
+     *
+     * Example:
+     * <pre> assertThat(qe, insert()); </pre>
+     */
     public static Matcher<? super QueryHolder> insert() {
         return queryType(QueryType.INSERT);
     }
 
+    /**
+     * Matcher to examine the query type is SELECT.
+     *
+     * Example:
+     * <pre> assertThat(qe, update()); </pre>
+     */
     public static Matcher<? super QueryHolder> update() {
         return queryType(QueryType.UPDATE);
     }
 
+    /**
+     * Matcher to examine the query type is SELECT.
+     *
+     * Example:
+     * <pre> assertThat(qe, delete()); </pre>
+     */
     public static Matcher<? super QueryHolder> delete() {
         return queryType(QueryType.DELETE);
     }
 
+    /**
+     * Matcher to examine the query type is SELECT.
+     *
+     * Example:
+     * <pre> assertThat(qe, other()); </pre>
+     */
     public static Matcher<? super QueryHolder> other() {
         return queryType(QueryType.OTHER);
     }
