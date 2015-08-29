@@ -177,62 +177,118 @@ public class ParameterHolderAssertions {
         };
     }
 
-    public static Matcher<? super ParameterHolder> paramAsString(final Integer index, Matcher<? super String> matcher) {
+    public static Matcher<? super ParameterHolder> paramAsString(Integer index, Matcher<? super String> matcher) {
         return param(index, String.class, matcher);
     }
 
-    public static Matcher<? super ParameterHolder> paramAsInteger(final Integer index, Matcher<? super Integer> matcher) {
+    public static Matcher<? super ParameterHolder> paramAsInteger(Integer index, Matcher<? super Integer> matcher) {
         return param(index, Integer.class, matcher);
     }
 
-    public static Matcher<? super ParameterHolder> paramAsLong(final Integer index, Matcher<? super Long> matcher) {
+    public static Matcher<? super ParameterHolder> paramAsLong(Integer index, Matcher<? super Long> matcher) {
         return param(index, Long.class, matcher);
     }
 
-    public static Matcher<? super ParameterHolder> paramAsDouble(final Integer index, Matcher<? super Double> matcher) {
+    public static Matcher<? super ParameterHolder> paramAsDouble(Integer index, Matcher<? super Double> matcher) {
         return param(index, Double.class, matcher);
     }
 
-    public static Matcher<? super ParameterHolder> paramAsShort(final Integer index, Matcher<? super Short> matcher) {
+    public static Matcher<? super ParameterHolder> paramAsShort(Integer index, Matcher<? super Short> matcher) {
         return param(index, Short.class, matcher);
     }
 
-    public static Matcher<? super ParameterHolder> paramAsBoolean(final Integer index, Matcher<? super Boolean> matcher) {
+    public static Matcher<? super ParameterHolder> paramAsBoolean(Integer index, Matcher<? super Boolean> matcher) {
         return param(index, Boolean.class, matcher);
     }
 
-    public static Matcher<? super ParameterHolder> paramAsByte(final Integer index, Matcher<? super Byte> matcher) {
+    public static Matcher<? super ParameterHolder> paramAsByte(Integer index, Matcher<? super Byte> matcher) {
         return param(index, Byte.class, matcher);
     }
 
-    public static Matcher<? super ParameterHolder> paramAsFloat(final Integer index, Matcher<? super Float> matcher) {
+    public static Matcher<? super ParameterHolder> paramAsFloat(Integer index, Matcher<? super Float> matcher) {
         return param(index, Float.class, matcher);
     }
 
-    public static Matcher<? super ParameterHolder> paramAsBigDecimal(final Integer index, Matcher<? super BigDecimal> matcher) {
+    public static Matcher<? super ParameterHolder> paramAsBigDecimal(Integer index, Matcher<? super BigDecimal> matcher) {
         return param(index, BigDecimal.class, matcher);
     }
 
-    public static Matcher<? super ParameterHolder> paramAsBytes(final Integer index, Matcher<? super byte[]> matcher) {
+    public static Matcher<? super ParameterHolder> paramAsBytes(Integer index, Matcher<? super byte[]> matcher) {
         return param(index, byte[].class, matcher);
     }
 
-    public static Matcher<? super ParameterHolder> paramAsDate(final Integer index, Matcher<? super Date> matcher) {
+    public static Matcher<? super ParameterHolder> paramAsDate(Integer index, Matcher<? super Date> matcher) {
         return param(index, Date.class, matcher);
     }
 
-    public static Matcher<? super ParameterHolder> paramAsTime(final Integer index, Matcher<? super Time> matcher) {
+    public static Matcher<? super ParameterHolder> paramAsTime(Integer index, Matcher<? super Time> matcher) {
         return param(index, Time.class, matcher);
     }
 
-    public static Matcher<? super ParameterHolder> paramAsTimestamp(final Integer index, Matcher<? super Timestamp> matcher) {
+    public static Matcher<? super ParameterHolder> paramAsTimestamp(Integer index, Matcher<? super Timestamp> matcher) {
         return param(index, Timestamp.class, matcher);
     }
 
-    public static Matcher<? super ParameterHolder> paramAsArray(final Integer index, Matcher<? super Array> matcher) {
+
+    public static Matcher<? super ParameterHolder> paramAsArray(Integer index, Matcher<? super Array> matcher) {
         return param(index, Array.class, matcher);
     }
 
+    public static Matcher<? super ParameterHolder> paramAsString(String name, Matcher<? super String> matcher) {
+        return param(name, String.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsInteger(String name, Matcher<? super Integer> matcher) {
+        return param(name, Integer.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsLong(String name, Matcher<? super Long> matcher) {
+        return param(name, Long.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsDouble(String name, Matcher<? super Double> matcher) {
+        return param(name, Double.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsShort(String name, Matcher<? super Short> matcher) {
+        return param(name, Short.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsBoolean(String name, Matcher<? super Boolean> matcher) {
+        return param(name, Boolean.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsByte(String name, Matcher<? super Byte> matcher) {
+        return param(name, Byte.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsFloat(String name, Matcher<? super Float> matcher) {
+        return param(name, Float.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsBigDecimal(String name, Matcher<? super BigDecimal> matcher) {
+        return param(name, BigDecimal.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsBytes(String name, Matcher<? super byte[]> matcher) {
+        return param(name, byte[].class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsDate(String name, Matcher<? super Date> matcher) {
+        return param(name, Date.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsTime(String name, Matcher<? super Time> matcher) {
+        return param(name, Time.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsTimestamp(String name, Matcher<? super Timestamp> matcher) {
+        return param(name, Timestamp.class, matcher);
+    }
+
+    public static Matcher<? super ParameterHolder> paramAsArray(String name, Matcher<? super Array> matcher) {
+        return param(name, Array.class, matcher);
+    }
 
     public static Matcher<? super ParameterHolder> paramSetNull(final int index, int sqlType) {
         SqlTypeMatcher sqlTypeMatcher = new SqlTypeMatcher(sqlType, "NULL[", "]");
@@ -279,6 +335,6 @@ public class ParameterHolderAssertions {
     }
 
     // Blob, Clob, NClob, java.net.URL
-    // TOOD: paramAs...(String name, ...)
+
 
 }

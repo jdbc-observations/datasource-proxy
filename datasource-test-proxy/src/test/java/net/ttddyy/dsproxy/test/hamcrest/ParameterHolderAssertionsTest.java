@@ -319,6 +319,50 @@ public class ParameterHolderAssertionsTest {
         Assert.assertThat(holder, paramAsArray(23, sameInstance(array)));
     }
 
+    @Test
+    public void paramAsWithName() {
+        byte b = 0xa;
+        byte[] bytes = new byte[]{0xa, 0xb};
+        Date date = new Date(1000);
+        Time time = new Time(1000);
+        Timestamp timestamp = new Timestamp(1000);
+        Array array = mock(Array.class);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("aa", "100");
+        map.put("bb", 101);
+        map.put("cc", 102L);
+        map.put("dd", (double) 103);
+        map.put("ee", (short) 104);
+        map.put("ff", false);
+        map.put("gg", b);
+        map.put("hh", (float) 105);
+        map.put("ii", new BigDecimal(106));
+        map.put("jj", bytes);
+        map.put("kk", date);
+        map.put("ll", time);
+        map.put("mm", timestamp);
+        map.put("nn", array);
+
+        ParameterByNameHolder holder = mock(ParameterByNameHolder.class);
+        given(holder.getParamsByName()).willReturn(map);
+
+        Assert.assertThat(holder, paramAsString("aa", is("100")));
+        Assert.assertThat(holder, paramAsInteger("bb", is(101)));
+        Assert.assertThat(holder, paramAsLong("cc", is(102L)));
+        Assert.assertThat(holder, paramAsDouble("dd", is((double) 103)));
+        Assert.assertThat(holder, paramAsShort("ee", is((short) 104)));
+        Assert.assertThat(holder, paramAsBoolean("ff", is(false)));
+        Assert.assertThat(holder, paramAsByte("gg", is(b)));
+        Assert.assertThat(holder, paramAsFloat("hh", is((float) 105)));
+        Assert.assertThat(holder, paramAsBigDecimal("ii", is(new BigDecimal(106))));
+        Assert.assertThat(holder, paramAsBytes("jj", is(bytes)));
+        Assert.assertThat(holder, paramAsDate("kk", is(date)));
+        Assert.assertThat(holder, paramAsTime("ll", is(time)));
+        Assert.assertThat(holder, paramAsTimestamp("mm", is(timestamp)));
+        Assert.assertThat(holder, paramAsArray("nn", sameInstance(array)));
+    }
+
 
     @Test
     public void setNullByIndex() {
@@ -356,6 +400,7 @@ public class ParameterHolderAssertionsTest {
         }
 
     }
+
     @Test
     public void setNullByName() {
         Map<String, Integer> map = new HashMap<String, Integer>();
