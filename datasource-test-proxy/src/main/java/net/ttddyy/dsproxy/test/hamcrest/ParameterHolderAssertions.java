@@ -150,7 +150,7 @@ public class ParameterHolderAssertions {
     }
 
     //param(1, String.class, is("FOO"))
-    public static <T> Matcher<? super ParameterHolder> param(final Integer index, final Class<T> clazz, Matcher<? super T> matcher) {
+    public static <T> Matcher<? super ParameterHolder> param(final int index, final Class<T> clazz, Matcher<? super T> matcher) {
         return new ParameterHolderMatcher.ParameterByIndexMatcher<T>(matcher) {
             @Override
             @SuppressWarnings("unchecked")
@@ -233,9 +233,52 @@ public class ParameterHolderAssertions {
         return param(index, Array.class, matcher);
     }
 
-    // TODO: handle setNull
+
+    public static Matcher<? super ParameterHolder> paramSetNull(final int index, int sqlType) {
+        SqlTypeMatcher sqlTypeMatcher = new SqlTypeMatcher(sqlType, "NULL[", "]");
+        return new ParameterHolderMatcher.ParameterByIndexMatcher<Integer>(sqlTypeMatcher) {
+            @Override
+            public Integer featureValueOf(ParameterByIndexHolder actual) {
+                return actual.getSetNullParamsByIndex().get(index);
+            }
+
+            @Override
+            public boolean validateParameterByIndex(ParameterByIndexHolder actual, Description descForExpected, Description descForFailure) {
+                if (!actual.getSetNullParamsByIndex().containsKey(index)) {
+                    descForExpected.appendText("parameter index " + index);
+                    descForFailure.appendText("parameter index " + index + " doesn't exist.");
+                    return false;
+                }
+                descForExpected.appendText("params[" + index + "] is ");
+                descForFailure.appendText("params[" + index + "] was ");
+                return true;
+            }
+        };
+    }
+
+    public static Matcher<? super ParameterHolder> paramSetNull(final String name, int sqlType) {
+        SqlTypeMatcher sqlTypeMatcher = new SqlTypeMatcher(sqlType, "NULL[", "]");
+        return new ParameterHolderMatcher.ParameterByNameMatcher<Integer>(sqlTypeMatcher) {
+            @Override
+            public Integer featureValueOf(ParameterByNameHolder actual) {
+                return actual.getSetNullParamsByName().get(name);
+            }
+
+            @Override
+            public boolean validateParameterByName(ParameterByNameHolder actual, Description descForExpected, Description descForFailure) {
+                if (!actual.getSetNullParamsByName().containsKey(name)) {
+                    descForExpected.appendText("parameter name " + name);
+                    descForFailure.appendText("parameter name " + name + " doesn't exist.");
+                    return false;
+                }
+                descForExpected.appendText("params[" + name + "] is ");
+                descForFailure.appendText("params[" + name + "] was ");
+                return true;
+            }
+        };
+    }
+
     // Blob, Clob, NClob, java.net.URL
     // TOOD: paramAs...(String name, ...)
-
 
 }

@@ -15,12 +15,24 @@ public class ParameterSetOperation {
      * Check the given operation is {@link java.sql.CallableStatement#registerOutParameter" method by method name.
      *
      * @param operation a parameter set operation
-     * @return true if it is a registerOutParameter operation
+     * @return true if it is a {@code registerOutParameter} operation
      * @since 1.4
      */
     public static boolean isRegisterOutParameterOperation(ParameterSetOperation operation) {
         String methodName = operation.getMethod().getName();
         return StatementMethodNames.PARAMETER_METHOD_REGISTER_OUT_PARAMETER.equals(methodName);
+    }
+
+    /**
+     * Check the given operation is {@code setNull} method by method name.
+     *
+     * @param operation a parameter set operation
+     * @return true if it is a {@code setNull} operation
+     * @since 1.4
+     */
+    public static boolean isSetNullParameterOperation(ParameterSetOperation operation) {
+        String methodName = operation.getMethod().getName();
+        return StatementMethodNames.PARAMETER_METHOD_SET_NULL.equals(methodName);
     }
 
     private Method method;

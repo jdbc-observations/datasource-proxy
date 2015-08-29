@@ -10,6 +10,7 @@ import java.sql.Array;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramAs
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramAsTimestamp;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramIndexes;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramNames;
+import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramSetNull;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsByIndex;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsByName;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -317,4 +319,77 @@ public class ParameterHolderAssertionsTest {
         Assert.assertThat(holder, paramAsArray(23, sameInstance(array)));
     }
 
+
+    @Test
+    public void setNullByIndex() {
+        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+        map.put(10, Types.ARRAY);
+        map.put(1, 9999);
+
+        ParameterByIndexHolder holder = mock(ParameterByIndexHolder.class);
+        given(holder.getSetNullParamsByIndex()).willReturn(map);
+
+        Assert.assertThat(holder, paramSetNull(10, Types.ARRAY));
+
+        // index out of range
+        try {
+            Assert.assertThat(holder, paramSetNull(100, Types.ARRAY));
+            fail("assertion should fail");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: parameter index 100\n     but: parameter index 100 doesn't exist.");
+        }
+
+        // type mismatch
+        try {
+            Assert.assertThat(holder, paramSetNull(10, Types.BIT));
+            fail("assertion should fail");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: params[10] is NULL[BIT:-7]\n     but: params[10] was NULL[ARRAY:2003]");
+        }
+
+        // unknown sql type
+        try {
+            Assert.assertThat(holder, paramSetNull(1, Types.BIT));
+            fail("assertion should fail");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: params[1] is NULL[BIT:-7]\n     but: params[1] was NULL[UNKNOWN:9999]");
+        }
+
+    }
+    @Test
+    public void setNullByName() {
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        map.put("foo", Types.ARRAY);
+        map.put("bar", 9999);
+
+        ParameterByNameHolder holder = mock(ParameterByNameHolder.class);
+        given(holder.getSetNullParamsByName()).willReturn(map);
+
+        Assert.assertThat(holder, paramSetNull("foo", Types.ARRAY));
+
+        // no key
+        try {
+            Assert.assertThat(holder, paramSetNull("NOT_EXIST", Types.ARRAY));
+            fail("assertion should fail");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: parameter name NOT_EXIST\n     but: parameter name NOT_EXIST doesn't exist.");
+        }
+
+        // type mismatch
+        try {
+            Assert.assertThat(holder, paramSetNull("foo", Types.BIT));
+            fail("assertion should fail");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: params[foo] is NULL[BIT:-7]\n     but: params[foo] was NULL[ARRAY:2003]");
+        }
+
+        // unknown sql type
+        try {
+            Assert.assertThat(holder, paramSetNull("bar", Types.BIT));
+            fail("assertion should fail");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: params[bar] is NULL[BIT:-7]\n     but: params[bar] was NULL[UNKNOWN:9999]");
+        }
+
+    }
 }
