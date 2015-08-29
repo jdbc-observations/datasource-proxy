@@ -185,8 +185,12 @@ public class QueryExecutionFactoryListener implements QueryExecutionListener {
         Integer key = (Integer) args[0];
         Object value = args[1];  // use second arg as value for the parameter-set-operation
 
-        holder.getParamIndexes().add(key);
-        holder.getParamsByIndex().put(key, value);
+        if (ParameterSetOperation.isSetNullParameterOperation(param)) {
+            holder.getSetNullParamsByIndex().put(key, (Integer) value);
+        } else {
+            holder.getParamsByIndex().put(key, value);
+        }
+
     }
 
     private void populateParameterByName(ParameterByNameHolder holder, ParameterSetOperation param) {
@@ -194,8 +198,11 @@ public class QueryExecutionFactoryListener implements QueryExecutionListener {
         String key = (String) args[0];
         Object value = args[1];  // use second arg as value for the parameter-set-operation
 
-        holder.getParamNames().add(key);
-        holder.getParamsByName().put(key, value);
+        if (ParameterSetOperation.isSetNullParameterOperation(param)) {
+            holder.getSetNullParamsByName().put(key, (Integer) value);
+        } else {
+            holder.getParamsByName().put(key, value);
+        }
     }
 
     private void populateOutParameter(OutParameterHolder holder, ParameterSetOperation param) {
