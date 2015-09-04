@@ -374,6 +374,7 @@ public class ParameterHolderAssertionsTest {
         given(holder.getSetNullParamsByIndex()).willReturn(map);
 
         Assert.assertThat(holder, paramSetNull(10, Types.ARRAY));
+        Assert.assertThat(holder, paramSetNull(10));
 
         // index out of range
         try {
@@ -399,6 +400,15 @@ public class ParameterHolderAssertionsTest {
             assertThat(e).hasMessage("\nExpected: params[1] is NULL[BIT:-7]\n     but: params[1] was NULL[UNKNOWN:9999]");
         }
 
+
+        // not exist
+        try {
+            Assert.assertThat(holder, paramSetNull(100));
+            fail("assertion should fail");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: params[100] is NULL\n     but: setNull indexes are [<1>, <10>]");
+        }
+
     }
 
     @Test
@@ -411,6 +421,7 @@ public class ParameterHolderAssertionsTest {
         given(holder.getSetNullParamsByName()).willReturn(map);
 
         Assert.assertThat(holder, paramSetNull("foo", Types.ARRAY));
+        Assert.assertThat(holder, paramSetNull("foo"));
 
         // no key
         try {
@@ -434,6 +445,15 @@ public class ParameterHolderAssertionsTest {
             fail("assertion should fail");
         } catch (AssertionError e) {
             assertThat(e).hasMessage("\nExpected: params[bar] is NULL[BIT:-7]\n     but: params[bar] was NULL[UNKNOWN:9999]");
+        }
+
+
+        // not exist
+        try {
+            Assert.assertThat(holder, paramSetNull("NOT_EXIST"));
+            fail("assertion should fail");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: params[NOT_EXIST] is NULL\n     but: setNull names are [\"bar\", \"foo\"]");
         }
 
     }

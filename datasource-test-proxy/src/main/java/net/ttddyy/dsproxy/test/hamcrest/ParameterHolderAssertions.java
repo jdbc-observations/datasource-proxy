@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy.test.hamcrest;
 import net.ttddyy.dsproxy.test.ParameterByIndexHolder;
 import net.ttddyy.dsproxy.test.ParameterByNameHolder;
 import net.ttddyy.dsproxy.test.ParameterHolder;
+import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -14,6 +15,9 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Hamcrest matchers for {@link ParameterHolder}({@link ParameterByIndexHolder}, {@link ParameterByNameHolder}).
@@ -598,8 +602,26 @@ public class ParameterHolderAssertions {
      * Example:
      * <pre> assertThat(parameterByNameHolder, paramSetNull("foo")); </pre>
      */
-    public static Matcher<? super ParameterHolder> paramSetNull(String name) {
-        return null;  // TODO: implement
+    public static Matcher<? super ParameterHolder> paramSetNull(final String name) {
+        EmptyParameterHolderMatcher emptyMatcher = new EmptyParameterHolderMatcher();
+        return new ParameterHolderMatcher.ParameterByNameMatcher<ParameterHolder>(emptyMatcher) {
+            @Override
+            public ParameterHolder featureValueOf(ParameterByNameHolder actual) {
+                return null;  // won't be used
+            }
+
+            @Override
+            public boolean validateParameterByName(ParameterByNameHolder actual, Description descForExpected, Description descForFailure) {
+                Set<String> names = actual.getSetNullParamsByName().keySet();
+                if (!names.contains(name)) {
+                    descForExpected.appendText("params[" + name + "] is NULL");
+                    SortedSet<String> sorted = new TreeSet<String>(names);
+                    descForFailure.appendText("setNull names are ").appendValueList("[", ", ", "]", sorted);
+                    return false;
+                }
+                return true;
+            }
+        };
     }
 
     /**
@@ -608,8 +630,39 @@ public class ParameterHolderAssertions {
      * Example:
      * <pre> assertThat(parameterByIndexHolder, paramSetNull(1)); </pre>
      */
-    public static Matcher<? super ParameterHolder> paramSetNull(int index) {
-        return null;  // TODO: implement
+    public static Matcher<? super ParameterHolder> paramSetNull(final int index) {
+        EmptyParameterHolderMatcher emptyMatcher = new EmptyParameterHolderMatcher();
+        return new ParameterHolderMatcher.ParameterByIndexMatcher<ParameterHolder>(emptyMatcher) {
+            @Override
+            public ParameterHolder featureValueOf(ParameterByIndexHolder actual) {
+                return null;  // won't be used
+            }
+
+            @Override
+            public boolean validateParameterByIndex(ParameterByIndexHolder actual, Description descForExpected, Description descForFailure) {
+                Set<Integer> indexes = actual.getSetNullParamsByIndex().keySet();
+                if (!indexes.contains(index)) {
+                    descForExpected.appendText("params[" + index + "] is NULL");
+                    SortedSet<Integer> sorted = new TreeSet<Integer>(indexes);
+                    descForFailure.appendText("setNull indexes are ").appendValueList("[", ", ", "]", sorted);
+                    return false;
+                }
+                return true;
+            }
+        };
+    }
+
+
+    private static class EmptyParameterHolderMatcher extends BaseMatcher<ParameterHolder> {
+
+        @Override
+        public boolean matches(Object item) {
+            return true;
+        }
+
+        @Override
+        public void describeTo(Description description) {
+        }
     }
 
 }
