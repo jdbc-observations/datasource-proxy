@@ -8,6 +8,7 @@ import net.ttddyy.dsproxy.test.ParameterHolder;
 import net.ttddyy.dsproxy.test.PreparedBatchExecution;
 import net.ttddyy.dsproxy.test.PreparedExecution;
 import net.ttddyy.dsproxy.test.ProxyTestDataSource;
+import net.ttddyy.dsproxy.test.QueriesHolder;
 import net.ttddyy.dsproxy.test.QueryExecution;
 import net.ttddyy.dsproxy.test.QueryHolder;
 import net.ttddyy.dsproxy.test.StatementBatchExecution;
@@ -557,6 +558,18 @@ public class DataSourceProxyMatchers {
     /////////////////////////////////////////////////////////////////////////////
     // QueriesHolderAssertions
     /////////////////////////////////////////////////////////////////////////////
+
+    public static Matcher<? super QueriesHolder> queries(int index, Matcher<String> stringMatcher) {
+        return QueriesHolderAssertions.queries(index, stringMatcher);
+    }
+
+    public static Matcher<? super QueriesHolder> queries(Matcher<? super Collection<String>> collectionMatcher) {
+        return QueriesHolderAssertions.queries(collectionMatcher);
+    }
+
+    public static Matcher<? super QueriesHolder> queryTypes(int index, Matcher<? super QueryHolder> queryHolderMatcher) {
+        return QueriesHolderAssertions.queryTypes(index, queryHolderMatcher);
+    }
 
     /////////////////////////////////////////////////////////////////////////////
     // BatchParameterHolderAssertions
