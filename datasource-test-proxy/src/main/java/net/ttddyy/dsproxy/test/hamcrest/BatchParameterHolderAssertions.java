@@ -13,11 +13,19 @@ import static org.hamcrest.Matchers.equalTo;
 
 
 /**
+ * Hamcrest matchers for {@link BatchParameterHolder}.
+ *
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
 public class BatchParameterHolderAssertions {
 
+    /**
+     * Matcher to check the batch size.
+     *
+     * Example:
+     * <pre> assertThat(ds.getBatchStatements(), batchSize(3)); </pre>
+     */
     public static Matcher<? super BatchParameterHolder> batchSize(final int batchSize) {
         return new FeatureMatcher<BatchParameterHolder, Integer>(equalTo(batchSize), "batchSize", "batchSize") {
             @Override
@@ -27,7 +35,12 @@ public class BatchParameterHolderAssertions {
         };
     }
 
-
+    /**
+     * Matcher to check the given index in batch matches with given parameter matcher.
+     *
+     * Example:
+     * <pre> assertThat(ds.getBatchStatements(), batch(0, param(1, String.class, is("FOO")))); </pre>
+     */
     public static Matcher<? super BatchParameterHolder> batch(final int index, final Matcher<? super ParameterHolder> parameterHolderMatcher) {
         return new CompositeMatcher<BatchParameterHolder, ParameterHolder>(parameterHolderMatcher) {
             @Override
@@ -64,8 +77,4 @@ public class BatchParameterHolderAssertions {
 
     }
 
-
-    // TODO: alias methods
-    // preparedBatch(
-    // batchParamKeys  or preparedBatchParamKeys
 }
