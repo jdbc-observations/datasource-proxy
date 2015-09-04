@@ -575,7 +575,22 @@ public class DataSourceProxyMatchers {
     // BatchParameterHolderAssertions
     /////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Matcher to check the batch size.
+     *
+     * Example:
+     * <pre> assertThat(ds.getBatchStatements(), batchSize(3)); </pre>
+     */
+    public static Matcher<? super BatchParameterHolder> batchSize(int batchSize) {
+        return BatchParameterHolderAssertions.batchSize(batchSize);
+    }
 
+    /**
+     * Matcher to check the given index in batch matches with given parameter matcher.
+     *
+     * Example:
+     * <pre> assertThat(ds.getBatchStatements(), batch(0, param(1, String.class, is("FOO")))); </pre>
+     */
     public static Matcher<? super BatchParameterHolder> batch(int index, Matcher<? super ParameterHolder> parameterHolderMatcher) {
         return BatchParameterHolderAssertions.batch(index, parameterHolderMatcher);
     }
