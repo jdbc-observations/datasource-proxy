@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.test.hamcrest;
 
+import net.ttddyy.dsproxy.test.OutParameterHolder;
 import net.ttddyy.dsproxy.test.ParameterByIndexHolder;
 import net.ttddyy.dsproxy.test.ParameterByNameHolder;
 import net.ttddyy.dsproxy.test.ParameterHolder;
@@ -13,8 +14,6 @@ import org.hamcrest.StringDescription;
  * @since 1.4
  */
 public abstract class ParameterHolderMatcher<S> extends BaseMatcher<ParameterHolder> {
-
-    // TODO: implement validation messages
 
     protected static enum MatchBy {
         INDEX, NAME, OUTPARAM
@@ -52,7 +51,7 @@ public abstract class ParameterHolderMatcher<S> extends BaseMatcher<ParameterHol
                 return false;  // validation failure
             }
             featureValue = getFeatureValue(byIndexHolder);
-        } else {
+        } else if (MatchBy.NAME.equals(this.matchBy)) {
             if (!(holder instanceof ParameterByNameHolder)) {
                 populateCompatibilityFailureMessage(ParameterByNameHolder.class, holder);
                 return false;
@@ -62,6 +61,16 @@ public abstract class ParameterHolderMatcher<S> extends BaseMatcher<ParameterHol
                 return false;  // validation failure
             }
             featureValue = getFeatureValue(byNameHolder);
+        } else {
+            if (!(holder instanceof OutParameterHolder)) {
+                populateCompatibilityFailureMessage(OutParameterHolder.class, holder);
+                return false;
+            }
+            OutParameterHolder byOutParamHolder = (OutParameterHolder) holder;
+            if (!validateParameterByOutParam(byOutParamHolder, this.descForExpected, this.descForFailure)) {
+                return false;  // validation failure
+            }
+            featureValue = getFeatureValue(byOutParamHolder);
         }
 
         if (!subMatcher.matches(featureValue)) {
@@ -89,11 +98,19 @@ public abstract class ParameterHolderMatcher<S> extends BaseMatcher<ParameterHol
         throw new UnsupportedOperationException("Subclass that uses byName should implement this method.");
     }
 
+    public S getFeatureValue(OutParameterHolder actual) {
+        throw new UnsupportedOperationException("Subclass that uses byName should implement this method.");
+    }
+
     public boolean validateParameterByIndex(ParameterByIndexHolder actual, Description descForExpected, Description descForFailure) {
         return true;
     }
 
     public boolean validateParameterByName(ParameterByNameHolder actual, Description descForExpected, Description descForFailure) {
+        return true;
+    }
+
+    public boolean validateParameterByOutParam(OutParameterHolder actual, Description descForExpected, Description descForFailure) {
         return true;
     }
 
@@ -133,5 +150,19 @@ public abstract class ParameterHolderMatcher<S> extends BaseMatcher<ParameterHol
         }
 
         public abstract T featureValueOf(ParameterByNameHolder actual);
+    }
+
+    public static abstract class OutParamMatcher<T> extends ParameterHolderMatcher<T> {
+
+        public OutParamMatcher(Matcher<? super T> subMatcher) {
+            super(subMatcher, MatchBy.OUTPARAM);
+        }
+
+        @Override
+        public T getFeatureValue(OutParameterHolder actual) {
+            return featureValueOf(actual);
+        }
+
+        public abstract T featureValueOf(OutParameterHolder actual);
     }
 }

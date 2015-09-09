@@ -1,203 +1,177 @@
 package net.ttddyy.dsproxy.test.hamcrest;
 
-import net.ttddyy.dsproxy.test.CallableBatchExecution;
-import net.ttddyy.dsproxy.test.CallableExecution;
 import net.ttddyy.dsproxy.test.OutParameterHolder;
-import net.ttddyy.dsproxy.test.ParameterByIndexHolder;
-import net.ttddyy.dsproxy.test.ParameterByNameHolder;
 import net.ttddyy.dsproxy.test.ParameterHolder;
-import net.ttddyy.dsproxy.test.PreparedExecution;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 
 import java.sql.SQLType;
 import java.util.Collection;
-import java.util.Map;
-
-import static net.ttddyy.dsproxy.test.hamcrest.BatchParameterHolderAssertions.batch;
-import static org.hamcrest.Matchers.allOf;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
+ * Hamcrest matchers for {@link OutParameterHolder}.
+ *
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
 public class OutParameterHolderAssertions {
 
-    // outParamNames(Matcher<? super Collection<String>>)
-    // outParamIndexes(Matcher<? super Collection<Integer>>)
-    // outParam(String, int)
-    // outParam(String, SQLType)
-    // outParam(int, int)
-    // outParam(int, SQLType)
-
-    public static Matcher<? super ParameterHolder> outParamNames(final Matcher<? super Collection<String>> matcher) {
-        return null;
-    }
-    public static Matcher<? super ParameterHolder> outParamIndexes(final Matcher<? super Collection<Integer>> matcher) {
-        return null;
-    }
-    public static Matcher<? super ParameterHolder> outParam(final String paramName, final int sqlType) {
-        return null;
-    }
-    public static Matcher<? super ParameterHolder> outParam(final String paramName, final SQLType sqlType) {
-        return null;
-    }
-    public static Matcher<? super ParameterHolder> outParam(final int index, final int sqlType) {
-        return null;
-    }
-    public static Matcher<? super ParameterHolder> outParam(final int index, final SQLType sqlType) {
-        return null;
+    /**
+     * Matcher to examine out-parameter names as a {@link Collection} of {@link String}.
+     * <p>
+     * Example:
+     * <pre> assertThat(outParameterHolder, outParamNames(hasItem("foo"), hasItem("bar"))); </pre>
+     *
+     * @param collectionMatcher a {@link Collection} matcher
+     */
+    public static Matcher<? super ParameterHolder> outParamNames(Matcher<? super Collection<String>> collectionMatcher) {
+        return new ParameterHolderMatcher.OutParamMatcher<Collection<String>>(collectionMatcher) {
+            @Override
+            public Collection<String> featureValueOf(OutParameterHolder actual) {
+                return actual.getOutParamNames();
+            }
+        };
     }
 
-    // TODO: REMOVE
-    public static void main(String[] args) {
-        CallableExecution ce = new CallableExecution();
-        Assert.assertThat(ce, outParam(1, 100));
-        Assert.assertThat(ce, allOf(outParam(1, 100), outParam(1, 100)));
-
-        PreparedExecution pe = new PreparedExecution();
-        Assert.assertThat(pe, outParam(1, 100));  // should fail
-
-        CallableBatchExecution cbe = new CallableBatchExecution();
-        Assert.assertThat(cbe, batch(0, outParam(1, 100)));
+    /**
+     * Matcher to examine out-parameter indexes as a {@link Collection} of {@link Integer}.
+     * <p>
+     * Example:
+     * <pre> assertThat(outParameterHolder, outParamIndexes(hasItem(1))); </pre>
+     *
+     * @param collectionMatcher a {@link Collection} matcher
+     */
+    public static Matcher<? super ParameterHolder> outParamIndexes(Matcher<? super Collection<Integer>> collectionMatcher) {
+        return new ParameterHolderMatcher.OutParamMatcher<Collection<Integer>>(collectionMatcher) {
+            @Override
+            public Collection<Integer> featureValueOf(OutParameterHolder actual) {
+                return actual.getOutParamIndexes();
+            }
+        };
     }
 
-//    // batch(0, paramsByIndex(hasEntry(1, "foo")))
-//    public static Matcher<? super ParameterHolder> paramsByIndex(final Matcher<Map<? extends Integer, ?>> mapMatcher) {
-//        return new ParameterHolderMatcher.ParameterByIndexMatcher<Map<? extends Integer, ?>>(mapMatcher) {
-//            @Override
-//            public Map<? extends Integer, ?> featureValueOf(ParameterByIndexHolder actual) {
-//                return actual.getParamsByIndex();
-//            }
-//        };
-//    }
-//
-//
-//    // batch(0, paramIndexes(hasItem(1), hasItem(2)))
-//    public static Matcher<? super ParameterHolder> paramIndexes(Matcher<? super Collection<Integer>> collectionMatcher) {
-//        return new ParameterHolderMatcher.ParameterByIndexMatcher<Collection<Integer>>(collectionMatcher) {
-//            @Override
-//            public Collection<Integer> featureValueOf(ParameterByIndexHolder actual) {
-//                return actual.getParamIndexes();
-//            }
-//        };
-//    }
-//
-//    // batch(0, paramIndexes(1,2,3))
-//    public static Matcher<? super ParameterHolder> paramIndexes(Integer... indexes) {
-//        return paramIndexes(Matchers.hasItems(indexes));
-//    }
-//
-//    // batch(0, params(hasItem("foo"), hasItem("bar")))
-//    public static Matcher<? super ParameterHolder> params(Matcher<? super Collection<String>> collectionMatcher) {
-//        return new ParameterHolderMatcher.ParameterByNameMatcher<Collection<String>>(collectionMatcher) {
-//            @Override
-//            public Collection<String> featureValueOf(ParameterByNameHolder actual) {
-//                return actual.getParamNames();
-//            }
-//        };
-//    }
-//
-//    // batch(0, paramValue("foo", is((Object) "FOO")))
-//    public static Matcher<? super ParameterHolder> paramValue(final String name, Matcher<Object> matcher) {
-//        return new ParameterHolderMatcher.ParameterByNameMatcher<Object>(matcher) {
-//            @Override
-//            public Object featureValueOf(ParameterByNameHolder actual) {
-//                return actual.getParamsByName().get(name);
-//            }
-//
-//            @Override
-//            public boolean validateParameterByName(ParameterByNameHolder actual, Description descForExpected, Description descForFailure) {
-//                if (!actual.getParamNames().contains(name)) {
-//                    descForExpected.appendText("parameter name " + name);
-//                    descForFailure.appendText("parameter name " + name + " doesn't exist.");
-//                    return false;
-//                }
-//                return true;
-//            }
-//        };
-//    }
-//
-//    // batch(0, paramValue(1, is((Object) "FOO")))
-//    public static Matcher<? super ParameterHolder> paramValue(final Integer index, Matcher<Object> matcher) {
-//        return new ParameterHolderMatcher.ParameterByIndexMatcher<Object>(matcher) {
-//            @Override
-//            public Object featureValueOf(ParameterByIndexHolder actual) {
-//                return actual.getParamsByIndex().get(index);
-//            }
-//
-//            @Override
-//            public boolean validateParameterByIndex(ParameterByIndexHolder actual, Description descForExpected, Description descForFailure) {
-//                if (!actual.getParamIndexes().contains(index)) {
-//                    descForExpected.appendText("parameter index " + index);
-//                    descForFailure.appendText("parameter index " + index + " doesn't exist.");
-//                    return false;
-//                }
-//                return true;
-//            }
-//        };
-//    }
-//
-//    //batch(0, paramValue("foo", String.class, is("FOO"))));
-//    public static <T> Matcher<? super ParameterHolder> paramValue(final String key, final Class<T> clazz, Matcher<? super T> matcher) {
-//        return new ParameterHolderMatcher.ParameterByNameMatcher<T>(matcher) {
-//            @Override
-//            @SuppressWarnings("unchecked")
-//            public T featureValueOf(ParameterByNameHolder actual) {
-//                return (T) actual.getParamsByName().get(key);
-//            }
-//
-//            @Override
-//            public boolean validateParameterByName(ParameterByNameHolder actual, Description descForExpected, Description descForFailure) {
-//                Object value = actual.getParamsByName().get(key);
-//                if (value == null) {
-//                    descForExpected.appendText("parameter name " + key);
-//                    descForFailure.appendText("parameter name " + key + " doesn't exist.");
-//                    return false;
-//                } else if (!clazz.isAssignableFrom(value.getClass())) {
-//                    descForExpected.appendText("parameter can cast to " + clazz.getSimpleName());
-//                    descForFailure.appendText("parameter can not cast to" + clazz.getSimpleName());
-//                    return false;
-//                }
-//                return true;
-//            }
-//        };
-//    }
-//
-//    //batch(0, paramValue(1, String.class, is("FOO"))));
-//    public static <T> Matcher<? super ParameterHolder> paramValue(final Integer index, final Class<T> clazz, Matcher<? super T> matcher) {
-//        return new ParameterHolderMatcher.ParameterByIndexMatcher<T>(matcher) {
-//            @Override
-//            @SuppressWarnings("unchecked")
-//            public T featureValueOf(ParameterByIndexHolder actual) {
-//                return (T) actual.getParamsByIndex().get(index);
-//            }
-//
-//            @Override
-//            public boolean validateParameterByIndex(ParameterByIndexHolder actual, Description descForExpected, Description descForFailure) {
-//                Object value = actual.getParamsByIndex().get(index);
-//                if (value == null) {
-//                    descForExpected.appendText("parameter index " + index);
-//                    descForFailure.appendText("parameter index " + index + " doesn't exist.");
-//                    return false;
-//                } else if (!clazz.isAssignableFrom(value.getClass())) {
-//                    descForExpected.appendText("parameter can cast to " + clazz.getSimpleName());
-//                    descForFailure.appendText("parameter can not cast to" + clazz.getSimpleName());
-//                    return false;
-//                }
-//                return true;
-//            }
-//        };
-//    }
-//
-//    public static Matcher<? super ParameterHolder> paramValueAsString(final Integer index, Matcher<? super String> matcher) {
-//        return paramValue(index, String.class, matcher);
-//    }
-//
-//    public static Matcher<? super ParameterHolder> paramAsInteger(final Integer index, Matcher<? super Integer> matcher) {
-//        return paramValue(index, Integer.class, matcher);
-//    }
+    /**
+     * Matcher to examine out-parameter by name and int sqlType.
+     * <p>
+     * Example:
+     * <pre> assertThat(outParameterHolder, outParam("foo", Types.BOOLEAN)); </pre>
+     *
+     * @param paramName out-parameter name
+     * @param sqlType   sqlType in int
+     */
+    public static Matcher<? super ParameterHolder> outParam(String paramName, int sqlType) {
+        SqlTypeMatcher matcher = new SqlTypeMatcher(sqlType);
+        return getOutputMatcherByName(paramName, matcher, Integer.class);
+    }
+
+    /**
+     * Matcher to examine out-parameter by name and {@link SQLType}.
+     * <p>
+     * Example:
+     * <pre> assertThat(outParameterHolder, outParam("foo", JDBCType.INTEGER)); </pre>
+     *
+     * @param paramName out-parameter name
+     * @param sqlType   sqlType
+     */
+    public static Matcher<? super ParameterHolder> outParam(String paramName, SQLType sqlType) {
+        Matcher<SQLType> matcher = Matchers.equalTo(sqlType);
+        return getOutputMatcherByName(paramName, matcher, SQLType.class);
+    }
+
+
+    /**
+     * Matcher to examine out-parameter by index and int sqlType.
+     * <p>
+     * Example:
+     * <pre> assertThat(outParameterHolder, outParam(1, Types.BOOLEAN)); </pre>
+     *
+     * @param index   out-parameter index
+     * @param sqlType sqlType in int
+     */
+    public static Matcher<? super ParameterHolder> outParam(int index, int sqlType) {
+        SqlTypeMatcher matcher = new SqlTypeMatcher(sqlType);
+        return getOutputMatcherByIndex(index, matcher, Integer.class);
+    }
+
+    /**
+     * Matcher to examine out-parameter by index and {@link SQLType}.
+     * <p>
+     * Example:
+     * <pre> assertThat(outParameterHolder, outParam(1, JDBCType.INTEGER)); </pre>
+     *
+     * @param index   out-parameter index
+     * @param sqlType sqlType
+     */
+    public static Matcher<? super ParameterHolder> outParam(int index, SQLType sqlType) {
+        Matcher<SQLType> matcher = Matchers.equalTo(sqlType);
+        return getOutputMatcherByIndex(index, matcher, SQLType.class);
+    }
+
+
+    private static <T> Matcher<? super ParameterHolder> getOutputMatcherByName(final String paramName, Matcher<T> matcher, final Class<T> valueType) {
+        return new ParameterHolderMatcher.OutParamMatcher<T>(matcher) {
+            @Override
+            public boolean validateParameterByOutParam(OutParameterHolder actual, Description descForExpected, Description descForFailure) {
+                Object value = actual.getOutParamsByName().get(paramName);
+                if (value == null) {
+                    Set<String> names = actual.getOutParamsByName().keySet();
+                    SortedSet<String> sorted = new TreeSet<String>(names);
+                    descForExpected.appendText("out param name " + paramName + " exist");
+                    descForFailure.appendText("out param names are " + sorted);
+                    return false;
+                } else if (!valueType.isAssignableFrom(value.getClass())) {
+                    descForExpected.appendText("value of out param " + paramName + " is instance of " + valueType);
+                    descForFailure.appendText("value " + value + " was " + value.getClass());
+                    return false;
+                }
+
+                return true;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public T featureValueOf(OutParameterHolder actual) {
+                this.descForExpected.appendText("out param " + paramName + " is ");
+                this.descForFailure.appendText("out param " + paramName + " was ");
+                return (T) actual.getOutParamsByName().get(paramName);
+            }
+
+        };
+    }
+
+
+    private static <T> Matcher<? super ParameterHolder> getOutputMatcherByIndex(final int index, Matcher<T> matcher, final Class<T> valueType) {
+        return new ParameterHolderMatcher.OutParamMatcher<T>(matcher) {
+            @Override
+            public boolean validateParameterByOutParam(OutParameterHolder actual, Description descForExpected, Description descForFailure) {
+                Object value = actual.getOutParamsByIndex().get(index);
+                if (value == null) {
+                    Set<Integer> indexes = actual.getOutParamsByIndex().keySet();
+                    SortedSet<Integer> sorted = new TreeSet<Integer>(indexes);
+                    descForExpected.appendText("out param index " + index + " exist");
+                    descForFailure.appendText("out param indexes are " + sorted);
+                    return false;
+                } else if (!valueType.isAssignableFrom(value.getClass())) {
+                    descForExpected.appendText("value of out param index " + index + " is instance of " + valueType);
+                    descForFailure.appendText("value " + value + " was " + value.getClass());
+                    return false;
+                }
+
+                return true;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public T featureValueOf(OutParameterHolder actual) {
+                this.descForExpected.appendText("out param index " + index + " is ");
+                this.descForFailure.appendText("out param index " + index + " was ");
+                return (T) actual.getOutParamsByIndex().get(index);
+            }
+        };
+    }
 
 }
