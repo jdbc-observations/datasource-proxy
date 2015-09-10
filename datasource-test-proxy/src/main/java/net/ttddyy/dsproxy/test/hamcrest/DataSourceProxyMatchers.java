@@ -18,6 +18,7 @@ import org.hamcrest.Matcher;
 import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.Date;
+import java.sql.SQLType;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -1052,5 +1053,80 @@ public class DataSourceProxyMatchers {
     // OutParameterHolderAssertions
     /////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Matcher to examine out-parameter names as a {@link Collection} of {@link String}.
+     * <p>
+     * Example:
+     * <pre> assertThat(outParameterHolder, outParamNames(hasItem("foo"), hasItem("bar"))); </pre>
+     *
+     * @param collectionMatcher a {@link Collection} matcher
+     */
+    public static Matcher<? super ParameterHolder> outParamNames(Matcher<? super Collection<String>> collectionMatcher) {
+        return OutParameterHolderAssertions.outParamNames(collectionMatcher);
+    }
+
+    /**
+     * Matcher to examine out-parameter indexes as a {@link Collection} of {@link Integer}.
+     * <p>
+     * Example:
+     * <pre> assertThat(outParameterHolder, outParamIndexes(hasItem(1))); </pre>
+     *
+     * @param collectionMatcher a {@link Collection} matcher
+     */
+    public static Matcher<? super ParameterHolder> outParamIndexes(Matcher<? super Collection<Integer>> collectionMatcher) {
+        return OutParameterHolderAssertions.outParamIndexes(collectionMatcher);
+    }
+
+    /**
+     * Matcher to examine out-parameter by name and int sqlType.
+     * <p>
+     * Example:
+     * <pre> assertThat(outParameterHolder, outParam("foo", Types.BOOLEAN)); </pre>
+     *
+     * @param paramName out-parameter name
+     * @param sqlType   sqlType in int
+     */
+    public static Matcher<? super ParameterHolder> outParam(String paramName, int sqlType) {
+        return OutParameterHolderAssertions.outParam(paramName, sqlType);
+    }
+
+    /**
+     * Matcher to examine out-parameter by name and {@link SQLType}.
+     * <p>
+     * Example:
+     * <pre> assertThat(outParameterHolder, outParam("foo", JDBCType.INTEGER)); </pre>
+     *
+     * @param paramName out-parameter name
+     * @param sqlType   sqlType
+     */
+    public static Matcher<? super ParameterHolder> outParam(String paramName, SQLType sqlType) {
+        return OutParameterHolderAssertions.outParam(paramName, sqlType);
+    }
+
+    /**
+     * Matcher to examine out-parameter by index and int sqlType.
+     * <p>
+     * Example:
+     * <pre> assertThat(outParameterHolder, outParam(1, Types.BOOLEAN)); </pre>
+     *
+     * @param index   out-parameter index
+     * @param sqlType sqlType in int
+     */
+    public static Matcher<? super ParameterHolder> outParam(int index, int sqlType) {
+        return OutParameterHolderAssertions.outParam(index, sqlType);
+    }
+
+    /**
+     * Matcher to examine out-parameter by index and {@link SQLType}.
+     * <p>
+     * Example:
+     * <pre> assertThat(outParameterHolder, outParam(1, JDBCType.INTEGER)); </pre>
+     *
+     * @param index   out-parameter index
+     * @param sqlType sqlType
+     */
+    public static Matcher<? super ParameterHolder> outParam(int index, SQLType sqlType) {
+        return OutParameterHolderAssertions.outParam(index, sqlType);
+    }
 
 }
