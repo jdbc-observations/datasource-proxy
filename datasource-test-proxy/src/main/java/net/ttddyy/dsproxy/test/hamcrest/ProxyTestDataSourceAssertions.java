@@ -2,16 +2,18 @@ package net.ttddyy.dsproxy.test.hamcrest;
 
 import net.ttddyy.dsproxy.QueryType;
 import net.ttddyy.dsproxy.listener.QueryUtils;
+import net.ttddyy.dsproxy.test.CallableBatchExecution;
+import net.ttddyy.dsproxy.test.CallableExecution;
+import net.ttddyy.dsproxy.test.DefaultQueryExtractor;
+import net.ttddyy.dsproxy.test.PreparedBatchExecution;
+import net.ttddyy.dsproxy.test.PreparedExecution;
 import net.ttddyy.dsproxy.test.ProxyTestDataSource;
 import net.ttddyy.dsproxy.test.QueriesHolder;
 import net.ttddyy.dsproxy.test.QueryExecution;
+import net.ttddyy.dsproxy.test.QueryExtractor;
 import net.ttddyy.dsproxy.test.QueryHolder;
-import net.ttddyy.dsproxy.test.StatementExecution;
 import net.ttddyy.dsproxy.test.StatementBatchExecution;
-import net.ttddyy.dsproxy.test.PreparedExecution;
-import net.ttddyy.dsproxy.test.PreparedBatchExecution;
-import net.ttddyy.dsproxy.test.CallableExecution;
-import net.ttddyy.dsproxy.test.CallableBatchExecution;
+import net.ttddyy.dsproxy.test.StatementExecution;
 import org.hamcrest.Description;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
@@ -348,6 +350,7 @@ public class ProxyTestDataSourceAssertions {
         private QueryType expectedQueryType;
         private int matchedCount = 0;
         private int expectedCount = 0;
+        private QueryExtractor queryExtractor = new DefaultQueryExtractor();
 
         private QueryTypeCountMatcher(QueryType expectedQueryType, int expectedCount) {
             this.expectedQueryType = expectedQueryType;
@@ -357,22 +360,13 @@ public class ProxyTestDataSourceAssertions {
         @Override
         protected boolean matchesSafely(ProxyTestDataSource item) {
             for (QueryExecution queryExecution : item.getQueryExecutions()) {
-                if (queryExecution instanceof QueryHolder) {
-                    String query = ((QueryHolder) queryExecution).getQuery();
+                List<String> queries = queryExtractor.getQueries(queryExecution);
+                for (String query : queries) {
                     QueryType queryType = QueryUtils.getQueryType(query);
                     if (this.expectedQueryType.equals(queryType)) {
                         this.matchedCount++;
                     }
-                } else if (queryExecution instanceof QueriesHolder) {
-                    // for StatementBatchExecution
-                    for (String query : ((QueriesHolder) queryExecution).getQueries()) {
-                        QueryType queryType = QueryUtils.getQueryType(query);
-                        if (this.expectedQueryType.equals(queryType)) {
-                            this.matchedCount++;
-                        }
-                    }
                 }
-
             }
             return this.matchedCount == this.expectedCount;
         }
