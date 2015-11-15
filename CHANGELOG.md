@@ -1,5 +1,13 @@
 # ChangeLog
 
+## 1.3.3
+
+- update `DefaultQueryLogEntryCreator` to allow subclasses to override log entry details
+ 
+## 1.3.2
+
+- add `CommonsOracleOutputParameterLoggingListener`
+
 ## 1.3.1
 
 - make logger name configurable in `CommonsQueryLoggingListener` and `SLF4JQueryLoggingListener`  
