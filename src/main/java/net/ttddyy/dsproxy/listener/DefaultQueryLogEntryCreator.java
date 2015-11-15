@@ -218,11 +218,12 @@ public class DefaultQueryLogEntryCreator implements QueryLogEntryCreator {
     }
 
     /**
-     * Write parameters for single batch execution.
+     * Write parameters for single execution.
      *
      * <p>default: (1=foo,2=100),
      *
      * @param sb            StringBuilder to write
+     * @param paramMap      parameters map
      * @param execInfo      execution info
      * @param queryInfoList query info list
      * @since 1.3.3
@@ -441,11 +442,12 @@ public class DefaultQueryLogEntryCreator implements QueryLogEntryCreator {
     }
 
     /**
-     * Write parameters for single batch execution as json.
+     * Write parameters for single execution as json.
      *
      * <p>default: {"1":"foo","2":"100"},
      *
      * @param sb            StringBuilder to write
+     * @param paramMap      parameters map
      * @param execInfo      execution info
      * @param queryInfoList query info list
      * @since 1.3.3
@@ -508,7 +510,7 @@ public class DefaultQueryLogEntryCreator implements QueryLogEntryCreator {
 
     /**
      * Comparator considering string as integer.
-     * <p/>
+     *
      * When it has null, put it as first element(smaller).
      * If string cannot be parsed to integer, it compared as string.
      */
