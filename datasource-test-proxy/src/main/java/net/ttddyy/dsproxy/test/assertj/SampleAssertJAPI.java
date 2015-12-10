@@ -1,31 +1,24 @@
 package net.ttddyy.dsproxy.test.assertj;
 
-import net.ttddyy.dsproxy.test.BatchExecutionEntry;
 import net.ttddyy.dsproxy.test.BatchParameterHolder;
 import net.ttddyy.dsproxy.test.CallableBatchExecution;
 import net.ttddyy.dsproxy.test.CallableExecution;
 import net.ttddyy.dsproxy.test.PreparedBatchExecution;
 import net.ttddyy.dsproxy.test.PreparedExecution;
-import net.ttddyy.dsproxy.test.ProxyTestDataSource;
-import net.ttddyy.dsproxy.test.QueriesHolder;
 import net.ttddyy.dsproxy.test.QueryExecution;
-import net.ttddyy.dsproxy.test.StatementBatchExecution;
-import net.ttddyy.dsproxy.test.StatementExecution;
-import org.assertj.core.api.Assertions;
 import org.junit.Assert;
-import org.junit.Test;
 
 import java.sql.Types;
 
 import static net.ttddyy.dsproxy.test.assertj.DataSourceProxyAssertions.assertThat;
-import static net.ttddyy.dsproxy.test.assertj.data.BatchParameter.nullParam;
-import static net.ttddyy.dsproxy.test.assertj.data.BatchParameter.outParam;
-import static net.ttddyy.dsproxy.test.assertj.data.BatchParameter.param;
-import static net.ttddyy.dsproxy.test.assertj.data.BatchParameters.containsParamIndexes;
-import static net.ttddyy.dsproxy.test.assertj.data.BatchParameters.containsParamKeys;
-import static net.ttddyy.dsproxy.test.assertj.data.BatchParameters.containsParamNames;
-import static net.ttddyy.dsproxy.test.assertj.data.BatchParameters.containsParamValuesExactly;
-import static net.ttddyy.dsproxy.test.assertj.data.BatchParameters.containsParams;
+import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter.nullParam;
+import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter.outParam;
+import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter.param;
+import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParamIndexes;
+import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParamKeys;
+import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParamNames;
+import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParamValuesExactly;
+import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParams;
 import static net.ttddyy.dsproxy.test.hamcrest.DataSourceProxyMatchers.batch;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramIndexes;
 import static org.assertj.core.api.Assertions.assertThat;

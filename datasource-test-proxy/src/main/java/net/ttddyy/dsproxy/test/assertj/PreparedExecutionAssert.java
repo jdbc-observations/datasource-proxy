@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.test.assertj;
 
 import net.ttddyy.dsproxy.test.PreparedExecution;
-import net.ttddyy.dsproxy.test.assertj.data.BatchParameter;
+import net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter;
 import org.assertj.core.api.AbstractAssert;
 
 /**
@@ -41,7 +41,7 @@ public class PreparedExecutionAssert extends AbstractAssert<PreparedExecutionAss
     }
 
 
-    public PreparedExecutionAssert containsParams(BatchParameter... params) {
+    public PreparedExecutionAssert containsParams(ExecutionParameter... params) {
         // TODO: impl
         return this;
     }

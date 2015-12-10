@@ -4,9 +4,9 @@ package net.ttddyy.dsproxy.test.assertj.data;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class BatchParameters {
+public class ExecutionParameters {
 
-    public static BatchParameters containsParams(BatchParameter... params) {
+    public static ExecutionParameters containsParams(ExecutionParameter... params) {
         return null;
     }
 
@@ -18,20 +18,20 @@ public class BatchParameters {
 //            return null;
 //        }
 //
-    public static BatchParameters containsParamKeys(Object... params) {
+    public static ExecutionParameters containsParamKeys(Object... params) {
         // TODO: they should be either string or int
         return null;
     }
 
-    public static BatchParameters containsParamIndexes(int... paramIndexes) {
+    public static ExecutionParameters containsParamIndexes(int... paramIndexes) {
         return null;
     }
 
-    public static BatchParameters containsParamNames(String... paramNames) {
+    public static ExecutionParameters containsParamNames(String... paramNames) {
         return null;
     }
 
-    public static BatchParameters containsParamValuesExactly(Object... paramValues) {
+    public static ExecutionParameters containsParamValuesExactly(Object... paramValues) {
         return null;
     }
 }

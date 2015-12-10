@@ -2,7 +2,7 @@ package net.ttddyy.dsproxy.test.assertj;
 
 import net.ttddyy.dsproxy.test.BatchExecutionEntry;
 import net.ttddyy.dsproxy.test.PreparedBatchExecution;
-import net.ttddyy.dsproxy.test.assertj.data.BatchParameters;
+import net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters;
 import org.assertj.core.api.AbstractAssert;
 
 /**
@@ -21,7 +21,7 @@ public class PreparedBatchExecutionAssert extends AbstractAssert<PreparedBatchEx
     }
 
     // TODO: impl
-    public PreparedBatchExecutionAssert batch(int batchIndex, BatchParameters params) {
+    public PreparedBatchExecutionAssert batch(int batchIndex, ExecutionParameters params) {
         return this;
     }
 

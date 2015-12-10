@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.test.assertj;
 
 import net.ttddyy.dsproxy.test.CallableExecution;
-import net.ttddyy.dsproxy.test.assertj.data.BatchParameter;
+import net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter;
 import org.assertj.core.api.AbstractAssert;
 
 import java.sql.SQLType;
@@ -56,7 +56,7 @@ public class CallableExecutionAssert extends AbstractAssert<CallableExecutionAss
     }
 
 
-    public CallableExecutionAssert containsParams(BatchParameter... params) {
+    public CallableExecutionAssert containsParams(ExecutionParameter... params) {
         return this;
     }
 
