@@ -30,4 +30,8 @@ public class BatchParameters {
     public static BatchParameters containsParamNames(String... paramNames) {
         return null;
     }
+
+    public static BatchParameters containsParamValuesExactly(Object... paramValues) {
+        return null;
+    }
 }

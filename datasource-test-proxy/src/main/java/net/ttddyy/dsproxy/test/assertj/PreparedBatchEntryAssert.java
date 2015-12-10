@@ -46,4 +46,9 @@ public class PreparedBatchEntryAssert extends AbstractAssert<PreparedBatchEntryA
         return this;
     }
 
+    public PreparedBatchEntryAssert containsParamValuesExactly(Object... paramValues) {
+        // TODO: impl
+        return this;
+    }
+
 }

@@ -23,6 +23,7 @@ import static net.ttddyy.dsproxy.test.assertj.data.BatchParameter.param;
 import static net.ttddyy.dsproxy.test.assertj.data.BatchParameters.containsParamIndexes;
 import static net.ttddyy.dsproxy.test.assertj.data.BatchParameters.containsParamKeys;
 import static net.ttddyy.dsproxy.test.assertj.data.BatchParameters.containsParamNames;
+import static net.ttddyy.dsproxy.test.assertj.data.BatchParameters.containsParamValuesExactly;
 import static net.ttddyy.dsproxy.test.assertj.data.BatchParameters.containsParams;
 import static net.ttddyy.dsproxy.test.hamcrest.DataSourceProxyMatchers.batch;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramIndexes;
@@ -80,12 +81,14 @@ public class SampleAssertJAPI {
         assertThat(pbe).hasBatchSize(3);
 
         assertThat(pbe).batch(0, containsParams(param(10, "value"), param(11, 100), nullParam(12)));
+        assertThat(pbe).batch(0, containsParamValuesExactly("value", 100, null, 12));
 
         assertThat(pbe).batch(0, containsParamIndexes(10, 11));
 
         assertThat(pbe).batch(0).containsParam(10, "value").containsParam(10, "value");
         assertThat(pbe).batch(0).containsParams(param(10, "value"), param(10, "value"), nullParam(12));
         assertThat(pbe).batch(0).containsParamIndex(10);
+        assertThat(pbe).batch(0).containsParamValuesExactly("value", 100, null, 12);
 
         assertThat(pbe.getQuery()).isEqualTo("...");
     }
