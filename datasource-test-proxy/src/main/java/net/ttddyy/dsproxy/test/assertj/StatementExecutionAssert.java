@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.test.assertj;
 
+import net.ttddyy.dsproxy.QueryType;
 import net.ttddyy.dsproxy.test.StatementExecution;
 import org.assertj.core.api.AbstractAssert;
 
@@ -15,6 +16,11 @@ public class StatementExecutionAssert extends AbstractAssert<StatementExecutionA
 
     public QueryHolderAssert query() {
         return new QueryHolderAssert(actual);
+    }
+
+    public StatementExecutionAssert hasQueryType(QueryType queryType) {
+        // TODO: impl
+        return this;
     }
 
 }

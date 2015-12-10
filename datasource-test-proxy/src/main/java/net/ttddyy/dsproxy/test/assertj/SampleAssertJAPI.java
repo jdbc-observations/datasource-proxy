@@ -1,11 +1,14 @@
 package net.ttddyy.dsproxy.test.assertj;
 
+import net.ttddyy.dsproxy.QueryType;
 import net.ttddyy.dsproxy.test.BatchParameterHolder;
 import net.ttddyy.dsproxy.test.CallableBatchExecution;
 import net.ttddyy.dsproxy.test.CallableExecution;
 import net.ttddyy.dsproxy.test.PreparedBatchExecution;
 import net.ttddyy.dsproxy.test.PreparedExecution;
 import net.ttddyy.dsproxy.test.QueryExecution;
+import net.ttddyy.dsproxy.test.StatementBatchExecution;
+import net.ttddyy.dsproxy.test.StatementExecution;
 import org.junit.Assert;
 
 import java.sql.Types;
@@ -22,6 +25,7 @@ import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsP
 import static net.ttddyy.dsproxy.test.hamcrest.DataSourceProxyMatchers.batch;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramIndexes;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.atIndex;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -62,6 +66,21 @@ public class SampleAssertJAPI {
 
         // assertThat(extractBatch(ds)).
 
+    }
+
+    private void statementExecution() {
+        StatementExecution se = new StatementExecution();
+
+        assertThat(se.getQuery()).isEqualTo("...");
+        assertThat(se).hasQueryType(QueryType.SELECT);
+    }
+
+    private void batchStatementExecution() {
+        StatementBatchExecution sbe = new StatementBatchExecution();
+
+        // check batch queries
+        assertThat(sbe.getQueries().get(0)).isEqualTo("...");
+        assertThat(sbe).contains(QueryType.SELECT, atIndex(0));
     }
 
     public void preparedExecution() {

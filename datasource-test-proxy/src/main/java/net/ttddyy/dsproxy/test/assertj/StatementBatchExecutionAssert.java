@@ -1,10 +1,12 @@
 package net.ttddyy.dsproxy.test.assertj;
 
+import net.ttddyy.dsproxy.QueryType;
 import net.ttddyy.dsproxy.test.StatementBatchExecution;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.AbstractCharSequenceAssert;
 import org.assertj.core.api.AbstractListAssert;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.data.Index;
 
 import java.util.List;
 
@@ -26,5 +28,10 @@ public class StatementBatchExecutionAssert extends AbstractAssert<StatementBatch
     public AbstractCharSequenceAssert<?, String> query(int index) {
         String query = actual.getQueries().get(index);
         return Assertions.assertThat(query);
+    }
+
+    public StatementBatchExecutionAssert contains(QueryType queryType, Index index) {
+        // TODO: impl
+        return this;
     }
 }
