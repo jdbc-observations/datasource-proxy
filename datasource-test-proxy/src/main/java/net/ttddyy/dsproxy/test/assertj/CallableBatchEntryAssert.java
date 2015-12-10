@@ -25,66 +25,66 @@ public class CallableBatchEntryAssert extends AbstractAssert<CallableBatchEntryA
     }
 
     public CallableBatchEntryAssert containsOutParam(int paramIndex, int sqlType) {
-        return null;
+        return this;
     }
 
     public CallableBatchEntryAssert containsOutParam(int paramIndex, SQLType sqlType) {
-        return null;
+        return this;
     }
 
     public CallableBatchEntryAssert containsOutParam(String paramName, int sqlType) {
-        return null;
+        return this;
     }
 
     public CallableBatchEntryAssert containsOutParam(String paramName, SQLType sqlType) {
-        return null;
+        return this;
     }
 
     public CallableBatchEntryAssert containsNullParam(int index, int sqlType) {
-        return null;
+        return this;
     }
 
     public CallableBatchEntryAssert containsNullParam(int index) {
-        return null;
+        return this;
     }
 
     public CallableBatchEntryAssert containsNullParam(String name, int sqlType) {
-        return null;
+        return this;
     }
 
     public CallableBatchEntryAssert containsNullParam(String name) {
-        return null;
+        return this;
     }
 
 
     public CallableBatchEntryAssert containsParams(BatchParameter... params) {
-        return null;
+        return this;
     }
 
     public CallableBatchEntryAssert containsParamKey(Object params) {
         // TODO: they should be either string or int
-        return null;
+        return this;
     }
 
     public CallableBatchEntryAssert containsParamKeys(Object... params) {
         // TODO: they should be either string or int
-        return null;
+        return this;
     }
 
     public CallableBatchEntryAssert containsParamIndex(int paramIndexe) {
-        return null;
+        return this;
     }
 
     public CallableBatchEntryAssert containsParamIndexes(int... paramIndexes) {
-        return null;
+        return this;
     }
 
     public CallableBatchEntryAssert containsParamName(String paramName) {
-        return null;
+        return this;
     }
 
     public CallableBatchEntryAssert containsParamNames(String... paramNames) {
-        return null;
+        return this;
     }
 
 }
