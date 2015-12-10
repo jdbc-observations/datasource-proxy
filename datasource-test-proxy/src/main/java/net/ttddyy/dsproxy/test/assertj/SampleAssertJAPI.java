@@ -69,29 +69,30 @@ public class SampleAssertJAPI {
     }
 
 
-/*
-    public void callableExecution(){
+    public void callableExecution() {
         CallableExecution ce = new CallableExecution();
 
-        // null, outparam
+/*
         assertThat(ce).success();
         assertThat(ce).failure();
+*/
 
-        assertThat(ce).param("key", "value").paramAsString("key", "value");
-        assertThat(ce).param(10, "value").paramAsString(10, "value");
-        assertThat(ce).param(atIndex(10), "value").paramAsString(atIndex(10), "value");
-        assertThat(ce).outParam(10, "value").outParamAsString(10, "value");
-        assertThat(ce).nullParam(10);
+        assertThat(ce).containsParam("key", "value")
+                .containsParam(10, "value")
+                .containsOutParam(10, Types.INTEGER)
+                .containsNullParam(10);
+//        assertThat(ce).containsParam(atIndex(10), "value");
 
-        assertThat(ce).containsParams(param("key", "value"), paramAsString("key", "value"));
-        assertThat(ce).containsOutParams(param("key", "value"), paramAsString("key", "value"));
-        assertThat(ce).containsNullParams(param("key", "value"), paramAsString("key", "value"));
+        assertThat(ce).containsParams(param("key", "value"), param(10, "value"), param("a", 100), outParam("key", Types.INTEGER), nullParam("key"));
+        assertThat(ce).containsParamKey("key").containsParamKey(10).containsParamIndex(10).containsParamName("key");
+        assertThat(ce).containsParamKeys("key", 10).containsParamIndexes(10, 11).containsParamNames("key", "key");
 
-//        assertThat(ce).batch(0).assertParamAsString(10).isEqualTo("");// string assert
+//        assertThat(ce).containsOutParams(param("key", "value"), paramAsString("key", "value"));
+//        assertThat(ce).containsNullParams(param("key", "value"), paramAsString("key", "value"));
 
     }
-*/
-    public void callableBatchExecution(){
+
+    public void callableBatchExecution() {
         CallableBatchExecution cbe = new CallableBatchExecution();
 
 /*
