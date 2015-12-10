@@ -17,6 +17,9 @@ public class CallableBatchExecutionAssert extends AbstractAssert<CallableBatchEx
         super(actual, CallableBatchExecutionAssert.class);
     }
 
+    public CallableBatchExecutionAssert hasBatchSize(int batchSize) {
+        return this;
+    }
     // TODO: impl
     public CallableBatchExecutionAssert batch(int batchIndex, BatchParameters params) {
         return this;

@@ -77,6 +77,8 @@ public class SampleAssertJAPI {
         assertThat(pbe).failure();
 */
 
+        assertThat(pbe).hasBatchSize(3);
+
         assertThat(pbe).batch(0, containsParams(param(10, "value"), param(11, 100), nullParam(12)));
 
         assertThat(pbe).batch(0, containsParamIndexes(10, 11));
@@ -120,6 +122,7 @@ public class SampleAssertJAPI {
         assertThat(cbe).failure();
 */
 
+        assertThat(cbe).hasBatchSize(3);
 
 //        assertThat(cbe).batch(0).param("key", "value").paramAsString("key", "value");
 //        assertThat(cbe).batch(0).param(10, "value").paramAsString(10, "value");

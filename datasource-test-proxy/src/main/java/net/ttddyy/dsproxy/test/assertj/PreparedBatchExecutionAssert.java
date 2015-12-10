@@ -16,6 +16,11 @@ public class PreparedBatchExecutionAssert extends AbstractAssert<PreparedBatchEx
     }
 
     // TODO: impl
+    public PreparedBatchExecutionAssert hasBatchSize(int batchSize) {
+        return this;
+    }
+
+    // TODO: impl
     public PreparedBatchExecutionAssert batch(int batchIndex, BatchParameters params) {
         return this;
     }
