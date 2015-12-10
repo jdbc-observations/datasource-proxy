@@ -1,6 +1,5 @@
 package net.ttddyy.dsproxy.test.assertj;
 
-import net.ttddyy.dsproxy.test.BatchExecution;
 import net.ttddyy.dsproxy.test.BatchExecutionEntry;
 import net.ttddyy.dsproxy.test.BatchParameterHolder;
 import net.ttddyy.dsproxy.test.CallableBatchExecution;
@@ -16,18 +15,6 @@ import org.junit.Test;
 
 import java.sql.Types;
 
-import static net.ttddyy.dsproxy.test.assertj.CallableBatchExecutionAssert.BatchParameter.nullParam;
-import static net.ttddyy.dsproxy.test.assertj.CallableBatchExecutionAssert.BatchParameter.outParam;
-import static net.ttddyy.dsproxy.test.assertj.CallableBatchExecutionAssert.BatchParameter.param;
-import static net.ttddyy.dsproxy.test.assertj.CallableBatchExecutionAssert.BatchParameter.paramAsString;
-import static net.ttddyy.dsproxy.test.assertj.CallableBatchExecutionAssert.BatchParameters.containsNullParams;
-import static net.ttddyy.dsproxy.test.assertj.CallableBatchExecutionAssert.BatchParameters.containsOutParams;
-import static net.ttddyy.dsproxy.test.assertj.CallableBatchExecutionAssert.BatchParameters.containsParamIndexes;
-import static net.ttddyy.dsproxy.test.assertj.CallableBatchExecutionAssert.BatchParameters.containsParamKeys;
-import static net.ttddyy.dsproxy.test.assertj.CallableBatchExecutionAssert.BatchParameters.containsParamNames;
-import static net.ttddyy.dsproxy.test.assertj.CallableBatchExecutionAssert.BatchParameters.containsParams;
-import static net.ttddyy.dsproxy.test.assertj.CallableBatchExecutionAssert.CallableParameter.param;
-import static net.ttddyy.dsproxy.test.assertj.CallableBatchExecutionAssert.CallableParameter.paramAsString;
 import static net.ttddyy.dsproxy.test.assertj.DataSourceProxyAssertions.assertThat;
 import static net.ttddyy.dsproxy.test.assertj.data.BatchParameter.nullParam;
 import static net.ttddyy.dsproxy.test.assertj.data.BatchParameter.outParam;
@@ -45,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class SampleAssertJAPI {
 
+/*
     @Test
     public void aa() {
         QueryExecution qe = new StatementExecution();
@@ -67,6 +55,7 @@ public class SampleAssertJAPI {
         assertThat(be).params();
 
     }
+*/
 
     public void test() {
         QueryExecution qe = null;
@@ -80,6 +69,7 @@ public class SampleAssertJAPI {
     }
 
 
+/*
     public void callableExecution(){
         CallableExecution ce = new CallableExecution();
 
@@ -100,11 +90,16 @@ public class SampleAssertJAPI {
 //        assertThat(ce).batch(0).assertParamAsString(10).isEqualTo("");// string assert
 
     }
+*/
     public void callableBatchExecution(){
         CallableBatchExecution cbe = new CallableBatchExecution();
 
+/*
         assertThat(cbe).success();
         assertThat(cbe).failure();
+*/
+
+
 //        assertThat(cbe).batch(0).param("key", "value").paramAsString("key", "value");
 //        assertThat(cbe).batch(0).param(10, "value").paramAsString(10, "value");
 //        assertThat(cbe).batch(0).outParam(10, "value").outParamAsString(10, "value");
