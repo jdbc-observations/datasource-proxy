@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.test.assertj;
 
 import net.ttddyy.dsproxy.test.PreparedExecution;
+import net.ttddyy.dsproxy.test.assertj.data.BatchParameter;
 import org.assertj.core.api.AbstractAssert;
 
 /**
@@ -19,6 +20,44 @@ public class PreparedExecutionAssert extends AbstractAssert<PreparedExecutionAss
     }
     public PreparedExecutionAssert bb(){
 //        new QueryHolderAssert(this.actual).foo("abc");
+        return this;
+    }
+
+
+    public PreparedExecutionAssert containsParam(int paramIndex, Object value) {
+        // TODO: impl
+        return this;
+    }
+
+
+    public PreparedExecutionAssert containsNullParam(int index, int sqlType) {
+        // TODO: impl
+        return this;
+    }
+
+    public PreparedExecutionAssert containsNullParam(int index) {
+        // TODO: impl
+        return this;
+    }
+
+
+    public PreparedExecutionAssert containsParams(BatchParameter... params) {
+        // TODO: impl
+        return this;
+    }
+
+    public PreparedExecutionAssert containsParamIndex(int paramIndexe) {
+        // TODO: impl
+        return this;
+    }
+
+    public PreparedExecutionAssert containsParamIndexes(int... paramIndexes) {
+        // TODO: impl
+        return this;
+    }
+
+    public PreparedExecutionAssert containsParamValuesExactly(Object... paramValues) {
+        // TODO: impl
         return this;
     }
 

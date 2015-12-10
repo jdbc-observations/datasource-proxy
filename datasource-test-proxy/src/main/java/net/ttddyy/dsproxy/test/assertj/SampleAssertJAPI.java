@@ -5,6 +5,7 @@ import net.ttddyy.dsproxy.test.BatchParameterHolder;
 import net.ttddyy.dsproxy.test.CallableBatchExecution;
 import net.ttddyy.dsproxy.test.CallableExecution;
 import net.ttddyy.dsproxy.test.PreparedBatchExecution;
+import net.ttddyy.dsproxy.test.PreparedExecution;
 import net.ttddyy.dsproxy.test.ProxyTestDataSource;
 import net.ttddyy.dsproxy.test.QueriesHolder;
 import net.ttddyy.dsproxy.test.QueryExecution;
@@ -68,6 +69,22 @@ public class SampleAssertJAPI {
 
         // assertThat(extractBatch(ds)).
 
+    }
+
+    public void preparedExecution() {
+        PreparedExecution pe = new PreparedExecution();
+
+/*
+        assertThat(pe).success();
+        assertThat(pe).failure();
+*/
+        assertThat(pe).containsParam(10, "value").containsParam(10, "value");
+        assertThat(pe).containsParams(param(10, "value"), param(10, "value"), nullParam(12));
+        assertThat(pe).containsParamIndex(10);
+        assertThat(pe).containsParamIndexes(10, 11);
+        assertThat(pe).containsParamValuesExactly("value", 100, null, 12);
+
+        assertThat(pe.getQuery()).isEqualTo("...");
     }
 
     public void preparedBatchExecution() {
