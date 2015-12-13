@@ -208,10 +208,8 @@ public class SampleAssertJAPI {
     public void callableExecution() {
         CallableExecution ce = new CallableExecution();
 
-/*
-        assertThat(ce).success();
-        assertThat(ce).failure();
-*/
+        assertThat(ce).isSuccess();
+        assertThat(ce).isFailure();
 
         assertThat(ce).containsParam("key", "value")
                 .containsParam(10, "value")
@@ -231,10 +229,8 @@ public class SampleAssertJAPI {
     public void callableBatchExecution() {
         CallableBatchExecution cbe = new CallableBatchExecution();
 
-/*
-        assertThat(cbe).success();
-        assertThat(cbe).failure();
-*/
+        assertThat(cbe).isSuccess();
+        assertThat(cbe).isFailure();
 
         assertThat(cbe).hasBatchSize(3);
 

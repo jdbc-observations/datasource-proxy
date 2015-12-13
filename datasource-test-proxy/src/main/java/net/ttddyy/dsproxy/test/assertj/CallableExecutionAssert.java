@@ -15,6 +15,16 @@ public class CallableExecutionAssert extends AbstractAssert<CallableExecutionAss
         super(actual, CallableExecutionAssert.class);
     }
 
+    public CallableExecutionAssert isSuccess() {
+        // TODO: impl
+        return this;
+    }
+
+    public CallableExecutionAssert isFailure() {
+        // TODO: impl
+        return this;
+    }
+
     public CallableExecutionAssert containsParam(int paramIndex, Object value) {
         return this;
     }

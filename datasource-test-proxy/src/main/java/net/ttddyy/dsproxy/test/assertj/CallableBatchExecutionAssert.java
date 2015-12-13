@@ -15,9 +15,20 @@ public class CallableBatchExecutionAssert extends AbstractAssert<CallableBatchEx
         super(actual, CallableBatchExecutionAssert.class);
     }
 
+    public CallableBatchExecutionAssert isSuccess() {
+        // TODO: impl
+        return this;
+    }
+
+    public CallableBatchExecutionAssert isFailure() {
+        // TODO: impl
+        return this;
+    }
+
     public CallableBatchExecutionAssert hasBatchSize(int batchSize) {
         return this;
     }
+
     // TODO: impl
     public CallableBatchExecutionAssert batch(int batchIndex, ExecutionParameters params) {
         return this;
