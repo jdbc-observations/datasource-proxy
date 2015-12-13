@@ -5,6 +5,7 @@ import net.ttddyy.dsproxy.test.CallableExecution;
 import net.ttddyy.dsproxy.test.PreparedBatchExecution;
 import net.ttddyy.dsproxy.test.PreparedExecution;
 import net.ttddyy.dsproxy.test.ProxyTestDataSource;
+import net.ttddyy.dsproxy.test.QueryExecution;
 import net.ttddyy.dsproxy.test.StatementBatchExecution;
 import net.ttddyy.dsproxy.test.StatementExecution;
 
@@ -20,6 +21,10 @@ public class DataSourceProxyAssertions {
 
     public static ProxyTestDataSourceAssert assertThat(ProxyTestDataSource actual) {
         return new ProxyTestDataSourceAssert(actual);
+    }
+
+    public static QueryExecutionAssert assertThat(QueryExecution actual) {
+        return new QueryExecutionAssert(actual);
     }
 
     public static StatementExecutionAssert assertThat(StatementExecution actual) {

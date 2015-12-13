@@ -6,6 +6,7 @@ import net.ttddyy.dsproxy.test.CallableBatchExecution;
 import net.ttddyy.dsproxy.test.CallableExecution;
 import net.ttddyy.dsproxy.test.PreparedBatchExecution;
 import net.ttddyy.dsproxy.test.PreparedExecution;
+import net.ttddyy.dsproxy.test.ProxyTestDataSource;
 import net.ttddyy.dsproxy.test.QueryExecution;
 import net.ttddyy.dsproxy.test.StatementBatchExecution;
 import net.ttddyy.dsproxy.test.StatementExecution;
@@ -67,6 +68,81 @@ public class SampleAssertJAPI {
         // assertThat(extractBatch(ds)).
 
     }
+
+    private void testDataSource() {
+        ProxyTestDataSource ds = new ProxyTestDataSource();
+
+        // execution count
+        assertThat(ds).hasExecutionCount(3);
+        assertThat(ds).hasStatementCount(3);
+        assertThat(ds).hasBatchStatementCount(3);
+        assertThat(ds).hasStatementOrBatchStatementCount(3);
+        assertThat(ds).hasPreparedCount(3);
+        assertThat(ds).hasBatchPreparedCount(3);
+        assertThat(ds).hasPreparedOrBatchPreparedCount(3);
+        assertThat(ds).hasCallableCount(3);
+        assertThat(ds).hasBatchCallableCount(3);
+        assertThat(ds).hasCallableOrBatchCallableCount(3);
+
+
+
+//        // each execution
+//        assertThat(ds, executions(0, isBatch()));
+//        assertThat(ds, executions(0, batch()));
+//        assertThat(ds, executions(0, is(batch())));
+//
+//        assertThat(ds, executions(0, isStatement()));
+//        assertThat(ds, executions(0, statement()));
+//        assertThat(ds, executions(0, is(isStatement())));
+//
+//        assertThat(ds, executions(0, isBatchStatement()));
+//        assertThat(ds, executions(0, batchStatement()));
+//        assertThat(ds, executions(0, is(batchStatement())));
+//
+//        assertThat(ds, executions(0, isStatementOrBatchStatement()));
+//        assertThat(ds, executions(0, isPrepared()));
+//        assertThat(ds, executions(0, isBatchPrepared()));
+//        assertThat(ds, executions(0, isPreparedOrBatchPrepared()));
+//        assertThat(ds, executions(0, isCallable()));
+//        assertThat(ds, executions(0, isBatchCallable()));
+//        assertThat(ds, executions(0, isCallableOrBatchCallable()));
+//
+//        assertThat(ds, executions(0, is(success())));
+//
+//
+//        // query count
+//        assertThat(ds, totalQueryCount(5));
+//        assertThat(ds, selectCount(3));
+//        assertThat(ds, insertCount(3));
+//        assertThat(ds, allOf(updateCount(3), deleteCount(1)));
+//
+//        // TODO:
+//        // ds.reset();
+//
+//        assertThat(ds.getFirstStatement(), query(is("abc")));
+//        assertThat(ds.getFirstBatchStatement(), queries(0, is("abc")));
+//        assertThat(ds.getFirstBatchCallable(), query(is("abc")));
+//
+
+        assertThat(ds.getQueryExecutions().get(0)).isBatch();
+        assertThat(ds.getQueryExecutions().get(0)).isStatement();
+        assertThat(ds.getQueryExecutions().get(0)).isBatchStatement();
+        assertThat(ds.getQueryExecutions().get(0)).isStatementOrBatchStatement();
+        assertThat(ds.getQueryExecutions().get(0)).isPrepared();
+        assertThat(ds.getQueryExecutions().get(0)).isBatchPrepared();
+        assertThat(ds.getQueryExecutions().get(0)).isPreparedOrBatchPrepared();
+        assertThat(ds.getQueryExecutions().get(0)).isCallable();
+        assertThat(ds.getQueryExecutions().get(0)).isBatchCallable();
+        assertThat(ds.getQueryExecutions().get(0)).isCallableOrBatchCallable();
+
+        assertThat(ds.getQueryExecutions().get(0)).asStatement();
+        assertThat(ds.getQueryExecutions().get(0)).asBatchStatement();
+        assertThat(ds.getQueryExecutions().get(0)).asPrepared();
+        assertThat(ds.getQueryExecutions().get(0)).asBatchPrepared();
+        assertThat(ds.getQueryExecutions().get(0)).asCallable();
+        assertThat(ds.getQueryExecutions().get(0)).asBatchCallable();
+    }
+
 
     private void statementExecution() {
         StatementExecution se = new StatementExecution();
