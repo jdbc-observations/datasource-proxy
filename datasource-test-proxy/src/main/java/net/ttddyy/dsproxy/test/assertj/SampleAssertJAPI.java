@@ -150,6 +150,9 @@ public class SampleAssertJAPI {
     private void statementExecution() {
         StatementExecution se = new StatementExecution();
 
+        assertThat(se).isSuccess();
+        assertThat(se).isFailure();
+
         assertThat(se.getQuery()).isEqualTo("...");
         assertThat(se).hasQueryType(QueryType.SELECT);
     }

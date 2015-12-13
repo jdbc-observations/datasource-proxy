@@ -14,6 +14,14 @@ public class StatementExecutionAssert extends AbstractAssert<StatementExecutionA
         super(actual, StatementExecutionAssert.class);
     }
 
+    public StatementExecutionAssert isSuccess() {
+        return this;
+    }
+
+    public StatementExecutionAssert isFailure() {
+        return this;
+    }
+
     public QueryHolderAssert query() {
         return new QueryHolderAssert(actual);
     }
