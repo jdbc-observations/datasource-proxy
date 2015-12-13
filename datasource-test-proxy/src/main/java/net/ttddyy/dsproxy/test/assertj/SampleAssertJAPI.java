@@ -124,6 +124,9 @@ public class SampleAssertJAPI {
 //        assertThat(ds.getFirstBatchCallable(), query(is("abc")));
 //
 
+        assertThat(ds.getQueryExecutions().get(0)).isSuccess();
+        assertThat(ds.getQueryExecutions().get(0)).isFailure();
+
         assertThat(ds.getQueryExecutions().get(0)).isBatch();
         assertThat(ds.getQueryExecutions().get(0)).isStatement();
         assertThat(ds.getQueryExecutions().get(0)).isBatchStatement();

@@ -13,8 +13,18 @@ import org.assertj.core.api.AbstractAssert;
  * @since 1.4
  */
 public class QueryExecutionAssert extends AbstractAssert<QueryExecutionAssert, QueryExecution> {
+
     public QueryExecutionAssert(QueryExecution actual) {
         super(actual, QueryExecution.class);
+    }
+
+    public QueryExecutionAssert isSuccess() {
+        // TODO: impl
+        return this;
+    }
+    public QueryExecutionAssert isFailure() {
+        // TODO: impl
+        return this;
     }
 
     public QueryExecutionAssert isBatch() {
