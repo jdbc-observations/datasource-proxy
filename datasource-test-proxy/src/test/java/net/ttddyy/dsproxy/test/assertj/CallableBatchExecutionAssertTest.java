@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.test.assertj;
 
 import net.ttddyy.dsproxy.test.CallableBatchExecution;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,20 +13,25 @@ import static org.junit.Assert.fail;
  */
 public class CallableBatchExecutionAssertTest {
 
+    private CallableBatchExecution cbe;
+    private CallableBatchExecutionAssert cbeAssert;
+
+    @Before
+    public void setUp() {
+        this.cbe = new CallableBatchExecution();
+        this.cbeAssert = new CallableBatchExecutionAssert(this.cbe);
+    }
+
     @Test
     public void testIsSuccess() {
-        CallableBatchExecution cbe = new CallableBatchExecution();
-
         // success case
-        cbe.setSuccess(true);
-        CallableBatchExecutionAssert cbeAssert = new CallableBatchExecutionAssert(cbe);
-        cbeAssert.isSuccess();
+        this.cbe.setSuccess(true);
+        this.cbeAssert.isSuccess();
 
         // failure case
-        cbe.setSuccess(false);
-        cbeAssert = new CallableBatchExecutionAssert(cbe);
+        this.cbe.setSuccess(false);
         try {
-            cbeAssert.isSuccess();
+            this.cbeAssert.isSuccess();
             fail("assertion should fail");
         } catch (AssertionError e) {
             assertThat(e).hasMessage("\nExpecting: <Successful execution> but was: <Failure execution>\n");
@@ -35,18 +41,14 @@ public class CallableBatchExecutionAssertTest {
 
     @Test
     public void testIsFailure() {
-        CallableBatchExecution cbe = new CallableBatchExecution();
-
         // success case
-        cbe.setSuccess(false);
-        CallableBatchExecutionAssert cbeAssert = new CallableBatchExecutionAssert(cbe);
-        cbeAssert.isFailure();
+        this.cbe.setSuccess(false);
+        this.cbeAssert.isFailure();
 
         // failure case
-        cbe.setSuccess(true);
-        cbeAssert = new CallableBatchExecutionAssert(cbe);
+        this.cbe.setSuccess(true);
         try {
-            cbeAssert.isFailure();
+            this.cbeAssert.isFailure();
             fail("assertion should fail");
         } catch (AssertionError e) {
             assertThat(e).hasMessage("\nExpecting: <Failure execution> but was: <Successful execution>\n");
