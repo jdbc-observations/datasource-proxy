@@ -171,10 +171,9 @@ public class SampleAssertJAPI {
     public void preparedExecution() {
         PreparedExecution pe = new PreparedExecution();
 
-/*
-        assertThat(pe).success();
-        assertThat(pe).failure();
-*/
+        assertThat(pe).isSuccess();
+        assertThat(pe).isFailure();
+
         assertThat(pe).containsParam(10, "value").containsParam(10, "value");
         assertThat(pe).containsParams(param(10, "value"), param(10, "value"), nullParam(12));
         assertThat(pe).containsParamIndex(10);

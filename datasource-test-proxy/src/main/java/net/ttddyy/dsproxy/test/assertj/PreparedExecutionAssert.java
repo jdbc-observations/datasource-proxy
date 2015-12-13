@@ -14,12 +14,23 @@ public class PreparedExecutionAssert extends AbstractAssert<PreparedExecutionAss
         super(actual, PreparedExecutionAssert.class);
     }
 
-    public PreparedExecutionAssert aa(){
+    public PreparedExecutionAssert aa() {
         new ParameterByIndexHolderAssertion(this.actual).foo();
         return this;
     }
-    public PreparedExecutionAssert bb(){
+
+    public PreparedExecutionAssert bb() {
 //        new QueryHolderAssert(this.actual).foo("abc");
+        return this;
+    }
+
+    public PreparedExecutionAssert isSuccess() {
+        // TODO: impl
+        return this;
+    }
+
+    public PreparedExecutionAssert isFailure() {
+        // TODO: impl
         return this;
     }
 
