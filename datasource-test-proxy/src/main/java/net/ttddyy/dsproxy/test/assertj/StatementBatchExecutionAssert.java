@@ -21,6 +21,16 @@ public class StatementBatchExecutionAssert extends AbstractAssert<StatementBatch
         super(actual, StatementBatchExecutionAssert.class);
     }
 
+    public StatementBatchExecutionAssert isSuccess() {
+        // TODO: impl
+        return this;
+    }
+
+    public StatementBatchExecutionAssert isFailure() {
+        // TODO: impl
+        return this;
+    }
+
     public AbstractListAssert<?, ? extends List<? extends String>, String> queries() {
         return Assertions.assertThat(actual.getQueries());
     }

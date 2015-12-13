@@ -160,6 +160,9 @@ public class SampleAssertJAPI {
     private void batchStatementExecution() {
         StatementBatchExecution sbe = new StatementBatchExecution();
 
+        assertThat(sbe).isSuccess();
+        assertThat(sbe).isFailure();
+
         // check batch queries
         assertThat(sbe.getQueries().get(0)).isEqualTo("...");
         assertThat(sbe).contains(QueryType.SELECT, atIndex(0));
