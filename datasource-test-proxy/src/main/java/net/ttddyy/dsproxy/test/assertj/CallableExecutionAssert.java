@@ -2,7 +2,6 @@ package net.ttddyy.dsproxy.test.assertj;
 
 import net.ttddyy.dsproxy.test.CallableExecution;
 import net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter;
-import org.assertj.core.api.AbstractAssert;
 
 import java.sql.SQLType;
 
@@ -10,18 +9,18 @@ import java.sql.SQLType;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class CallableExecutionAssert extends AbstractAssert<CallableExecutionAssert, CallableExecution> {
+public class CallableExecutionAssert extends AbstractExecutionAssert<CallableExecutionAssert, CallableExecution> {
     public CallableExecutionAssert(CallableExecution actual) {
         super(actual, CallableExecutionAssert.class);
     }
 
     public CallableExecutionAssert isSuccess() {
-        // TODO: impl
+        this.isExecutionSuccess();
         return this;
     }
 
     public CallableExecutionAssert isFailure() {
-        // TODO: impl
+        this.isExecutionFailure();
         return this;
     }
 
