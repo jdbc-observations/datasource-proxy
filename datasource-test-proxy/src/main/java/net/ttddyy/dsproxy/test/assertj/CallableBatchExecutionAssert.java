@@ -3,25 +3,24 @@ package net.ttddyy.dsproxy.test.assertj;
 import net.ttddyy.dsproxy.test.BatchExecutionEntry;
 import net.ttddyy.dsproxy.test.CallableBatchExecution;
 import net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters;
-import org.assertj.core.api.AbstractAssert;
 
 /**
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
 // TODO: should this extend AbstractAssert??
-public class CallableBatchExecutionAssert extends AbstractAssert<CallableBatchExecutionAssert, CallableBatchExecution> {
+public class CallableBatchExecutionAssert extends AbstractExecutionAssert<CallableBatchExecutionAssert, CallableBatchExecution> {
     public CallableBatchExecutionAssert(CallableBatchExecution actual) {
         super(actual, CallableBatchExecutionAssert.class);
     }
 
     public CallableBatchExecutionAssert isSuccess() {
-        // TODO: impl
+        isExecutionSuccess();
         return this;
     }
 
     public CallableBatchExecutionAssert isFailure() {
-        // TODO: impl
+        isExecutionFailure();
         return this;
     }
 
