@@ -186,10 +186,8 @@ public class SampleAssertJAPI {
     public void preparedBatchExecution() {
         PreparedBatchExecution pbe = new PreparedBatchExecution();
 
-/*
-        assertThat(pbe).success();
-        assertThat(pbe).failure();
-*/
+        assertThat(pbe).isSuccess();
+        assertThat(pbe).isFailure();
 
         assertThat(pbe).hasBatchSize(3);
 
