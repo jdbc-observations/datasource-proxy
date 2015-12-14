@@ -2,13 +2,12 @@ package net.ttddyy.dsproxy.test.assertj;
 
 import net.ttddyy.dsproxy.test.PreparedExecution;
 import net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter;
-import org.assertj.core.api.AbstractAssert;
 
 /**
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class PreparedExecutionAssert extends AbstractAssert<PreparedExecutionAssert, PreparedExecution> {
+public class PreparedExecutionAssert extends AbstractExecutionAssert<PreparedExecutionAssert, PreparedExecution> {
 
     public PreparedExecutionAssert(PreparedExecution actual) {
         super(actual, PreparedExecutionAssert.class);
@@ -25,12 +24,12 @@ public class PreparedExecutionAssert extends AbstractAssert<PreparedExecutionAss
     }
 
     public PreparedExecutionAssert isSuccess() {
-        // TODO: impl
+        isExecutionSuccess();
         return this;
     }
 
     public PreparedExecutionAssert isFailure() {
-        // TODO: impl
+        isExecutionFailure();
         return this;
     }
 
