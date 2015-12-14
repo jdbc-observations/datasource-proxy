@@ -3,25 +3,24 @@ package net.ttddyy.dsproxy.test.assertj;
 import net.ttddyy.dsproxy.test.BatchExecutionEntry;
 import net.ttddyy.dsproxy.test.PreparedBatchExecution;
 import net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters;
-import org.assertj.core.api.AbstractAssert;
 
 /**
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class PreparedBatchExecutionAssert extends AbstractAssert<PreparedBatchExecutionAssert, PreparedBatchExecution> {
+public class PreparedBatchExecutionAssert extends AbstractExecutionAssert<PreparedBatchExecutionAssert, PreparedBatchExecution> {
 
     public PreparedBatchExecutionAssert(PreparedBatchExecution actual) {
         super(actual, PreparedBatchExecutionAssert.class);
     }
 
     public PreparedBatchExecutionAssert isSuccess() {
-        // TODO: impl
+        isExecutionSuccess();
         return this;
     }
 
     public PreparedBatchExecutionAssert isFailure() {
-        // TODO: impl
+        isExecutionFailure();
         return this;
     }
 
