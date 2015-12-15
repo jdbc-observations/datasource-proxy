@@ -30,6 +30,14 @@ public class StatementBatchExecutionAssert extends AbstractExecutionAssert<State
         return this;
     }
 
+    public StatementBatchExecutionAssert hasBatchSize(int batchSize) {
+        int actualSize = this.actual.getQueries().size();
+        if (actualSize != batchSize) {
+            failWithMessage("%nExpected batch size:<%s> but was:<%s> in batch statement executions%n", batchSize, actualSize);
+        }
+        return this;
+    }
+
     public AbstractListAssert<?, ? extends List<? extends String>, String> queries() {
         return Assertions.assertThat(actual.getQueries());
     }

@@ -163,6 +163,8 @@ public class SampleAssertJAPI {
         assertThat(sbe).isSuccess();
         assertThat(sbe).isFailure();
 
+        assertThat(sbe).hasBatchSize(3);
+
         // check batch queries
         assertThat(sbe.getQueries().get(0)).isEqualTo("...");
         assertThat(sbe).contains(QueryType.SELECT, atIndex(0));
