@@ -25,6 +25,7 @@ public class CallableBatchExecutionAssert extends AbstractExecutionAssert<Callab
     }
 
     public CallableBatchExecutionAssert hasBatchSize(int batchSize) {
+        new BatchParameterHolderAssert(this.actual).hasBatchSize(batchSize, "callable");
         return this;
     }
 
