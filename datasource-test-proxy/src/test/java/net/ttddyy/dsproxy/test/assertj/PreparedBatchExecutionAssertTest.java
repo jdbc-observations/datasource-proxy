@@ -1,11 +1,17 @@
 package net.ttddyy.dsproxy.test.assertj;
 
+import net.ttddyy.dsproxy.test.BatchExecutionEntry;
 import net.ttddyy.dsproxy.test.PreparedBatchExecution;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -53,6 +59,26 @@ public class PreparedBatchExecutionAssertTest {
             assertThat(e).hasMessage("\nExpecting: <Failure execution> but was: <Successful execution>\n");
         }
 
+    }
+
+    @Test
+    public void testHasBatchSize() {
+        BatchExecutionEntry entry = mock(BatchExecutionEntry.class);
+
+        ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
+        entries.addAll(Arrays.asList(entry, entry, entry));
+
+        PreparedBatchExecution pbe = mock(PreparedBatchExecution.class);
+        given(pbe.getBatchExecutionEntries()).willReturn(entries);
+
+        DataSourceProxyAssertions.assertThat(pbe).hasBatchSize(3);
+
+        try {
+            DataSourceProxyAssertions.assertThat(pbe).hasBatchSize(1);
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected batch size:<1> but was:<3> in batch prepared executions\n");
+        }
     }
 
 }
