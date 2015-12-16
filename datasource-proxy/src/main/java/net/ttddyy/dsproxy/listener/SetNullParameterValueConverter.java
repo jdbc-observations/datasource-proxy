@@ -12,8 +12,12 @@ public class SetNullParameterValueConverter implements ParameterValueConverter {
 
     @Override
     public String getValue(ParameterSetOperation param) {
-
         Integer sqlType = (Integer) param.getArgs()[1];  // second arg for setNull is always int
+        return getDisplayValue(sqlType);
+    }
+
+    public String getDisplayValue(Integer sqlType) {
+
         String sqlTypeName = ParameterValueConverter.SQL_TYPENAME_BY_CODE.get(sqlType);
 
         StringBuilder sb = new StringBuilder();
