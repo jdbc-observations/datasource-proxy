@@ -21,8 +21,8 @@ import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter.param;
 import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParamIndexes;
 import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParamKeys;
 import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParamNames;
-import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParamValuesExactly;
 import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParams;
+import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParamsExactly;
 import static net.ttddyy.dsproxy.test.hamcrest.DataSourceProxyMatchers.batch;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramIndexes;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -194,7 +194,8 @@ public class SampleAssertJAPI {
         assertThat(pbe).hasBatchSize(3);
 
         assertThat(pbe).batch(0, containsParams(param(10, "value"), param(11, 100), nullParam(12)));
-        assertThat(pbe).batch(0, containsParamValuesExactly("value", 100, null, 12));
+        assertThat(pbe).batch(0, containsParamsExactly(param(10, "value"), param(11, 100), nullParam(12)));
+//        assertThat(pbe).batch(0, containsParamValuesExactly("value", 100, null, 12));  // TODO: for values??
 
         assertThat(pbe).batch(0, containsParamIndexes(10, 11));
 
