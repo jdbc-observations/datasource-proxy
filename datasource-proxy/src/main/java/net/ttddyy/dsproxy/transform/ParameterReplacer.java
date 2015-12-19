@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.transform;
 
 
+import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 
 import java.io.InputStream;
@@ -19,25 +20,27 @@ import java.util.Map;
  */
 public class ParameterReplacer {
 
-    private Map<Object, ParameterSetOperation> parameters = new LinkedHashMap<Object, ParameterSetOperation>();
+    private Map<ParameterKey, ParameterSetOperation> parameters = new LinkedHashMap<ParameterKey, ParameterSetOperation>();
     private boolean modified = false;
 
     public ParameterReplacer() {
     }
 
-    public ParameterReplacer(Map<Object, ParameterSetOperation> parameters) {
+    public ParameterReplacer(Map<ParameterKey, ParameterSetOperation> parameters) {
         // make a copy
         this.parameters.putAll(parameters);
     }
 
     @SuppressWarnings("unchecked")
     public <T> T getValue(int index) {
-        return (T) this.parameters.get(index).getArgs()[1];  // index 1 in arguments is always value
+        ParameterKey parameterKey = new ParameterKey(index);
+        return (T) this.parameters.get(parameterKey).getArgs()[1];  // index 1 in arguments is always value
     }
 
     @SuppressWarnings("unchecked")
     public <T> T getValue(String paramName) {
-        return (T) this.parameters.get(paramName).getArgs()[1];  // index 1 in arguments is always value
+        ParameterKey parameterKey = new ParameterKey(paramName);
+        return (T) this.parameters.get(parameterKey).getArgs()[1];  // index 1 in arguments is always value
     }
 
     public void clearParameters() {
@@ -54,12 +57,14 @@ public class ParameterReplacer {
     }
 
     private void record(int parameterIndex, Method paramMethod, Object... args) {
-        this.parameters.put(parameterIndex, new ParameterSetOperation(paramMethod, args));
+        ParameterKey parameterKey = new ParameterKey(parameterIndex);
+        this.parameters.put(parameterKey, new ParameterSetOperation(paramMethod, args));
         modified = true;
     }
 
     private void recordByName(String parameterName, Method paramMethod, Object... args) {
-        this.parameters.put(parameterName, new ParameterSetOperation(paramMethod, args));
+        ParameterKey parameterKey = new ParameterKey(parameterName);
+        this.parameters.put(parameterKey, new ParameterSetOperation(paramMethod, args));
         modified = true;
     }
 
@@ -67,7 +72,7 @@ public class ParameterReplacer {
         return modified;
     }
 
-    public Map<Object, ParameterSetOperation> getModifiedParameters() {
+    public Map<ParameterKey, ParameterSetOperation> getModifiedParameters() {
         return this.parameters;
     }
 

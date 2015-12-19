@@ -32,11 +32,11 @@ public class PreparedStatementProxyLogic {
 
     // when same key(index/name) is used for parameter set operation, old value will be replaced. To implement that logic
     // using a map, so that putting same key will override the entry.
-    private Map<Object, ParameterSetOperation> parameters = new LinkedHashMap<Object, ParameterSetOperation>();
+    private Map<ParameterKey, ParameterSetOperation> parameters = new LinkedHashMap<ParameterKey, ParameterSetOperation>();
     private InterceptorHolder interceptorHolder;
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
 
-    private List<Map<Object, ParameterSetOperation>> batchParameters = new ArrayList<Map<Object, ParameterSetOperation>>();
+    private List<Map<ParameterKey, ParameterSetOperation>> batchParameters = new ArrayList<Map<ParameterKey, ParameterSetOperation>>();
 
     public PreparedStatementProxyLogic() {
     }
@@ -96,8 +96,18 @@ public class PreparedStatementProxyLogic {
                 if ("clearParameters".equals(methodName)) {
                     parameters.clear();
                 } else {
+
+                    ParameterKey parameterKey;
+                    if (args[0] instanceof Integer) {
+                        parameterKey = new ParameterKey((Integer) args[0]);
+                    } else if (args[0] instanceof String) {
+                        parameterKey = new ParameterKey((String) args[0]);
+                    } else {
+                        return MethodUtils.proceedExecution(method, ps, args);
+                    }
+
                     // when same key is specified, old value will be overridden
-                    parameters.put(args[0], new ParameterSetOperation(method, args));
+                    parameters.put(parameterKey, new ParameterSetOperation(method, args));
                 }
 
             } else if (StatementMethodNames.BATCH_PARAM_METHODS.contains(methodName)) {
@@ -109,7 +119,7 @@ public class PreparedStatementProxyLogic {
                     transformParameters(true, batchParameters.size());
 
                     // copy values
-                    Map<Object, ParameterSetOperation> newParams = new LinkedHashMap<Object, ParameterSetOperation>(parameters);
+                    Map<ParameterKey, ParameterSetOperation> newParams = new LinkedHashMap<ParameterKey, ParameterSetOperation>(parameters);
                     batchParameters.add(newParams);
 
                     parameters.clear();
@@ -133,7 +143,7 @@ public class PreparedStatementProxyLogic {
 
             // one query with multiple parameters
             QueryInfo queryInfo = new QueryInfo(this.query);
-            for (Map<Object, ParameterSetOperation> params : batchParameters) {
+            for (Map<ParameterKey, ParameterSetOperation> params : batchParameters) {
                 queryInfo.getParametersList().add(new ArrayList<ParameterSetOperation>(params.values()));
             }
             queries.add(queryInfo);
@@ -190,7 +200,7 @@ public class PreparedStatementProxyLogic {
             ps.clearParameters();  // clear existing parameters
 
             // re-set parameters
-            Map<Object, ParameterSetOperation> modifiedParameters = parameterReplacer.getModifiedParameters();
+            Map<ParameterKey, ParameterSetOperation> modifiedParameters = parameterReplacer.getModifiedParameters();
             for (ParameterSetOperation operation : modifiedParameters.values()) {
                 final Method paramMethod = operation.getMethod();
                 final Object[] paramArgs = operation.getArgs();

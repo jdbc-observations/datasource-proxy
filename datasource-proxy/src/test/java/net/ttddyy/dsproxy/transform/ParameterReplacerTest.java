@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.transform;
 
+import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 import org.junit.Test;
 
@@ -20,24 +21,24 @@ public class ParameterReplacerTest {
 
         Method method = null;
 
-        Map<Object, ParameterSetOperation> input = new LinkedHashMap<Object, ParameterSetOperation>();
-        input.put(1, new ParameterSetOperation(method, new Object[]{1, "value-1"}));
-        input.put(2, new ParameterSetOperation(method, new Object[]{2, "value-2"}));
-        input.put("foo", new ParameterSetOperation(method, new Object[]{"foo", "value-foo"}));
-        input.put("bar", new ParameterSetOperation(method, new Object[]{"bar", "value-bar"}));
+        Map<ParameterKey, ParameterSetOperation> input = new LinkedHashMap<ParameterKey, ParameterSetOperation>();
+        input.put(new ParameterKey(1), new ParameterSetOperation(method, new Object[]{1, "value-1"}));
+        input.put(new ParameterKey(2), new ParameterSetOperation(method, new Object[]{2, "value-2"}));
+        input.put(new ParameterKey("foo"), new ParameterSetOperation(method, new Object[]{"foo", "value-foo"}));
+        input.put(new ParameterKey("bar"), new ParameterSetOperation(method, new Object[]{"bar", "value-bar"}));
 
         ParameterReplacer replacer = new ParameterReplacer(input);
         replacer.setString(1, "replaced-1");
         replacer.setString("foo", "replaced-foo");
 
-        Map<Object, ParameterSetOperation> params = replacer.getModifiedParameters();
+        Map<ParameterKey, ParameterSetOperation> params = replacer.getModifiedParameters();
         assertThat(params.keySet(), hasSize(4));
-        assertThat(params.keySet(), hasItems((Object)1, 2, "foo", "bar"));
+        assertThat(params.keySet(), hasItems(new ParameterKey(1), new ParameterKey(2), new ParameterKey("foo"), new ParameterKey("bar")));
 
-        assertThat((String) params.get(1).getArgs()[1], is("replaced-1"));
-        assertThat((String) params.get(2).getArgs()[1], is("value-2"));
-        assertThat((String) params.get("foo").getArgs()[1], is("replaced-foo"));
-        assertThat((String) params.get("bar").getArgs()[1], is("value-bar"));
+        assertThat((String) params.get(new ParameterKey(1)).getArgs()[1], is("replaced-1"));
+        assertThat((String) params.get(new ParameterKey(2)).getArgs()[1], is("value-2"));
+        assertThat((String) params.get(new ParameterKey("foo")).getArgs()[1], is("replaced-foo"));
+        assertThat((String) params.get(new ParameterKey("bar")).getArgs()[1], is("value-bar"));
 
     }
 
@@ -46,23 +47,23 @@ public class ParameterReplacerTest {
 
         Method method = null;
 
-        Map<Object, ParameterSetOperation> input = new LinkedHashMap<Object, ParameterSetOperation>();
-        input.put(1, new ParameterSetOperation(method, new Object[]{1, "value-1"}));
-        input.put(2, new ParameterSetOperation(method, new Object[]{2, "value-2"}));
-        input.put("foo", new ParameterSetOperation(method, new Object[]{"foo", "value-foo"}));
-        input.put("bar", new ParameterSetOperation(method, new Object[]{"bar", "value-bar"}));
+        Map<ParameterKey, ParameterSetOperation> input = new LinkedHashMap<ParameterKey, ParameterSetOperation>();
+        input.put(new ParameterKey(1), new ParameterSetOperation(method, new Object[]{1, "value-1"}));
+        input.put(new ParameterKey(2), new ParameterSetOperation(method, new Object[]{2, "value-2"}));
+        input.put(new ParameterKey("foo"), new ParameterSetOperation(method, new Object[]{"foo", "value-foo"}));
+        input.put(new ParameterKey("bar"), new ParameterSetOperation(method, new Object[]{"bar", "value-bar"}));
 
         ParameterReplacer replacer = new ParameterReplacer(input);
         replacer.clearParameters();
         replacer.setString(1, "replaced-1");
         replacer.setString("foo", "replaced-foo");
 
-        Map<Object, ParameterSetOperation> params = replacer.getModifiedParameters();
+        Map<ParameterKey, ParameterSetOperation> params = replacer.getModifiedParameters();
         assertThat(params.keySet(), hasSize(2));
-        assertThat(params.keySet(), hasItems((Object)1, "foo"));
+        assertThat(params.keySet(), hasItems(new ParameterKey(1), new ParameterKey("foo")));
 
-        assertThat((String) params.get(1).getArgs()[1], is("replaced-1"));
-        assertThat((String) params.get("foo").getArgs()[1], is("replaced-foo"));
+        assertThat((String) params.get(new ParameterKey(1)).getArgs()[1], is("replaced-1"));
+        assertThat((String) params.get(new ParameterKey("foo")).getArgs()[1], is("replaced-foo"));
     }
 
 }
