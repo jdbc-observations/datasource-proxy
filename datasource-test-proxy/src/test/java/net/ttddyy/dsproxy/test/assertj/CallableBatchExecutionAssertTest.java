@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.test.assertj;
 
+import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.test.BatchExecutionEntry;
 import net.ttddyy.dsproxy.test.CallableBatchExecution;
 import net.ttddyy.dsproxy.test.PreparedBatchExecution;
@@ -94,15 +95,15 @@ public class CallableBatchExecutionAssertTest {
 
     @Test
     public void testBatchWithContainsParams() {
-        Map<Integer, Object> paramsByIndex = new HashMap<Integer, Object>();
-        paramsByIndex.put(1, "foo");
+        Map<ParameterKey, Object> paramsByIndex = new HashMap<ParameterKey, Object>();
+        paramsByIndex.put(new ParameterKey(1), "foo");
 
-        Map<String, Object> paramsByName = new HashMap<String, Object>();
-        paramsByName.put("bar", "BAR");
+        Map<ParameterKey, Object> paramsByName = new HashMap<ParameterKey, Object>();
+        paramsByName.put(new ParameterKey("bar"), "BAR");
 
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.setParamsByIndex(paramsByIndex);
-        entry.setParamsByName(paramsByName);
+        entry.getParams().putAll(paramsByIndex);
+        entry.getParams().putAll(paramsByName);
 
         ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
         entries.addAll(Arrays.asList(entry));
@@ -157,15 +158,15 @@ public class CallableBatchExecutionAssertTest {
 
     @Test
     public void testBatchParamKeysWithContainsParams() {
-        Map<Integer, Object> paramsByIndex = new HashMap<Integer, Object>();
-        paramsByIndex.put(1, "foo");
+        Map<ParameterKey, Object> paramsByIndex = new HashMap<ParameterKey, Object>();
+        paramsByIndex.put(new ParameterKey(1), "foo");
 
-        Map<String, Object> paramsByName = new HashMap<String, Object>();
-        paramsByName.put("bar", "BAR");
+        Map<ParameterKey, Object> paramsByName = new HashMap<ParameterKey, Object>();
+        paramsByName.put(new ParameterKey("bar"), "BAR");
 
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.setParamsByIndex(paramsByIndex);
-        entry.setParamsByName(paramsByName);
+        entry.getParams().putAll(paramsByIndex);
+        entry.getParams().putAll(paramsByName);
 
         ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
         entries.addAll(Arrays.asList(entry));
@@ -194,15 +195,15 @@ public class CallableBatchExecutionAssertTest {
 
     @Test
     public void testBatchParamKeysWithContainsParamsExactly() {
-        Map<Integer, Object> paramsByIndex = new HashMap<Integer, Object>();
-        paramsByIndex.put(1, "foo");
+        Map<ParameterKey, Object> paramsByIndex = new HashMap<ParameterKey, Object>();
+        paramsByIndex.put(new ParameterKey(1), "foo");
 
-        Map<String, Object> paramsByName = new HashMap<String, Object>();
-        paramsByName.put("bar", "BAR");
+        Map<ParameterKey, Object> paramsByName = new HashMap<ParameterKey, Object>();
+        paramsByName.put(new ParameterKey("bar"), "BAR");
 
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.setParamsByIndex(paramsByIndex);
-        entry.setParamsByName(paramsByName);
+        entry.getParams().putAll(paramsByIndex);
+        entry.getParams().putAll(paramsByName);
 
         ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
         entries.addAll(Arrays.asList(entry));
@@ -233,15 +234,15 @@ public class CallableBatchExecutionAssertTest {
 
     @Test
     public void testBatchParamKeyNames() {
-        Map<Integer, Object> paramsByIndex = new HashMap<Integer, Object>();
-        paramsByIndex.put(1, "foo");
+        Map<ParameterKey, Object> paramsByIndex = new HashMap<ParameterKey, Object>();
+        paramsByIndex.put(new ParameterKey(1), "foo");
 
-        Map<String, Object> paramsByName = new HashMap<String, Object>();
-        paramsByName.put("bar", "BAR");
+        Map<ParameterKey, Object> paramsByName = new HashMap<ParameterKey, Object>();
+        paramsByName.put(new ParameterKey("bar"), "BAR");
 
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.setParamsByIndex(paramsByIndex);
-        entry.setParamsByName(paramsByName);
+        entry.getParams().putAll(paramsByIndex);
+        entry.getParams().putAll(paramsByName);
 
         ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
         entries.addAll(Arrays.asList(entry));
@@ -265,15 +266,15 @@ public class CallableBatchExecutionAssertTest {
 
     @Test
     public void testBatchParamKeyIndexes() {
-        Map<Integer, Object> paramsByIndex = new HashMap<Integer, Object>();
-        paramsByIndex.put(1, "foo");
+        Map<ParameterKey, Object> paramsByIndex = new HashMap<ParameterKey, Object>();
+        paramsByIndex.put(new ParameterKey(1), "foo");
 
-        Map<String, Object> paramsByName = new HashMap<String, Object>();
-        paramsByName.put("bar", "BAR");
+        Map<ParameterKey, Object> paramsByName = new HashMap<ParameterKey, Object>();
+        paramsByName.put(new ParameterKey("bar"), "BAR");
 
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.setParamsByIndex(paramsByIndex);
-        entry.setParamsByName(paramsByName);
+        entry.getParams().putAll(paramsByIndex);
+        entry.getParams().putAll(paramsByName);
 
         ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
         entries.addAll(Arrays.asList(entry));
@@ -296,15 +297,15 @@ public class CallableBatchExecutionAssertTest {
 
     @Test
     public void testBatchParamKeys() {
-        Map<Integer, Object> paramsByIndex = new HashMap<Integer, Object>();
-        paramsByIndex.put(1, "foo");
+        Map<ParameterKey, Object> paramsByIndex = new HashMap<ParameterKey, Object>();
+        paramsByIndex.put(new ParameterKey(1), "foo");
 
-        Map<String, Object> paramsByName = new HashMap<String, Object>();
-        paramsByName.put("bar", "BAR");
+        Map<ParameterKey, Object> paramsByName = new HashMap<ParameterKey, Object>();
+        paramsByName.put(new ParameterKey("bar"), "BAR");
 
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.setParamsByIndex(paramsByIndex);
-        entry.setParamsByName(paramsByName);
+        entry.getParams().putAll(paramsByIndex);
+        entry.getParams().putAll(paramsByName);
 
         ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
         entries.addAll(Arrays.asList(entry));

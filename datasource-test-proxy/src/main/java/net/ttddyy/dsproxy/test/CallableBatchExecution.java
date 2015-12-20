@@ -62,7 +62,6 @@ public class CallableBatchExecution extends BaseQueryExecution implements BatchP
             List<String> names = new ArrayList<String>();
             names.addAll(toNameMap(this.params).keySet());
             names.addAll(toNameMap(this.setNullParams).keySet());
-            names.addAll(toNameMap(this.outParams).keySet());
             return names;
         }
 
@@ -71,7 +70,6 @@ public class CallableBatchExecution extends BaseQueryExecution implements BatchP
             List<Integer> indexes = new ArrayList<Integer>();
             indexes.addAll(toIndexMap(this.params).keySet());
             indexes.addAll(toIndexMap(this.setNullParams).keySet());
-            indexes.addAll(toIndexMap(this.outParams).keySet());
             return indexes;
         }
 
