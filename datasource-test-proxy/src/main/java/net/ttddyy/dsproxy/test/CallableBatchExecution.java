@@ -1,9 +1,14 @@
 package net.ttddyy.dsproxy.test;
 
+import net.ttddyy.dsproxy.proxy.ParameterKey;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static net.ttddyy.dsproxy.proxy.ParameterKeyUtils.toIndexMap;
+import static net.ttddyy.dsproxy.proxy.ParameterKeyUtils.toNameMap;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -13,83 +18,87 @@ public class CallableBatchExecution extends BaseQueryExecution implements BatchP
 
     public static class CallableBatchExecutionEntry implements BatchExecutionEntry, ParameterByIndexHolder, ParameterByNameHolder, OutParameterHolder {
 
-        public Map<String, Object> paramsByName = new LinkedHashMap<String, Object>();
-        public Map<Integer, Object> paramsByIndex = new LinkedHashMap<Integer, Object>();
-        public Map<String, Integer> setNullByName = new LinkedHashMap<String, Integer>();
-        public Map<Integer, Integer> setNullByIndex = new LinkedHashMap<Integer, Integer>();
-        public Map<String, Object> outParamsByName = new LinkedHashMap<String, Object>();
-        public Map<Integer, Object> outParamsByIndex = new LinkedHashMap<Integer, Object>();
+        public Map<ParameterKey, Object> params = new LinkedHashMap<ParameterKey, Object>();
+        public Map<ParameterKey, Integer> setNullParams = new LinkedHashMap<ParameterKey, Integer>();
+        public Map<ParameterKey, Object> outParams = new LinkedHashMap<ParameterKey, Object>();
 
-        public void setParamsByName(Map<String, Object> paramsByName) {
-            this.paramsByName = paramsByName;
+        @Override
+        public Map<ParameterKey, Object> getParams() {
+            return this.params;
         }
 
-        public void setParamsByIndex(Map<Integer, Object> paramsByIndex) {
-            this.paramsByIndex = paramsByIndex;
+        @Override
+        public Map<ParameterKey, Integer> getSetNullParams() {
+            return this.setNullParams;
+        }
+
+        @Override
+        public Map<ParameterKey, Object> getOutParams() {
+            return this.outParams;
         }
 
         @Override
         public Map<String, Object> getParamsByName() {
-            return paramsByName;
+            return toNameMap(this.params);
         }
 
         @Override
         public Map<Integer, Object> getParamsByIndex() {
-            return paramsByIndex;
+            return toIndexMap(this.params);
         }
 
         @Override
         public Map<String, Integer> getSetNullParamsByName() {
-            return this.setNullByName;
+            return toNameMap(this.setNullParams);
         }
 
         @Override
         public Map<Integer, Integer> getSetNullParamsByIndex() {
-            return this.setNullByIndex;
+            return toIndexMap(this.setNullParams);
         }
 
         @Override
         public List<String> getParamNames() {
             List<String> names = new ArrayList<String>();
-            names.addAll(this.paramsByName.keySet());
-            names.addAll(this.setNullByName.keySet());
+            names.addAll(toNameMap(this.params).keySet());
+            names.addAll(toNameMap(this.setNullParams).keySet());
             return names;
         }
 
         @Override
         public List<Integer> getParamIndexes() {
             List<Integer> indexes = new ArrayList<Integer>();
-            indexes.addAll(this.paramsByIndex.keySet());
-            indexes.addAll(this.setNullByIndex.keySet());
+            indexes.addAll(toIndexMap(this.params).keySet());
+            indexes.addAll(toIndexMap(this.setNullParams).keySet());
             return indexes;
         }
 
         @Override
         public List<Object> getParamValues() {
             List<Object> list = new ArrayList<Object>();
-            list.addAll(this.paramsByIndex.values());
-            list.addAll(this.paramsByName.values());
+            list.addAll(toIndexMap(this.params).values());
             return list;
         }
 
+        // TODO: impl here
         @Override
         public Map<Integer, Object> getOutParamsByIndex() {
-            return this.outParamsByIndex;
+            return toIndexMap(this.outParams);
         }
 
         @Override
         public Map<String, Object> getOutParamsByName() {
-            return this.outParamsByName;
+            return toNameMap(this.outParams);
         }
 
         @Override
         public List<Integer> getOutParamIndexes() {
-            return new ArrayList<Integer>(this.outParamsByIndex.keySet());
+            return new ArrayList<Integer>(toIndexMap(this.outParams).keySet());
         }
 
         @Override
         public List<String> getOutParamNames() {
-            return new ArrayList<String>(this.outParamsByName.keySet());
+            return new ArrayList<String>(toNameMap(this.outParams).keySet());
         }
     }
 

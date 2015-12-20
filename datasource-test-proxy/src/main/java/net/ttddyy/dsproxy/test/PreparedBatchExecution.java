@@ -1,9 +1,13 @@
 package net.ttddyy.dsproxy.test;
 
+import net.ttddyy.dsproxy.proxy.ParameterKey;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static net.ttddyy.dsproxy.proxy.ParameterKeyUtils.toIndexMap;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -13,36 +17,42 @@ public class PreparedBatchExecution extends BaseQueryExecution implements QueryH
 
     public static class PreparedBatchExecutionEntry implements BatchExecutionEntry, ParameterByIndexHolder {
 
-        public Map<Integer, Object> paramsByIndex = new LinkedHashMap<Integer, Object>();
-        public Map<Integer, Integer> setNullByIndex = new LinkedHashMap<Integer, Integer>();
-
-        public void setParamsByIndex(Map<Integer, Object> paramsByIndex) {
-            this.paramsByIndex = paramsByIndex;
-        }
+        public Map<ParameterKey, Object> params = new LinkedHashMap<ParameterKey, Object>();
+        public Map<ParameterKey, Integer> setNullParams = new LinkedHashMap<ParameterKey, Integer>();
 
         @Override
         public Map<Integer, Object> getParamsByIndex() {
-            return this.paramsByIndex;
+            return toIndexMap(this.params);
         }
 
         @Override
         public Map<Integer, Integer> getSetNullParamsByIndex() {
-            return this.setNullByIndex;
+            return toIndexMap(this.setNullParams);
         }
 
         @Override
         public List<Integer> getParamIndexes() {
             List<Integer> indexes = new ArrayList<Integer>();
-            indexes.addAll(this.paramsByIndex.keySet());
-            indexes.addAll(this.setNullByIndex.keySet());
+            indexes.addAll(toIndexMap(this.params).keySet());
+            indexes.addAll(toIndexMap(this.setNullParams).keySet());
             return indexes;
         }
 
         @Override
         public List<Object> getParamValues() {
             List<Object> list = new ArrayList<Object>();
-            list.addAll(this.paramsByIndex.values());
+            list.addAll(toIndexMap(this.params).values());
             return list;
+        }
+
+        @Override
+        public Map<ParameterKey, Object> getParams() {
+            return this.params;
+        }
+
+        @Override
+        public Map<ParameterKey, Integer> getSetNullParams() {
+            return this.setNullParams;
         }
 
     }

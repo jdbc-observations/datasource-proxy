@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.test.hamcrest;
 
+import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.test.PreparedExecution;
 import org.hamcrest.Matcher;
 import org.junit.Test;
@@ -34,20 +35,20 @@ public class PreparedExecutionTest {
     @Test
     public void testParams() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParamsByIndex().put(1, "foo");
-        pe.getParamsByIndex().put(2, "bar");
-        pe.getParamsByIndex().put(3, "baz");
-        pe.getParamsByIndex().put(4, 100);
-        assertThat(pe, paramsByIndex(hasEntry(2,  (Object)"bar")));
+        pe.getParams().put(new ParameterKey(1), "foo");
+        pe.getParams().put(new ParameterKey(2), "bar");
+        pe.getParams().put(new ParameterKey(3), "baz");
+        pe.getParams().put(new ParameterKey(4), 100);
+        assertThat(pe, paramsByIndex(hasEntry(2, (Object) "bar")));
         assertThat(pe, paramsByIndex(hasEntry(4, (Object) 100)));
     }
 
     @Test
     public void testParamIndexes() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParamsByIndex().put(1, "foo");
-        pe.getParamsByIndex().put(2, "bar");
-        pe.getParamsByIndex().put(3, "baz");
+        pe.getParams().put(new ParameterKey(1), "foo");
+        pe.getParams().put(new ParameterKey(2), "bar");
+        pe.getParams().put(new ParameterKey(3), "baz");
         assertThat(pe, paramIndexes(hasItem(1)));
         assertThat(pe, paramIndexes(hasSize(3)));
     }
@@ -55,8 +56,8 @@ public class PreparedExecutionTest {
     @Test
     public void testParamValue() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParamsByIndex().put(1, "foo");
-        pe.getParamsByIndex().put(100, 100);
+        pe.getParams().put(new ParameterKey(1), "foo");
+        pe.getParams().put(new ParameterKey(100), 100);
 
         assertThat(pe, param(1, is((Object) "foo")));
 
@@ -67,8 +68,8 @@ public class PreparedExecutionTest {
     @Test
     public void testParamValueWithClass() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParamsByIndex().put(1, "foo");
-        pe.getParamsByIndex().put(100, 100);
+        pe.getParams().put(new ParameterKey(1), "foo");
+        pe.getParams().put(new ParameterKey(100), 100);
 
         assertThat(pe, param(1, String.class, is("foo")));
         assertThat(pe, param(1, String.class, startsWith("foo")));
