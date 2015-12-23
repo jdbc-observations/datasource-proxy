@@ -7,11 +7,12 @@ import net.ttddyy.dsproxy.test.PreparedBatchExecution;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
+import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter.nullParam;
+import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter.outParam;
 import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter.param;
 import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParamIndexes;
 import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParamKeys;
@@ -94,19 +95,13 @@ public class CallableBatchExecutionAssertTest {
 
 
     @Test
-    public void testBatchWithContainsParams() {
-        Map<ParameterKey, Object> paramsByIndex = new HashMap<ParameterKey, Object>();
-        paramsByIndex.put(new ParameterKey(1), "foo");
-
-        Map<ParameterKey, Object> paramsByName = new HashMap<ParameterKey, Object>();
-        paramsByName.put(new ParameterKey("bar"), "BAR");
-
+    public void batchWithContainsParams() {
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.getParams().putAll(paramsByIndex);
-        entry.getParams().putAll(paramsByName);
+        entry.getParams().put(new ParameterKey(1), "foo");
+        entry.getParams().put(new ParameterKey("bar"), "BAR");
 
         ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
-        entries.addAll(Arrays.asList(entry));
+        entries.add(entry);
 
         CallableBatchExecution cbe = mock(CallableBatchExecution.class);
         given(cbe.getBatchExecutionEntries()).willReturn(entries);
@@ -130,12 +125,20 @@ public class CallableBatchExecutionAssertTest {
             assertThat(e).hasMessage("\nExpecting: batch index <1> is too big for the batch size <1>");
         }
 
-        // value is wrong
+        // value is wrong for index
         try {
             DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(param(1, "fooABC")));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=foo}>\nto contain:\n<[index=1, value=fooABC]>\nbut could not find:\n<[index=1, value=fooABC]>");
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=foo, bar=BAR}>\nto contain:\n<[1=fooABC]>\nbut could not find:\n<[1=fooABC]>");
+        }
+
+        // value is wrong for name
+        try {
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(param("bar", "BARABC")));
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=foo, bar=BAR}>\nto contain:\n<[bar=BARABC]>\nbut could not find:\n<[bar=BARABC]>");
         }
 
         // no param index key
@@ -157,56 +160,121 @@ public class CallableBatchExecutionAssertTest {
     }
 
     @Test
-    public void testBatchParamKeysWithContainsParams() {
-        Map<ParameterKey, Object> paramsByIndex = new HashMap<ParameterKey, Object>();
-        paramsByIndex.put(new ParameterKey(1), "foo");
-
-        Map<ParameterKey, Object> paramsByName = new HashMap<ParameterKey, Object>();
-        paramsByName.put(new ParameterKey("bar"), "BAR");
-
+    public void containsParamsWithSetNullParameters() {
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.getParams().putAll(paramsByIndex);
-        entry.getParams().putAll(paramsByName);
+        entry.getSetNullParams().put(new ParameterKey(1), Types.VARCHAR);
+        entry.getSetNullParams().put(new ParameterKey("bar"), Types.DATE);
 
         ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
-        entries.addAll(Arrays.asList(entry));
+        entries.add(entry);
 
         CallableBatchExecution cbe = mock(CallableBatchExecution.class);
         given(cbe.getBatchExecutionEntries()).willReturn(entries);
 
+        // successful call
+        DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(nullParam(1, Types.VARCHAR), nullParam("bar", Types.DATE)));
 
-        // no param index key
+        // value is wrong for index
         try {
-            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(param(2, "bar")));
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(nullParam(1, Types.ARRAY)));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, bar]>\nto contain:\n<[2]>\nbut could not find:\n<[2]>");
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=NULL(VARCHAR), bar=NULL(DATE)}>\nto contain:\n<[1=NULL(ARRAY)]>\nbut could not find:\n<[1=NULL(ARRAY)]>");
         }
 
-        // no param name key
+        // value is wrong for name
         try {
-            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(param("foo", "FOO")));
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(nullParam("bar", Types.ARRAY)));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, bar]>\nto contain:\n<[foo]>\nbut could not find:\n<[foo]>");
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=NULL(VARCHAR), bar=NULL(DATE)}>\nto contain:\n<[bar=NULL(ARRAY)]>\nbut could not find:\n<[bar=NULL(ARRAY)]>");
         }
 
+        try {
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(param(1, 12))); // Types.VARCHAR == 12
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=NULL(VARCHAR), bar=NULL(DATE)}>\nto contain:\n<[1=12]>\nbut could not find:\n<[1=12]>");
+        }
     }
 
     @Test
-    public void testBatchParamKeysWithContainsParamsExactly() {
-        Map<ParameterKey, Object> paramsByIndex = new HashMap<ParameterKey, Object>();
-        paramsByIndex.put(new ParameterKey(1), "foo");
-
-        Map<ParameterKey, Object> paramsByName = new HashMap<ParameterKey, Object>();
-        paramsByName.put(new ParameterKey("bar"), "BAR");
-
+    public void containsParamsWithRegisterOutParameters() {
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.getParams().putAll(paramsByIndex);
-        entry.getParams().putAll(paramsByName);
+        entry.getOutParams().put(new ParameterKey(1), Types.BOOLEAN);
+        entry.getOutParams().put(new ParameterKey("bar"), Types.DOUBLE);
 
         ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
-        entries.addAll(Arrays.asList(entry));
+        entries.add(entry);
+
+        CallableBatchExecution cbe = mock(CallableBatchExecution.class);
+        given(cbe.getBatchExecutionEntries()).willReturn(entries);
+
+        // successful call
+        DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(outParam(1, Types.BOOLEAN), outParam("bar", Types.DOUBLE)));
+
+        // value is wrong for index
+        try {
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(outParam(1, Types.ARRAY)));
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN), bar=OUTPUT(DOUBLE)}>\nto contain:\n<[1=OUTPUT(ARRAY)]>\nbut could not find:\n<[1=OUTPUT(ARRAY)]>");
+        }
+
+        // value is wrong for name
+        try {
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(outParam("bar", Types.ARRAY)));
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN), bar=OUTPUT(DOUBLE)}>\nto contain:\n<[bar=OUTPUT(ARRAY)]>\nbut could not find:\n<[bar=OUTPUT(ARRAY)]>");
+        }
+
+        try {
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(param(1, 16))); // Types.BOOLEAN == 16
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN), bar=OUTPUT(DOUBLE)}>\nto contain:\n<[1=16]>\nbut could not find:\n<[1=16]>");
+        }
+    }
+
+    @Test
+    public void containsParamsWithMixedParameterTypes() {
+        CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
+        entry.getParams().put(new ParameterKey(1), "foo");
+        entry.getParams().put(new ParameterKey("foo"), "FOO");
+        entry.getSetNullParams().put(new ParameterKey(2), Types.VARCHAR);
+        entry.getSetNullParams().put(new ParameterKey("bar"), Types.DATE);
+        entry.getOutParams().put(new ParameterKey(3), Types.BOOLEAN);
+        entry.getOutParams().put(new ParameterKey("baz"), Types.BIGINT);
+
+        ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
+        entries.add(entry);
+
+        CallableBatchExecution cbe = mock(CallableBatchExecution.class);
+        given(cbe.getBatchExecutionEntries()).willReturn(entries);
+
+        // successful call
+        DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(param(1, "foo"), param("foo", "FOO"),
+                nullParam(2, Types.VARCHAR), nullParam("bar", Types.DATE),
+                outParam(3, Types.BOOLEAN), outParam("baz", Types.BIGINT)));
+
+        try {
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(nullParam(1, Types.ARRAY)));
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=foo, 2=NULL(VARCHAR), 3=OUTPUT(BOOLEAN), bar=NULL(DATE), baz=OUTPUT(BIGINT), foo=FOO}>\nto contain:\n<[1=NULL(ARRAY)]>\nbut could not find:\n<[1=NULL(ARRAY)]>");
+        }
+    }
+
+
+    @Test
+    public void batchParamKeysWithContainsParamsExactly() {
+        CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
+        entry.getParams().put(new ParameterKey(1), "foo");
+        entry.getParams().put(new ParameterKey("bar"), "BAR");
+
+        ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
+        entries.add(entry);
 
         CallableBatchExecution cbe = mock(CallableBatchExecution.class);
         given(cbe.getBatchExecutionEntries()).willReturn(entries);
@@ -233,32 +301,97 @@ public class CallableBatchExecutionAssertTest {
     }
 
     @Test
-    public void testBatchParamKeyNames() {
-        Map<ParameterKey, Object> paramsByIndex = new HashMap<ParameterKey, Object>();
-        paramsByIndex.put(new ParameterKey(1), "foo");
-
-        Map<ParameterKey, Object> paramsByName = new HashMap<ParameterKey, Object>();
-        paramsByName.put(new ParameterKey("bar"), "BAR");
-
+    public void batchParamKeysWithContainsParamsExactlyForSetNullParameters() {
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.getParams().putAll(paramsByIndex);
-        entry.getParams().putAll(paramsByName);
+        entry.getSetNullParams().put(new ParameterKey(1), Types.VARCHAR);
+        entry.getSetNullParams().put(new ParameterKey("bar"), Types.DATE);
 
         ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
-        entries.addAll(Arrays.asList(entry));
+        entries.add(entry);
 
         CallableBatchExecution cbe = mock(CallableBatchExecution.class);
         given(cbe.getBatchExecutionEntries()).willReturn(entries);
 
         // successful case
+        DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamsExactly(nullParam(1, Types.VARCHAR), nullParam("bar", Types.DATE)));
+
+        // missing one param key (index)
+        try {
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamsExactly(nullParam(1, Types.VARCHAR)));
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, bar]>\nto be exactly:\n<[1]>\nbut missing keys:\n<[]>\nextra keys:\n<[bar]>");
+        }
+
+        // missing one param key (name)
+        try {
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamsExactly(nullParam("bar", Types.DATE)));
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, bar]>\nto be exactly:\n<[bar]>\nbut missing keys:\n<[]>\nextra keys:\n<[1]>");
+        }
+
+    }
+
+    @Test
+    public void batchParamKeysWithContainsParamsExactlyForRegisterOutParameters() {
+        CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
+        entry.getOutParams().put(new ParameterKey(1), Types.BOOLEAN);
+        entry.getOutParams().put(new ParameterKey("bar"), Types.DOUBLE);
+
+        ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
+        entries.add(entry);
+
+        CallableBatchExecution cbe = mock(CallableBatchExecution.class);
+        given(cbe.getBatchExecutionEntries()).willReturn(entries);
+
+        // successful case
+        DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamsExactly(outParam(1, Types.BOOLEAN), outParam("bar", Types.DOUBLE)));
+
+        // missing one param key (index)
+        try {
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamsExactly(outParam(1, Types.BOOLEAN)));
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, bar]>\nto be exactly:\n<[1]>\nbut missing keys:\n<[]>\nextra keys:\n<[bar]>");
+        }
+
+        // missing one param key (name)
+        try {
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamsExactly(outParam("bar", Types.DOUBLE)));
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, bar]>\nto be exactly:\n<[bar]>\nbut missing keys:\n<[]>\nextra keys:\n<[1]>");
+        }
+
+    }
+
+    @Test
+    public void testBatchParamKeyNames() {
+        CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
+        entry.getParams().put(new ParameterKey(1), "foo");
+        entry.getParams().put(new ParameterKey("foo"), "FOO");
+        entry.getSetNullParams().put(new ParameterKey(2), Types.VARCHAR);
+        entry.getSetNullParams().put(new ParameterKey("bar"), Types.DATE);
+        entry.getOutParams().put(new ParameterKey(3), Types.BOOLEAN);
+        entry.getOutParams().put(new ParameterKey("baz"), Types.BIGINT);
+
+        ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
+        entries.add(entry);
+
+        CallableBatchExecution cbe = mock(CallableBatchExecution.class);
+        given(cbe.getBatchExecutionEntries()).willReturn(entries);
+
+        // successful case
+        DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamNames("foo", "bar", "baz"));
         DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamNames("bar"));
 
         // missing param key
         try {
-            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamNames("foo", "bar"));
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamNames("zzz", "bar"));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, bar]>\nto contain:\n<[bar, foo]>\nbut could not find:\n<[foo]>");
+            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, 2, 3, bar, baz, foo]>\nto contain:\n<[bar, zzz]>\nbut could not find:\n<[zzz]>");
         }
 
 
@@ -266,49 +399,47 @@ public class CallableBatchExecutionAssertTest {
 
     @Test
     public void testBatchParamKeyIndexes() {
-        Map<ParameterKey, Object> paramsByIndex = new HashMap<ParameterKey, Object>();
-        paramsByIndex.put(new ParameterKey(1), "foo");
-
-        Map<ParameterKey, Object> paramsByName = new HashMap<ParameterKey, Object>();
-        paramsByName.put(new ParameterKey("bar"), "BAR");
-
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.getParams().putAll(paramsByIndex);
-        entry.getParams().putAll(paramsByName);
+        entry.getParams().put(new ParameterKey(1), "foo");
+        entry.getParams().put(new ParameterKey("foo"), "FOO");
+        entry.getSetNullParams().put(new ParameterKey(2), Types.VARCHAR);
+        entry.getSetNullParams().put(new ParameterKey("bar"), Types.DATE);
+        entry.getOutParams().put(new ParameterKey(3), Types.BOOLEAN);
+        entry.getOutParams().put(new ParameterKey("baz"), Types.BIGINT);
 
         ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
-        entries.addAll(Arrays.asList(entry));
+        entries.add(entry);
 
         CallableBatchExecution cbe = mock(CallableBatchExecution.class);
         given(cbe.getBatchExecutionEntries()).willReturn(entries);
 
         // successful case
-        DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamIndexes(1));
+        DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamIndexes(1, 2, 3));
+        DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamIndexes(2, 3, 1));
+        DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamIndexes(2, 3));
 
         // missing one param key (index)
         try {
-            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamIndexes(1, 2));
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamIndexes(1, 2, 100));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, bar]>\nto contain:\n<[1, 2]>\nbut could not find:\n<[2]>");
+            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, 2, 3, bar, baz, foo]>\nto contain:\n<[1, 100, 2]>\nbut could not find:\n<[100]>");
         }
 
     }
 
     @Test
     public void testBatchParamKeys() {
-        Map<ParameterKey, Object> paramsByIndex = new HashMap<ParameterKey, Object>();
-        paramsByIndex.put(new ParameterKey(1), "foo");
-
-        Map<ParameterKey, Object> paramsByName = new HashMap<ParameterKey, Object>();
-        paramsByName.put(new ParameterKey("bar"), "BAR");
-
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.getParams().putAll(paramsByIndex);
-        entry.getParams().putAll(paramsByName);
+        entry.getParams().put(new ParameterKey(1), "foo");
+        entry.getParams().put(new ParameterKey("foo"), "FOO");
+        entry.getSetNullParams().put(new ParameterKey(2), Types.VARCHAR);
+        entry.getSetNullParams().put(new ParameterKey("bar"), Types.DATE);
+        entry.getOutParams().put(new ParameterKey(3), Types.BOOLEAN);
+        entry.getOutParams().put(new ParameterKey("baz"), Types.BIGINT);
 
         ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
-        entries.addAll(Arrays.asList(entry));
+        entries.add(entry);
 
         CallableBatchExecution cbe = mock(CallableBatchExecution.class);
         given(cbe.getBatchExecutionEntries()).willReturn(entries);
@@ -317,13 +448,14 @@ public class CallableBatchExecutionAssertTest {
         DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamKeys(1));
         DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamKeys("bar"));
         DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamKeys(1, "bar"));
+        DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamKeys(1, 2, 3, "foo", "bar", "baz"));
 
         // missing keys
         try {
-            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamKeys(1, 2, "foo", "bar"));
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamKeys(1, 2, 100, "zzz", "bar"));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, bar]>\nto contain:\n<[1, 2, bar, foo]>\nbut could not find:\n<[2, foo]>");
+            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, 2, 3, bar, baz, foo]>\nto contain:\n<[1, 100, 2, bar, zzz]>\nbut could not find:\n<[100, zzz]>");
         }
 
         // wrong key type
@@ -356,7 +488,4 @@ public class CallableBatchExecutionAssertTest {
 
     }
 
-
-    // TODO: batch with setNull
-    // TODO: batch with registerOutParameter
 }

@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.test.assertj.data;
 
+import net.ttddyy.dsproxy.proxy.ParameterKey;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,9 +15,6 @@ public class ExecutionParameters {
     public enum ExecutionParametersType {
         CONTAINS, CONTAINS_EXACTLY, CONTAINS_KEYS_ONLY;
     }
-
-    private List<ExecutionParameter> parameters = new ArrayList<ExecutionParameter>();
-    private ExecutionParametersType type;
 
     public static ExecutionParameters containsParams(ExecutionParameter... params) {
         ExecutionParameters executionParameters = new ExecutionParameters();
@@ -48,12 +47,12 @@ public class ExecutionParameters {
 
         List<ExecutionParameter> params = new ArrayList<ExecutionParameter>();
 
-        for (Object paramKey : paramKeys) {
+        for (Object rawParamKey : paramKeys) {
             ExecutionParameter param;
-            if (paramKey instanceof Integer) {
-                param = new ExecutionParameter.ParamExecutionByIndex((Integer) paramKey, null);
-            } else if (paramKey instanceof String) {
-                param = new ExecutionParameter.ParamExecutionByName((String) paramKey, null);
+            if (rawParamKey instanceof Integer) {
+                param = new ExecutionParameter.ParamExecution(new ParameterKey((Integer) rawParamKey), null);
+            } else if (rawParamKey instanceof String) {
+                param = new ExecutionParameter.ParamExecution(new ParameterKey((String) rawParamKey), null);
             } else {
                 throw new IllegalArgumentException("param key should be int or String");
             }
@@ -71,7 +70,7 @@ public class ExecutionParameters {
 
         List<ExecutionParameter> params = new ArrayList<ExecutionParameter>();
         for (int paramIndex : paramIndexes) {
-            ExecutionParameter param = new ExecutionParameter.ParamExecutionByIndex(paramIndex, null);
+            ExecutionParameter param = new ExecutionParameter.ParamExecution(new ParameterKey(paramIndex), null);
             params.add(param);
         }
 
@@ -85,7 +84,7 @@ public class ExecutionParameters {
 
         List<ExecutionParameter> params = new ArrayList<ExecutionParameter>();
         for (String paramName : paramNames) {
-            ExecutionParameter param = new ExecutionParameter.ParamExecutionByName(paramName, null);
+            ExecutionParameter param = new ExecutionParameter.ParamExecution(new ParameterKey(paramName), null);
             params.add(param);
         }
 
@@ -95,6 +94,9 @@ public class ExecutionParameters {
         return executionParameters;
 
     }
+
+    private List<ExecutionParameter> parameters = new ArrayList<ExecutionParameter>();
+    private ExecutionParametersType type;
 
 
     public List<ExecutionParameter> getParameters() {

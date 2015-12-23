@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.test.assertj.data;
 
+import net.ttddyy.dsproxy.proxy.ParameterKey;
+
 import java.sql.SQLType;
 
 /**
@@ -8,28 +10,11 @@ import java.sql.SQLType;
  */
 public abstract class ExecutionParameter {
 
-    public static abstract class ExecutionParameterByIndex extends ExecutionParameter {
-        protected int paramIndex;
-
-        public int getParamIndex() {
-            return paramIndex;
-        }
-    }
-
-    public static abstract class ExecutionParameterByName extends ExecutionParameter {
-        protected String paramName;
-
-        public String getParamName() {
-            return paramName;
-        }
-    }
-
-
-    public static class ParamExecutionByIndex extends ExecutionParameterByIndex {
+    public static class ParamExecution extends ExecutionParameter {
         private Object value;
 
-        public ParamExecutionByIndex(int paramIndex, Object value) {
-            this.paramIndex = paramIndex;
+        public ParamExecution(ParameterKey parameterKey, Object value) {
+            super(parameterKey);
             this.value = value;
         }
 
@@ -38,25 +23,11 @@ public abstract class ExecutionParameter {
         }
     }
 
-    public static class ParamExecutionByName extends ExecutionParameterByName {
-        private Object value;
-
-        public ParamExecutionByName(String paramName, Object value) {
-            this.paramName = paramName;
-            this.value = value;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-    }
-
-
-    public static class NullParamExecutionByIndex extends ExecutionParameterByIndex {
+    public static class SetNullParamExecution extends ExecutionParameter {
         private Integer sqlType;  // null if do not check sqlType
 
-        public NullParamExecutionByIndex(int paramIndex, Integer sqlType) {
-            this.paramIndex = paramIndex;
+        public SetNullParamExecution(ParameterKey parameterKey, Integer sqlType) {
+            super(parameterKey);
             this.sqlType = sqlType;
         }
 
@@ -65,24 +36,11 @@ public abstract class ExecutionParameter {
         }
     }
 
-    public static class NullParamExecutionByName extends ExecutionParameterByName {
-        private Integer sqlType;
-
-        public NullParamExecutionByName(String paramName, Integer sqlType) {
-            this.paramName = paramName;
-            this.sqlType = sqlType;
-        }
-
-        public Integer getSqlType() {
-            return sqlType;
-        }
-    }
-
-    public static class OutParamExecutionByIndexWithIntType extends ExecutionParameterByIndex {
+    public static class RegisterOutParamExecutionWithIntType extends ExecutionParameter {
         private int sqlType;
 
-        public OutParamExecutionByIndexWithIntType(int paramIndex, int sqlType) {
-            this.paramIndex = paramIndex;
+        public RegisterOutParamExecutionWithIntType(ParameterKey parameterKey, int sqlType) {
+            super(parameterKey);
             this.sqlType = sqlType;
         }
 
@@ -91,24 +49,11 @@ public abstract class ExecutionParameter {
         }
     }
 
-    public static class OutParamExecutionByNameWithIntType extends ExecutionParameterByName {
-        private int sqlType;
-
-        public OutParamExecutionByNameWithIntType(String paramName, int sqlType) {
-            this.paramName = paramName;
-            this.sqlType = sqlType;
-        }
-
-        public int getSqlType() {
-            return sqlType;
-        }
-    }
-
-    public static class OutParamExecutionByIndexWithSQLType extends ExecutionParameterByIndex {
+    public static class RegisterOutParamExecutionWithSQLType extends ExecutionParameter {
         private SQLType sqlType;
 
-        public OutParamExecutionByIndexWithSQLType(int paramIndex, SQLType sqlType) {
-            this.paramIndex = paramIndex;
+        public RegisterOutParamExecutionWithSQLType(ParameterKey parameterKey, SQLType sqlType) {
+            super(parameterKey);
             this.sqlType = sqlType;
         }
 
@@ -116,60 +61,60 @@ public abstract class ExecutionParameter {
             return sqlType;
         }
     }
-
-    public static class OutParamExecutionByNameWithSQLType extends ExecutionParameterByName {
-        private SQLType sqlType;
-
-        public OutParamExecutionByNameWithSQLType(String paramName, SQLType sqlType) {
-            this.paramName = paramName;
-            this.sqlType = sqlType;
-        }
-
-        public SQLType getSqlType() {
-            return sqlType;
-        }
-    }
-
 
     public static ExecutionParameter param(int paramIndex, Object value) {
-        return new ParamExecutionByIndex(paramIndex, value);
+        return new ParamExecution(new ParameterKey(paramIndex), value);
     }
 
     public static ExecutionParameter param(String paramName, Object value) {
-        return new ParamExecutionByName(paramName, value);
+        return new ParamExecution(new ParameterKey(paramName), value);
     }
 
     public static ExecutionParameter nullParam(int index, int sqlType) {
-        return new NullParamExecutionByIndex(index, sqlType);
+        return new SetNullParamExecution(new ParameterKey(index), sqlType);
     }
 
     // do not care sqlType
     public static ExecutionParameter nullParam(int index) {
-        return new NullParamExecutionByIndex(index, null);
+        return new SetNullParamExecution(new ParameterKey(index), null);
     }
 
     public static ExecutionParameter nullParam(String name, int sqlType) {
-        return new NullParamExecutionByName(name, sqlType);
+        return new SetNullParamExecution(new ParameterKey(name), sqlType);
     }
 
     public static ExecutionParameter nullParam(String name) {
-        return new NullParamExecutionByName(name, null);
+        return new SetNullParamExecution(new ParameterKey(name), null);
     }
 
     public static ExecutionParameter outParam(int paramIndex, int sqlType) {
-        return new OutParamExecutionByIndexWithIntType(paramIndex, sqlType);
+        return new RegisterOutParamExecutionWithIntType(new ParameterKey(paramIndex), sqlType);
     }
 
     public static ExecutionParameter outParam(int paramIndex, SQLType sqlType) {
-        return new OutParamExecutionByIndexWithSQLType(paramIndex, sqlType);
+        return new RegisterOutParamExecutionWithSQLType(new ParameterKey(paramIndex), sqlType);
     }
 
     public static ExecutionParameter outParam(String paramName, int sqlType) {
-        return new OutParamExecutionByNameWithIntType(paramName, sqlType);
+        return new RegisterOutParamExecutionWithIntType(new ParameterKey(paramName), sqlType);
     }
 
     public static ExecutionParameter outParam(String paramName, SQLType sqlType) {
-        return new OutParamExecutionByNameWithSQLType(paramName, sqlType);
+        return new RegisterOutParamExecutionWithSQLType(new ParameterKey(paramName), sqlType);
+    }
+
+    protected ParameterKey key;
+
+    public ExecutionParameter(ParameterKey key) {
+        this.key = key;
+    }
+
+    public ParameterKey.ParameterKeyType getKeyType() {
+        return this.key.getType();
+    }
+
+    public ParameterKey getKey() {
+        return key;
     }
 
 }

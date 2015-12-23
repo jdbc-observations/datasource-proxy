@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy.test;
 import net.ttddyy.dsproxy.proxy.ParameterKey;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,14 @@ public class CallableBatchExecution extends BaseQueryExecution implements BatchP
         @Override
         public Map<Integer, Integer> getSetNullParamsByIndex() {
             return toIndexMap(this.setNullParams);
+        }
+
+        public Map<ParameterKey, Object> getAllParams() {
+            Map<ParameterKey, Object> params = new HashMap<ParameterKey, Object>();
+            params.putAll(this.params);
+            params.putAll(this.setNullParams);
+            params.putAll(this.outParams);
+            return params;
         }
 
         @Override
