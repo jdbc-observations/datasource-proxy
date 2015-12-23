@@ -58,6 +58,7 @@ public class CallableBatchExecution extends BaseQueryExecution implements BatchP
             return toIndexMap(this.setNullParams);
         }
 
+        @Override
         public Map<ParameterKey, Object> getAllParams() {
             Map<ParameterKey, Object> params = new HashMap<ParameterKey, Object>();
             params.putAll(this.params);

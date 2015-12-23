@@ -103,6 +103,14 @@ public class ExecutionParameters {
         return parameters;
     }
 
+    public List<ParameterKey> getParameterKeys() {
+        List<ParameterKey> keys = new ArrayList<ParameterKey>();
+        for (ExecutionParameter parameter : this.parameters) {
+            keys.add(parameter.getKey());
+        }
+        return keys;
+    }
+
     public ExecutionParametersType getType() {
         return type;
     }

@@ -52,6 +52,11 @@ public class ParameterHolderMatcherTest {
         public Map<Integer, Integer> getSetNullParamsByIndex() {
             return null;
         }
+
+        @Override
+        public Map<ParameterKey, Object> getAllParams() {
+            return null;
+        }
     }
 
     // ParamHolder that only implements ParamterByNameHolder
@@ -79,6 +84,11 @@ public class ParameterHolderMatcherTest {
 
         @Override
         public Map<String, Integer> getSetNullParamsByName() {
+            return null;
+        }
+
+        @Override
+        public Map<ParameterKey, Object> getAllParams() {
             return null;
         }
     }

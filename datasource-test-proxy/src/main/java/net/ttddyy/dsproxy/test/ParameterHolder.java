@@ -14,4 +14,6 @@ public interface ParameterHolder {
 
     Map<ParameterKey, Integer> getSetNullParams();
 
+    Map<ParameterKey, Object> getAllParams();
+
 }
