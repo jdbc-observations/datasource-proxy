@@ -4,7 +4,7 @@ package net.ttddyy.dsproxy.proxy;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class ParameterKey {
+public class ParameterKey implements Comparable<ParameterKey> {
 
     public enum ParameterKeyType {
         BY_INDEX, BY_NAME
@@ -42,6 +42,15 @@ public class ParameterKey {
 
     public boolean isByName() {
         return this.type == ParameterKeyType.BY_NAME;
+    }
+
+    public String getKeyAsString() {
+        return this.type == ParameterKeyType.BY_INDEX ? Integer.toString(this.index) : this.name;
+    }
+
+    @Override
+    public int compareTo(ParameterKey other) {
+        return this.getKeyAsString().compareTo(other.getKeyAsString());
     }
 
     @Override
