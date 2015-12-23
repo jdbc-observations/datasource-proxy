@@ -5,6 +5,7 @@ import net.ttddyy.dsproxy.listener.SetNullParameterValueConverter;
 import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.test.BatchExecutionEntry;
 import net.ttddyy.dsproxy.test.CallableBatchExecution;
+import net.ttddyy.dsproxy.test.ParameterHolder;
 import net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter;
 import net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters;
 
@@ -72,9 +73,20 @@ public class CallableBatchExecutionAssert extends AbstractExecutionAssert<Callab
         }
     }
 
+    // TODO: consider both int and SQLType to be inter-changeable. (consider changing display value)
     private void validateOutParamParameterWithInt(ParameterKey parameterKey, int sqlType, CallableBatchExecution.CallableBatchExecutionEntry executionEntry) {
         Object actualValue = executionEntry.getOutParams().get(parameterKey);
         if (!new Integer(sqlType).equals(actualValue)) {
+            SortedMap<String, Object> sortedParams = getAllParamsForDisplay(executionEntry);
+            String displayValue = registerOutParameterValueConverter.getDisplayValue(sqlType);
+            String expectedEntry = String.format("%s=%s", parameterKey.getKeyAsString(), displayValue);
+            failWithMessage("%nExpecting: parameters %n<%s>%nto contain:%n<[%s]>%nbut could not find:%n<[%s]>", sortedParams, expectedEntry, expectedEntry);
+        }
+    }
+
+    private void validateOutParamParameterWithSQLType(ParameterKey parameterKey, SQLType sqlType, CallableBatchExecution.CallableBatchExecutionEntry executionEntry) {
+        Object actualValue = executionEntry.getOutParams().get(parameterKey);
+        if (sqlType != actualValue) {
             SortedMap<String, Object> sortedParams = getAllParamsForDisplay(executionEntry);
             String displayValue = registerOutParameterValueConverter.getDisplayValue(sqlType);
             String expectedEntry = String.format("%s=%s", parameterKey.getKeyAsString(), displayValue);
@@ -106,24 +118,7 @@ public class CallableBatchExecutionAssert extends AbstractExecutionAssert<Callab
     }
 
 
-    private void validateOutParamParameterWithSQLType(ParameterKey parameterKey, SQLType sqlType, Map<ParameterKey, Object> outParams) {
-        Object actualValue = outParams.get(parameterKey);
-        if (sqlType != actualValue) {
-            TreeMap<String, Object> sortedParams = new TreeMap<String, Object>();
-            for (Map.Entry<ParameterKey, Object> entry : outParams.entrySet()) {
-                sortedParams.put(entry.getKey().getKeyAsString(), registerOutParameterValueConverter.getDisplayValue(entry.getValue()));
-            }
-
-            String displayValue = registerOutParameterValueConverter.getDisplayValue(sqlType);
-            String expectedEntry = String.format("%s=%s", parameterKey.getKeyAsString(), displayValue);
-            failWithMessage("%nExpecting: registerOut parameters %n<%s>%nto contain:%n<[%s]>%nbut could not find:%n<[%s]>", sortedParams, expectedEntry, expectedEntry);
-        }
-    }
-
-
-    public CallableBatchExecutionAssert batch(int batchIndex, ExecutionParameters params) {
-
-        // check index exists
+    private void validateBatchIndexSize(int batchIndex) {
         List<BatchExecutionEntry> batchEntries = this.actual.getBatchExecutionEntries();
         int batchSize = batchEntries.size();
 
@@ -134,23 +129,19 @@ public class CallableBatchExecutionAssert extends AbstractExecutionAssert<Callab
             String message = String.format("\nExpecting: batch index <%d> is too big for the batch size <%d>", batchIndex, batchSize);
             failWithMessage(message);
         }
+    }
 
-        BatchExecutionEntry batchEntry = this.actual.getBatchExecutionEntries().get(batchIndex);
-        if (!(batchEntry instanceof CallableBatchExecution.CallableBatchExecutionEntry)) {
+    private void validateBatchExecutionEntryType(BatchExecutionEntry batchEntry, Class<? extends BatchExecutionEntry> batchExecutionEntryClass) {
+        if (!(batchEntry.getClass().isAssignableFrom(batchExecutionEntryClass))) {
             failWithMessage("\nExpecting: batch entry\n<%s>\nbut was\n<%s>",
-                    CallableBatchExecution.CallableBatchExecutionEntry.class.getSimpleName(),
+                    batchExecutionEntryClass.getSimpleName(),
                     batchEntry.getClass().getSimpleName());
         }
+    }
 
-        CallableBatchExecution.CallableBatchExecutionEntry entry = (CallableBatchExecution.CallableBatchExecutionEntry) this.actual.getBatchExecutionEntries().get(batchIndex);
-
-        List<ExecutionParameter> executionParameters = params.getParameters();
+    private void validateParameterKeys(ParameterHolder entry, ExecutionParameters params) {
         ExecutionParameters.ExecutionParametersType parametersType = params.getType();
-
-        SortedSet<ParameterKey> expectedParamKeys = new TreeSet<ParameterKey>();
-        for (ExecutionParameter executionParameter : executionParameters) {
-            expectedParamKeys.add(executionParameter.getKey());
-        }
+        SortedSet<ParameterKey> expectedParamKeys = new TreeSet<ParameterKey>(params.getParameterKeys());
 
         SortedSet<ParameterKey> actualParamKeys = new TreeSet<ParameterKey>(entry.getAllParams().keySet());
 
@@ -187,14 +178,34 @@ public class CallableBatchExecutionAssert extends AbstractExecutionAssert<Callab
                         "callable", actualKeys, expectedKeys, missingKeys, extraKeys);
             }
         }
+    }
 
-        if (ExecutionParameters.ExecutionParametersType.CONTAINS_KEYS_ONLY == parametersType) {
+    public CallableBatchExecutionAssert batch(int batchIndex, ExecutionParameters params) {
+
+        // check index exists
+        validateBatchIndexSize(batchIndex);
+
+        BatchExecutionEntry batchEntry = this.actual.getBatchExecutionEntries().get(batchIndex);
+        if (!(batchEntry instanceof CallableBatchExecution.CallableBatchExecutionEntry)) {
+            failWithMessage("\nExpecting: batch entry\n<%s>\nbut was\n<%s>",
+                    CallableBatchExecution.CallableBatchExecutionEntry.class.getSimpleName(),
+                    batchEntry.getClass().getSimpleName());
+        }
+
+        BatchExecutionEntry batchExecutionEntry = this.actual.getBatchExecutionEntries().get(batchIndex);
+
+        validateBatchExecutionEntryType(batchExecutionEntry, CallableBatchExecution.CallableBatchExecutionEntry.class);
+
+        CallableBatchExecution.CallableBatchExecutionEntry entry = (CallableBatchExecution.CallableBatchExecutionEntry) batchEntry;
+        validateParameterKeys(entry, params);
+
+        if (ExecutionParameters.ExecutionParametersType.CONTAINS_KEYS_ONLY == params.getType()) {
             return this;  // only check keys
         }
 
 
         // validate key-value pairs
-        for (ExecutionParameter param : executionParameters) {
+        for (ExecutionParameter param : params.getParameters()) {
             ParameterKey parameterKey = param.getKey();
 
             if (param instanceof ExecutionParameter.ParamExecution) {
@@ -211,7 +222,7 @@ public class CallableBatchExecutionAssert extends AbstractExecutionAssert<Callab
 
             } else if (param instanceof ExecutionParameter.RegisterOutParamExecutionWithSQLType) {
                 SQLType sqlType = ((ExecutionParameter.RegisterOutParamExecutionWithSQLType) param).getSqlType();
-                validateOutParamParameterWithSQLType(parameterKey, sqlType, entry.getOutParams());
+                validateOutParamParameterWithSQLType(parameterKey, sqlType, entry);
 
             } else {
                 // TODO: better error message

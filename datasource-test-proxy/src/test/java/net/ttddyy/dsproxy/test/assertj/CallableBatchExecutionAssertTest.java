@@ -7,6 +7,7 @@ import net.ttddyy.dsproxy.test.PreparedBatchExecution;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.sql.JDBCType;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -203,6 +204,8 @@ public class CallableBatchExecutionAssertTest {
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
         entry.getOutParams().put(new ParameterKey(1), Types.BOOLEAN);
         entry.getOutParams().put(new ParameterKey("bar"), Types.DOUBLE);
+        entry.getOutParams().put(new ParameterKey(2), JDBCType.VARCHAR);
+        entry.getOutParams().put(new ParameterKey("foo"), JDBCType.BIGINT);
 
         ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
         entries.add(entry);
@@ -212,28 +215,49 @@ public class CallableBatchExecutionAssertTest {
 
         // successful call
         DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(outParam(1, Types.BOOLEAN), outParam("bar", Types.DOUBLE)));
+        DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(outParam(2, JDBCType.VARCHAR), outParam("foo", JDBCType.BIGINT)));
+        DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(outParam(1, Types.BOOLEAN), outParam(2, JDBCType.VARCHAR)));
+        DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(outParam("bar", Types.DOUBLE), outParam("foo", JDBCType.BIGINT)));
+        DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(outParam(1, Types.BOOLEAN), outParam("bar", Types.DOUBLE), outParam(2, JDBCType.VARCHAR), outParam("foo", JDBCType.BIGINT)));
 
-        // value is wrong for index
+
+        // value is wrong for index with int type
         try {
             DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(outParam(1, Types.ARRAY)));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN), bar=OUTPUT(DOUBLE)}>\nto contain:\n<[1=OUTPUT(ARRAY)]>\nbut could not find:\n<[1=OUTPUT(ARRAY)]>");
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN), 2=OUTPUT(VARCHAR), bar=OUTPUT(DOUBLE), foo=OUTPUT(BIGINT)}>\nto contain:\n<[1=OUTPUT(ARRAY)]>\nbut could not find:\n<[1=OUTPUT(ARRAY)]>");
         }
 
-        // value is wrong for name
+        // value is wrong for name with int type
         try {
             DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(outParam("bar", Types.ARRAY)));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN), bar=OUTPUT(DOUBLE)}>\nto contain:\n<[bar=OUTPUT(ARRAY)]>\nbut could not find:\n<[bar=OUTPUT(ARRAY)]>");
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN), 2=OUTPUT(VARCHAR), bar=OUTPUT(DOUBLE), foo=OUTPUT(BIGINT)}>\nto contain:\n<[bar=OUTPUT(ARRAY)]>\nbut could not find:\n<[bar=OUTPUT(ARRAY)]>");
+        }
+
+        // value is wrong for index with SQLType
+        try {
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(outParam(1, JDBCType.ARRAY)));
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN), 2=OUTPUT(VARCHAR), bar=OUTPUT(DOUBLE), foo=OUTPUT(BIGINT)}>\nto contain:\n<[1=OUTPUT(ARRAY)]>\nbut could not find:\n<[1=OUTPUT(ARRAY)]>");
+        }
+
+        // value is wrong for name with SQLType
+        try {
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(outParam("bar", JDBCType.ARRAY)));
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN), 2=OUTPUT(VARCHAR), bar=OUTPUT(DOUBLE), foo=OUTPUT(BIGINT)}>\nto contain:\n<[bar=OUTPUT(ARRAY)]>\nbut could not find:\n<[bar=OUTPUT(ARRAY)]>");
         }
 
         try {
             DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(param(1, 16))); // Types.BOOLEAN == 16
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN), bar=OUTPUT(DOUBLE)}>\nto contain:\n<[1=16]>\nbut could not find:\n<[1=16]>");
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN), 2=OUTPUT(VARCHAR), bar=OUTPUT(DOUBLE), foo=OUTPUT(BIGINT)}>\nto contain:\n<[1=16]>\nbut could not find:\n<[1=16]>");
         }
     }
 
