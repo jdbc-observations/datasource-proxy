@@ -186,15 +186,8 @@ public class CallableBatchExecutionAssert extends AbstractExecutionAssert<Callab
         validateBatchIndexSize(batchIndex);
 
         BatchExecutionEntry batchEntry = this.actual.getBatchExecutionEntries().get(batchIndex);
-        if (!(batchEntry instanceof CallableBatchExecution.CallableBatchExecutionEntry)) {
-            failWithMessage("\nExpecting: batch entry\n<%s>\nbut was\n<%s>",
-                    CallableBatchExecution.CallableBatchExecutionEntry.class.getSimpleName(),
-                    batchEntry.getClass().getSimpleName());
-        }
 
-        BatchExecutionEntry batchExecutionEntry = this.actual.getBatchExecutionEntries().get(batchIndex);
-
-        validateBatchExecutionEntryType(batchExecutionEntry, CallableBatchExecution.CallableBatchExecutionEntry.class);
+        validateBatchExecutionEntryType(batchEntry, CallableBatchExecution.CallableBatchExecutionEntry.class);
 
         CallableBatchExecution.CallableBatchExecutionEntry entry = (CallableBatchExecution.CallableBatchExecutionEntry) batchEntry;
         validateParameterKeys(entry, params);
