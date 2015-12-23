@@ -22,7 +22,14 @@ public class RegisterOutParameterValueConverter implements ParameterValueConvert
         // for the second argument, it is either int or SQLType(in JDBC 4.2)
         if (sqlType instanceof Integer) {
             String sqlTypeName = ParameterValueConverter.SQL_TYPENAME_BY_CODE.get((Integer) sqlType);
-            sb.append(sqlTypeName != null ? sqlTypeName : sqlType);
+            if (sqlTypeName != null) {
+                sb.append(sqlTypeName);
+                sb.append("[");
+                sb.append(sqlType);
+                sb.append("]");
+            } else {
+                sb.append(sqlType);
+            }
         } else {
             sb.append(sqlType);
         }

@@ -226,7 +226,7 @@ public class CallableBatchExecutionAssertTest {
             DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(outParam(1, Types.ARRAY)));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN), 2=OUTPUT(VARCHAR), bar=OUTPUT(DOUBLE), foo=OUTPUT(BIGINT)}>\nto contain:\n<[1=OUTPUT(ARRAY)]>\nbut could not find:\n<[1=OUTPUT(ARRAY)]>");
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN[16]), 2=OUTPUT(VARCHAR), bar=OUTPUT(DOUBLE[8]), foo=OUTPUT(BIGINT)}>\nto contain:\n<[1=OUTPUT(ARRAY[2003])]>\nbut could not find:\n<[1=OUTPUT(ARRAY[2003])]>");
         }
 
         // value is wrong for name with int type
@@ -234,7 +234,7 @@ public class CallableBatchExecutionAssertTest {
             DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(outParam("bar", Types.ARRAY)));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN), 2=OUTPUT(VARCHAR), bar=OUTPUT(DOUBLE), foo=OUTPUT(BIGINT)}>\nto contain:\n<[bar=OUTPUT(ARRAY)]>\nbut could not find:\n<[bar=OUTPUT(ARRAY)]>");
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN[16]), 2=OUTPUT(VARCHAR), bar=OUTPUT(DOUBLE[8]), foo=OUTPUT(BIGINT)}>\nto contain:\n<[bar=OUTPUT(ARRAY[2003])]>\nbut could not find:\n<[bar=OUTPUT(ARRAY[2003])]>");
         }
 
         // value is wrong for index with SQLType
@@ -242,7 +242,7 @@ public class CallableBatchExecutionAssertTest {
             DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(outParam(1, JDBCType.ARRAY)));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN), 2=OUTPUT(VARCHAR), bar=OUTPUT(DOUBLE), foo=OUTPUT(BIGINT)}>\nto contain:\n<[1=OUTPUT(ARRAY)]>\nbut could not find:\n<[1=OUTPUT(ARRAY)]>");
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN[16]), 2=OUTPUT(VARCHAR), bar=OUTPUT(DOUBLE[8]), foo=OUTPUT(BIGINT)}>\nto contain:\n<[1=OUTPUT(ARRAY)]>\nbut could not find:\n<[1=OUTPUT(ARRAY)]>");
         }
 
         // value is wrong for name with SQLType
@@ -250,14 +250,14 @@ public class CallableBatchExecutionAssertTest {
             DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(outParam("bar", JDBCType.ARRAY)));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN), 2=OUTPUT(VARCHAR), bar=OUTPUT(DOUBLE), foo=OUTPUT(BIGINT)}>\nto contain:\n<[bar=OUTPUT(ARRAY)]>\nbut could not find:\n<[bar=OUTPUT(ARRAY)]>");
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN[16]), 2=OUTPUT(VARCHAR), bar=OUTPUT(DOUBLE[8]), foo=OUTPUT(BIGINT)}>\nto contain:\n<[bar=OUTPUT(ARRAY)]>\nbut could not find:\n<[bar=OUTPUT(ARRAY)]>");
         }
 
         try {
             DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(param(1, 16))); // Types.BOOLEAN == 16
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN), 2=OUTPUT(VARCHAR), bar=OUTPUT(DOUBLE), foo=OUTPUT(BIGINT)}>\nto contain:\n<[1=16]>\nbut could not find:\n<[1=16]>");
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=OUTPUT(BOOLEAN[16]), 2=OUTPUT(VARCHAR), bar=OUTPUT(DOUBLE[8]), foo=OUTPUT(BIGINT)}>\nto contain:\n<[1=16]>\nbut could not find:\n<[1=16]>");
         }
     }
 
@@ -286,7 +286,7 @@ public class CallableBatchExecutionAssertTest {
             DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(nullParam(1, Types.ARRAY)));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=foo, 2=NULL(VARCHAR), 3=OUTPUT(BOOLEAN), bar=NULL(DATE), baz=OUTPUT(BIGINT), foo=FOO}>\nto contain:\n<[1=NULL(ARRAY)]>\nbut could not find:\n<[1=NULL(ARRAY)]>");
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=foo, 2=NULL(VARCHAR), 3=OUTPUT(BOOLEAN[16]), bar=NULL(DATE), baz=OUTPUT(BIGINT[-5]), foo=FOO}>\nto contain:\n<[1=NULL(ARRAY)]>\nbut could not find:\n<[1=NULL(ARRAY)]>");
         }
     }
 

@@ -73,7 +73,7 @@ public class CallableBatchExecutionAssert extends AbstractExecutionAssert<Callab
         }
     }
 
-    // TODO: consider both int and SQLType to be inter-changeable. (consider changing display value)
+    // TODO: consider both int and SQLType to be inter-changeable. (probably some value object to work for both)
     private void validateOutParamParameterWithInt(ParameterKey parameterKey, int sqlType, CallableBatchExecution.CallableBatchExecutionEntry executionEntry) {
         Object actualValue = executionEntry.getOutParams().get(parameterKey);
         if (!new Integer(sqlType).equals(actualValue)) {
