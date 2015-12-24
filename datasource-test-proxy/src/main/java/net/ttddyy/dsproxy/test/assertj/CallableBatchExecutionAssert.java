@@ -118,7 +118,8 @@ public class CallableBatchExecutionAssert extends AbstractExecutionAssert<Callab
     }
 
 
-    private void validateBatchIndexSize(int batchIndex) {
+    private void validatedBatchExecutionEntry(int batchIndex, ExecutionParameters params, Class<? extends ParameterHolder> batchExecutionEntryClass) {
+        // validate batch index size
         List<BatchExecutionEntry> batchEntries = this.actual.getBatchExecutionEntries();
         int batchSize = batchEntries.size();
 
@@ -129,14 +130,17 @@ public class CallableBatchExecutionAssert extends AbstractExecutionAssert<Callab
             String message = String.format("\nExpecting: batch index <%d> is too big for the batch size <%d>", batchIndex, batchSize);
             failWithMessage(message);
         }
-    }
 
-    private void validateBatchExecutionEntryType(BatchExecutionEntry batchEntry, Class<? extends BatchExecutionEntry> batchExecutionEntryClass) {
+        // validate batch execution entry type
+        BatchExecutionEntry batchEntry = this.actual.getBatchExecutionEntries().get(batchIndex);
         if (!(batchEntry.getClass().isAssignableFrom(batchExecutionEntryClass))) {
             failWithMessage("\nExpecting: batch entry\n<%s>\nbut was\n<%s>",
                     batchExecutionEntryClass.getSimpleName(),
                     batchEntry.getClass().getSimpleName());
         }
+
+        validateParameterKeys(batchExecutionEntryClass.cast(batchEntry), params);
+
     }
 
     private void validateParameterKeys(ParameterHolder entry, ExecutionParameters params) {
@@ -182,19 +186,15 @@ public class CallableBatchExecutionAssert extends AbstractExecutionAssert<Callab
 
     public CallableBatchExecutionAssert batch(int batchIndex, ExecutionParameters params) {
 
-        // check index exists
-        validateBatchIndexSize(batchIndex);
-
-        BatchExecutionEntry batchEntry = this.actual.getBatchExecutionEntries().get(batchIndex);
-
-        validateBatchExecutionEntryType(batchEntry, CallableBatchExecution.CallableBatchExecutionEntry.class);
-
-        CallableBatchExecution.CallableBatchExecutionEntry entry = (CallableBatchExecution.CallableBatchExecutionEntry) batchEntry;
-        validateParameterKeys(entry, params);
+        validatedBatchExecutionEntry(batchIndex, params, CallableBatchExecution.CallableBatchExecutionEntry.class);
 
         if (ExecutionParameters.ExecutionParametersType.CONTAINS_KEYS_ONLY == params.getType()) {
             return this;  // only check keys
         }
+
+        // type is already validated
+        CallableBatchExecution.CallableBatchExecutionEntry entry = (CallableBatchExecution.CallableBatchExecutionEntry)
+                this.actual.getBatchExecutionEntries().get(batchIndex);
 
 
         // validate key-value pairs
