@@ -31,18 +31,6 @@ public class ExecutionParameters {
 
     }
 
-
-    // TODO: differentiate with containsParams??
-    public static ExecutionParameters containsOutParams(ExecutionParameter... params) {
-        return null; // TODO: impl
-    }
-
-    // TODO: differentiate with containsParams??
-    public static ExecutionParameters containsNullParams(ExecutionParameter... params) {
-        return null;  // TODO: impl
-    }
-
-    //
     public static ExecutionParameters containsParamKeys(Object... paramKeys) {
 
         List<ExecutionParameter> params = new ArrayList<ExecutionParameter>();
