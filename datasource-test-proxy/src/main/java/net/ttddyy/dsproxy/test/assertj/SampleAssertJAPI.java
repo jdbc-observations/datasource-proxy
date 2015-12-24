@@ -242,11 +242,11 @@ public class SampleAssertJAPI {
 //        assertThat(cbe).batch(0).outParam(10, "value").outParamAsString(10, "value");
 //        assertThat(cbe).batch(0).paramSetNull(10);
 
-//        assertThat(cbe).batch(0, param("key", "value"), paramAsString("key", "value"));
+        assertThat(cbe).batch(0, containsParams(param("key", "value"), param("key", "value")));
         assertThat(cbe).batch(0, containsParams(param("key", "value"), param(10, "value"), param("a", 100), outParam("key", Types.INTEGER), nullParam("key")));
-//        assertThat(cbe).batch(0, containsParams(param("key", "value"), param(10, "value")));
-//        assertThat(cbe).batch(0, containsOutParams(param("key", Types.INTEGER), param(10, Types.INTEGER)));
-//        assertThat(cbe).batch(0, containsNullParams(param("key", "value"), param(10, "value")));
+        assertThat(cbe).batch(0, containsParams(param("key", "value"), param(10, "value")));
+        assertThat(cbe).batch(0, containsParams(outParam("key", Types.INTEGER), outParam(10, Types.INTEGER)));
+        assertThat(cbe).batch(0, containsParams(nullParam("key", Types.INTEGER), nullParam(10)));
 
         assertThat(cbe).batch(0, containsParamKeys("key", 10));
         assertThat(cbe).batch(0, containsParamIndexes(10, 11));
