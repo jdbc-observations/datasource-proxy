@@ -70,6 +70,12 @@ public abstract class ExecutionParameter {
         return new ParamExecution(new ParameterKey(paramName), value);
     }
 
+    /**
+     *
+     * @param index
+     * @param sqlType the SQL type code defined in <code>java.sql.Types</code>
+     * @return
+     */
     public static ExecutionParameter nullParam(int index, int sqlType) {
         return new SetNullParamExecution(new ParameterKey(index), sqlType);
     }
