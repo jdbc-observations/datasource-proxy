@@ -200,6 +200,39 @@ public class CallableBatchExecutionAssertTest {
     }
 
     @Test
+    public void containsParamsWithSetNullParametersOnlyKeys() {
+        CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
+        entry.getSetNullParams().put(new ParameterKey(1), Types.VARCHAR);
+        entry.getSetNullParams().put(new ParameterKey("bar"), Types.DATE);
+
+        ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
+        entries.add(entry);
+
+        CallableBatchExecution cbe = mock(CallableBatchExecution.class);
+        given(cbe.getBatchExecutionEntries()).willReturn(entries);
+
+        // successful call
+        DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(nullParam(1), nullParam("bar")));
+
+        // index key doesn't exist
+        try {
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(nullParam(100)));
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, bar]>\nto contain:\n<[100]>\nbut could not find:\n<[100]>");
+        }
+
+        // name key doesn't exist
+        try {
+            DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParams(nullParam("BAR")));
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, bar]>\nto contain:\n<[BAR]>\nbut could not find:\n<[BAR]>");
+        }
+
+    }
+
+    @Test
     public void containsParamsWithRegisterOutParameters() {
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
         entry.getOutParams().put(new ParameterKey(1), Types.BOOLEAN);
