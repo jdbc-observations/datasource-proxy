@@ -480,7 +480,7 @@ public class CallableBatchExecutionAssertTest {
             DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamIndexes(1, 2, 100));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, 2, 3, bar, baz, foo]>\nto contain:\n<[1, 100, 2]>\nbut could not find:\n<[100]>");
+            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, 2, 3, bar, baz, foo]>\nto contain:\n<[1, 2, 100]>\nbut could not find:\n<[100]>");
         }
 
     }
@@ -512,7 +512,7 @@ public class CallableBatchExecutionAssertTest {
             DataSourceProxyAssertions.assertThat(cbe).batch(0, containsParamKeys(1, 2, 100, "zzz", "bar"));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, 2, 3, bar, baz, foo]>\nto contain:\n<[1, 100, 2, bar, zzz]>\nbut could not find:\n<[100, zzz]>");
+            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, 2, 3, bar, baz, foo]>\nto contain:\n<[1, 2, 100, bar, zzz]>\nbut could not find:\n<[100, zzz]>");
         }
 
         // wrong key type

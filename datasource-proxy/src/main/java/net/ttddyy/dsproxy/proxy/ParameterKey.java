@@ -50,7 +50,50 @@ public class ParameterKey implements Comparable<ParameterKey> {
 
     @Override
     public int compareTo(ParameterKey other) {
-        return this.getKeyAsString().compareTo(other.getKeyAsString());
+        // TODO: for null
+
+        if (this.isByIndex()) {
+            if (other.isByIndex()) {
+                return (this.index == other.index) ? 0 : (this.index < other.index ? -1 : 1);
+            } else {
+                if (isIntString(other.name)) {
+                    return Integer.compare(this.index, Integer.parseInt(other.name));
+                } else {
+                    return -1;  // this(number) first
+                }
+            }
+        } else {
+            if (other.isByIndex()) {
+                if (isIntString(this.name)) {
+                    return Integer.compare(Integer.parseInt(this.name), other.index);
+                } else {
+                    return 1;  // other(number) first
+                }
+            } else {
+                boolean thisIsIntString = isIntString(this.name);
+                boolean otherIsIntString = isIntString(other.name);
+                boolean bothAreIntString = thisIsIntString && otherIsIntString;
+
+                if (bothAreIntString) {
+                    return Integer.compare(Integer.parseInt(this.name), Integer.parseInt(other.name));
+                } else if (thisIsIntString || otherIsIntString) {
+                    return thisIsIntString ? -1 : 1;  // number first
+                } else {
+                    return this.name.compareTo(other.name);
+                }
+
+            }
+
+        }
+    }
+
+    private boolean isIntString(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     @Override
