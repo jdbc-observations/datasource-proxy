@@ -3,12 +3,17 @@ package net.ttddyy.dsproxy.test.assertj;
 import net.ttddyy.dsproxy.test.BatchExecutionEntry;
 import net.ttddyy.dsproxy.test.PreparedBatchExecution;
 import net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters;
+import net.ttddyy.dsproxy.test.assertj.helper.BatchExecutionEntryAsserts;
+import net.ttddyy.dsproxy.test.assertj.helper.ExecutionParameterAsserts;
 
 /**
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
 public class PreparedBatchExecutionAssert extends AbstractExecutionAssert<PreparedBatchExecutionAssert, PreparedBatchExecution> {
+
+    private BatchExecutionEntryAsserts batchAssert = new BatchExecutionEntryAsserts(this.info);
+    private ExecutionParameterAsserts parameterAssertHelper = new ExecutionParameterAsserts(this.info);
 
     public PreparedBatchExecutionAssert(PreparedBatchExecution actual) {
         super(actual, PreparedBatchExecutionAssert.class);
@@ -29,8 +34,22 @@ public class PreparedBatchExecutionAssert extends AbstractExecutionAssert<Prepar
         return this;
     }
 
-    // TODO: impl
+
     public PreparedBatchExecutionAssert batch(int batchIndex, ExecutionParameters params) {
+
+        this.batchAssert.assertBatchExecutionEntry(this.actual, batchIndex, PreparedBatchExecution.PreparedBatchExecutionEntry.class);
+
+        // entry is validated to be the one for prepared
+        PreparedBatchExecution.PreparedBatchExecutionEntry batchEntry = (PreparedBatchExecution.PreparedBatchExecutionEntry) this.actual.getBatchExecutionEntries().get(batchIndex);
+        this.parameterAssertHelper.assertParameterKeys(batchEntry, params, false);
+
+        if (ExecutionParameters.ExecutionParametersType.CONTAINS_KEYS_ONLY == params.getType()) {
+            return this;  // only check keys
+        }
+
+        // validate key-value pairs
+        parameterAssertHelper.assertExecutionParameters(params, batchEntry);
+
         return this;
     }
 
