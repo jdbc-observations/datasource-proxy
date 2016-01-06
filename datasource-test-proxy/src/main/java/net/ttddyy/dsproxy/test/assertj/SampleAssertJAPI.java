@@ -221,8 +221,16 @@ public class SampleAssertJAPI {
 //        assertThat(ce).containsParam(atIndex(10), "value");
 
         assertThat(ce).containsParams(param("key", "value"), param(10, "value"), param("a", 100), outParam("key", Types.INTEGER), nullParam("key"));
-        assertThat(ce).containsParamKey("key").containsParamKey(10).containsParamIndex(10).containsParamName("key");
+        assertThat(ce).containsParamKeys("key").containsParamKeys(10).containsParamIndex(10).containsParamName("key");
         assertThat(ce).containsParamKeys("key", 10).containsParamIndexes(10, 11).containsParamNames("key", "key");
+
+
+//        containsParams
+//        containsParamsExactly
+//        containsParamKeys
+//        containsParamIndexes
+//        containsParamNames
+
 
 //        assertThat(ce).containsOutParams(param("key", "value"), paramAsString("key", "value"));
 //        assertThat(ce).containsNullParams(param("key", "value"), paramAsString("key", "value"));
@@ -257,6 +265,11 @@ public class SampleAssertJAPI {
         assertThat(cbe).batch(0).containsParamKey("key").containsParamKey(10).containsParamIndex(10).containsParamName("key");
         assertThat(cbe).batch(0).containsParamKeys("key", 10).containsParamIndexes(10, 11).containsParamNames("key", "key");
 
+//        containsParams
+//        containsParamsExactly
+//        containsParamKeys
+//        containsParamIndexes
+//        containsParamNames
 
 //        assertThat(cbe).batch(0).assertParamAsString(10).isEqualTo("");// string assert
 
