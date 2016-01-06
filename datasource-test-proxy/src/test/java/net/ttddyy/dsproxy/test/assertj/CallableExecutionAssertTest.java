@@ -387,4 +387,83 @@ public class CallableExecutionAssertTest {
 
     }
 
+    @Test
+    public void testContainsParam() {
+        CallableExecution ce = new CallableExecution();
+        ce.getParams().put(new ParameterKey(1), "foo");
+        ce.getParams().put(new ParameterKey("foo"), "FOO");
+        ce.getSetNullParams().put(new ParameterKey(2), Types.VARCHAR);
+        ce.getSetNullParams().put(new ParameterKey("bar"), Types.DATE);
+        ce.getOutParams().put(new ParameterKey(3), Types.BOOLEAN);
+        ce.getOutParams().put(new ParameterKey("baz"), Types.BIGINT);
+
+        // successful call
+        DataSourceProxyAssertions.assertThat(ce).containsParam(1, "foo").containsParam("foo", "FOO");
+
+        // index with wrong value
+        try {
+            DataSourceProxyAssertions.assertThat(ce).containsParam(1, "WRONG");
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=foo, 2=NULL(VARCHAR), 3=OUTPUT(BOOLEAN[16]), bar=NULL(DATE), baz=OUTPUT(BIGINT[-5]), foo=FOO}>\nto contain:\n<[1=WRONG]>\nbut could not find:\n<[1=WRONG]>");
+        }
+
+        // name with wrong value
+        try {
+            DataSourceProxyAssertions.assertThat(ce).containsParam("foo", "WRONG");
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=foo, 2=NULL(VARCHAR), 3=OUTPUT(BOOLEAN[16]), bar=NULL(DATE), baz=OUTPUT(BIGINT[-5]), foo=FOO}>\nto contain:\n<[foo=WRONG]>\nbut could not find:\n<[foo=WRONG]>");
+        }
+
+        // no index and value
+        try {
+            DataSourceProxyAssertions.assertThat(ce).containsParam(100, "WRONG");
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, 2, 3, bar, baz, foo]>\nto contain:\n<[100]>\nbut could not find:\n<[100]>");
+        }
+
+        // no name and value
+        try {
+            DataSourceProxyAssertions.assertThat(ce).containsParam("WRONG", "WRONG");
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, 2, 3, bar, baz, foo]>\nto contain:\n<[WRONG]>\nbut could not find:\n<[WRONG]>");
+        }
+
+        // index null param
+        try {
+            DataSourceProxyAssertions.assertThat(ce).containsParam(2, Types.VARCHAR);
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=foo, 2=NULL(VARCHAR), 3=OUTPUT(BOOLEAN[16]), bar=NULL(DATE), baz=OUTPUT(BIGINT[-5]), foo=FOO}>\nto contain:\n<[2=12]>\nbut could not find:\n<[2=12]>");
+        }
+
+        // name null param
+        try {
+            DataSourceProxyAssertions.assertThat(ce).containsParam("bar", Types.DATE);
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=foo, 2=NULL(VARCHAR), 3=OUTPUT(BOOLEAN[16]), bar=NULL(DATE), baz=OUTPUT(BIGINT[-5]), foo=FOO}>\nto contain:\n<[bar=91]>\nbut could not find:\n<[bar=91]>");
+        }
+
+        // index out param
+        try {
+            DataSourceProxyAssertions.assertThat(ce).containsParam(3, Types.BOOLEAN);
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=foo, 2=NULL(VARCHAR), 3=OUTPUT(BOOLEAN[16]), bar=NULL(DATE), baz=OUTPUT(BIGINT[-5]), foo=FOO}>\nto contain:\n<[3=16]>\nbut could not find:\n<[3=16]>");
+        }
+
+        // name out param
+        try {
+            DataSourceProxyAssertions.assertThat(ce).containsParam("baz", Types.BIGINT);
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=foo, 2=NULL(VARCHAR), 3=OUTPUT(BOOLEAN[16]), bar=NULL(DATE), baz=OUTPUT(BIGINT[-5]), foo=FOO}>\nto contain:\n<[baz=-5]>\nbut could not find:\n<[baz=-5]>");
+        }
+
+    }
+
 }

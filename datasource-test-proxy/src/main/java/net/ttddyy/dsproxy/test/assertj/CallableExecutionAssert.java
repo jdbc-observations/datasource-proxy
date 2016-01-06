@@ -30,10 +30,12 @@ public class CallableExecutionAssert extends AbstractExecutionAssert<CallableExe
     }
 
     public CallableExecutionAssert containsParam(int paramIndex, Object value) {
+        containsParams(ExecutionParameter.param(paramIndex, value));
         return this;
     }
 
     public CallableExecutionAssert containsParam(String paramName, Object value) {
+        containsParams(ExecutionParameter.param(paramName, value));
         return this;
     }
 
