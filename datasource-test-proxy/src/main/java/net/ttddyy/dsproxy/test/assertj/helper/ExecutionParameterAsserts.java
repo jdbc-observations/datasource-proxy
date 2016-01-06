@@ -36,13 +36,12 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
         super(info);
     }
 
-    public void assertParameterKeys(ParameterHolder entry, ExecutionParameters params, boolean isCallable) {
+    public void assertParameterKeys(ParameterHolder parameterHolder, ExecutionParameters params, boolean isCallable) {
         ExecutionParameters.ExecutionParametersType parametersType = params.getType();
         SortedSet<ParameterKey> expectedParamKeys = new TreeSet<ParameterKey>(params.getParameterKeys());
 
-        SortedSet<ParameterKey> actualParamKeys = new TreeSet<ParameterKey>(entry.getAllParams().keySet());
+        SortedSet<ParameterKey> actualParamKeys = new TreeSet<ParameterKey>(parameterHolder.getAllParams().keySet());
 
-        // TODO: order for keys. should be 1,2,10,20 instead of 1, 10, 2, 20
         // validate keys
         boolean containsAll = actualParamKeys.containsAll(expectedParamKeys);
         if (!containsAll) {
@@ -79,32 +78,32 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
     }
 
 
-    public <T extends ParameterHolder> void assertExecutionParameters(ExecutionParameters params, T entry) {
+    public <T extends ParameterHolder> void assertExecutionParameters(T paramHolder, ExecutionParameters params) {
         // validate key-value pairs
         for (ExecutionParameter param : params.getParameters()) {
-            assertExecutionParameter(param, entry);
+            assertExecutionParameter(paramHolder, param);
         }
 
     }
 
-    public <T extends ParameterHolder> void assertExecutionParameter(ExecutionParameter param, T entry) {
+    public <T extends ParameterHolder> void assertExecutionParameter(T paramHolder, ExecutionParameter param) {
         ParameterKey parameterKey = param.getKey();
 
         if (param instanceof ExecutionParameter.ParamExecution) {
             Object expectedValue = ((ExecutionParameter.ParamExecution) param).getValue();
-            validateParameter(parameterKey, expectedValue, entry);
+            validateParameter(parameterKey, expectedValue, paramHolder);
 
         } else if (param instanceof ExecutionParameter.SetNullParamExecution) {
             Integer sqlType = ((ExecutionParameter.SetNullParamExecution) param).getSqlType();
-            validateSetNullParameter(parameterKey, sqlType, entry);
+            validateSetNullParameter(parameterKey, sqlType, paramHolder);
 
-        } else if (param instanceof ExecutionParameter.RegisterOutParamExecutionWithIntType && entry instanceof OutParameterHolder) {
+        } else if (param instanceof ExecutionParameter.RegisterOutParamExecutionWithIntType && paramHolder instanceof OutParameterHolder) {
             int sqlType = ((ExecutionParameter.RegisterOutParamExecutionWithIntType) param).getSqlType();
-            validateOutParamParameterWithInt(parameterKey, sqlType, (OutParameterHolder) entry);
+            validateOutParamParameterWithInt(parameterKey, sqlType, (OutParameterHolder) paramHolder);
 
-        } else if (param instanceof ExecutionParameter.RegisterOutParamExecutionWithSQLType && entry instanceof OutParameterHolder) {
+        } else if (param instanceof ExecutionParameter.RegisterOutParamExecutionWithSQLType && paramHolder instanceof OutParameterHolder) {
             SQLType sqlType = ((ExecutionParameter.RegisterOutParamExecutionWithSQLType) param).getSqlType();
-            validateOutParamParameterWithSQLType(parameterKey, sqlType, (OutParameterHolder) entry);
+            validateOutParamParameterWithSQLType(parameterKey, sqlType, (OutParameterHolder) paramHolder);
 
         } else {
             // TODO: better error message

@@ -50,7 +50,7 @@ public class CallableBatchExecutionAssert extends AbstractExecutionAssert<Callab
         }
 
         // validate key-value pairs
-        parameterAssert.assertExecutionParameters(params, batchEntry);
+        parameterAssert.assertExecutionParameters(batchEntry, params);
 
         return this;
     }

@@ -48,7 +48,7 @@ public class PreparedBatchExecutionAssert extends AbstractExecutionAssert<Prepar
         }
 
         // validate key-value pairs
-        parameterAssert.assertExecutionParameters(params, batchEntry);
+        parameterAssert.assertExecutionParameters(batchEntry, params);
 
         return this;
     }
