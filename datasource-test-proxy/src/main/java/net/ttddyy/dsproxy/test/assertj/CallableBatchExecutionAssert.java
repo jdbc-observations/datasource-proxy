@@ -55,6 +55,7 @@ public class CallableBatchExecutionAssert extends AbstractExecutionAssert<Callab
         return this;
     }
 
+    // TODO: unittest for this
     public CallableBatchEntryAssert batch(int batchIndex) {
         BatchExecutionEntry batchExecutionEntry = this.actual.getBatchExecutionEntries().get(batchIndex);
         return new CallableBatchEntryAssert(batchExecutionEntry);
