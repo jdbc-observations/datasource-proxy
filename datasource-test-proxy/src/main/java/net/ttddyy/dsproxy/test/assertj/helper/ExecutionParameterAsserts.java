@@ -36,47 +36,227 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
         super(info);
     }
 
+    private SortedSet<ParameterKey> getParamExecutionKeys(ExecutionParameters params) {
+        SortedSet<ParameterKey> keys = new TreeSet<ParameterKey>();
+        for (ExecutionParameter param : params.getParameters()) {
+            if (param instanceof ExecutionParameter.ParamExecution) {
+                keys.add(param.getKey());
+            }
+        }
+        return keys;
+    }
+
+    private SortedSet<ParameterKey> getSetNullParamExecutionKeys(ExecutionParameters params) {
+        SortedSet<ParameterKey> keys = new TreeSet<ParameterKey>();
+        for (ExecutionParameter param : params.getParameters()) {
+            if (param instanceof ExecutionParameter.SetNullParamExecution) {
+                keys.add(param.getKey());
+            }
+        }
+        return keys;
+    }
+
+    private SortedSet<ParameterKey> getOutParamExecutionKeys(ExecutionParameters params) {
+        SortedSet<ParameterKey> keys = new TreeSet<ParameterKey>();
+        for (ExecutionParameter param : params.getParameters()) {
+            if (param instanceof ExecutionParameter.RegisterOutParamExecutionWithIntType ||
+                    param instanceof ExecutionParameter.RegisterOutParamExecutionWithSQLType) {
+                keys.add(param.getKey());
+            }
+        }
+        return keys;
+    }
+
+    private SortedSet<ParameterKey> getParamKeyOnlyExecutionKeys(ExecutionParameters params) {
+        SortedSet<ParameterKey> keys = new TreeSet<ParameterKey>();
+        for (ExecutionParameter param : params.getParameters()) {
+            if (param instanceof ExecutionParameter.ParamKeyOnlyExecution) {
+                keys.add(param.getKey());
+            }
+        }
+        return keys;
+    }
+
     public void assertParameterKeys(ParameterHolder parameterHolder, ExecutionParameters params, boolean isCallable) {
-        ExecutionParameters.ExecutionParametersType parametersType = params.getType();
-        SortedSet<ParameterKey> expectedParamKeys = new TreeSet<ParameterKey>(params.getParameterKeys());
 
-        SortedSet<ParameterKey> actualParamKeys = new TreeSet<ParameterKey>(parameterHolder.getAllParams().keySet());
+        // TODO: clean up
 
-        // validate keys
-        boolean containsAll = actualParamKeys.containsAll(expectedParamKeys);
-        if (!containsAll) {
+        // first check any param key only items
+        // validate index and name key only regardless of whether params, set-null, or register-out.
+        SortedSet<ParameterKey> expectedParamKeyOnlyKeys = getParamKeyOnlyExecutionKeys(params);
+        if (!expectedParamKeyOnlyKeys.isEmpty()) {
+            SortedSet<ParameterKey> actualAllKeys = new TreeSet<ParameterKey>(parameterHolder.getAllParams().keySet());
 
-            SortedSet<ParameterKey> notFoundParameterKeys = new TreeSet<ParameterKey>(expectedParamKeys);
-            notFoundParameterKeys.removeAll(actualParamKeys);
+            if(actualAllKeys.containsAll(expectedParamKeyOnlyKeys)){
+                return;
+            }
 
-            String actualKeys = getParameterKeysAsString(actualParamKeys);
-            String expectedKeys = getParameterKeysAsString(expectedParamKeys);
+            SortedSet<ParameterKey> notFoundParameterKeys = new TreeSet<ParameterKey>(expectedParamKeyOnlyKeys);
+            notFoundParameterKeys.removeAll(actualAllKeys);
+
+            String actualKeys = getParameterKeysAsString(actualAllKeys);
+            String expectedKeys = getParameterKeysAsString(expectedParamKeyOnlyKeys);
             String notFoundKeys = getParameterKeysAsString(notFoundParameterKeys);
 
             failWithMessage("%nExpecting: %s parameter keys%n<%s>%nto contain:%n<%s>%nbut could not find:%n<%s>",
                     isCallable ? "callable" : "prepared", actualKeys, expectedKeys, notFoundKeys);
+
+            // TODO: need param details??
+
+            return;
+        }
+
+
+        boolean isOutParamHolder = parameterHolder instanceof OutParameterHolder;
+        ExecutionParameters.ExecutionParametersType parametersType = params.getType();
+
+        // TODO: clean up
+        SortedSet<ParameterKey> actualParamKeys = new TreeSet<ParameterKey>(parameterHolder.getParams().keySet());
+        SortedSet<ParameterKey> actualSetNullParamKeys = new TreeSet<ParameterKey>(parameterHolder.getSetNullParams().keySet());
+
+        SortedSet<ParameterKey> actualOutParamKeys = new TreeSet<ParameterKey>();
+        if (isOutParamHolder) {
+            actualOutParamKeys.addAll(((OutParameterHolder) parameterHolder).getOutParams().keySet());
+        }
+
+        SortedSet<ParameterKey> actualAllKeys = new TreeSet<ParameterKey>();
+        actualAllKeys.addAll(actualParamKeys);
+        actualAllKeys.addAll(actualSetNullParamKeys);
+        actualAllKeys.addAll(actualOutParamKeys);
+
+        SortedSet<ParameterKey> expectedParamKeys = getParamExecutionKeys(params);
+        SortedSet<ParameterKey> expectedSetNullParamKeys = getSetNullParamExecutionKeys(params);
+        SortedSet<ParameterKey> expectedOutParamKeys = getOutParamExecutionKeys(params);
+
+        SortedSet<ParameterKey> expectedAllKeys = new TreeSet<ParameterKey>();
+        expectedAllKeys.addAll(expectedParamKeys);
+        expectedAllKeys.addAll(expectedSetNullParamKeys);
+        expectedAllKeys.addAll(expectedOutParamKeys);
+
+        SortedSet<ParameterKey> notFoundParamKeys = new TreeSet<ParameterKey>(expectedParamKeys);
+        SortedSet<ParameterKey> notFoundSetNullParamKeys = new TreeSet<ParameterKey>(expectedSetNullParamKeys);
+        SortedSet<ParameterKey> notFoundOutParamKeys = new TreeSet<ParameterKey>(expectedOutParamKeys);
+        notFoundParamKeys.removeAll(actualParamKeys);
+        notFoundSetNullParamKeys.removeAll(actualSetNullParamKeys);
+        notFoundOutParamKeys.removeAll(actualOutParamKeys);
+
+
+        boolean isParamKeysAllPresent = notFoundParamKeys.isEmpty();
+        boolean isSetNullParamKeysAllPresent = notFoundSetNullParamKeys.isEmpty();
+        boolean isOutParamKeysAllPresent = notFoundOutParamKeys.isEmpty();
+
+        boolean containsAll = isParamKeysAllPresent && isSetNullParamKeysAllPresent && isOutParamKeysAllPresent;
+
+        // validate keys
+        if (!containsAll) {
+
+            String actualKeys = getParameterKeysAsString(actualAllKeys);
+
+            StringBuilder actualKeysDetail = new StringBuilder();
+            actualKeysDetail.append("params=");
+            actualKeysDetail.append(getParameterKeysAsString(actualParamKeys));
+            actualKeysDetail.append(", set-null=");
+            actualKeysDetail.append(getParameterKeysAsString(actualSetNullParamKeys));
+            actualKeysDetail.append(", register-out=");
+            actualKeysDetail.append(getParameterKeysAsString(actualOutParamKeys));
+
+            String expectedKeys = getKeysAsString(!isParamKeysAllPresent, !isSetNullParamKeysAllPresent,
+                    !isOutParamKeysAllPresent, expectedParamKeys, expectedSetNullParamKeys, expectedOutParamKeys);
+
+            String notFoundKeys = getKeysAsString(!isParamKeysAllPresent, !isSetNullParamKeysAllPresent,
+                    !isOutParamKeysAllPresent, notFoundParamKeys, notFoundSetNullParamKeys, notFoundOutParamKeys);
+
+            failWithMessage("%nExpecting: %s parameter keys%n<%s>%n(%s)%nto contain:%n<%s>%nbut could not find:%n<%s>",
+                    isCallable ? "callable" : "prepared", actualKeys, actualKeysDetail, expectedKeys, notFoundKeys);
         }
 
         if (ExecutionParameters.ExecutionParametersType.CONTAINS_EXACTLY == parametersType) {
-            boolean isSameSize = actualParamKeys.size() == expectedParamKeys.size();
+            boolean isParamsSameSize = actualParamKeys.size() == expectedParamKeys.size();
+            boolean isSetNullParamsSameSize = actualSetNullParamKeys.size() == expectedSetNullParamKeys.size();
+            boolean isOutParamsSameSize = actualOutParamKeys.size() == expectedOutParamKeys.size();
+            boolean isSameSize = isParamsSameSize && isSetNullParamsSameSize && isOutParamsSameSize;
+
             if (!isSameSize) {
-                SortedSet<ParameterKey> missingParameterKeys = new TreeSet<ParameterKey>(expectedParamKeys);
-                missingParameterKeys.removeAll(actualParamKeys);
+                SortedSet<ParameterKey> missingParamKeys = new TreeSet<ParameterKey>(expectedParamKeys);
+                missingParamKeys.removeAll(actualParamKeys);
+                SortedSet<ParameterKey> missingSetNullParamKeys = new TreeSet<ParameterKey>(expectedSetNullParamKeys);
+                missingSetNullParamKeys.removeAll(actualSetNullParamKeys);
+                SortedSet<ParameterKey> missingOutParamKeys = new TreeSet<ParameterKey>(expectedOutParamKeys);
+                missingOutParamKeys.removeAll(actualOutParamKeys);
 
                 SortedSet<ParameterKey> extraParameterKeys = new TreeSet<ParameterKey>(actualParamKeys);
                 extraParameterKeys.removeAll(expectedParamKeys);
+                SortedSet<ParameterKey> extraSetNullParameterKeys = new TreeSet<ParameterKey>(actualSetNullParamKeys);
+                extraSetNullParameterKeys.removeAll(expectedSetNullParamKeys);
+                SortedSet<ParameterKey> extraOutParameterKeys = new TreeSet<ParameterKey>(actualOutParamKeys);
+                extraOutParameterKeys.removeAll(expectedOutParamKeys);
 
-                String actualKeys = getParameterKeysAsString(actualParamKeys);
-                String expectedKeys = getParameterKeysAsString(expectedParamKeys);
-                String missingKeys = getParameterKeysAsString(missingParameterKeys);
-                String extraKeys = getParameterKeysAsString(extraParameterKeys);
+                String actualKeys = getParameterKeysAsString(actualAllKeys);
+                String expectedKeys = getParameterKeysAsString(expectedAllKeys);
 
-                failWithMessage("%nExpecting: %s parameter keys%n<%s>%nto be exactly:%n<%s>%nbut missing keys:%n<%s>%nextra keys:%n<%s>",
-                        "callable", actualKeys, expectedKeys, missingKeys, extraKeys);
+                StringBuilder actualKeysDetail = new StringBuilder();
+                actualKeysDetail.append("params=");
+                actualKeysDetail.append(getParameterKeysAsString(actualParamKeys));
+                actualKeysDetail.append(", set-null=");
+                actualKeysDetail.append(getParameterKeysAsString(actualSetNullParamKeys));
+                actualKeysDetail.append(", register-out=");
+                actualKeysDetail.append(getParameterKeysAsString(actualOutParamKeys));
+
+                StringBuilder expectedKeysDetail = new StringBuilder();
+                expectedKeysDetail.append("params=");
+                expectedKeysDetail.append(getParameterKeysAsString(expectedParamKeys));
+                expectedKeysDetail.append(", set-null=");
+                expectedKeysDetail.append(getParameterKeysAsString(expectedSetNullParamKeys));
+                expectedKeysDetail.append(", register-out=");
+                expectedKeysDetail.append(getParameterKeysAsString(expectedOutParamKeys));
+
+                boolean hasMissingParamKeys = !missingParamKeys.isEmpty();
+                boolean hasMissingSetNullKeys = !missingSetNullParamKeys.isEmpty();
+                boolean hasMissingOutKeys = !missingOutParamKeys.isEmpty();
+
+                boolean hasExtraParamKeys = !extraParameterKeys.isEmpty();
+                boolean hasExtraSetNullKeys = !extraSetNullParameterKeys.isEmpty();
+                boolean hasExtraOutKeys = !extraOutParameterKeys.isEmpty();
+
+
+                String missingKeys = getKeysAsString(hasMissingParamKeys, hasMissingSetNullKeys,
+                        hasMissingOutKeys, missingParamKeys, missingSetNullParamKeys, missingOutParamKeys);
+                String extraKeys = getKeysAsString(hasExtraParamKeys, hasExtraSetNullKeys,
+                        hasExtraOutKeys, extraParameterKeys, extraSetNullParameterKeys, extraOutParameterKeys);
+
+
+                failWithMessage("%nExpecting: %s parameter keys%n<%s>%n(%s)%nto be exactly:%n<%s>%n(%s)%nbut missing keys:%n<%s>%nextra keys:%n<%s>",
+                        "callable", actualKeys, actualKeysDetail, expectedKeys, expectedKeysDetail, missingKeys, extraKeys);
             }
         }
     }
 
+
+    private String getKeysAsString(boolean writeParamKeys, boolean writeSetNullKeys, boolean writeOutKeys,
+                                   SortedSet<ParameterKey> paramKeys, SortedSet<ParameterKey> setNullKeys,
+                                   SortedSet<ParameterKey> registerOutKeys) {
+        StringBuilder sb = new StringBuilder();
+        if (writeParamKeys) {
+            sb.append("params=");
+            sb.append(getParameterKeysAsString(paramKeys));
+        }
+        if (writeSetNullKeys) {
+            if (sb.length() != 0) {
+                sb.append(", ");
+            }
+            sb.append("set-null=");
+            sb.append(getParameterKeysAsString(setNullKeys));
+        }
+        if (writeOutKeys) {
+            if (sb.length() != 0) {
+                sb.append(", ");
+            }
+            sb.append("register-out=");
+            sb.append(getParameterKeysAsString(registerOutKeys));
+        }
+
+        return sb.toString();
+    }
 
     public <T extends ParameterHolder> void assertExecutionParameters(T paramHolder, ExecutionParameters params) {
         // validate key-value pairs

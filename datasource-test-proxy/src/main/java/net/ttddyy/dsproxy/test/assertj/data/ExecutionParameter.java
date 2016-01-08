@@ -10,6 +10,18 @@ import java.sql.SQLType;
  */
 public abstract class ExecutionParameter {
 
+    /**
+     * Only for param keys. Do not care whether it is from params, setNull, or registerOut.
+     */
+    public static class ParamKeyOnlyExecution extends ExecutionParameter {
+        public ParamKeyOnlyExecution(ParameterKey parameterKey) {
+            super(parameterKey);
+        }
+    }
+
+    /**
+     * For set... operations.
+     */
     public static class ParamExecution extends ExecutionParameter {
         private Object value;
 
@@ -23,6 +35,9 @@ public abstract class ExecutionParameter {
         }
     }
 
+    /**
+     * For setNull operations
+     */
     public static class SetNullParamExecution extends ExecutionParameter {
         private Integer sqlType;  // null if do not check sqlType
 
@@ -71,7 +86,6 @@ public abstract class ExecutionParameter {
     }
 
     /**
-     *
      * @param index
      * @param sqlType the SQL type code defined in <code>java.sql.Types</code>
      * @return

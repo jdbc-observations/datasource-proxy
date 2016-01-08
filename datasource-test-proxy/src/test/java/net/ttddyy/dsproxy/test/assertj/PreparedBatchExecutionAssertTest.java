@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter.nullParam;
@@ -19,7 +18,6 @@ import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsP
 import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParamsExactly;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -74,11 +72,8 @@ public class PreparedBatchExecutionAssertTest {
     public void testHasBatchSize() {
         BatchExecutionEntry entry = mock(BatchExecutionEntry.class);
 
-        ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
-        entries.addAll(Arrays.asList(entry, entry, entry));
-
-        PreparedBatchExecution pbe = mock(PreparedBatchExecution.class);
-        given(pbe.getBatchExecutionEntries()).willReturn(entries);
+        PreparedBatchExecution pbe = new PreparedBatchExecution();
+        pbe.getBatchExecutionEntries().addAll(Arrays.asList(entry, entry, entry));
 
         DataSourceProxyAssertions.assertThat(pbe).hasBatchSize(3);
 
@@ -96,11 +91,8 @@ public class PreparedBatchExecutionAssertTest {
         entry.getParams().put(new ParameterKey(1), "foo");
         entry.getParams().put(new ParameterKey(2), "bar");
 
-        ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
-        entries.add(entry);
-
-        PreparedBatchExecution pbe = mock(PreparedBatchExecution.class);
-        given(pbe.getBatchExecutionEntries()).willReturn(entries);
+        PreparedBatchExecution pbe = new PreparedBatchExecution();
+        pbe.getBatchExecutionEntries().add(entry);
 
         // successful call
         DataSourceProxyAssertions.assertThat(pbe).batch(0, containsParams(param(1, "foo"), param(2, "bar")));
@@ -134,7 +126,14 @@ public class PreparedBatchExecutionAssertTest {
             DataSourceProxyAssertions.assertThat(pbe).batch(0, containsParams(param(100, "bar")));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: prepared parameter keys\n<[1, 2]>\nto contain:\n<[100]>\nbut could not find:\n<[100]>");
+            assertThat(e).hasMessage("\n" +
+                    "Expecting: prepared parameter keys\n" +
+                    "<[1, 2]>\n" +
+                    "(params=[1, 2], set-null=[], register-out=[])\n" +
+                    "to contain:\n" +
+                    "<params=[100]>\n" +
+                    "but could not find:\n" +
+                    "<params=[100]>");
         }
 
         // name key (should only for callable)
@@ -142,7 +141,14 @@ public class PreparedBatchExecutionAssertTest {
             DataSourceProxyAssertions.assertThat(pbe).batch(0, containsParams(param("foo", "FOO")));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: prepared parameter keys\n<[1, 2]>\nto contain:\n<[foo]>\nbut could not find:\n<[foo]>");
+            assertThat(e).hasMessage("\n" +
+                    "Expecting: prepared parameter keys\n" +
+                    "<[1, 2]>\n" +
+                    "(params=[1, 2], set-null=[], register-out=[])\n" +
+                    "to contain:\n" +
+                    "<params=[foo]>\n" +
+                    "but could not find:\n" +
+                    "<params=[foo]>");
         }
     }
 
@@ -152,11 +158,8 @@ public class PreparedBatchExecutionAssertTest {
         entry.getSetNullParams().put(new ParameterKey(1), Types.VARCHAR);
         entry.getSetNullParams().put(new ParameterKey(2), Types.DATE);
 
-        ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
-        entries.add(entry);
-
-        PreparedBatchExecution pbe = mock(PreparedBatchExecution.class);
-        given(pbe.getBatchExecutionEntries()).willReturn(entries);
+        PreparedBatchExecution pbe = new PreparedBatchExecution();
+        pbe.getBatchExecutionEntries().add(entry);
 
         // successful call
         DataSourceProxyAssertions.assertThat(pbe).batch(0, containsParams(nullParam(1, Types.VARCHAR), nullParam(2, Types.DATE)));
@@ -173,7 +176,14 @@ public class PreparedBatchExecutionAssertTest {
             DataSourceProxyAssertions.assertThat(pbe).batch(0, containsParams(param(1, 12))); // Types.VARCHAR == 12
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=NULL(VARCHAR), 2=NULL(DATE)}>\nto contain:\n<[1=12]>\nbut could not find:\n<[1=12]>");
+            assertThat(e).hasMessage("\n" +
+                    "Expecting: prepared parameter keys\n" +
+                    "<[1, 2]>\n" +
+                    "(params=[], set-null=[1, 2], register-out=[])\n" +
+                    "to contain:\n" +
+                    "<params=[1]>\n" +
+                    "but could not find:\n" +
+                    "<params=[1]>");
         }
     }
 
@@ -183,11 +193,8 @@ public class PreparedBatchExecutionAssertTest {
         entry.getSetNullParams().put(new ParameterKey(1), Types.VARCHAR);
         entry.getSetNullParams().put(new ParameterKey(2), Types.DATE);
 
-        ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
-        entries.add(entry);
-
-        PreparedBatchExecution pbe = mock(PreparedBatchExecution.class);
-        given(pbe.getBatchExecutionEntries()).willReturn(entries);
+        PreparedBatchExecution pbe = new PreparedBatchExecution();
+        pbe.getBatchExecutionEntries().add(entry);
 
         // successful call
         DataSourceProxyAssertions.assertThat(pbe).batch(0, containsParams(nullParam(1), nullParam(2)));
@@ -197,7 +204,14 @@ public class PreparedBatchExecutionAssertTest {
             DataSourceProxyAssertions.assertThat(pbe).batch(0, containsParams(nullParam(100)));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: prepared parameter keys\n<[1, 2]>\nto contain:\n<[100]>\nbut could not find:\n<[100]>");
+            assertThat(e).hasMessage("\n" +
+                    "Expecting: prepared parameter keys\n" +
+                    "<[1, 2]>\n" +
+                    "(params=[], set-null=[1, 2], register-out=[])\n" +
+                    "to contain:\n" +
+                    "<set-null=[100]>\n" +
+                    "but could not find:\n" +
+                    "<set-null=[100]>");
         }
 
         // name key doesn't exist
@@ -205,7 +219,14 @@ public class PreparedBatchExecutionAssertTest {
             DataSourceProxyAssertions.assertThat(pbe).batch(0, containsParams(nullParam("BAR")));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: prepared parameter keys\n<[1, 2]>\nto contain:\n<[BAR]>\nbut could not find:\n<[BAR]>");
+            assertThat(e).hasMessage("\n" +
+                    "Expecting: prepared parameter keys\n" +
+                    "<[1, 2]>\n" +
+                    "(params=[], set-null=[1, 2], register-out=[])\n" +
+                    "to contain:\n" +
+                    "<set-null=[BAR]>\n" +
+                    "but could not find:\n" +
+                    "<set-null=[BAR]>");
         }
 
     }
@@ -218,20 +239,25 @@ public class PreparedBatchExecutionAssertTest {
         entry.getSetNullParams().put(new ParameterKey(2), Types.VARCHAR);
         entry.getSetNullParams().put(new ParameterKey(20), Types.DATE);
 
-        ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
-        entries.add(entry);
-
-        PreparedBatchExecution pbe = mock(PreparedBatchExecution.class);
-        given(pbe.getBatchExecutionEntries()).willReturn(entries);
+        PreparedBatchExecution pbe = new PreparedBatchExecution();
+        pbe.getBatchExecutionEntries().add(entry);
 
         // successful call
         DataSourceProxyAssertions.assertThat(pbe).batch(0, containsParams(param(1, "foo"), nullParam(2, Types.VARCHAR)));
 
+        // specified index is not in null-params
         try {
             DataSourceProxyAssertions.assertThat(pbe).batch(0, containsParams(nullParam(1, Types.ARRAY)));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: parameters \n<{1=foo, 10=FOO, 2=NULL(VARCHAR), 20=NULL(DATE)}>\nto contain:\n<[1=NULL(ARRAY)]>\nbut could not find:\n<[1=NULL(ARRAY)]>");
+            assertThat(e).hasMessage("\n" +
+                    "Expecting: prepared parameter keys\n" +
+                    "<[1, 2, 10, 20]>\n" +
+                    "(params=[1, 10], set-null=[2, 20], register-out=[])\n" +
+                    "to contain:\n" +
+                    "<set-null=[1]>\n" +
+                    "but could not find:\n" +
+                    "<set-null=[1]>");
         }
     }
 
@@ -241,11 +267,8 @@ public class PreparedBatchExecutionAssertTest {
         entry.getParams().put(new ParameterKey(1), "foo");
         entry.getParams().put(new ParameterKey(2), "BAR");
 
-        ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
-        entries.add(entry);
-
-        PreparedBatchExecution pbe = mock(PreparedBatchExecution.class);
-        given(pbe.getBatchExecutionEntries()).willReturn(entries);
+        PreparedBatchExecution pbe = new PreparedBatchExecution();
+        pbe.getBatchExecutionEntries().add(entry);
 
         // successful case
         DataSourceProxyAssertions.assertThat(pbe).batch(0, containsParamsExactly(param(1, "foo"), param(2, "BAR")));
@@ -255,7 +278,17 @@ public class PreparedBatchExecutionAssertTest {
             DataSourceProxyAssertions.assertThat(pbe).batch(0, containsParamsExactly(param(1, "foo")));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, 2]>\nto be exactly:\n<[1]>\nbut missing keys:\n<[]>\nextra keys:\n<[2]>");
+            assertThat(e).hasMessage("\n" +
+                    "Expecting: callable parameter keys\n" +
+                    "<[1, 2]>\n" +
+                    "(params=[1, 2], set-null=[], register-out=[])\n" +
+                    "to be exactly:\n" +
+                    "<[1]>\n" +
+                    "(params=[1], set-null=[], register-out=[])\n" +
+                    "but missing keys:\n" +
+                    "<>\n" +
+                    "extra keys:\n" +
+                    "<params=[2]>");
         }
 
     }
@@ -266,11 +299,9 @@ public class PreparedBatchExecutionAssertTest {
         entry.getSetNullParams().put(new ParameterKey(1), Types.VARCHAR);
         entry.getSetNullParams().put(new ParameterKey(2), Types.DATE);
 
-        ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
-        entries.add(entry);
+        PreparedBatchExecution pbe = new PreparedBatchExecution();
+        pbe.getBatchExecutionEntries().add(entry);
 
-        PreparedBatchExecution pbe = mock(PreparedBatchExecution.class);
-        given(pbe.getBatchExecutionEntries()).willReturn(entries);
 
         // successful case
         DataSourceProxyAssertions.assertThat(pbe).batch(0, containsParamsExactly(nullParam(1, Types.VARCHAR), nullParam(2, Types.DATE)));
@@ -280,7 +311,17 @@ public class PreparedBatchExecutionAssertTest {
             DataSourceProxyAssertions.assertThat(pbe).batch(0, containsParamsExactly(nullParam(1, Types.VARCHAR)));
             fail("exception should be thrown");
         } catch (AssertionError e) {
-            assertThat(e).hasMessage("\nExpecting: callable parameter keys\n<[1, 2]>\nto be exactly:\n<[1]>\nbut missing keys:\n<[]>\nextra keys:\n<[2]>");
+            assertThat(e).hasMessage("\n" +
+                    "Expecting: callable parameter keys\n" +
+                    "<[1, 2]>\n" +
+                    "(params=[], set-null=[1, 2], register-out=[])\n" +
+                    "to be exactly:\n" +
+                    "<[1]>\n" +
+                    "(params=[], set-null=[1], register-out=[])\n" +
+                    "but missing keys:\n" +
+                    "<>\n" +
+                    "extra keys:\n" +
+                    "<set-null=[2]>");
         }
 
     }
@@ -292,11 +333,8 @@ public class PreparedBatchExecutionAssertTest {
         entry.getParams().put(new ParameterKey(1), "foo");
         entry.getSetNullParams().put(new ParameterKey(2), Types.VARCHAR);
 
-        ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
-        entries.add(entry);
-
-        PreparedBatchExecution pbe = mock(PreparedBatchExecution.class);
-        given(pbe.getBatchExecutionEntries()).willReturn(entries);
+        PreparedBatchExecution pbe = new PreparedBatchExecution();
+        pbe.getBatchExecutionEntries().add(entry);
 
         // successful case
         DataSourceProxyAssertions.assertThat(pbe).batch(0, containsParamIndexes(1, 2));
@@ -319,11 +357,8 @@ public class PreparedBatchExecutionAssertTest {
         entry.getParams().put(new ParameterKey(1), "foo");
         entry.getSetNullParams().put(new ParameterKey(2), Types.VARCHAR);
 
-        ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
-        entries.add(entry);
-
-        PreparedBatchExecution pbe = mock(PreparedBatchExecution.class);
-        given(pbe.getBatchExecutionEntries()).willReturn(entries);
+        PreparedBatchExecution pbe = new PreparedBatchExecution();
+        pbe.getBatchExecutionEntries().add(entry);
 
         // successful case
         DataSourceProxyAssertions.assertThat(pbe).batch(0, containsParamKeys(1));
@@ -352,11 +387,9 @@ public class PreparedBatchExecutionAssertTest {
 
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
 
-        ArrayList<BatchExecutionEntry> entries = new ArrayList<BatchExecutionEntry>();
-        entries.add(entry);   // setting wrong type
+        PreparedBatchExecution pbe = new PreparedBatchExecution();
+        pbe.getBatchExecutionEntries().add(entry);  // setting wrong type
 
-        PreparedBatchExecution pbe = mock(PreparedBatchExecution.class);
-        given(pbe.getBatchExecutionEntries()).willReturn(entries);
 
         try {
             DataSourceProxyAssertions.assertThat(pbe).batch(0, containsParams(param(1, "foo")));

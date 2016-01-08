@@ -38,9 +38,9 @@ public class ExecutionParameters {
         for (Object rawParamKey : paramKeys) {
             ExecutionParameter param;
             if (rawParamKey instanceof Integer) {
-                param = new ExecutionParameter.ParamExecution(new ParameterKey((Integer) rawParamKey), null);
+                param = new ExecutionParameter.ParamKeyOnlyExecution(new ParameterKey((Integer) rawParamKey));
             } else if (rawParamKey instanceof String) {
-                param = new ExecutionParameter.ParamExecution(new ParameterKey((String) rawParamKey), null);
+                param = new ExecutionParameter.ParamKeyOnlyExecution(new ParameterKey((String) rawParamKey));
             } else {
                 throw new IllegalArgumentException("param key should be int or String");
             }
@@ -58,7 +58,7 @@ public class ExecutionParameters {
 
         List<ExecutionParameter> params = new ArrayList<ExecutionParameter>();
         for (int paramIndex : paramIndexes) {
-            ExecutionParameter param = new ExecutionParameter.ParamExecution(new ParameterKey(paramIndex), null);
+            ExecutionParameter param = new ExecutionParameter.ParamKeyOnlyExecution(new ParameterKey(paramIndex));
             params.add(param);
         }
 
@@ -72,7 +72,7 @@ public class ExecutionParameters {
 
         List<ExecutionParameter> params = new ArrayList<ExecutionParameter>();
         for (String paramName : paramNames) {
-            ExecutionParameter param = new ExecutionParameter.ParamExecution(new ParameterKey(paramName), null);
+            ExecutionParameter param = new ExecutionParameter.ParamKeyOnlyExecution(new ParameterKey(paramName));
             params.add(param);
         }
 

@@ -39,40 +39,46 @@ public class CallableExecutionAssert extends AbstractExecutionAssert<CallableExe
         return this;
     }
 
-    public CallableExecutionAssert containsOutParam(int paramIndex, int sqlType) {
-        return this;
-    }
-
-    public CallableExecutionAssert containsOutParam(int paramIndex, SQLType sqlType) {
-        return this;
-    }
-
-    public CallableExecutionAssert containsOutParam(String paramName, int sqlType) {
-        return this;
-    }
-
-    public CallableExecutionAssert containsOutParam(String paramName, SQLType sqlType) {
-        return this;
-    }
-
     public CallableExecutionAssert containsNullParam(int index, int sqlType) {
+        containsParams(ExecutionParameter.nullParam(index, sqlType));
         return this;
     }
 
     public CallableExecutionAssert containsNullParam(int index) {
+        containsParams(ExecutionParameter.nullParam(index));
         return this;
     }
 
     public CallableExecutionAssert containsNullParam(String name, int sqlType) {
+        containsParams(ExecutionParameter.nullParam(name, sqlType));
         return this;
     }
 
     public CallableExecutionAssert containsNullParam(String name) {
+        containsParams(ExecutionParameter.nullParam(name));
         return this;
     }
 
+    public CallableExecutionAssert containsOutParam(int paramIndex, int sqlType) {
+        containsParams(ExecutionParameter.outParam(paramIndex, sqlType));
+        return this;
+    }
 
-    //////////
+    public CallableExecutionAssert containsOutParam(int paramIndex, SQLType sqlType) {
+        containsParams(ExecutionParameter.outParam(paramIndex, sqlType));
+        return this;
+    }
+
+    public CallableExecutionAssert containsOutParam(String paramName, int sqlType) {
+        containsParams(ExecutionParameter.outParam(paramName, sqlType));
+        return this;
+    }
+
+    public CallableExecutionAssert containsOutParam(String paramName, SQLType sqlType) {
+        containsParams(ExecutionParameter.outParam(paramName, sqlType));
+        return this;
+    }
+
 
     public CallableExecutionAssert containsParams(ExecutionParameter... params) {
         ExecutionParameters executionParameters = ExecutionParameters.containsParams(params);
