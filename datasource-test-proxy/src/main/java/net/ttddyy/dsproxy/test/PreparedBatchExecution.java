@@ -3,12 +3,12 @@ package net.ttddyy.dsproxy.test;
 import net.ttddyy.dsproxy.proxy.ParameterKey;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static net.ttddyy.dsproxy.proxy.ParameterKeyUtils.toIndexMap;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterBy;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyValueMap;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -18,56 +18,56 @@ public class PreparedBatchExecution extends BaseQueryExecution implements QueryH
 
     public static class PreparedBatchExecutionEntry implements BatchExecutionEntry, ParameterByIndexHolder {
 
-        public Map<ParameterKey, Object> params = new LinkedHashMap<ParameterKey, Object>();
-        public Map<ParameterKey, Integer> setNullParams = new LinkedHashMap<ParameterKey, Integer>();
+        private List<ParameterKeyValue> parameters = new ArrayList<ParameterKeyValue>();
+
+        @Override
+        public List<ParameterKeyValue> getParameters() {
+            return this.parameters;
+        }
 
         @Override
         public Map<Integer, Object> getParamsByIndex() {
-            return toIndexMap(this.params);
+            return toIndexMap(getParams());
         }
 
         @Override
         public Map<Integer, Integer> getSetNullParamsByIndex() {
-            return toIndexMap(this.setNullParams);
+            return toIndexMap(getSetNullParams());
         }
 
         @Override
         public List<Integer> getParamIndexes() {
             List<Integer> indexes = new ArrayList<Integer>();
-            indexes.addAll(toIndexMap(this.params).keySet());
-            indexes.addAll(toIndexMap(this.setNullParams).keySet());
+            indexes.addAll(toIndexMap(getParams()).keySet());
+            indexes.addAll(toIndexMap(getSetNullParams()).keySet());
             return indexes;
         }
 
         @Override
         public List<Object> getParamValues() {
             List<Object> list = new ArrayList<Object>();
-            list.addAll(toIndexMap(this.params).values());
+            list.addAll(toIndexMap(getParams()).values());
             return list;
         }
 
         @Override
         public Map<ParameterKey, Object> getParams() {
-            return this.params;
+            return toKeyValueMap(filterBy(this.parameters, ParameterKeyValue.OperationType.SET_PARAM));
         }
 
         @Override
         public Map<ParameterKey, Integer> getSetNullParams() {
-            return this.setNullParams;
+            return toKeyValueMap(filterBy(this.parameters, ParameterKeyValue.OperationType.SET_NULL));
         }
 
         @Override
         public Map<ParameterKey, Object> getAllParams() {
-            Map<ParameterKey, Object> params = new HashMap<ParameterKey, Object>();
-            params.putAll(this.params);
-            params.putAll(this.setNullParams);
-            return params;
+            return toKeyValueMap(this.parameters);
         }
     }
 
-    public String query;
-
-    public List<BatchExecutionEntry> batchExecutionEntries = new ArrayList<BatchExecutionEntry>();
+    private String query;
+    private List<BatchExecutionEntry> batchExecutionEntries = new ArrayList<BatchExecutionEntry>();
 
     @Override
     public boolean isBatch() {

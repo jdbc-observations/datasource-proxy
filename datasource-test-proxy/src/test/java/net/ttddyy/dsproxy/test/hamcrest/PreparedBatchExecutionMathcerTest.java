@@ -1,13 +1,10 @@
 package net.ttddyy.dsproxy.test.hamcrest;
 
-import com.google.common.collect.ImmutableMap;
-import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.test.PreparedBatchExecution;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import java.util.Map;
-
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.createSetParam;
 import static net.ttddyy.dsproxy.test.hamcrest.BatchParameterHolderAssertions.batch;
 import static net.ttddyy.dsproxy.test.hamcrest.BatchParameterHolderAssertions.batchSize;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.param;
@@ -41,14 +38,13 @@ public class PreparedBatchExecutionMathcerTest {
 
     @Test
     public void testBatchSize() {
-        Map<ParameterKey, Object> params1 = ImmutableMap.<ParameterKey, Object>of(new ParameterKey(10), "FOO", new ParameterKey(11), "BAR");
-        Map<ParameterKey, Object> params2 = ImmutableMap.<ParameterKey, Object>of(new ParameterKey(20), "FOO", new ParameterKey(21), "BAR");
-
         PreparedBatchExecution.PreparedBatchExecutionEntry entry1 = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry1.getParams().putAll(params1);
+        entry1.getParameters().add(createSetParam(10, "FOO"));
+        entry1.getParameters().add(createSetParam(11, "BAR"));
 
         PreparedBatchExecution.PreparedBatchExecutionEntry entry2 = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry2.getParams().putAll(params2);
+        entry2.getParameters().add(createSetParam(20, "FOO"));
+        entry2.getParameters().add(createSetParam(21, "BAR"));
 
         PreparedBatchExecution pbe = new PreparedBatchExecution();
         pbe.getBatchExecutionEntries().add(entry1);
@@ -60,10 +56,10 @@ public class PreparedBatchExecutionMathcerTest {
     @Test
     public void testBatch() {
 
-        Map<ParameterKey, Object> params = ImmutableMap.<ParameterKey, Object>of(new ParameterKey(1), "FOO", new ParameterKey(2), "BAR", new ParameterKey(10), 100);
-
         PreparedBatchExecution.PreparedBatchExecutionEntry entry = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry.getParams().putAll(params);
+        entry.getParameters().add(createSetParam(1, "FOO"));
+        entry.getParameters().add(createSetParam(2, "BAR"));
+        entry.getParameters().add(createSetParam(10, 100));
 
         PreparedBatchExecution pbe = new PreparedBatchExecution();
         pbe.getBatchExecutionEntries().add(entry);
@@ -86,10 +82,11 @@ public class PreparedBatchExecutionMathcerTest {
     @Test
     public void testBatchByIndex() {
 
-        Map<ParameterKey, Object> params = ImmutableMap.<ParameterKey, Object>of(new ParameterKey(1), "FOO", new ParameterKey(2), "BAR", new ParameterKey(3), 100);
-
         PreparedBatchExecution.PreparedBatchExecutionEntry entry = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry.getParams().putAll(params);
+        entry.getParameters().add(createSetParam(1, "FOO"));
+        entry.getParameters().add(createSetParam(2, "BAR"));
+        entry.getParameters().add(createSetParam(3, 100));
+
 
         PreparedBatchExecution pbe = new PreparedBatchExecution();
         pbe.getBatchExecutionEntries().add(entry);

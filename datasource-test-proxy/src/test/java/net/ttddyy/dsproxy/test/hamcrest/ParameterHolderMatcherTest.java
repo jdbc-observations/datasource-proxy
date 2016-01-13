@@ -4,6 +4,7 @@ import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.test.ParameterByIndexHolder;
 import net.ttddyy.dsproxy.test.ParameterByNameHolder;
 import net.ttddyy.dsproxy.test.ParameterHolder;
+import net.ttddyy.dsproxy.test.ParameterKeyValue;
 import net.ttddyy.dsproxy.test.PreparedBatchExecution;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -28,6 +29,12 @@ public class ParameterHolderMatcherTest {
 
     // ParamHolder that only implements ParamterByIndexHolder
     private static class MockIndexOnlyParamHolder implements ParameterHolder, ParameterByIndexHolder {
+
+        @Override
+        public List<ParameterKeyValue> getParameters() {
+            return null;
+        }
+
         @Override
         public Map<ParameterKey, Object> getParams() {
             return null;
@@ -61,6 +68,11 @@ public class ParameterHolderMatcherTest {
 
     // ParamHolder that only implements ParamterByNameHolder
     private static class MockNameOnlyParamHolder implements ParameterHolder, ParameterByNameHolder {
+
+        @Override
+        public List<ParameterKeyValue> getParameters() {
+            return null;
+        }
 
         @Override
         public Map<ParameterKey, Object> getParams() {

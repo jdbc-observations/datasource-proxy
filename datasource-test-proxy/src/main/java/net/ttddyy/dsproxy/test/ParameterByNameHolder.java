@@ -15,6 +15,7 @@ public interface ParameterByNameHolder extends ParameterHolder {
 
     /**
      * Keys of parameters.
+     * Includes both set_param and set_null parameters.
      *
      * @return String keys.
      */

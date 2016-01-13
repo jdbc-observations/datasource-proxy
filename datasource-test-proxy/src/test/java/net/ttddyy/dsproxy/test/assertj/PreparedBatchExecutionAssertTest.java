@@ -1,6 +1,5 @@
 package net.ttddyy.dsproxy.test.assertj;
 
-import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.test.BatchExecutionEntry;
 import net.ttddyy.dsproxy.test.CallableBatchExecution;
 import net.ttddyy.dsproxy.test.PreparedBatchExecution;
@@ -10,6 +9,8 @@ import org.junit.Test;
 import java.sql.Types;
 import java.util.Arrays;
 
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.createSetNull;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.createSetParam;
 import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter.nullParam;
 import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter.param;
 import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParamIndexes;
@@ -88,8 +89,8 @@ public class PreparedBatchExecutionAssertTest {
     @Test
     public void batchWithContainsParams() {
         PreparedBatchExecution.PreparedBatchExecutionEntry entry = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry.getParams().put(new ParameterKey(1), "foo");
-        entry.getParams().put(new ParameterKey(2), "bar");
+        entry.getParameters().add(createSetParam(1, "foo"));
+        entry.getParameters().add(createSetParam(2, "bar"));
 
         PreparedBatchExecution pbe = new PreparedBatchExecution();
         pbe.getBatchExecutionEntries().add(entry);
@@ -155,8 +156,8 @@ public class PreparedBatchExecutionAssertTest {
     @Test
     public void containsParamsWithSetNullParameters() {
         PreparedBatchExecution.PreparedBatchExecutionEntry entry = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry.getSetNullParams().put(new ParameterKey(1), Types.VARCHAR);
-        entry.getSetNullParams().put(new ParameterKey(2), Types.DATE);
+        entry.getParameters().add(createSetNull(1, Types.VARCHAR));
+        entry.getParameters().add(createSetNull(2, Types.DATE));
 
         PreparedBatchExecution pbe = new PreparedBatchExecution();
         pbe.getBatchExecutionEntries().add(entry);
@@ -190,8 +191,8 @@ public class PreparedBatchExecutionAssertTest {
     @Test
     public void containsParamsWithSetNullParametersOnlyKeys() {
         PreparedBatchExecution.PreparedBatchExecutionEntry entry = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry.getSetNullParams().put(new ParameterKey(1), Types.VARCHAR);
-        entry.getSetNullParams().put(new ParameterKey(2), Types.DATE);
+        entry.getParameters().add(createSetNull(1, Types.VARCHAR));
+        entry.getParameters().add(createSetNull(2, Types.DATE));
 
         PreparedBatchExecution pbe = new PreparedBatchExecution();
         pbe.getBatchExecutionEntries().add(entry);
@@ -234,10 +235,10 @@ public class PreparedBatchExecutionAssertTest {
     @Test
     public void containsParamsWithMixedParameterTypes() {
         PreparedBatchExecution.PreparedBatchExecutionEntry entry = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry.getParams().put(new ParameterKey(1), "foo");
-        entry.getParams().put(new ParameterKey(10), "FOO");
-        entry.getSetNullParams().put(new ParameterKey(2), Types.VARCHAR);
-        entry.getSetNullParams().put(new ParameterKey(20), Types.DATE);
+        entry.getParameters().add(createSetParam(1, "foo"));
+        entry.getParameters().add(createSetParam(10, "FOO"));
+        entry.getParameters().add(createSetNull(2, Types.VARCHAR));
+        entry.getParameters().add(createSetNull(20, Types.DATE));
 
         PreparedBatchExecution pbe = new PreparedBatchExecution();
         pbe.getBatchExecutionEntries().add(entry);
@@ -264,8 +265,8 @@ public class PreparedBatchExecutionAssertTest {
     @Test
     public void batchParamKeysWithContainsParamsExactly() {
         PreparedBatchExecution.PreparedBatchExecutionEntry entry = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry.getParams().put(new ParameterKey(1), "foo");
-        entry.getParams().put(new ParameterKey(2), "BAR");
+        entry.getParameters().add(createSetParam(1, "foo"));
+        entry.getParameters().add(createSetParam(2, "BAR"));
 
         PreparedBatchExecution pbe = new PreparedBatchExecution();
         pbe.getBatchExecutionEntries().add(entry);
@@ -296,8 +297,8 @@ public class PreparedBatchExecutionAssertTest {
     @Test
     public void batchParamKeysWithContainsParamsExactlyForSetNullParameters() {
         PreparedBatchExecution.PreparedBatchExecutionEntry entry = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry.getSetNullParams().put(new ParameterKey(1), Types.VARCHAR);
-        entry.getSetNullParams().put(new ParameterKey(2), Types.DATE);
+        entry.getParameters().add(createSetNull(1, Types.VARCHAR));
+        entry.getParameters().add(createSetNull(2, Types.DATE));
 
         PreparedBatchExecution pbe = new PreparedBatchExecution();
         pbe.getBatchExecutionEntries().add(entry);
@@ -330,8 +331,8 @@ public class PreparedBatchExecutionAssertTest {
     @Test
     public void testBatchParamKeyIndexes() {
         PreparedBatchExecution.PreparedBatchExecutionEntry entry = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry.getParams().put(new ParameterKey(1), "foo");
-        entry.getSetNullParams().put(new ParameterKey(2), Types.VARCHAR);
+        entry.getParameters().add(createSetParam(1, "foo"));
+        entry.getParameters().add(createSetNull(2, Types.VARCHAR));
 
         PreparedBatchExecution pbe = new PreparedBatchExecution();
         pbe.getBatchExecutionEntries().add(entry);
@@ -354,8 +355,8 @@ public class PreparedBatchExecutionAssertTest {
     @Test
     public void testBatchParamKeys() {
         PreparedBatchExecution.PreparedBatchExecutionEntry entry = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry.getParams().put(new ParameterKey(1), "foo");
-        entry.getSetNullParams().put(new ParameterKey(2), Types.VARCHAR);
+        entry.getParameters().add(createSetParam(1, "foo"));
+        entry.getParameters().add(createSetNull(2, Types.VARCHAR));
 
         PreparedBatchExecution pbe = new PreparedBatchExecution();
         pbe.getBatchExecutionEntries().add(entry);

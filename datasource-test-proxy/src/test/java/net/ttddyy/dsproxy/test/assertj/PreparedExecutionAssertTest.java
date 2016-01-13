@@ -1,13 +1,13 @@
 package net.ttddyy.dsproxy.test.assertj;
 
-import net.ttddyy.dsproxy.proxy.ParameterKey;
-import net.ttddyy.dsproxy.test.CallableExecution;
 import net.ttddyy.dsproxy.test.PreparedExecution;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.sql.Types;
 
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.createSetNull;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.createSetParam;
 import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter.nullParam;
 import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter.param;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -64,9 +64,9 @@ public class PreparedExecutionAssertTest {
     @Test
     public void testContainsParams() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParams().put(new ParameterKey(2), "bar");
-        pe.getParams().put(new ParameterKey(1), "foo");
-        pe.getSetNullParams().put(new ParameterKey(3), Types.BIT);
+        pe.getParameters().add(createSetParam(1, "foo"));
+        pe.getParameters().add(createSetParam(2, "bar"));
+        pe.getParameters().add(createSetNull(3, Types.BIT));
 
         // successful call
         DataSourceProxyAssertions.assertThat(pe).containsParams(param(1, "foo"), param(2, "bar"), nullParam(3, Types.BIT));
@@ -138,8 +138,8 @@ public class PreparedExecutionAssertTest {
     @Test
     public void testContainsNullParam() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParams().put(new ParameterKey(1), "foo");
-        pe.getSetNullParams().put(new ParameterKey(2), Types.VARCHAR);
+        pe.getParameters().add(createSetParam(1, "foo"));
+        pe.getParameters().add(createSetNull(2, Types.VARCHAR));
 
         // successful call
         DataSourceProxyAssertions.assertThat(pe)
@@ -226,9 +226,8 @@ public class PreparedExecutionAssertTest {
     @Test
     public void testParamIndex() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParams().put(new ParameterKey(1), "foo");
-        pe.getSetNullParams().put(new ParameterKey(2), Types.VARCHAR);
-
+        pe.getParameters().add(createSetParam(1, "foo"));
+        pe.getParameters().add(createSetNull(2, Types.VARCHAR));
 
         // successful case
         DataSourceProxyAssertions.assertThat(pe).containsParamIndex(1);
@@ -253,8 +252,8 @@ public class PreparedExecutionAssertTest {
     @Test
     public void testParamIndexes() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParams().put(new ParameterKey(1), "foo");
-        pe.getSetNullParams().put(new ParameterKey(2), Types.VARCHAR);
+        pe.getParameters().add(createSetParam(1, "foo"));
+        pe.getParameters().add(createSetNull(2, Types.VARCHAR));
 
 
         // successful case
@@ -280,9 +279,9 @@ public class PreparedExecutionAssertTest {
     @Test
     public void testContainsParamValuesExactly() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParams().put(new ParameterKey(1), "foo");
-        pe.getParams().put(new ParameterKey(2), 100);
-        pe.getSetNullParams().put(new ParameterKey(3), Types.VARCHAR);
+        pe.getParameters().add(createSetParam(1, "foo"));
+        pe.getParameters().add(createSetParam(2, 100));
+        pe.getParameters().add(createSetNull(3, Types.VARCHAR));
 
 
         // successful case
