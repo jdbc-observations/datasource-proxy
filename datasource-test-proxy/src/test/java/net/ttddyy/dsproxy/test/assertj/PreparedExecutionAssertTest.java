@@ -279,8 +279,8 @@ public class PreparedExecutionAssertTest {
     @Test
     public void testContainsParamValuesExactly() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParameters().add(createSetParam(1, "foo"));
         pe.getParameters().add(createSetParam(2, 100));
+        pe.getParameters().add(createSetParam(1, "foo"));
         pe.getParameters().add(createSetNull(3, Types.VARCHAR));
 
 

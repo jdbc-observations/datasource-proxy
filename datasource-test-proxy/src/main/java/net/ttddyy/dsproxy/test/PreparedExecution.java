@@ -3,6 +3,8 @@ package net.ttddyy.dsproxy.test;
 import net.ttddyy.dsproxy.proxy.ParameterKey;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +37,13 @@ public class PreparedExecution extends BaseQueryExecution implements QueryHolder
 
     @Override
     public List<ParameterKeyValue> getParameters() {
+        // TODO: clean up
+        Collections.sort(this.parameters, new Comparator<ParameterKeyValue>() {
+            @Override
+            public int compare(ParameterKeyValue left, ParameterKeyValue right) {
+                return left.getKey().compareTo(right.getKey());  // use key to sort
+            }
+        });
         return this.parameters;
     }
 

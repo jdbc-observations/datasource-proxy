@@ -18,13 +18,27 @@ public class ParameterKeyValue {
     public ParameterKeyValue(int indexKey, Object value, OperationType type) {
         this(new ParameterKey(indexKey), value, type);
     }
+
     public ParameterKeyValue(String nameKey, Object value, OperationType type) {
         this(new ParameterKey(nameKey), value, type);
     }
+
     public ParameterKeyValue(ParameterKey key, Object value, OperationType type) {
         this.key = key;
         this.value = value;
         this.type = type;
+    }
+
+    public boolean isSetParam() {
+        return this.type == OperationType.SET_PARAM;
+    }
+
+    public boolean isSetNull() {
+        return this.type == OperationType.SET_NULL;
+    }
+
+    public boolean isRegisterOut() {
+        return this.type == OperationType.REGISTER_OUT;
     }
 
     public ParameterKey getKey() {
@@ -50,4 +64,6 @@ public class ParameterKeyValue {
     public void setType(OperationType type) {
         this.type = type;
     }
+
+
 }

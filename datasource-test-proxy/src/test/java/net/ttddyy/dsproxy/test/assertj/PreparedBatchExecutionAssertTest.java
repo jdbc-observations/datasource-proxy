@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.test.assertj;
 
+import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.test.BatchExecutionEntry;
 import net.ttddyy.dsproxy.test.CallableBatchExecution;
 import net.ttddyy.dsproxy.test.PreparedBatchExecution;
@@ -333,6 +334,9 @@ public class PreparedBatchExecutionAssertTest {
         PreparedBatchExecution.PreparedBatchExecutionEntry entry = new PreparedBatchExecution.PreparedBatchExecutionEntry();
         entry.getParameters().add(createSetParam(1, "foo"));
         entry.getParameters().add(createSetNull(2, Types.VARCHAR));
+
+        entry.getParams().put(new ParameterKey(1), "foo");
+        entry.getSetNullParams().put(new ParameterKey(2), Types.VARCHAR);
 
         PreparedBatchExecution pbe = new PreparedBatchExecution();
         pbe.getBatchExecutionEntries().add(entry);

@@ -76,4 +76,19 @@ public class ParameterKeyValueUtils {
         return result;
     }
 
+    public static  Map<Integer, Object> toKeyIndexMap(List<ParameterKeyValue> keyValues) {
+        Map<Integer, Object> result = new LinkedHashMap<Integer, Object>();
+        for (ParameterKeyValue keyValue : keyValues) {
+            result.put(keyValue.getKey().getIndex(), keyValue.getValue());
+        }
+        return result;
+    }
+    public static  Map<ParameterKey, ParameterKeyValue> toParamKeyMap(List<ParameterKeyValue> keyValues) {
+        Map<ParameterKey, ParameterKeyValue> result = new LinkedHashMap<ParameterKey, ParameterKeyValue>();
+        for (ParameterKeyValue keyValue : keyValues) {
+            result.put(keyValue.getKey(), keyValue);
+        }
+        return result;
+    }
+
 }
