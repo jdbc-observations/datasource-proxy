@@ -42,6 +42,16 @@ public class PreparedExecution extends BaseQueryExecution implements QueryHolder
     }
 
     @Override
+    public SortedSet<ParameterKeyValue> getSetParams() {
+        return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_PARAM);
+    }
+
+    @Override
+    public SortedSet<ParameterKeyValue> getSetNullParams() {
+        return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_NULL);
+    }
+
+    @Override
     public Map<Integer, Object> getParamsByIndex() {
         return toKeyIndexMap(filterByKeyType(getSetParams(), ParameterKey.ParameterKeyType.BY_INDEX));
     }
@@ -52,26 +62,16 @@ public class PreparedExecution extends BaseQueryExecution implements QueryHolder
     }
 
     @Override
-    public List<Integer> getParamIndexes() {
-        List<Integer> indexes = new ArrayList<Integer>();
-        indexes.addAll(getParamsByIndex().keySet());
-        indexes.addAll(getSetNullParamsByIndex().keySet());
-        return indexes;
-    }
-
-    @Override
     public Map<ParameterKey, Object> getAllParams() {
         return toKeyValueMap(this.parameters);
     }
 
     @Override
-    public SortedSet<ParameterKeyValue> getSetParams() {
-        return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_PARAM);
-    }
-
-    @Override
-    public SortedSet<ParameterKeyValue> getSetNullParams() {
-        return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_NULL);
+    public List<Integer> getParamIndexes() {
+        List<Integer> indexes = new ArrayList<Integer>();
+        indexes.addAll(getParamsByIndex().keySet());
+        indexes.addAll(getSetNullParamsByIndex().keySet());
+        return indexes;
     }
 
 }

@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import static net.ttddyy.dsproxy.proxy.ParameterKeyUtils.toIndexMap;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterBy;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterByKeyType;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyIndexMap;
@@ -30,6 +29,17 @@ public class PreparedBatchExecution extends BaseQueryExecution implements QueryH
         }
 
         @Override
+        public SortedSet<ParameterKeyValue> getSetParams() {
+            return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_PARAM);
+        }
+
+        @Override
+        public SortedSet<ParameterKeyValue> getSetNullParams() {
+            return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_NULL);
+        }
+
+
+        @Override
         public Map<Integer, Object> getParamsByIndex() {
             return toKeyIndexMap(filterByKeyType(getSetParams(), ParameterKey.ParameterKeyType.BY_INDEX));
         }
@@ -37,6 +47,11 @@ public class PreparedBatchExecution extends BaseQueryExecution implements QueryH
         @Override
         public Map<Integer, Integer> getSetNullParamsByIndex() {
             return toKeyIndexMap(filterByKeyType(getSetNullParams(), ParameterKey.ParameterKeyType.BY_INDEX));
+        }
+
+        @Override
+        public Map<ParameterKey, Object> getAllParams() {
+            return toKeyValueMap(this.parameters);
         }
 
         @Override
@@ -54,20 +69,6 @@ public class PreparedBatchExecution extends BaseQueryExecution implements QueryH
             return list;
         }
 
-        @Override
-        public SortedSet<ParameterKeyValue> getSetParams() {
-            return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_PARAM);
-        }
-
-        @Override
-        public SortedSet<ParameterKeyValue> getSetNullParams() {
-            return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_NULL);
-        }
-
-        @Override
-        public Map<ParameterKey, Object> getAllParams() {
-            return toKeyValueMap(this.parameters);
-        }
     }
 
     private String query;
