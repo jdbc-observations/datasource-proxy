@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import static net.ttddyy.dsproxy.proxy.ParameterKeyUtils.toIndexMap;
-import static net.ttddyy.dsproxy.proxy.ParameterKeyUtils.toNameMap;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterBy;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterByKeyType;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyIndexMap;
@@ -56,8 +54,8 @@ public class CallableExecution extends BaseQueryExecution implements QueryHolder
     }
 
     @Override
-    public Map<ParameterKey, Object> getOutParams() {
-        return toKeyValueMap(filterBy(this.parameters, ParameterKeyValue.OperationType.REGISTER_OUT));
+    public SortedSet<ParameterKeyValue> getOutParams() {
+        return filterBy(this.parameters, ParameterKeyValue.OperationType.REGISTER_OUT);
     }
 
     @Override
@@ -81,6 +79,16 @@ public class CallableExecution extends BaseQueryExecution implements QueryHolder
     }
 
     @Override
+    public Map<String, Object> getOutParamsByName() {
+        return toKeyNameMap(filterByKeyType(getOutParams(), ParameterKey.ParameterKeyType.BY_NAME));
+    }
+
+    @Override
+    public Map<Integer, Object> getOutParamsByIndex() {
+        return toKeyIndexMap(filterByKeyType(getOutParams(), ParameterKey.ParameterKeyType.BY_INDEX));
+    }
+
+    @Override
     public List<String> getParamNames() {
         List<String> names = new ArrayList<String>();
         names.addAll(getParamsByName().keySet());
@@ -97,27 +105,19 @@ public class CallableExecution extends BaseQueryExecution implements QueryHolder
     }
 
     @Override
-    public Map<ParameterKey, Object> getAllParams() {
-        return toKeyValueMap(this.parameters);
-    }
-
-    @Override
-    public Map<Integer, Object> getOutParamsByIndex() {
-        return toIndexMap(getOutParams());
-    }
-
-    @Override
-    public Map<String, Object> getOutParamsByName() {
-        return toNameMap(getOutParams());
+    public List<String> getOutParamNames() {
+        return new ArrayList<String>(getOutParamsByName().keySet());
     }
 
     @Override
     public List<Integer> getOutParamIndexes() {
-        return new ArrayList<Integer>(toIndexMap(getOutParams()).keySet());
+        return new ArrayList<Integer>(getOutParamsByIndex().keySet());
     }
 
     @Override
-    public List<String> getOutParamNames() {
-        return new ArrayList<String>(toNameMap(getOutParams()).keySet());
+    public Map<ParameterKey, Object> getAllParams() {
+        return toKeyValueMap(this.parameters);
     }
+
+
 }

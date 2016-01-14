@@ -1,9 +1,8 @@
 package net.ttddyy.dsproxy.test;
 
-import net.ttddyy.dsproxy.proxy.ParameterKey;
-
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -11,7 +10,7 @@ import java.util.Map;
  */
 public interface OutParameterHolder extends ParameterHolder {
 
-    Map<ParameterKey, Object> getOutParams();
+    SortedSet<ParameterKeyValue> getOutParams();
 
     Map<Integer, Object> getOutParamsByIndex();
 

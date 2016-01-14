@@ -135,7 +135,7 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
 
         SortedSet<ParameterKey> actualOutParamKeys = new TreeSet<ParameterKey>();
         if (isOutParamHolder) {
-            actualOutParamKeys.addAll(((OutParameterHolder) parameterHolder).getOutParams().keySet());
+            actualOutParamKeys.addAll(toParamKeys(((OutParameterHolder) parameterHolder).getOutParams()));
         }
 
 
@@ -317,7 +317,7 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
 
     // TODO: consider both int and SQLType to be inter-changeable. (probably some value object to work for both)
     private void validateOutParamParameterWithInt(ParameterKey parameterKey, int sqlType, OutParameterHolder executionEntry) {
-        Object actualValue = executionEntry.getOutParams().get(parameterKey);
+        Object actualValue = toKeyValueMap(executionEntry.getOutParams()).get(parameterKey);
         if (!new Integer(sqlType).equals(actualValue)) {
             SortedMap<String, Object> sortedParams = getAllParamsForDisplay(executionEntry);
             String displayValue = registerOutParameterValueConverter.getDisplayValue(sqlType);
@@ -327,7 +327,7 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
     }
 
     private void validateOutParamParameterWithSQLType(ParameterKey parameterKey, SQLType sqlType, OutParameterHolder executionEntry) {
-        Object actualValue = executionEntry.getOutParams().get(parameterKey);
+        Object actualValue = toKeyValueMap(executionEntry.getOutParams()).get(parameterKey);
         if (sqlType != actualValue) {
             SortedMap<String, Object> sortedParams = getAllParamsForDisplay(executionEntry);
             String displayValue = registerOutParameterValueConverter.getDisplayValue(sqlType);
@@ -342,7 +342,7 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
         Set<ParameterKey> nullParamKeys = toParamKeys(entry.getSetNullParams());
         Set<ParameterKey> outParamKeys = new HashSet<ParameterKey>();
         if (entry instanceof OutParameterHolder) {
-            outParamKeys.addAll(((OutParameterHolder) entry).getOutParams().keySet());
+            outParamKeys.addAll(toParamKeys(((OutParameterHolder) entry).getOutParams()));
         }
 
 
