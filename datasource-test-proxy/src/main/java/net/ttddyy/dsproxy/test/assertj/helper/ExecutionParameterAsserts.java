@@ -5,13 +5,13 @@ import net.ttddyy.dsproxy.listener.SetNullParameterValueConverter;
 import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.test.OutParameterHolder;
 import net.ttddyy.dsproxy.test.ParameterHolder;
+import net.ttddyy.dsproxy.test.ParameterKeyValue;
 import net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter;
 import net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters;
 import org.assertj.core.api.WritableAssertionInfo;
 
 import java.sql.SQLType;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -118,7 +118,7 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
     public void assertParameterKeys(ParameterHolder parameterHolder, ExecutionParameters params, boolean isCallable) {
 
         // TODO: clean up
-        SortedSet<ParameterKey> actualAllKeys = new TreeSet<ParameterKey>(parameterHolder.getAllParams().keySet());
+        SortedSet<ParameterKey> actualAllKeys = toParamKeys(parameterHolder.getParameters());
 
         // first check any param key only items
         SortedSet<ParameterKey> expectedParamKeyOnlyKeys = getParamKeyOnlyExecutionKeys(params);
@@ -347,15 +347,15 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
 
 
         SortedMap<String, Object> sorted = new TreeMap<String, Object>();
-        for (Map.Entry<ParameterKey, Object> parameterEntry : entry.getAllParams().entrySet()) {
-            ParameterKey key = parameterEntry.getKey();
+        for (ParameterKeyValue keyValue : entry.getParameters()) {
+            ParameterKey key = keyValue.getKey();
             String valueToDisplay;
             if (nullParamKeys.contains(key)) {
-                valueToDisplay = this.setNullValueConverter.getDisplayValue((Integer) parameterEntry.getValue());
+                valueToDisplay = this.setNullValueConverter.getDisplayValue((Integer) keyValue.getValue());
             } else if (outParamKeys.contains(key)) {
-                valueToDisplay = this.registerOutParameterValueConverter.getDisplayValue(parameterEntry.getValue());
+                valueToDisplay = this.registerOutParameterValueConverter.getDisplayValue(keyValue.getValue());
             } else {
-                valueToDisplay = String.valueOf(parameterEntry.getValue());
+                valueToDisplay = String.valueOf(keyValue.getValue());
             }
             sorted.put(key.getKeyAsString(), valueToDisplay);  // display {key=val, key2=val2}
         }

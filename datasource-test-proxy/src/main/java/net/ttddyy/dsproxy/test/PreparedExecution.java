@@ -11,7 +11,6 @@ import java.util.TreeSet;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterBy;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterByKeyType;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyIndexMap;
-import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyValueMap;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -59,11 +58,6 @@ public class PreparedExecution extends BaseQueryExecution implements QueryHolder
     @Override
     public Map<Integer, Integer> getSetNullParamsByIndex() {
         return toKeyIndexMap(filterByKeyType(getSetNullParams(), ParameterKey.ParameterKeyType.BY_INDEX));
-    }
-
-    @Override
-    public Map<ParameterKey, Object> getAllParams() {
-        return toKeyValueMap(this.parameters);
     }
 
     @Override

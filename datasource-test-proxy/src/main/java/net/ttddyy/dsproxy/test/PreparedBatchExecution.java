@@ -50,11 +50,6 @@ public class PreparedBatchExecution extends BaseQueryExecution implements QueryH
         }
 
         @Override
-        public Map<ParameterKey, Object> getAllParams() {
-            return toKeyValueMap(this.parameters);
-        }
-
-        @Override
         public List<Integer> getParamIndexes() {
             List<Integer> indexes = new ArrayList<Integer>();
             indexes.addAll(getParamsByIndex().keySet());

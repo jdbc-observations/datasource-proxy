@@ -12,7 +12,6 @@ import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterBy;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterByKeyType;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyIndexMap;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyNameMap;
-import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyValueMap;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -113,11 +112,5 @@ public class CallableExecution extends BaseQueryExecution implements QueryHolder
     public List<Integer> getOutParamIndexes() {
         return new ArrayList<Integer>(getOutParamsByIndex().keySet());
     }
-
-    @Override
-    public Map<ParameterKey, Object> getAllParams() {
-        return toKeyValueMap(this.parameters);
-    }
-
 
 }

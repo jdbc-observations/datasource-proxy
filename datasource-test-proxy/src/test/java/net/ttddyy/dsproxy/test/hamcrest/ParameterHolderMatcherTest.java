@@ -1,6 +1,5 @@
 package net.ttddyy.dsproxy.test.hamcrest;
 
-import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.test.ParameterByIndexHolder;
 import net.ttddyy.dsproxy.test.ParameterByNameHolder;
 import net.ttddyy.dsproxy.test.ParameterHolder;
@@ -60,11 +59,6 @@ public class ParameterHolderMatcherTest {
         public Map<Integer, Integer> getSetNullParamsByIndex() {
             return null;
         }
-
-        @Override
-        public Map<ParameterKey, Object> getAllParams() {
-            return null;
-        }
     }
 
     // ParamHolder that only implements ParamterByNameHolder
@@ -100,10 +94,6 @@ public class ParameterHolderMatcherTest {
             return null;
         }
 
-        @Override
-        public Map<ParameterKey, Object> getAllParams() {
-            return null;
-        }
     }
 
     @Test

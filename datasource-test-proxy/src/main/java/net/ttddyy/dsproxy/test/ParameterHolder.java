@@ -1,8 +1,5 @@
 package net.ttddyy.dsproxy.test;
 
-import net.ttddyy.dsproxy.proxy.ParameterKey;
-
-import java.util.Map;
 import java.util.SortedSet;
 
 /**
@@ -16,7 +13,5 @@ public interface ParameterHolder {
     SortedSet<ParameterKeyValue> getSetParams();
 
     SortedSet<ParameterKeyValue> getSetNullParams();
-
-    Map<ParameterKey, Object> getAllParams();
 
 }

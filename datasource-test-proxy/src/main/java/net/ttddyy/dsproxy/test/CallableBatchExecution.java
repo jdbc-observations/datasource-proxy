@@ -77,11 +77,6 @@ public class CallableBatchExecution extends BaseQueryExecution implements BatchP
 
 
         @Override
-        public Map<ParameterKey, Object> getAllParams() {
-            return toKeyValueMap(this.parameters);
-        }
-
-        @Override
         public List<String> getParamNames() {
             List<String> names = new ArrayList<String>();
             names.addAll(getParamsByName().keySet());
