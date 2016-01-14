@@ -5,7 +5,7 @@ import net.ttddyy.dsproxy.proxy.ParameterKey;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class ParameterKeyValue {
+public class ParameterKeyValue implements Comparable<ParameterKeyValue> {
 
     public enum OperationType {
         SET_PARAM, SET_NULL, REGISTER_OUT
@@ -65,5 +65,13 @@ public class ParameterKeyValue {
         this.type = type;
     }
 
+    @Override
+    public int compareTo(ParameterKeyValue o) {
+        int byKey = this.key.compareTo(o.key);  //use key for ordering
+        if (byKey != 0) {
+            return byKey;
+        }
+        return this.value == o.value ? 0 : 1;
+    }
 
 }
