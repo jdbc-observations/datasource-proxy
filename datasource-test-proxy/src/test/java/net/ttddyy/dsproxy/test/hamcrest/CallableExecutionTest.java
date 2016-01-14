@@ -103,8 +103,8 @@ public class CallableExecutionTest {
 //    @Test
 //    public void testParamValueWithClass() {
 //        PreparedExecution pe = new PreparedExecution();
-//        pe.getParams().put("foo", "FOO");
-//        pe.getParams().put("number", 100);
+//        pe.getSetParams().put("foo", "FOO");
+//        pe.getSetParams().put("number", 100);
 //
 //        assertThat(pe, paramValue("foo", String.class, is("FOO")));
 //        assertThat(pe, paramValue("foo", String.class, startsWith("FOO")));

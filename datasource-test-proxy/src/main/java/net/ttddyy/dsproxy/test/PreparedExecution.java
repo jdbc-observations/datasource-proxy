@@ -44,7 +44,7 @@ public class PreparedExecution extends BaseQueryExecution implements QueryHolder
 
     @Override
     public Map<Integer, Object> getParamsByIndex() {
-        return toKeyIndexMap(filterByKeyType(getParams(), ParameterKey.ParameterKeyType.BY_INDEX));
+        return toKeyIndexMap(filterByKeyType(getSetParams(), ParameterKey.ParameterKeyType.BY_INDEX));
     }
 
     @Override
@@ -66,7 +66,7 @@ public class PreparedExecution extends BaseQueryExecution implements QueryHolder
     }
 
     @Override
-    public SortedSet<ParameterKeyValue> getParams() {
+    public SortedSet<ParameterKeyValue> getSetParams() {
         return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_PARAM);
     }
 

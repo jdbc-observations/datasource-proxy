@@ -31,7 +31,7 @@ public class PreparedBatchExecution extends BaseQueryExecution implements QueryH
 
         @Override
         public Map<Integer, Object> getParamsByIndex() {
-            return toKeyIndexMap(filterByKeyType(getParams(), ParameterKey.ParameterKeyType.BY_INDEX));
+            return toKeyIndexMap(filterByKeyType(getSetParams(), ParameterKey.ParameterKeyType.BY_INDEX));
         }
 
         @Override
@@ -50,12 +50,12 @@ public class PreparedBatchExecution extends BaseQueryExecution implements QueryH
         @Override
         public List<Object> getParamValues() {
             List<Object> list = new ArrayList<Object>();
-            list.addAll(toKeyValueMap(getParams()).values());
+            list.addAll(toKeyValueMap(getSetParams()).values());
             return list;
         }
 
         @Override
-        public SortedSet<ParameterKeyValue> getParams() {
+        public SortedSet<ParameterKeyValue> getSetParams() {
             return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_PARAM);
         }
 

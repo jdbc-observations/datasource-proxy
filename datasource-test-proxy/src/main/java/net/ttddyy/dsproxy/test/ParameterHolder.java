@@ -13,7 +13,7 @@ public interface ParameterHolder {
 
     SortedSet<ParameterKeyValue> getParameters();
 
-    SortedSet<ParameterKeyValue> getParams();
+    SortedSet<ParameterKeyValue> getSetParams();
 
     Map<ParameterKey, Integer> getSetNullParams();
 

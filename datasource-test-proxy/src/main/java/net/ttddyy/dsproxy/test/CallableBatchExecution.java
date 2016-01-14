@@ -32,7 +32,7 @@ public class CallableBatchExecution extends BaseQueryExecution implements BatchP
         }
 
         @Override
-        public SortedSet<ParameterKeyValue> getParams() {
+        public SortedSet<ParameterKeyValue> getSetParams() {
             return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_PARAM);
         }
 
@@ -48,12 +48,12 @@ public class CallableBatchExecution extends BaseQueryExecution implements BatchP
 
         @Override
         public Map<String, Object> getParamsByName() {
-            return toKeyNameMap(filterByKeyType(getParams(), ParameterKey.ParameterKeyType.BY_NAME));
+            return toKeyNameMap(filterByKeyType(getSetParams(), ParameterKey.ParameterKeyType.BY_NAME));
         }
 
         @Override
         public Map<Integer, Object> getParamsByIndex() {
-            return toKeyIndexMap(filterByKeyType(getParams(), ParameterKey.ParameterKeyType.BY_INDEX));
+            return toKeyIndexMap(filterByKeyType(getSetParams(), ParameterKey.ParameterKeyType.BY_INDEX));
         }
 
         @Override
@@ -90,7 +90,7 @@ public class CallableBatchExecution extends BaseQueryExecution implements BatchP
         @Override
         public List<Object> getParamValues() {
             List<Object> list = new ArrayList<Object>();
-            list.addAll(toKeyValueMap(getParams()).values());
+            list.addAll(toKeyValueMap(getSetParams()).values());
             return list;
         }
 
