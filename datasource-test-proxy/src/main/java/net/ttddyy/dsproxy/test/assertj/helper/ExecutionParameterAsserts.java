@@ -131,7 +131,7 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
 
 
         SortedSet<ParameterKey> actualParamKeys = toParamKeys(parameterHolder.getSetParams());
-        SortedSet<ParameterKey> actualSetNullParamKeys = new TreeSet<ParameterKey>(parameterHolder.getSetNullParams().keySet());
+        SortedSet<ParameterKey> actualSetNullParamKeys = toParamKeys(parameterHolder.getSetNullParams());
 
         SortedSet<ParameterKey> actualOutParamKeys = new TreeSet<ParameterKey>();
         if (isOutParamHolder) {
@@ -306,7 +306,7 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
             return;  // don't check if sqlType is null
         }
 
-        Object actualValue = executionEntry.getSetNullParams().get(parameterKey);
+        Object actualValue = toKeyValueMap(executionEntry.getSetNullParams()).get(parameterKey);
         if (sqlType != actualValue) {
             SortedMap<String, Object> sortedParams = getAllParamsForDisplay(executionEntry);
             String displayValue = setNullValueConverter.getDisplayValue(sqlType);
@@ -339,7 +339,7 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
     private <T extends ParameterHolder> SortedMap<String, Object> getAllParamsForDisplay(T entry) {
 
         // TODO: make it work for both OutParameterHolder and ParameterHolder
-        Set<ParameterKey> nullParamKeys = entry.getSetNullParams().keySet();
+        Set<ParameterKey> nullParamKeys = toParamKeys(entry.getSetNullParams());
         Set<ParameterKey> outParamKeys = new HashSet<ParameterKey>();
         if (entry instanceof OutParameterHolder) {
             outParamKeys.addAll(((OutParameterHolder) entry).getOutParams().keySet());

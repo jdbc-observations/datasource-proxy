@@ -86,18 +86,20 @@ public class ParameterKeyValueUtils {
         return result;
     }
 
-    public static Map<Integer, Object> toKeyIndexMap(SortedSet<ParameterKeyValue> keyValues) {
-        Map<Integer, Object> result = new LinkedHashMap<Integer, Object>();
+    @SuppressWarnings("unchecked")
+    public static <T> Map<Integer, T> toKeyIndexMap(SortedSet<ParameterKeyValue> keyValues) {
+        Map<Integer, T> result = new LinkedHashMap<Integer, T>();
         for (ParameterKeyValue keyValue : keyValues) {
-            result.put(keyValue.getKey().getIndex(), keyValue.getValue());
+            result.put(keyValue.getKey().getIndex(), (T)keyValue.getValue());
         }
         return result;
     }
 
-    public static Map<String, Object> toKeyNameMap(SortedSet<ParameterKeyValue> keyValues) {
-        Map<String, Object> result = new LinkedHashMap<String, Object>();
+    @SuppressWarnings("unchecked")
+    public static <T> Map<String, T> toKeyNameMap(SortedSet<ParameterKeyValue> keyValues) {
+        Map<String, T> result = new LinkedHashMap<String, T>();
         for (ParameterKeyValue keyValue : keyValues) {
-            result.put(keyValue.getKey().getName(), keyValue.getValue());
+            result.put(keyValue.getKey().getName(), (T)keyValue.getValue());
         }
         return result;
     }

@@ -42,7 +42,7 @@ public class ParameterHolderMatcherTest {
         }
 
         @Override
-        public Map<ParameterKey, Integer> getSetNullParams() {
+        public SortedSet<ParameterKeyValue> getSetNullParams() {
             return null;
         }
 
@@ -81,7 +81,7 @@ public class ParameterHolderMatcherTest {
         }
 
         @Override
-        public Map<ParameterKey, Integer> getSetNullParams() {
+        public SortedSet<ParameterKeyValue> getSetNullParams() {
             return null;
         }
 

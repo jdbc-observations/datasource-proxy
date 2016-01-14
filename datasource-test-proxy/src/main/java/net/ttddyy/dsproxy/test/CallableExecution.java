@@ -51,8 +51,8 @@ public class CallableExecution extends BaseQueryExecution implements QueryHolder
     }
 
     @Override
-    public Map<ParameterKey, Integer> getSetNullParams() {
-        return toKeyValueMap(filterBy(this.parameters, ParameterKeyValue.OperationType.SET_NULL));
+    public SortedSet<ParameterKeyValue> getSetNullParams() {
+        return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_NULL);
     }
 
     @Override
@@ -72,19 +72,19 @@ public class CallableExecution extends BaseQueryExecution implements QueryHolder
 
     @Override
     public Map<String, Integer> getSetNullParamsByName() {
-        return toNameMap(getSetNullParams());
+        return toKeyNameMap(filterByKeyType(getSetNullParams(), ParameterKey.ParameterKeyType.BY_NAME));
     }
 
     @Override
     public Map<Integer, Integer> getSetNullParamsByIndex() {
-        return toIndexMap(getSetNullParams());
+        return toKeyIndexMap(filterByKeyType(getSetNullParams(), ParameterKey.ParameterKeyType.BY_INDEX));
     }
 
     @Override
     public List<String> getParamNames() {
         List<String> names = new ArrayList<String>();
         names.addAll(getParamsByName().keySet());
-        names.addAll(toNameMap(getSetNullParams()).keySet());
+        names.addAll(getSetNullParamsByName().keySet());
         return names;
     }
 
@@ -92,7 +92,7 @@ public class CallableExecution extends BaseQueryExecution implements QueryHolder
     public List<Integer> getParamIndexes() {
         List<Integer> indexes = new ArrayList<Integer>();
         indexes.addAll(getParamsByIndex().keySet());
-        indexes.addAll(toIndexMap(getSetNullParams()).keySet());
+        indexes.addAll(getSetNullParamsByIndex().keySet());
         return indexes;
     }
 

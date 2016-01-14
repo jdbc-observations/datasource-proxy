@@ -36,14 +36,14 @@ public class PreparedBatchExecution extends BaseQueryExecution implements QueryH
 
         @Override
         public Map<Integer, Integer> getSetNullParamsByIndex() {
-            return toIndexMap(getSetNullParams());
+            return toKeyIndexMap(filterByKeyType(getSetNullParams(), ParameterKey.ParameterKeyType.BY_INDEX));
         }
 
         @Override
         public List<Integer> getParamIndexes() {
             List<Integer> indexes = new ArrayList<Integer>();
             indexes.addAll(getParamsByIndex().keySet());
-            indexes.addAll(toIndexMap(getSetNullParams()).keySet());
+            indexes.addAll(getSetNullParamsByIndex().keySet());
             return indexes;
         }
 
@@ -60,8 +60,8 @@ public class PreparedBatchExecution extends BaseQueryExecution implements QueryH
         }
 
         @Override
-        public Map<ParameterKey, Integer> getSetNullParams() {
-            return toKeyValueMap(filterBy(this.parameters, ParameterKeyValue.OperationType.SET_NULL));
+        public SortedSet<ParameterKeyValue> getSetNullParams() {
+            return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_NULL);
         }
 
         @Override
