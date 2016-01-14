@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -31,7 +32,7 @@ public class ParameterHolderMatcherTest {
     private static class MockIndexOnlyParamHolder implements ParameterHolder, ParameterByIndexHolder {
 
         @Override
-        public List<ParameterKeyValue> getParameters() {
+        public SortedSet<ParameterKeyValue> getParameters() {
             return null;
         }
 
@@ -70,7 +71,7 @@ public class ParameterHolderMatcherTest {
     private static class MockNameOnlyParamHolder implements ParameterHolder, ParameterByNameHolder {
 
         @Override
-        public List<ParameterKeyValue> getParameters() {
+        public SortedSet<ParameterKeyValue> getParameters() {
             return null;
         }
 

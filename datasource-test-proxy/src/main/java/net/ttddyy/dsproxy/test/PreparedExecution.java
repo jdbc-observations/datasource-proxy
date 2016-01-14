@@ -3,10 +3,10 @@ package net.ttddyy.dsproxy.test;
 import net.ttddyy.dsproxy.proxy.ParameterKey;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static net.ttddyy.dsproxy.proxy.ParameterKeyUtils.toIndexMap;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterBy;
@@ -19,7 +19,7 @@ import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyValueMap;
 public class PreparedExecution extends BaseQueryExecution implements QueryHolder, ParameterByIndexHolder {
 
     private String query;
-    private List<ParameterKeyValue> parameters = new ArrayList<ParameterKeyValue>();
+    private SortedSet<ParameterKeyValue> parameters = new TreeSet<ParameterKeyValue>();
 
     @Override
     public boolean isBatch() {
@@ -36,14 +36,7 @@ public class PreparedExecution extends BaseQueryExecution implements QueryHolder
     }
 
     @Override
-    public List<ParameterKeyValue> getParameters() {
-        // TODO: clean up
-        Collections.sort(this.parameters, new Comparator<ParameterKeyValue>() {
-            @Override
-            public int compare(ParameterKeyValue left, ParameterKeyValue right) {
-                return left.getKey().compareTo(right.getKey());  // use key to sort
-            }
-        });
+    public SortedSet<ParameterKeyValue> getParameters() {
         return this.parameters;
     }
 

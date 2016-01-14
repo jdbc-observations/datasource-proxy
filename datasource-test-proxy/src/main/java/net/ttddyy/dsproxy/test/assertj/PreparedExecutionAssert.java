@@ -9,8 +9,9 @@ import net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters;
 import net.ttddyy.dsproxy.test.assertj.helper.ExecutionParameterAsserts;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toParamKeyMap;
 
@@ -78,7 +79,7 @@ public class PreparedExecutionAssert extends AbstractExecutionAssert<PreparedExe
      */
     public PreparedExecutionAssert containsParamValuesExactly(Object... paramValues) {
 
-        List<ParameterKeyValue> actualKeyValues = this.actual.getParameters();
+        SortedSet<ParameterKeyValue> actualKeyValues = this.actual.getParameters();
         if (!isContainsParamValuesExactly(actualKeyValues, paramValues)) {
             String failureMessage = getFailureMessageForValuesExactly(actualKeyValues, paramValues);
             failWithMessage(failureMessage);
@@ -87,16 +88,18 @@ public class PreparedExecutionAssert extends AbstractExecutionAssert<PreparedExe
         return this;
     }
 
-    private boolean isContainsParamValuesExactly(List<ParameterKeyValue> actual, Object[] expected) {
+    private boolean isContainsParamValuesExactly(SortedSet<ParameterKeyValue> actualAsSet, Object[] expected) {
+
+        ParameterKeyValue[] actual = actualAsSet.toArray(new ParameterKeyValue[actualAsSet.size()]);
 
         // size check
-        if (actual.size() != expected.length) {
+        if (actual.length != expected.length) {
             return false;
         }
 
         // value check
-        for (int i = 0; i < actual.size(); i++) {
-            ParameterKeyValue actualKeyValue = actual.get(i);
+        for (int i = 0; i < actual.length; i++) {
+            ParameterKeyValue actualKeyValue = actual[i];
             Object actualValue = actualKeyValue.isSetNull() ? null : actualKeyValue.getValue();
             Object expectedValue = expected[i];
 
@@ -110,7 +113,7 @@ public class PreparedExecutionAssert extends AbstractExecutionAssert<PreparedExe
 
     }
 
-    private String getFailureMessageForValuesExactly(List<ParameterKeyValue> actualKeyValues, Object[] expected) {
+    private String getFailureMessageForValuesExactly(SortedSet<ParameterKeyValue> actualKeyValues, Object[] expected) {
 
         // construct map for expected
         Map<ParameterKey, Object> expectedParamAndValue = new LinkedHashMap<ParameterKey, Object>();
@@ -129,7 +132,7 @@ public class PreparedExecutionAssert extends AbstractExecutionAssert<PreparedExe
 
     }
 
-    private String getActualKeyValueToDisplay(List<ParameterKeyValue> keyValues) {
+    private String getActualKeyValueToDisplay(SortedSet<ParameterKeyValue> keyValues) {
         Map<Integer, Object> actualValueMapToDisplay = new LinkedHashMap<Integer, Object>();
 
         for (ParameterKeyValue keyValue : keyValues) {
@@ -154,10 +157,10 @@ public class PreparedExecutionAssert extends AbstractExecutionAssert<PreparedExe
         return toDisplay.toString();
     }
 
-    private String getMissingToDisplay(List<ParameterKeyValue> actual, Map<ParameterKey, Object> expected) {
+    private String getMissingToDisplay(SortedSet<ParameterKeyValue> actual, Map<ParameterKey, Object> expected) {
         Map<Integer, Object> missing = new LinkedHashMap<Integer, Object>();
 
-        Map<ParameterKey, ParameterKeyValue> actualParamKeyMap = toParamKeyMap(actual);
+        Map<ParameterKey, ParameterKeyValue> actualParamKeyMap = toParamKeyMap(new TreeSet<ParameterKeyValue>(actual));
 
         for (Map.Entry<ParameterKey, Object> entry : expected.entrySet()) {
             int index = entry.getKey().getIndex();
@@ -187,7 +190,7 @@ public class PreparedExecutionAssert extends AbstractExecutionAssert<PreparedExe
     }
 
 
-    private String getExtraToDisplay(List<ParameterKeyValue> actual, Map<ParameterKey, Object> expected) {
+    private String getExtraToDisplay(SortedSet<ParameterKeyValue> actual, Map<ParameterKey, Object> expected) {
         Map<Integer, Object> extra = new LinkedHashMap<Integer, Object>();
         for (ParameterKeyValue actualKeyValue : actual) {
             ParameterKey actualKey = actualKeyValue.getKey();

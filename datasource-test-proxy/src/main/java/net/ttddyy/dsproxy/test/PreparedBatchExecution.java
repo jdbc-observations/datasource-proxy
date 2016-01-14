@@ -5,6 +5,8 @@ import net.ttddyy.dsproxy.proxy.ParameterKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static net.ttddyy.dsproxy.proxy.ParameterKeyUtils.toIndexMap;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterBy;
@@ -18,10 +20,10 @@ public class PreparedBatchExecution extends BaseQueryExecution implements QueryH
 
     public static class PreparedBatchExecutionEntry implements BatchExecutionEntry, ParameterByIndexHolder {
 
-        private List<ParameterKeyValue> parameters = new ArrayList<ParameterKeyValue>();
+        private SortedSet<ParameterKeyValue> parameters = new TreeSet<ParameterKeyValue>();
 
         @Override
-        public List<ParameterKeyValue> getParameters() {
+        public SortedSet<ParameterKeyValue> getParameters() {
             return this.parameters;
         }
 
