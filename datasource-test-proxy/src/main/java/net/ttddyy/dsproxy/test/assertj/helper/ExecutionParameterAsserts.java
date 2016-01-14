@@ -18,6 +18,9 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyValueMap;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toParamKeys;
+
 /**
  * Reusable assertions for <code>{@link net.ttddyy.dsproxy.test.assertj.data.ExecutionParameter}</code>s.
  *
@@ -127,7 +130,7 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
         boolean isOutParamHolder = parameterHolder instanceof OutParameterHolder;
 
 
-        SortedSet<ParameterKey> actualParamKeys = new TreeSet<ParameterKey>(parameterHolder.getParams().keySet());
+        SortedSet<ParameterKey> actualParamKeys = toParamKeys(parameterHolder.getParams());
         SortedSet<ParameterKey> actualSetNullParamKeys = new TreeSet<ParameterKey>(parameterHolder.getSetNullParams().keySet());
 
         SortedSet<ParameterKey> actualOutParamKeys = new TreeSet<ParameterKey>();
@@ -290,7 +293,7 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
 
     public <T extends ParameterHolder> void validateParameter(ParameterKey parameterKey, Object expectedValue, T executionEntry) {
 
-        Object actualValue = executionEntry.getParams().get(parameterKey);
+        Object actualValue = toKeyValueMap(executionEntry.getParams()).get(parameterKey);
         if (expectedValue != actualValue) {
             SortedMap<String, Object> sortedParams = getAllParamsForDisplay(executionEntry);
             String expectedEntry = String.format("%s=%s", parameterKey.getKeyAsString(), expectedValue);

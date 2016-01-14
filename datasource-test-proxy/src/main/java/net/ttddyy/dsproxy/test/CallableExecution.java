@@ -11,6 +11,9 @@ import java.util.TreeSet;
 import static net.ttddyy.dsproxy.proxy.ParameterKeyUtils.toIndexMap;
 import static net.ttddyy.dsproxy.proxy.ParameterKeyUtils.toNameMap;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterBy;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterByKeyType;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyIndexMap;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyNameMap;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyValueMap;
 
 /**
@@ -43,8 +46,8 @@ public class CallableExecution extends BaseQueryExecution implements QueryHolder
     }
 
     @Override
-    public Map<ParameterKey, Object> getParams() {
-        return toKeyValueMap(filterBy(this.parameters, ParameterKeyValue.OperationType.SET_PARAM));
+    public SortedSet<ParameterKeyValue> getParams() {
+        return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_PARAM);
     }
 
     @Override
@@ -59,12 +62,12 @@ public class CallableExecution extends BaseQueryExecution implements QueryHolder
 
     @Override
     public Map<String, Object> getParamsByName() {
-        return toNameMap(getParams());
+        return toKeyNameMap(filterByKeyType(getParams(), ParameterKey.ParameterKeyType.BY_NAME));
     }
 
     @Override
     public Map<Integer, Object> getParamsByIndex() {
-        return toIndexMap(getParams());
+        return toKeyIndexMap(filterByKeyType(getParams(), ParameterKey.ParameterKeyType.BY_INDEX));
     }
 
     @Override
@@ -80,7 +83,7 @@ public class CallableExecution extends BaseQueryExecution implements QueryHolder
     @Override
     public List<String> getParamNames() {
         List<String> names = new ArrayList<String>();
-        names.addAll(toNameMap(getParams()).keySet());
+        names.addAll(getParamsByName().keySet());
         names.addAll(toNameMap(getSetNullParams()).keySet());
         return names;
     }
@@ -88,7 +91,7 @@ public class CallableExecution extends BaseQueryExecution implements QueryHolder
     @Override
     public List<Integer> getParamIndexes() {
         List<Integer> indexes = new ArrayList<Integer>();
-        indexes.addAll(toIndexMap(getParams()).keySet());
+        indexes.addAll(getParamsByIndex().keySet());
         indexes.addAll(toIndexMap(getSetNullParams()).keySet());
         return indexes;
     }

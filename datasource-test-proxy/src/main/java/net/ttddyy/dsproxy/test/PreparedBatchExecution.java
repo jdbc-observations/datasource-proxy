@@ -10,6 +10,8 @@ import java.util.TreeSet;
 
 import static net.ttddyy.dsproxy.proxy.ParameterKeyUtils.toIndexMap;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterBy;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterByKeyType;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyIndexMap;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyValueMap;
 
 /**
@@ -29,7 +31,7 @@ public class PreparedBatchExecution extends BaseQueryExecution implements QueryH
 
         @Override
         public Map<Integer, Object> getParamsByIndex() {
-            return toIndexMap(getParams());
+            return toKeyIndexMap(filterByKeyType(getParams(), ParameterKey.ParameterKeyType.BY_INDEX));
         }
 
         @Override
@@ -40,7 +42,7 @@ public class PreparedBatchExecution extends BaseQueryExecution implements QueryH
         @Override
         public List<Integer> getParamIndexes() {
             List<Integer> indexes = new ArrayList<Integer>();
-            indexes.addAll(toIndexMap(getParams()).keySet());
+            indexes.addAll(getParamsByIndex().keySet());
             indexes.addAll(toIndexMap(getSetNullParams()).keySet());
             return indexes;
         }
@@ -48,13 +50,13 @@ public class PreparedBatchExecution extends BaseQueryExecution implements QueryH
         @Override
         public List<Object> getParamValues() {
             List<Object> list = new ArrayList<Object>();
-            list.addAll(toIndexMap(getParams()).values());
+            list.addAll(toKeyValueMap(getParams()).values());
             return list;
         }
 
         @Override
-        public Map<ParameterKey, Object> getParams() {
-            return toKeyValueMap(filterBy(this.parameters, ParameterKeyValue.OperationType.SET_PARAM));
+        public SortedSet<ParameterKeyValue> getParams() {
+            return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_PARAM);
         }
 
         @Override

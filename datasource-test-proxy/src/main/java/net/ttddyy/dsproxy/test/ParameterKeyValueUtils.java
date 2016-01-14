@@ -59,6 +59,16 @@ public class ParameterKeyValueUtils {
         return result;
     }
 
+    public static SortedSet<ParameterKeyValue> filterByKeyType(SortedSet<ParameterKeyValue> parameters, ParameterKey.ParameterKeyType keyType) {
+        SortedSet<ParameterKeyValue> result = new TreeSet<ParameterKeyValue>();
+        for (ParameterKeyValue keyValue : parameters) {
+            if (keyValue.getKey().getType() == keyType) {
+                result.add(keyValue);
+            }
+        }
+        return result;
+    }
+
     public static SortedSet<ParameterKey> toParamKeys(SortedSet<ParameterKeyValue> parameters) {
         SortedSet<ParameterKey> result = new TreeSet<ParameterKey>();
         for (ParameterKeyValue keyValue : parameters) {
@@ -76,14 +86,23 @@ public class ParameterKeyValueUtils {
         return result;
     }
 
-    public static  Map<Integer, Object> toKeyIndexMap(SortedSet<ParameterKeyValue> keyValues) {
+    public static Map<Integer, Object> toKeyIndexMap(SortedSet<ParameterKeyValue> keyValues) {
         Map<Integer, Object> result = new LinkedHashMap<Integer, Object>();
         for (ParameterKeyValue keyValue : keyValues) {
             result.put(keyValue.getKey().getIndex(), keyValue.getValue());
         }
         return result;
     }
-    public static  Map<ParameterKey, ParameterKeyValue> toParamKeyMap(SortedSet<ParameterKeyValue> keyValues) {
+
+    public static Map<String, Object> toKeyNameMap(SortedSet<ParameterKeyValue> keyValues) {
+        Map<String, Object> result = new LinkedHashMap<String, Object>();
+        for (ParameterKeyValue keyValue : keyValues) {
+            result.put(keyValue.getKey().getName(), keyValue.getValue());
+        }
+        return result;
+    }
+
+    public static Map<ParameterKey, ParameterKeyValue> toParamKeyMap(SortedSet<ParameterKeyValue> keyValues) {
         Map<ParameterKey, ParameterKeyValue> result = new LinkedHashMap<ParameterKey, ParameterKeyValue>();
         for (ParameterKeyValue keyValue : keyValues) {
             result.put(keyValue.getKey(), keyValue);
