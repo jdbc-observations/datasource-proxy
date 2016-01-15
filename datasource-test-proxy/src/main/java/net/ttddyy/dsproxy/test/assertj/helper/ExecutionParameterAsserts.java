@@ -57,7 +57,7 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
 
 
     /**
-     * Validate all keys(index and name) exists regardless of the types(params, set-null, or register-out).
+     * Validate all keys(index and name) exists regardless of the types(set-params, set-null, or register-out).
      *
      * @see ExecutionParameters#containsParamKeys(Object...)
      * @see ExecutionParameters#containsParamIndexes(int...)
@@ -102,9 +102,7 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
 
         SortedSet<ParameterKeyValue> actualParamValues = parameterHolder.getParameters();
         SortedSet<ParameterKey> actualSetParamKeys = toParamKeys(filterBy(actualParamValues, ParameterKeyValue.OperationType.SET_PARAM));
-        ;
         SortedSet<ParameterKey> actualSetNullParamKeys = toParamKeys(filterBy(actualParamValues, ParameterKeyValue.OperationType.SET_NULL));
-        ;
         SortedSet<ParameterKey> actualOutParamKeys = toParamKeys(filterBy(actualParamValues, ParameterKeyValue.OperationType.REGISTER_OUT));
 
         SortedSet<ParameterKey> expectedSetParamKeys = getExpectedParamExecutionKeys(params, ExecutionParameter.ParamExecution.class);
@@ -234,23 +232,23 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
     }
 
     public <T extends ParameterHolder> void assertExecutionParameter(T paramHolder, ExecutionParameter param) {
-        ParameterKey parameterKey = param.getKey();
+        ParameterKey expectedParamKey = param.getKey();
 
         if (param instanceof ExecutionParameter.ParamExecution) {
             Object expectedValue = ((ExecutionParameter.ParamExecution) param).getValue();
-            validateParameter(parameterKey, expectedValue, paramHolder);
+            validateParameter(expectedParamKey, expectedValue, paramHolder);
 
         } else if (param instanceof ExecutionParameter.SetNullParamExecution) {
             Integer sqlType = ((ExecutionParameter.SetNullParamExecution) param).getSqlType();
-            validateSetNullParameter(parameterKey, sqlType, paramHolder);
+            validateSetNullParameter(expectedParamKey, sqlType, paramHolder);
 
         } else if (param instanceof ExecutionParameter.RegisterOutParamExecutionWithIntType && paramHolder instanceof OutParameterHolder) {
             int sqlType = ((ExecutionParameter.RegisterOutParamExecutionWithIntType) param).getSqlType();
-            validateOutParamParameterWithInt(parameterKey, sqlType, (OutParameterHolder) paramHolder);
+            validateOutParamParameterWithInt(expectedParamKey, sqlType, (OutParameterHolder) paramHolder);
 
         } else if (param instanceof ExecutionParameter.RegisterOutParamExecutionWithSQLType && paramHolder instanceof OutParameterHolder) {
             SQLType sqlType = ((ExecutionParameter.RegisterOutParamExecutionWithSQLType) param).getSqlType();
-            validateOutParamParameterWithSQLType(parameterKey, sqlType, (OutParameterHolder) paramHolder);
+            validateOutParamParameterWithSQLType(expectedParamKey, sqlType, (OutParameterHolder) paramHolder);
 
         } else {
             // TODO: better error message
@@ -259,47 +257,47 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
 
     }
 
-    public <T extends ParameterHolder> void validateParameter(ParameterKey parameterKey, Object expectedValue, T executionEntry) {
+    public <T extends ParameterHolder> void validateParameter(ParameterKey expectedParamKey, Object expectedValue, T executionEntry) {
 
-        Object actualValue = toKeyValueMap(executionEntry.getSetParams()).get(parameterKey);
+        Object actualValue = toKeyValueMap(executionEntry.getSetParams()).get(expectedParamKey);
         if (expectedValue != actualValue) {
             SortedMap<String, Object> sortedParams = getAllParamsForDisplay(executionEntry);
-            String expectedEntry = String.format("%s=%s", parameterKey.getKeyAsString(), expectedValue);
+            String expectedEntry = String.format("%s=%s", expectedParamKey.getKeyAsString(), expectedValue);
             failWithMessage("%nExpecting: parameters %n<%s>%nto contain:%n<[%s]>%nbut could not find:%n<[%s]>", sortedParams, expectedEntry, expectedEntry);
         }
     }
 
-    public <T extends ParameterHolder> void validateSetNullParameter(ParameterKey parameterKey, Integer sqlType, T executionEntry) {
+    public <T extends ParameterHolder> void validateSetNullParameter(ParameterKey expectedParamKey, Integer sqlType, T executionEntry) {
         if (sqlType == null) {
             return;  // don't check if sqlType is null
         }
 
-        Object actualValue = toKeyValueMap(executionEntry.getSetNullParams()).get(parameterKey);
+        Object actualValue = toKeyValueMap(executionEntry.getSetNullParams()).get(expectedParamKey);
         if (sqlType != actualValue) {
             SortedMap<String, Object> sortedParams = getAllParamsForDisplay(executionEntry);
             String displayValue = setNullValueConverter.getDisplayValue(sqlType);
-            String expectedEntry = String.format("%s=%s", parameterKey.getKeyAsString(), displayValue);
+            String expectedEntry = String.format("%s=%s", expectedParamKey.getKeyAsString(), displayValue);
             failWithMessage("%nExpecting: parameters %n<%s>%nto contain:%n<[%s]>%nbut could not find:%n<[%s]>", sortedParams, expectedEntry, expectedEntry);
         }
     }
 
     // TODO: consider both int and SQLType to be inter-changeable. (probably some value object to work for both)
-    private void validateOutParamParameterWithInt(ParameterKey parameterKey, int sqlType, OutParameterHolder executionEntry) {
-        Object actualValue = toKeyValueMap(executionEntry.getOutParams()).get(parameterKey);
+    private void validateOutParamParameterWithInt(ParameterKey expectedParamKey, int sqlType, OutParameterHolder executionEntry) {
+        Object actualValue = toKeyValueMap(executionEntry.getOutParams()).get(expectedParamKey);
         if (!new Integer(sqlType).equals(actualValue)) {
             SortedMap<String, Object> sortedParams = getAllParamsForDisplay(executionEntry);
             String displayValue = registerOutParameterValueConverter.getDisplayValue(sqlType);
-            String expectedEntry = String.format("%s=%s", parameterKey.getKeyAsString(), displayValue);
+            String expectedEntry = String.format("%s=%s", expectedParamKey.getKeyAsString(), displayValue);
             failWithMessage("%nExpecting: parameters %n<%s>%nto contain:%n<[%s]>%nbut could not find:%n<[%s]>", sortedParams, expectedEntry, expectedEntry);
         }
     }
 
-    private void validateOutParamParameterWithSQLType(ParameterKey parameterKey, SQLType sqlType, OutParameterHolder executionEntry) {
-        Object actualValue = toKeyValueMap(executionEntry.getOutParams()).get(parameterKey);
+    private void validateOutParamParameterWithSQLType(ParameterKey expectedParamKey, SQLType sqlType, OutParameterHolder executionEntry) {
+        Object actualValue = toKeyValueMap(executionEntry.getOutParams()).get(expectedParamKey);
         if (sqlType != actualValue) {
             SortedMap<String, Object> sortedParams = getAllParamsForDisplay(executionEntry);
             String displayValue = registerOutParameterValueConverter.getDisplayValue(sqlType);
-            String expectedEntry = String.format("%s=%s", parameterKey.getKeyAsString(), displayValue);
+            String expectedEntry = String.format("%s=%s", expectedParamKey.getKeyAsString(), displayValue);
             failWithMessage("%nExpecting: parameters %n<%s>%nto contain:%n<[%s]>%nbut could not find:%n<[%s]>", sortedParams, expectedEntry, expectedEntry);
         }
     }
