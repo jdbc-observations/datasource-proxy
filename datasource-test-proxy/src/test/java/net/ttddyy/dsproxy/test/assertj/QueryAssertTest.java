@@ -10,14 +10,14 @@ import static org.mockito.Mockito.mock;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class QueryHolderAssertTest {
+public class QueryAssertTest {
 
     @Test
     public void query() {
         QueryHolder qh = mock(QueryHolder.class);
         given(qh.getQuery()).willReturn("select");
 
-        new QueryHolderAssert(qh).isEqualTo("select");
-        new QueryHolderAssert(qh).startsWith("s");
+        new QueryAssert(qh).isEqualTo("select");
+        new QueryAssert(qh).startsWith("s");
     }
 }
