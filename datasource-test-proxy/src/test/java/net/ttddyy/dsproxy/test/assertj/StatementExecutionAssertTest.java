@@ -59,6 +59,14 @@ public class StatementExecutionAssertTest {
     }
 
     @Test
+    public void testQuery() {
+        StatementExecution se = new StatementExecution();
+        se.setQuery("SELECT");
+
+        DataSourceProxyAssertions.assertThat(se).query().isEqualTo("SELECT");
+    }
+
+    @Test
     public void testHasQueryType() {
         StatementExecution seSelect = new StatementExecution();
         StatementExecution seInsert = new StatementExecution();

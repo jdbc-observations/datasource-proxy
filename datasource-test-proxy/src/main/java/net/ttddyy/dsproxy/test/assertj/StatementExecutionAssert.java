@@ -3,6 +3,8 @@ package net.ttddyy.dsproxy.test.assertj;
 import net.ttddyy.dsproxy.QueryType;
 import net.ttddyy.dsproxy.listener.QueryUtils;
 import net.ttddyy.dsproxy.test.StatementExecution;
+import org.assertj.core.api.AbstractCharSequenceAssert;
+import org.assertj.core.api.Assertions;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -23,8 +25,8 @@ public class StatementExecutionAssert extends AbstractExecutionAssert<StatementE
         return this;
     }
 
-    public QueryAssert query() {
-        return new QueryAssert(actual);
+    public AbstractCharSequenceAssert<?, String> query() {
+        return Assertions.assertThat(this.actual.getQuery());
     }
 
     public StatementExecutionAssert isSelect() {
