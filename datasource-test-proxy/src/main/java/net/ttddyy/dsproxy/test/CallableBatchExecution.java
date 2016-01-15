@@ -45,7 +45,7 @@ public class CallableBatchExecution extends BaseQueryExecution implements BatchP
         }
 
         @Override
-        public Map<String, Object> getParamsByName() {
+        public Map<String, Object> getSetParamsByName() {
             return toKeyNameMap(filterByKeyType(getSetParams(), ParameterKey.ParameterKeyType.BY_NAME));
         }
 
@@ -79,7 +79,7 @@ public class CallableBatchExecution extends BaseQueryExecution implements BatchP
         @Override
         public List<String> getParamNames() {
             List<String> names = new ArrayList<String>();
-            names.addAll(getParamsByName().keySet());
+            names.addAll(getSetParamsByName().keySet());
             names.addAll(getSetNullParamsByName().keySet());
             return names;
         }

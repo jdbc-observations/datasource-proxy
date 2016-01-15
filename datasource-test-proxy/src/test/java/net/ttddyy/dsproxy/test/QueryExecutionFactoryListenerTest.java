@@ -213,7 +213,7 @@ public class QueryExecutionFactoryListenerTest {
         assertThat(ce.getParamIndexes()).hasSize(3).contains(1, 2, 3);
         assertThat(ce.getParamsByIndex()).hasSize(2).containsEntry(1, 100).containsEntry(2, 200);
         assertThat(ce.getParamNames()).hasSize(3).contains("foo", "bar", "baz");
-        assertThat(ce.getParamsByName()).hasSize(2).containsEntry("foo", 100).containsEntry("bar", 200);
+        assertThat(ce.getSetParamsByName()).hasSize(2).containsEntry("foo", 100).containsEntry("bar", 200);
         assertThat(ce.getSetNullParamsByIndex()).hasSize(1).containsEntry(3, Types.DATE);
         assertThat(ce.getSetNullParamsByName()).hasSize(1).containsEntry("baz", Types.BOOLEAN);
         assertThat(ce.getOutParamIndexes()).hasSize(2).contains(10, 20);
@@ -277,7 +277,7 @@ public class QueryExecutionFactoryListenerTest {
         assertThat(batchEntry1.getParamIndexes()).hasSize(2).contains(1, 3);
         assertThat(batchEntry1.getParamNames()).hasSize(2).contains("foo", "baz");
         assertThat(batchEntry1.getParamsByIndex()).hasSize(1).containsEntry(1, 100);
-        assertThat(batchEntry1.getParamsByName()).hasSize(1).containsEntry("foo", 100);
+        assertThat(batchEntry1.getSetParamsByName()).hasSize(1).containsEntry("foo", 100);
         assertThat(batchEntry1.getSetNullParamsByIndex()).hasSize(1).containsEntry(3, Types.DATE);
         assertThat(batchEntry1.getSetNullParamsByName()).hasSize(1).containsEntry("baz", Types.BOOLEAN);
         assertThat(batchEntry1.getOutParamIndexes()).hasSize(1).contains(10);
@@ -290,7 +290,7 @@ public class QueryExecutionFactoryListenerTest {
         assertThat(batchEntry2.getParamIndexes()).hasSize(1).contains(2);
         assertThat(batchEntry2.getParamNames()).hasSize(1).contains("bar");
         assertThat(batchEntry2.getParamsByIndex()).hasSize(1).containsEntry(2, 200);
-        assertThat(batchEntry2.getParamsByName()).hasSize(1).containsEntry("bar", 200);
+        assertThat(batchEntry2.getSetParamsByName()).hasSize(1).containsEntry("bar", 200);
         assertThat(batchEntry2.getOutParamIndexes()).hasSize(1).contains(20);
         assertThat(batchEntry2.getOutParamNames()).hasSize(1).contains("bar-out");
         assertThat(batchEntry2.getOutParamsByIndex()).hasSize(1).containsEntry(20, 2000);

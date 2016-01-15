@@ -80,7 +80,7 @@ public class ParameterHolderMatcherTest {
         }
 
         @Override
-        public Map<String, Object> getParamsByName() {
+        public Map<String, Object> getSetParamsByName() {
             return null;
         }
 

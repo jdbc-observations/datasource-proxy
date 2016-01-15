@@ -104,7 +104,7 @@ public class ParameterHolderAssertionsTest {
         map.put("foo", 100);
 
         ParameterByNameHolder holder = mock(ParameterByNameHolder.class);
-        given(holder.getParamsByName()).willReturn(map);
+        given(holder.getSetParamsByName()).willReturn(map);
 
         Assert.assertThat(holder, paramsByName(hasEntry("foo", (Object) 100)));
     }
@@ -116,7 +116,7 @@ public class ParameterHolderAssertionsTest {
         map.put("bar", 200);
 
         ParameterByNameHolder holder = mock(ParameterByNameHolder.class);
-        given(holder.getParamsByName()).willReturn(map);
+        given(holder.getSetParamsByName()).willReturn(map);
 
         try {
             Assert.assertThat(holder, paramsByName(hasEntry("BAZ", (Object) 10)));
@@ -191,7 +191,7 @@ public class ParameterHolderAssertionsTest {
         map.put("foo", 100);
 
         ParameterByNameHolder holder = mock(ParameterByNameHolder.class);
-        given(holder.getParamsByName()).willReturn(map);
+        given(holder.getSetParamsByName()).willReturn(map);
         given(holder.getParamNames()).willReturn(new ArrayList<String>(map.keySet()));
 
         Assert.assertThat(holder, param("foo", is((Object) 100)));
@@ -203,7 +203,7 @@ public class ParameterHolderAssertionsTest {
         map.put("foo", 100);
 
         ParameterByNameHolder holder = mock(ParameterByNameHolder.class);
-        given(holder.getParamsByName()).willReturn(map);
+        given(holder.getSetParamsByName()).willReturn(map);
         given(holder.getParamNames()).willReturn(new ArrayList<String>(map.keySet()));
 
         try {
@@ -251,7 +251,7 @@ public class ParameterHolderAssertionsTest {
         map.put("foo", 100);
 
         ParameterByNameHolder holder = mock(ParameterByNameHolder.class);
-        given(holder.getParamsByName()).willReturn(map);
+        given(holder.getSetParamsByName()).willReturn(map);
         given(holder.getParamNames()).willReturn(new ArrayList<String>(map.keySet()));
 
         Assert.assertThat(holder, param("foo", Integer.class, is(100)));
@@ -263,7 +263,7 @@ public class ParameterHolderAssertionsTest {
         map.put("foo", 100);
 
         ParameterByNameHolder holder = mock(ParameterByNameHolder.class);
-        given(holder.getParamsByName()).willReturn(map);
+        given(holder.getSetParamsByName()).willReturn(map);
         given(holder.getParamNames()).willReturn(new ArrayList<String>(map.keySet()));
 
         try {
@@ -345,7 +345,7 @@ public class ParameterHolderAssertionsTest {
         map.put("nn", array);
 
         ParameterByNameHolder holder = mock(ParameterByNameHolder.class);
-        given(holder.getParamsByName()).willReturn(map);
+        given(holder.getSetParamsByName()).willReturn(map);
 
         Assert.assertThat(holder, paramAsString("aa", is("100")));
         Assert.assertThat(holder, paramAsInteger("bb", is(101)));

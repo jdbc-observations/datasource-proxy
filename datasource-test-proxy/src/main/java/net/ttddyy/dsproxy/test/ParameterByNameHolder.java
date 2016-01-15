@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public interface ParameterByNameHolder extends ParameterHolder {
 
-    Map<String, Object> getParamsByName();
+    Map<String, Object> getSetParamsByName();
 
     Map<String, Integer> getSetNullParamsByName();
 
