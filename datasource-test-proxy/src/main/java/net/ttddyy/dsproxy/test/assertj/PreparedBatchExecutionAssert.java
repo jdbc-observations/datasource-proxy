@@ -30,7 +30,7 @@ public class PreparedBatchExecutionAssert extends AbstractExecutionAssert<Prepar
     }
 
     public PreparedBatchExecutionAssert hasBatchSize(int batchSize) {
-        new BatchParameterHolderAssert(this.actual).hasBatchSize(batchSize, "prepared");
+        this.batchAssert.assertBatchSize(this.actual, batchSize, "prepared");
         return this;
     }
 

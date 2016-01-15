@@ -144,6 +144,9 @@ public class SampleAssertJAPI {
         assertThat(ds.getQueryExecutions().get(0)).asBatchPrepared();
         assertThat(ds.getQueryExecutions().get(0)).asCallable();
         assertThat(ds.getQueryExecutions().get(0)).asBatchCallable();
+
+        assertThat(ds.getFirstBatchStatement()).queries().contains("ABC", atIndex(3));
+        ds.getFirstBatchStatement().getQueries().get(3);
     }
 
 

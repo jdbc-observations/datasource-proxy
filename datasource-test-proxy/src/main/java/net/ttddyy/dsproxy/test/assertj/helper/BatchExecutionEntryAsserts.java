@@ -9,13 +9,19 @@ import java.util.List;
 
 /**
  * @author Tadaya Tsuyukubo
- * @since 1.4
  */
 // TODO: better name
 public class BatchExecutionEntryAsserts extends AbstractHelperAsserts {
 
     public BatchExecutionEntryAsserts(WritableAssertionInfo info) {
         super(info);
+    }
+
+    public void assertBatchSize(BatchParameterHolder batchParameterHolder, int batchSize, String batchType) {
+        int actualSize = batchParameterHolder.getBatchExecutionEntries().size();
+        if (actualSize != batchSize) {
+            failWithMessage("%nExpected batch size:<%s> but was:<%s> in batch %s executions%n", batchSize, actualSize, batchType);
+        }
     }
 
     public void assertBatchExecutionEntry(BatchParameterHolder batchParameterHolder, int batchIndex, Class<? extends ParameterHolder> batchExecutionEntryClass) {
