@@ -23,8 +23,8 @@ public class StatementExecutionAssert extends AbstractExecutionAssert<StatementE
         return this;
     }
 
-    public QueryHolderAssert query() {
-        return new QueryHolderAssert(actual);
+    public QueryAssert query() {
+        return new QueryAssert(actual);
     }
 
     public StatementExecutionAssert hasQueryType(QueryType queryType) {
