@@ -1,11 +1,11 @@
 package net.ttddyy.dsproxy.test.assertj;
 
 import net.ttddyy.dsproxy.QueryType;
+import net.ttddyy.dsproxy.listener.QueryUtils;
 import net.ttddyy.dsproxy.test.StatementExecution;
 
 /**
  * @author Tadaya Tsuyukubo
- * @since 1.4
  */
 public class StatementExecutionAssert extends AbstractExecutionAssert<StatementExecutionAssert, StatementExecution> {
 
@@ -27,8 +27,37 @@ public class StatementExecutionAssert extends AbstractExecutionAssert<StatementE
         return new QueryAssert(actual);
     }
 
+    public StatementExecutionAssert isSelect() {
+        hasQueryType(QueryType.SELECT);
+        return this;
+    }
+
+    public StatementExecutionAssert isInsert() {
+        hasQueryType(QueryType.INSERT);
+        return this;
+    }
+
+    public StatementExecutionAssert isUpdate() {
+        hasQueryType(QueryType.UPDATE);
+        return this;
+    }
+
+    public StatementExecutionAssert isDelete() {
+        hasQueryType(QueryType.DELETE);
+        return this;
+    }
+
+    public StatementExecutionAssert isOther() {
+        hasQueryType(QueryType.OTHER);
+        return this;
+    }
+
     public StatementExecutionAssert hasQueryType(QueryType queryType) {
-        // TODO: impl
+        String query = this.actual.getQuery();
+        QueryType actualType = QueryUtils.getQueryType(query);
+        if (actualType != queryType) {
+            failWithMessage("%nExpected query type:<%s> but was:<%s>%n", queryType, actualType);
+        }
         return this;
     }
 

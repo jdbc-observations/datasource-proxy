@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.test.assertj;
 
+import net.ttddyy.dsproxy.QueryType;
 import net.ttddyy.dsproxy.test.StatementExecution;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,6 +56,39 @@ public class StatementExecutionAssertTest {
         } catch (AssertionError e) {
             assertThat(e).hasMessage("\nExpecting: <Failure execution> but was: <Successful execution>\n");
         }
-
     }
+
+    @Test
+    public void testHasQueryType() {
+        StatementExecution seSelect = new StatementExecution();
+        StatementExecution seInsert = new StatementExecution();
+        StatementExecution seUpdate = new StatementExecution();
+        StatementExecution seDelete = new StatementExecution();
+        StatementExecution seOther = new StatementExecution();
+        seSelect.setQuery("SELECT");
+        seInsert.setQuery("INSERT");
+        seUpdate.setQuery("UPDATE");
+        seDelete.setQuery("DELETE");
+        seOther.setQuery("OTHER");
+
+        DataSourceProxyAssertions.assertThat(seSelect).hasQueryType(QueryType.SELECT);
+        DataSourceProxyAssertions.assertThat(seInsert).hasQueryType(QueryType.INSERT);
+        DataSourceProxyAssertions.assertThat(seUpdate).hasQueryType(QueryType.UPDATE);
+        DataSourceProxyAssertions.assertThat(seDelete).hasQueryType(QueryType.DELETE);
+        DataSourceProxyAssertions.assertThat(seOther).hasQueryType(QueryType.OTHER);
+        DataSourceProxyAssertions.assertThat(seSelect).isSelect();
+        DataSourceProxyAssertions.assertThat(seInsert).isInsert();
+        DataSourceProxyAssertions.assertThat(seUpdate).isUpdate();
+        DataSourceProxyAssertions.assertThat(seDelete).isDelete();
+        DataSourceProxyAssertions.assertThat(seOther).isOther();
+
+        // wrong type
+        try {
+            DataSourceProxyAssertions.assertThat(seSelect).isDelete();
+            fail("exception should be thrown");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected query type:<DELETE> but was:<SELECT>\n");
+        }
+    }
+
 }
