@@ -3,11 +3,14 @@ package net.ttddyy.dsproxy.test;
 import net.ttddyy.dsproxy.proxy.ParameterKey;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-import static net.ttddyy.dsproxy.proxy.ParameterKeyUtils.toIndexMap;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterBy;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterByKeyType;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyIndexMap;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -15,9 +18,8 @@ import static net.ttddyy.dsproxy.proxy.ParameterKeyUtils.toIndexMap;
  */
 public class PreparedExecution extends BaseQueryExecution implements QueryHolder, ParameterByIndexHolder {
 
-    public String query;
-    public Map<ParameterKey, Object> params = new LinkedHashMap<ParameterKey, Object>();
-    public Map<ParameterKey, Integer> setNullParams = new LinkedHashMap<ParameterKey, Integer>();
+    private String query;
+    private SortedSet<ParameterKeyValue> parameters = new TreeSet<ParameterKeyValue>();
 
     @Override
     public boolean isBatch() {
@@ -34,31 +36,36 @@ public class PreparedExecution extends BaseQueryExecution implements QueryHolder
     }
 
     @Override
+    public SortedSet<ParameterKeyValue> getParameters() {
+        return this.parameters;
+    }
+
+    @Override
+    public SortedSet<ParameterKeyValue> getSetParams() {
+        return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_PARAM);
+    }
+
+    @Override
+    public SortedSet<ParameterKeyValue> getSetNullParams() {
+        return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_NULL);
+    }
+
+    @Override
     public Map<Integer, Object> getParamsByIndex() {
-        return toIndexMap(this.params);
+        return toKeyIndexMap(filterByKeyType(getSetParams(), ParameterKey.ParameterKeyType.BY_INDEX));
     }
 
     @Override
     public Map<Integer, Integer> getSetNullParamsByIndex() {
-        return toIndexMap(this.setNullParams);
+        return toKeyIndexMap(filterByKeyType(getSetNullParams(), ParameterKey.ParameterKeyType.BY_INDEX));
     }
 
     @Override
     public List<Integer> getParamIndexes() {
         List<Integer> indexes = new ArrayList<Integer>();
-        indexes.addAll(toIndexMap(this.params).keySet());
-        indexes.addAll(toIndexMap(this.setNullParams).keySet());
+        indexes.addAll(getParamsByIndex().keySet());
+        indexes.addAll(getSetNullParamsByIndex().keySet());
         return indexes;
-    }
-
-    @Override
-    public Map<ParameterKey, Object> getParams() {
-        return this.params;
-    }
-
-    @Override
-    public Map<ParameterKey, Integer> getSetNullParams() {
-        return this.setNullParams;
     }
 
 }

@@ -3,12 +3,16 @@ package net.ttddyy.dsproxy.test;
 import net.ttddyy.dsproxy.proxy.ParameterKey;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-import static net.ttddyy.dsproxy.proxy.ParameterKeyUtils.toIndexMap;
-import static net.ttddyy.dsproxy.proxy.ParameterKeyUtils.toNameMap;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterBy;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterByKeyType;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyIndexMap;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyNameMap;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyValueMap;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -18,94 +22,101 @@ public class CallableBatchExecution extends BaseQueryExecution implements BatchP
 
     public static class CallableBatchExecutionEntry implements BatchExecutionEntry, ParameterByIndexHolder, ParameterByNameHolder, OutParameterHolder {
 
-        public Map<ParameterKey, Object> params = new LinkedHashMap<ParameterKey, Object>();
-        public Map<ParameterKey, Integer> setNullParams = new LinkedHashMap<ParameterKey, Integer>();
-        public Map<ParameterKey, Object> outParams = new LinkedHashMap<ParameterKey, Object>();
+        private SortedSet<ParameterKeyValue> parameters = new TreeSet<ParameterKeyValue>();
 
         @Override
-        public Map<ParameterKey, Object> getParams() {
-            return this.params;
+        public SortedSet<ParameterKeyValue> getParameters() {
+            return this.parameters;
         }
 
         @Override
-        public Map<ParameterKey, Integer> getSetNullParams() {
-            return this.setNullParams;
+        public SortedSet<ParameterKeyValue> getSetParams() {
+            return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_PARAM);
         }
 
         @Override
-        public Map<ParameterKey, Object> getOutParams() {
-            return this.outParams;
+        public SortedSet<ParameterKeyValue> getSetNullParams() {
+            return filterBy(this.parameters, ParameterKeyValue.OperationType.SET_NULL);
         }
 
         @Override
-        public Map<String, Object> getParamsByName() {
-            return toNameMap(this.params);
+        public SortedSet<ParameterKeyValue> getOutParams() {
+            return filterBy(this.parameters, ParameterKeyValue.OperationType.REGISTER_OUT);
+        }
+
+        @Override
+        public Map<String, Object> getSetParamsByName() {
+            return toKeyNameMap(filterByKeyType(getSetParams(), ParameterKey.ParameterKeyType.BY_NAME));
         }
 
         @Override
         public Map<Integer, Object> getParamsByIndex() {
-            return toIndexMap(this.params);
+            return toKeyIndexMap(filterByKeyType(getSetParams(), ParameterKey.ParameterKeyType.BY_INDEX));
         }
 
         @Override
         public Map<String, Integer> getSetNullParamsByName() {
-            return toNameMap(this.setNullParams);
+            return toKeyNameMap(filterByKeyType(getSetNullParams(), ParameterKey.ParameterKeyType.BY_NAME));
         }
 
         @Override
         public Map<Integer, Integer> getSetNullParamsByIndex() {
-            return toIndexMap(this.setNullParams);
+            return toKeyIndexMap(filterByKeyType(getSetNullParams(), ParameterKey.ParameterKeyType.BY_INDEX));
+
         }
+
+        @Override
+        public Map<String, Object> getOutParamsByName() {
+            return toKeyNameMap(filterByKeyType(getOutParams(), ParameterKey.ParameterKeyType.BY_NAME));
+        }
+
+        @Override
+        public Map<Integer, Object> getOutParamsByIndex() {
+            return toKeyIndexMap(filterByKeyType(getOutParams(), ParameterKey.ParameterKeyType.BY_INDEX));
+        }
+
 
         @Override
         public List<String> getParamNames() {
             List<String> names = new ArrayList<String>();
-            names.addAll(toNameMap(this.params).keySet());
-            names.addAll(toNameMap(this.setNullParams).keySet());
+            names.addAll(getSetParamsByName().keySet());
+            names.addAll(getSetNullParamsByName().keySet());
             return names;
         }
 
         @Override
         public List<Integer> getParamIndexes() {
             List<Integer> indexes = new ArrayList<Integer>();
-            indexes.addAll(toIndexMap(this.params).keySet());
-            indexes.addAll(toIndexMap(this.setNullParams).keySet());
+            indexes.addAll(getParamsByIndex().keySet());
+            indexes.addAll(getSetNullParamsByIndex().keySet());
             return indexes;
         }
 
         @Override
-        public List<Object> getParamValues() {
-            List<Object> list = new ArrayList<Object>();
-            list.addAll(toIndexMap(this.params).values());
-            return list;
-        }
-
-        // TODO: impl here
-        @Override
-        public Map<Integer, Object> getOutParamsByIndex() {
-            return toIndexMap(this.outParams);
-        }
-
-        @Override
-        public Map<String, Object> getOutParamsByName() {
-            return toNameMap(this.outParams);
+        public List<String> getOutParamNames() {
+            return new ArrayList<String>(getOutParamsByName().keySet());
         }
 
         @Override
         public List<Integer> getOutParamIndexes() {
-            return new ArrayList<Integer>(toIndexMap(this.outParams).keySet());
+            return new ArrayList<Integer>(getOutParamsByIndex().keySet());
         }
 
+        // TOOD: need this??
         @Override
-        public List<String> getOutParamNames() {
-            return new ArrayList<String>(toNameMap(this.outParams).keySet());
+        public List<Object> getParamValues() {
+            List<Object> list = new ArrayList<Object>();
+            list.addAll(toKeyValueMap(getSetParams()).values());
+            return list;
         }
+
+
     }
 
 
-    public String query;
+    private String query;
 
-    public List<BatchExecutionEntry> batchExecutionEntries = new ArrayList<BatchExecutionEntry>();
+    private List<BatchExecutionEntry> batchExecutionEntries = new ArrayList<BatchExecutionEntry>();
 
     @Override
     public boolean isBatch() {

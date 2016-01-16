@@ -1,9 +1,9 @@
 package net.ttddyy.dsproxy.test.hamcrest;
 
-import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.test.ParameterByIndexHolder;
 import net.ttddyy.dsproxy.test.ParameterByNameHolder;
 import net.ttddyy.dsproxy.test.ParameterHolder;
+import net.ttddyy.dsproxy.test.ParameterKeyValue;
 import net.ttddyy.dsproxy.test.PreparedBatchExecution;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -28,13 +29,19 @@ public class ParameterHolderMatcherTest {
 
     // ParamHolder that only implements ParamterByIndexHolder
     private static class MockIndexOnlyParamHolder implements ParameterHolder, ParameterByIndexHolder {
+
         @Override
-        public Map<ParameterKey, Object> getParams() {
+        public SortedSet<ParameterKeyValue> getParameters() {
             return null;
         }
 
         @Override
-        public Map<ParameterKey, Integer> getSetNullParams() {
+        public SortedSet<ParameterKeyValue> getSetParams() {
+            return null;
+        }
+
+        @Override
+        public SortedSet<ParameterKeyValue> getSetNullParams() {
             return null;
         }
 
@@ -58,17 +65,22 @@ public class ParameterHolderMatcherTest {
     private static class MockNameOnlyParamHolder implements ParameterHolder, ParameterByNameHolder {
 
         @Override
-        public Map<ParameterKey, Object> getParams() {
+        public SortedSet<ParameterKeyValue> getParameters() {
             return null;
         }
 
         @Override
-        public Map<ParameterKey, Integer> getSetNullParams() {
+        public SortedSet<ParameterKeyValue> getSetParams() {
             return null;
         }
 
         @Override
-        public Map<String, Object> getParamsByName() {
+        public SortedSet<ParameterKeyValue> getSetNullParams() {
+            return null;
+        }
+
+        @Override
+        public Map<String, Object> getSetParamsByName() {
             return null;
         }
 
@@ -81,6 +93,7 @@ public class ParameterHolderMatcherTest {
         public Map<String, Integer> getSetNullParamsByName() {
             return null;
         }
+
     }
 
     @Test

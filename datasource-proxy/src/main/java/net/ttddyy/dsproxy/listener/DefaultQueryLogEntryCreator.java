@@ -4,7 +4,6 @@ import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
-import net.ttddyy.dsproxy.proxy.StatementMethodNames;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -551,12 +550,10 @@ public class DefaultQueryLogEntryCreator implements QueryLogEntryCreator {
     protected String getParameterValueToDisplay(ParameterSetOperation param) {
 
         String value;
-
-        String methodName = param.getMethod().getName();
-        if (StatementMethodNames.PARAMETER_METHOD_SET_NULL.equals(methodName)) {
+        if (ParameterSetOperation.isSetNullParameterOperation(param)) {
             // for setNull
             value = getDisplayValueForSetNull(param);
-        } else if (StatementMethodNames.PARAMETER_METHOD_REGISTER_OUT_PARAMETER.equals(methodName)) {
+        } else if (ParameterSetOperation.isRegisterOutParameterOperation(param)) {
             // for registerOutParameter
             value = getDisplayValueForRegisterOutParameter(param);
         } else {

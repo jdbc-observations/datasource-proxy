@@ -9,12 +9,13 @@ import java.util.Map;
  */
 public interface ParameterByNameHolder extends ParameterHolder {
 
-    Map<String, Object> getParamsByName();
+    Map<String, Object> getSetParamsByName();
 
     Map<String, Integer> getSetNullParamsByName();
 
     /**
      * Keys of parameters.
+     * Includes both set_param and set_null parameters.
      *
      * @return String keys.
      */

@@ -41,7 +41,7 @@ public class ParameterHolderAssertions {
             @Override
             public Map<? extends String, ?> featureValueOf(ParameterByNameHolder actual) {
                 this.descForExpected.appendText("parameters as a ");
-                return actual.getParamsByName();
+                return actual.getSetParamsByName();
             }
         };
     }
@@ -138,7 +138,7 @@ public class ParameterHolderAssertions {
         return new ParameterHolderMatcher.ParameterByNameMatcher<Object>(matcher) {
             @Override
             public Object featureValueOf(ParameterByNameHolder actual) {
-                return actual.getParamsByName().get(name);
+                return actual.getSetParamsByName().get(name);
             }
 
             @Override
@@ -198,12 +198,12 @@ public class ParameterHolderAssertions {
             @Override
             @SuppressWarnings("unchecked")
             public T featureValueOf(ParameterByNameHolder actual) {
-                return (T) actual.getParamsByName().get(name);
+                return (T) actual.getSetParamsByName().get(name);
             }
 
             @Override
             public boolean validateParameterByName(ParameterByNameHolder actual, Description descForExpected, Description descForFailure) {
-                Object value = actual.getParamsByName().get(name);
+                Object value = actual.getSetParamsByName().get(name);
                 if (value == null) {
                     descForExpected.appendText("parameter name " + name);
                     descForFailure.appendText("parameter name " + name + " doesn't exist.");

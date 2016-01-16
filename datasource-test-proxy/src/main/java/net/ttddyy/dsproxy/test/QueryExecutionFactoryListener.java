@@ -10,6 +10,10 @@ import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.createRegisterOut;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.createSetNull;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.createSetParam;
+
 /**
  * @author Tadaya Tsuyukubo
  * @since 1.4
@@ -86,13 +90,7 @@ public class QueryExecutionFactoryListener implements QueryExecutionListener {
         for (QueryInfo queryInfo : queryInfoList) {
             // TODO: size of parametersList must be 1 for Prepared
             for (List<ParameterSetOperation> params : queryInfo.getParametersList()) {
-                for (ParameterSetOperation param : params) {
-                    if (ParameterSetOperation.isSetNullParameterOperation(param)) {
-                        populateSetNullParameter(pe, param);
-                    } else {
-                        populateParameter(pe, param);
-                    }
-                }
+                populateParameterSetOperations(pe, params);
             }
         }
 
@@ -110,13 +108,7 @@ public class QueryExecutionFactoryListener implements QueryExecutionListener {
 
             for (List<ParameterSetOperation> params : queryInfo.getParametersList()) {
                 PreparedBatchExecution.PreparedBatchExecutionEntry batchEntry = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-                for (ParameterSetOperation param : params) {
-                    if (ParameterSetOperation.isSetNullParameterOperation(param)) {
-                        populateSetNullParameter(batchEntry, param);
-                    } else {
-                        populateParameter(batchEntry, param);
-                    }
-                }
+                populateParameterSetOperations(batchEntry, params);
                 pbe.getBatchExecutionEntries().add(batchEntry);
             }
         }
@@ -134,17 +126,7 @@ public class QueryExecutionFactoryListener implements QueryExecutionListener {
         for (QueryInfo queryInfo : queryInfoList) {
             // TODO: size of parametersList must be 1 for Callable
             for (List<ParameterSetOperation> params : queryInfo.getParametersList()) {
-                for (ParameterSetOperation param : params) {
-                    // populate CallableExecution
-                    if (ParameterSetOperation.isRegisterOutParameterOperation(param)) {
-                        populateOutParameter(ce, param);
-                    } else if (ParameterSetOperation.isSetNullParameterOperation(param)) {
-                        populateSetNullParameter(ce, param);
-                    } else {
-                        populateParameter(ce, param);
-                    }
-
-                }
+                populateParameterSetOperations(ce, params);
             }
         }
         return ce;
@@ -161,18 +143,7 @@ public class QueryExecutionFactoryListener implements QueryExecutionListener {
 
             for (List<ParameterSetOperation> params : queryInfo.getParametersList()) {
                 CallableBatchExecution.CallableBatchExecutionEntry batchEntry = new CallableBatchExecution.CallableBatchExecutionEntry();
-
-                for (ParameterSetOperation param : params) {
-                    // populate batch entry
-                    if (ParameterSetOperation.isRegisterOutParameterOperation(param)) {
-                        populateOutParameter(batchEntry, param);
-                    } else if (ParameterSetOperation.isSetNullParameterOperation(param)) {
-                        populateSetNullParameter(batchEntry, param);
-                    } else {
-                        populateParameter(batchEntry, param);
-                    }
-                }
-
+                populateParameterSetOperations(batchEntry, params);
                 cbe.getBatchExecutionEntries().add(batchEntry);
             }
         }
@@ -180,26 +151,30 @@ public class QueryExecutionFactoryListener implements QueryExecutionListener {
         return cbe;
     }
 
-    private void populateParameter(ParameterHolder holder, ParameterSetOperation param) {
-        Object[] args = param.getArgs();
-        Object key = args[0];
-        Object value = args[1];  // use second arg as value for the parameter-set-operation
-        holder.getParams().put(getParameterKey(key), value);
-
+    private void populateParameterSetOperations(ParameterHolder holder, List<ParameterSetOperation> params) {
+        for (ParameterSetOperation param : params) {
+            populateParameterSetOperation(holder, param);
+        }
     }
 
-    private void populateSetNullParameter(ParameterHolder holder, ParameterSetOperation param) {
-        Object[] args = param.getArgs();
-        Object key = args[0];
-        Integer value = (Integer) args[1]; // use second arg as value for the parameter-set-operation
-        holder.getSetNullParams().put(getParameterKey(key), value);
-    }
-
-    private void populateOutParameter(OutParameterHolder holder, ParameterSetOperation param) {
-        Object[] args = param.getArgs();
+    private void populateParameterSetOperation(ParameterHolder holder, ParameterSetOperation setOperation) {
+        Object[] args = setOperation.getArgs();
         Object key = args[0];
         Object value = args[1]; // use second arg as value for the parameter-set-operation
-        holder.getOutParams().put(getParameterKey(key), value);
+
+        ParameterKeyValue keyValue;
+        if (ParameterSetOperation.isSetNullParameterOperation(setOperation)) {
+            ParameterKey parameterKey = getParameterKey(key);
+            keyValue = createSetNull(parameterKey, value);
+        } else if (ParameterSetOperation.isRegisterOutParameterOperation(setOperation)) {
+            ParameterKey parameterKey = getParameterKey(key);
+            keyValue = createRegisterOut(parameterKey, value);
+        } else {
+            ParameterKey parameterKey = getParameterKey(key);
+            keyValue = createSetParam(parameterKey, value);
+        }
+
+        holder.getParameters().add(keyValue);
     }
 
     private ParameterKey getParameterKey(Object key) {
