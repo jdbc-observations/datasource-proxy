@@ -6,7 +6,6 @@ import org.assertj.core.api.AbstractAssert;
 
 /**
  * @author Tadaya Tsuyukubo
- * @since 1.4
  */
 public class PreparedBatchEntryAssert extends AbstractAssert<PreparedBatchEntryAssert, BatchExecutionEntry> {
 

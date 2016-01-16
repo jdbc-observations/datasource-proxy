@@ -19,7 +19,6 @@ import java.util.List;
  * AssertJ assertions for {@link ProxyTestDataSource}.
  *
  * @author Tadaya Tsuyukubo
- * @since 1.4
  */
 public class ProxyTestDataSourceAssert extends AbstractAssert<ProxyTestDataSourceAssert, ProxyTestDataSource> {
 

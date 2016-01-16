@@ -6,7 +6,6 @@ import org.assertj.core.internal.Failures;
 
 /**
  * @author Tadaya Tsuyukubo
- * @since 1.4
  */
 // TODO: better name
 public abstract class AbstractHelperAsserts {

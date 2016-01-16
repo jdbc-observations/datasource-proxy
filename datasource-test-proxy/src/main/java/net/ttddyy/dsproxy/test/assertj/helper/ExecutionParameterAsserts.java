@@ -28,7 +28,6 @@ import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toParamKeys;
  * TODO: clean up
  *
  * @author Tadaya Tsuyukubo
- * @since 1.4
  */
 // TODO: better name
 public class ExecutionParameterAsserts extends AbstractHelperAsserts {

@@ -8,7 +8,6 @@ import net.ttddyy.dsproxy.test.assertj.helper.ExecutionParameterAsserts;
 
 /**
  * @author Tadaya Tsuyukubo
- * @since 1.4
  */
 public class PreparedBatchExecutionAssert extends AbstractExecutionAssert<PreparedBatchExecutionAssert, PreparedBatchExecution> {
 

@@ -15,7 +15,6 @@ import net.ttddyy.dsproxy.test.StatementExecution;
  * @author Tadaya Tsuyukubo
  * @see ProxyTestDataSourceAssert
  * @see StatementExecutionAssert
- * @since 1.4
  */
 public class DataSourceProxyAssertions {
 

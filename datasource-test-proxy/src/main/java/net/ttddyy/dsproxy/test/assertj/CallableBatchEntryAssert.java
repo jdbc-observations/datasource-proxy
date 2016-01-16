@@ -8,7 +8,6 @@ import java.sql.SQLType;
 
 /**
  * @author Tadaya Tsuyukubo
- * @since 1.4
  */
 public class CallableBatchEntryAssert extends AbstractAssert<CallableBatchEntryAssert, BatchExecutionEntry> {
 

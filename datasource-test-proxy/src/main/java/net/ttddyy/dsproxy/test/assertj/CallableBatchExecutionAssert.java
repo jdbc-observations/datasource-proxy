@@ -8,7 +8,6 @@ import net.ttddyy.dsproxy.test.assertj.helper.ExecutionParameterAsserts;
 
 /**
  * @author Tadaya Tsuyukubo
- * @since 1.4
  */
 // TODO: should this extend AbstractAssert??
 public class CallableBatchExecutionAssert extends AbstractExecutionAssert<CallableBatchExecutionAssert, CallableBatchExecution> {

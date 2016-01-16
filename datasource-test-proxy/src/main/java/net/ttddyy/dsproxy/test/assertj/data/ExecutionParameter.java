@@ -6,7 +6,6 @@ import java.sql.SQLType;
 
 /**
  * @author Tadaya Tsuyukubo
- * @since 1.4
  */
 public abstract class ExecutionParameter {
 

@@ -7,13 +7,13 @@ import org.assertj.core.api.AbstractAssert;
  * Shared assertion methods.
  *
  * @author Tadaya Tsuyukubo
+ * @see QueryExecutionAssert
  * @see StatementExecutionAssert
  * @see StatementBatchExecutionAssert
  * @see PreparedExecutionAssert
  * @see PreparedBatchExecutionAssert
  * @see CallableExecutionAssert
  * @see CallableBatchExecutionAssert
- * @since 1.4
  */
 public abstract class AbstractExecutionAssert<S extends AbstractAssert<S, A>, A extends QueryExecution> extends AbstractAssert<S, A> {
     public AbstractExecutionAssert(A actual, Class<?> selfType) {
