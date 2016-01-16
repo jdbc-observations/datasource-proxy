@@ -202,10 +202,10 @@ public class SampleAssertJAPI {
 
         assertThat(pbe).batch(0, containsParamIndexes(10, 11));
 
-        assertThat(pbe).batch(0).containsParam(10, "value").containsParam(10, "value");
-        assertThat(pbe).batch(0).containsParams(param(10, "value"), param(10, "value"), nullParam(12));
-        assertThat(pbe).batch(0).containsParamIndex(10);
-        assertThat(pbe).batch(0).containsParamValuesExactly("value", 100, null, 12);
+//        assertThat(pbe).batch(0).containsParam(10, "value").containsParam(10, "value");
+//        assertThat(pbe).batch(0).containsParams(param(10, "value"), param(10, "value"), nullParam(12));
+//        assertThat(pbe).batch(0).containsParamIndex(10);
+//        assertThat(pbe).batch(0).containsParamValuesExactly("value", 100, null, 12);
 
         assertThat(pbe.getQuery()).isEqualTo("...");
     }
@@ -263,10 +263,10 @@ public class SampleAssertJAPI {
         assertThat(cbe).batch(0, containsParamIndexes(10, 11));
         assertThat(cbe).batch(0, containsParamNames("key", "key2"));
 
-        assertThat(cbe).batch(0).containsParam("key", "value").containsParam(10, "value").containsOutParam("key", Types.INTEGER).containsNullParam("key");
-        assertThat(cbe).batch(0).containsParams(param("key", "value"), param(10, "value"), param("a", 100), outParam("key", Types.INTEGER), nullParam("key"));
-        assertThat(cbe).batch(0).containsParamKey("key").containsParamKey(10).containsParamIndex(10).containsParamName("key");
-        assertThat(cbe).batch(0).containsParamKeys("key", 10).containsParamIndexes(10, 11).containsParamNames("key", "key");
+//        assertThat(cbe).batch(0).containsParam("key", "value").containsParam(10, "value").containsOutParam("key", Types.INTEGER).containsNullParam("key");
+//        assertThat(cbe).batch(0).containsParams(param("key", "value"), param(10, "value"), param("a", 100), outParam("key", Types.INTEGER), nullParam("key"));
+//        assertThat(cbe).batch(0).containsParamKey("key").containsParamKey(10).containsParamIndex(10).containsParamName("key");
+//        assertThat(cbe).batch(0).containsParamKeys("key", 10).containsParamIndexes(10, 11).containsParamNames("key", "key");
 
 //        containsParams
 //        containsParamsExactly
