@@ -129,11 +129,9 @@ public class QueryExecutionAssert extends AbstractExecutionAssert<QueryExecution
     }
 
     private StatementType getStatementType(QueryExecution queryExecution) {
-        boolean isBatch = queryExecution.isBatch();
-
         if (queryExecution instanceof StatementExecution || queryExecution instanceof StatementBatchExecution) {
             return StatementType.STATEMENT;
-        } else if (queryExecution instanceof PreparedExecution || queryExecution instanceof PreparedBatchEntryAssert) {
+        } else if (queryExecution instanceof PreparedExecution || queryExecution instanceof PreparedBatchExecution) {
             return StatementType.PREPARED;
         } else if (queryExecution instanceof CallableExecution || queryExecution instanceof CallableBatchExecution) {
             return StatementType.CALLABLE;
