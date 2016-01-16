@@ -1,7 +1,12 @@
 # ChangeLog
 
+## 1.3.3
+
+- update `DefaultQueryLogEntryCreator` to allow subclasses to override log entry details
+ 
 ## 1.3.2
 
+- add `CommonsOracleOutputParameterLoggingListener`
 - add new listener for oracle to log output params. `CommonsOracleOutputParameterLoggingListener`
 
 ## 1.3.1
