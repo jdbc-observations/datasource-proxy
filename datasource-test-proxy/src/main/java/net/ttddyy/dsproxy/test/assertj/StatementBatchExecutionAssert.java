@@ -42,6 +42,10 @@ public class StatementBatchExecutionAssert extends AbstractExecutionAssert<State
         return Assertions.assertThat(this.actual.getQueries());
     }
 
+    public AbstractCharSequenceAssert<?, String> query(Index index) {
+        return query(index.value);
+    }
+
     public AbstractCharSequenceAssert<?, String> query(int index) {
         String query = this.actual.getQueries().get(index);
         return Assertions.assertThat(query);
