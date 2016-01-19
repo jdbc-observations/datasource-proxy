@@ -11,7 +11,6 @@ import net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters;
 import org.assertj.core.api.WritableAssertionInfo;
 
 import java.sql.SQLType;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -302,27 +301,9 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
     }
 
     private <T extends ParameterHolder> SortedMap<String, Object> getAllParamsForDisplay(T entry) {
-
-        // TODO: make it work for both OutParameterHolder and ParameterHolder
-        Set<ParameterKey> nullParamKeys = toParamKeys(entry.getSetNullParams());
-        Set<ParameterKey> outParamKeys = new HashSet<ParameterKey>();
-        if (entry instanceof OutParameterHolder) {
-            outParamKeys.addAll(toParamKeys(((OutParameterHolder) entry).getOutParams()));
-        }
-
-
         SortedMap<String, Object> sorted = new TreeMap<String, Object>();
         for (ParameterKeyValue keyValue : entry.getParameters()) {
-            ParameterKey key = keyValue.getKey();
-            String valueToDisplay;
-            if (nullParamKeys.contains(key)) {
-                valueToDisplay = this.setNullValueConverter.getDisplayValue((Integer) keyValue.getValue());
-            } else if (outParamKeys.contains(key)) {
-                valueToDisplay = this.registerOutParameterValueConverter.getDisplayValue(keyValue.getValue());
-            } else {
-                valueToDisplay = String.valueOf(keyValue.getValue());
-            }
-            sorted.put(key.getKeyAsString(), valueToDisplay);  // display {key=val, key2=val2}
+            sorted.put(keyValue.getKey().getKeyAsString(), keyValue.getDisplayValue());  // display {key=val, key2=val2}
         }
 
         return sorted;
