@@ -4,7 +4,6 @@ import net.ttddyy.dsproxy.listener.RegisterOutParameterValueConverter;
 import net.ttddyy.dsproxy.listener.SetNullParameterValueConverter;
 import net.ttddyy.dsproxy.proxy.ParameterKey;
 
-import java.sql.SQLType;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -34,26 +33,14 @@ public class ParameterKeyValueUtils {
         return new ParameterKeyValue(key, value, displayValue, ParameterKeyValue.OperationType.SET_PARAM);
     }
 
-    public static ParameterKeyValue createSetNull(int index, SQLType sqlType) {
-        return new ParameterKeyValue(index, sqlType, sqlType.getName(), ParameterKeyValue.OperationType.SET_NULL);
-    }
-
     public static ParameterKeyValue createSetNull(int index, int sqlType) {
         String displayValue = setNullValueConverter.getDisplayValue(sqlType);
         return new ParameterKeyValue(index, sqlType, displayValue, ParameterKeyValue.OperationType.SET_NULL);
     }
 
-    public static ParameterKeyValue createSetNull(String name, SQLType sqlType) {
-        return new ParameterKeyValue(name, sqlType, sqlType.getName(), ParameterKeyValue.OperationType.SET_NULL);
-    }
-
     public static ParameterKeyValue createSetNull(String name, int sqlType) {
         String displayValue = setNullValueConverter.getDisplayValue(sqlType);
         return new ParameterKeyValue(name, sqlType, displayValue, ParameterKeyValue.OperationType.SET_NULL);
-    }
-
-    public static ParameterKeyValue createSetNull(ParameterKey key, SQLType sqlType) {
-        return new ParameterKeyValue(key, sqlType, sqlType.getName(), ParameterKeyValue.OperationType.SET_NULL);
     }
 
     public static ParameterKeyValue createSetNull(ParameterKey key, int sqlType) {
