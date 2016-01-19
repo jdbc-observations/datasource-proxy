@@ -13,19 +13,39 @@ public class ParameterKeyValue implements Comparable<ParameterKeyValue> {
 
     private ParameterKey key;
     private Object value;
+    private String displayValue;
     private OperationType type;
 
+    @Deprecated
     public ParameterKeyValue(int indexKey, Object value, OperationType type) {
         this(new ParameterKey(indexKey), value, type);
     }
 
+    @Deprecated
     public ParameterKeyValue(String nameKey, Object value, OperationType type) {
         this(new ParameterKey(nameKey), value, type);
     }
 
+    @Deprecated
     public ParameterKeyValue(ParameterKey key, Object value, OperationType type) {
         this.key = key;
         this.value = value;
+        this.displayValue = value == null ? null : value.toString();
+        this.type = type;
+    }
+
+    public ParameterKeyValue(int indexKey, Object value, String displayValue, OperationType type) {
+        this(new ParameterKey(indexKey), value, displayValue, type);
+    }
+
+    public ParameterKeyValue(String nameKey, Object value, String displayValue, OperationType type) {
+        this(new ParameterKey(nameKey), value, displayValue, type);
+    }
+
+    public ParameterKeyValue(ParameterKey key, Object value, String displayValue, OperationType type) {
+        this.key = key;
+        this.value = value;
+        this.displayValue = displayValue;
         this.type = type;
     }
 
@@ -55,6 +75,14 @@ public class ParameterKeyValue implements Comparable<ParameterKeyValue> {
 
     public void setValue(Object value) {
         this.value = value;
+    }
+
+    public String getDisplayValue() {
+        return displayValue;
+    }
+
+    public void setDisplayValue(String displayValue) {
+        this.displayValue = displayValue;
     }
 
     public OperationType getType() {
