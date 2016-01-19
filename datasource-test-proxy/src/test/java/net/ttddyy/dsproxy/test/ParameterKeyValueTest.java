@@ -5,6 +5,8 @@ import org.junit.Test;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.createRegisterOut;
+import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.createSetParam;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -15,9 +17,9 @@ public class ParameterKeyValueTest {
     @Test
     public void compareToIndex() {
         SortedSet<ParameterKeyValue> set = new TreeSet<ParameterKeyValue>();
-        set.add(new ParameterKeyValue(1, 10, ParameterKeyValue.OperationType.SET_PARAM));
-        set.add(new ParameterKeyValue(3, 10, ParameterKeyValue.OperationType.SET_PARAM));
-        set.add(new ParameterKeyValue(2, 10, ParameterKeyValue.OperationType.SET_PARAM));
+        set.add(createSetParam(1, 10));
+        set.add(createSetParam(3, 10));
+        set.add(createSetParam(2, 10));
 
         assertThat(set).hasSize(3).extracting("key.index").containsExactly(1, 2, 3);
     }
@@ -25,9 +27,9 @@ public class ParameterKeyValueTest {
     @Test
     public void compareToSameIndex() {
         SortedSet<ParameterKeyValue> set = new TreeSet<ParameterKeyValue>();
-        set.add(new ParameterKeyValue(1, 10, ParameterKeyValue.OperationType.SET_PARAM));
-        set.add(new ParameterKeyValue(1, 30, ParameterKeyValue.OperationType.SET_PARAM));
-        set.add(new ParameterKeyValue(1, 20, ParameterKeyValue.OperationType.SET_PARAM));
+        set.add(createSetParam(1, 10));
+        set.add(createSetParam(1, 30));
+        set.add(createSetParam(1, 20));
 
         assertThat(set).hasSize(3).extracting("key.index").containsExactly(1, 1, 1);
 
@@ -38,9 +40,9 @@ public class ParameterKeyValueTest {
     @Test
     public void compareToSameIndexDifferentValueType() {
         SortedSet<ParameterKeyValue> set = new TreeSet<ParameterKeyValue>();
-        set.add(new ParameterKeyValue(1, 10, ParameterKeyValue.OperationType.SET_PARAM));
-        set.add(new ParameterKeyValue(1, "30", ParameterKeyValue.OperationType.SET_PARAM));
-        set.add(new ParameterKeyValue(1, 20, ParameterKeyValue.OperationType.SET_PARAM));
+        set.add(createSetParam(1, 10));
+        set.add(createSetParam(1, "30"));
+        set.add(createSetParam(1, 20));
 
         assertThat(set).hasSize(3).extracting("key.index").containsExactly(1, 1, 1);
 
@@ -51,9 +53,9 @@ public class ParameterKeyValueTest {
     @Test
     public void compareToDifferentValue() {
         SortedSet<ParameterKeyValue> set = new TreeSet<ParameterKeyValue>();
-        set.add(new ParameterKeyValue(1, null, ParameterKeyValue.OperationType.SET_PARAM));
-        set.add(new ParameterKeyValue(1, null, ParameterKeyValue.OperationType.REGISTER_OUT));
-        set.add(new ParameterKeyValue(1, null, ParameterKeyValue.OperationType.SET_PARAM));  // same key, value again
+        set.add(createSetParam(1, null));
+        set.add(createRegisterOut(1, null));
+        set.add(createSetParam(1, null));  // same key, value again
 
         // regardless operation type, it only checks key & value
         assertThat(set).hasSize(1).extracting("key.index").containsExactly(1);
@@ -62,9 +64,9 @@ public class ParameterKeyValueTest {
     @Test
     public void compareToDifferentKeyTypeWithInt() {
         SortedSet<ParameterKeyValue> set = new TreeSet<ParameterKeyValue>();
-        set.add(new ParameterKeyValue(1, 10, ParameterKeyValue.OperationType.SET_PARAM));
-        set.add(new ParameterKeyValue("10", 20, ParameterKeyValue.OperationType.SET_PARAM));
-        set.add(new ParameterKeyValue(1, 20, ParameterKeyValue.OperationType.SET_PARAM));
+        set.add(createSetParam(1, 10));
+        set.add(createSetParam("10", 20));
+        set.add(createSetParam(1, 20));
 
         // regardless operation type, it only checks key & value
         assertThat(set).hasSize(3).extracting("key.keyAsString").containsExactly("1", "1", "10");
@@ -73,8 +75,8 @@ public class ParameterKeyValueTest {
     @Test
     public void compareToNumberKeyInString() {
         SortedSet<ParameterKeyValue> set = new TreeSet<ParameterKeyValue>();
-        set.add(new ParameterKeyValue(1, 10, ParameterKeyValue.OperationType.SET_PARAM));
-        set.add(new ParameterKeyValue("1", 20, ParameterKeyValue.OperationType.SET_PARAM));
+        set.add(createSetParam(1, 10));
+        set.add(createSetParam("1", 20));
 
         assertThat(set).hasSize(2).extracting("key.keyAsString").containsExactly("1", "1");
         assertThat(set).extracting("value").containsExactly(10, 20);
@@ -83,10 +85,10 @@ public class ParameterKeyValueTest {
     @Test
     public void compareToDifferentKeyType() {
         SortedSet<ParameterKeyValue> set = new TreeSet<ParameterKeyValue>();
-        set.add(new ParameterKeyValue(1, 10, ParameterKeyValue.OperationType.SET_PARAM));
-        set.add(new ParameterKeyValue("foo", 200, ParameterKeyValue.OperationType.SET_PARAM));
-        set.add(new ParameterKeyValue(1, 20, ParameterKeyValue.OperationType.SET_PARAM));
-        set.add(new ParameterKeyValue("bar", 300, ParameterKeyValue.OperationType.SET_PARAM));
+        set.add(createSetParam(1, 10));
+        set.add(createSetParam("foo", 200));
+        set.add(createSetParam(1, 20));
+        set.add(createSetParam("bar", 300));
 
         // regardless operation type, it only checks key & value
         assertThat(set).hasSize(4).extracting("key.keyAsString").containsExactly("1", "1", "bar", "foo");
