@@ -38,7 +38,7 @@ public class CallableBatchExecutionAssert extends AbstractExecutionAssert<Callab
 
         this.batchAssert.assertBatchExecutionEntry(this.actual, batchIndex, CallableBatchExecution.CallableBatchExecutionEntry.class);
 
-        // entry is validated to be the one for prepared
+        // entry is validated to be the one for callable
         CallableBatchExecution.CallableBatchExecutionEntry batchEntry = (CallableBatchExecution.CallableBatchExecutionEntry) this.actual.getBatchExecutionEntries().get(batchIndex);
         this.parameterAssert.assertParameterKeys(batchEntry, params, true);
 

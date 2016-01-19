@@ -103,7 +103,7 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
         SortedSet<ParameterKey> actualSetNullParamKeys = toParamKeys(filterBy(actualParamValues, ParameterKeyValue.OperationType.SET_NULL));
         SortedSet<ParameterKey> actualOutParamKeys = toParamKeys(filterBy(actualParamValues, ParameterKeyValue.OperationType.REGISTER_OUT));
 
-        SortedSet<ParameterKey> expectedSetParamKeys = getExpectedParamExecutionKeys(params, ExecutionParameter.ParamExecution.class);
+        SortedSet<ParameterKey> expectedSetParamKeys = getExpectedParamExecutionKeys(params, ExecutionParameter.SetParamExecution.class);
         SortedSet<ParameterKey> expectedSetNullParamKeys = getExpectedParamExecutionKeys(params, ExecutionParameter.SetNullParamExecution.class);
         SortedSet<ParameterKey> expectedOutParamKeys = getExpectedParamExecutionKeys(params, ExecutionParameter.RegisterOutParamExecutionWithIntType.class, ExecutionParameter.RegisterOutParamExecutionWithSQLType.class);
 
@@ -232,9 +232,9 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
     public <T extends ParameterHolder> void assertExecutionParameter(T paramHolder, ExecutionParameter param) {
         ParameterKey expectedParamKey = param.getKey();
 
-        if (param instanceof ExecutionParameter.ParamExecution) {
-            Object expectedValue = ((ExecutionParameter.ParamExecution) param).getValue();
-            validateParameter(expectedParamKey, expectedValue, paramHolder);
+        if (param instanceof ExecutionParameter.SetParamExecution) {
+            Object expectedValue = ((ExecutionParameter.SetParamExecution) param).getValue();
+            validateSetParameter(expectedParamKey, expectedValue, paramHolder);
 
         } else if (param instanceof ExecutionParameter.SetNullParamExecution) {
             Integer sqlType = ((ExecutionParameter.SetNullParamExecution) param).getSqlType();
@@ -255,7 +255,7 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
 
     }
 
-    public <T extends ParameterHolder> void validateParameter(ParameterKey expectedParamKey, Object expectedValue, T executionEntry) {
+    public <T extends ParameterHolder> void validateSetParameter(ParameterKey expectedParamKey, Object expectedValue, T executionEntry) {
 
         Object actualValue = toKeyValueMap(executionEntry.getSetParams()).get(expectedParamKey);
         if (expectedValue != actualValue) {

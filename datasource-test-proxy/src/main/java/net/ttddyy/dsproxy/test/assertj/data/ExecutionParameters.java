@@ -18,14 +18,14 @@ public class ExecutionParameters {
     public static ExecutionParameters containsParams(ExecutionParameter... params) {
         ExecutionParameters executionParameters = new ExecutionParameters();
         executionParameters.type = ExecutionParametersType.CONTAINS;
-        executionParameters.getParameters().addAll(Arrays.asList(params));
+        executionParameters.parameters.addAll(Arrays.asList(params));
         return executionParameters;
     }
 
     public static ExecutionParameters containsParamsExactly(ExecutionParameter... params) {
         ExecutionParameters executionParameters = new ExecutionParameters();
         executionParameters.type = ExecutionParametersType.CONTAINS_EXACTLY;
-        executionParameters.getParameters().addAll(Arrays.asList(params));
+        executionParameters.parameters.addAll(Arrays.asList(params));
         return executionParameters;
 
     }
@@ -49,7 +49,7 @@ public class ExecutionParameters {
 
         ExecutionParameters executionParameters = new ExecutionParameters();
         executionParameters.type = ExecutionParametersType.CONTAINS_KEYS_ONLY;
-        executionParameters.getParameters().addAll(params);
+        executionParameters.parameters.addAll(params);
         return executionParameters;
     }
 
@@ -63,7 +63,7 @@ public class ExecutionParameters {
 
         ExecutionParameters executionParameters = new ExecutionParameters();
         executionParameters.type = ExecutionParametersType.CONTAINS_KEYS_ONLY;
-        executionParameters.getParameters().addAll(params);
+        executionParameters.parameters.addAll(params);
         return executionParameters;
     }
 
@@ -77,7 +77,7 @@ public class ExecutionParameters {
 
         ExecutionParameters executionParameters = new ExecutionParameters();
         executionParameters.type = ExecutionParametersType.CONTAINS_KEYS_ONLY;
-        executionParameters.getParameters().addAll(params);
+        executionParameters.parameters.addAll(params);
         return executionParameters;
 
     }
@@ -88,14 +88,6 @@ public class ExecutionParameters {
 
     public List<ExecutionParameter> getParameters() {
         return parameters;
-    }
-
-    public List<ParameterKey> getParameterKeys() {
-        List<ParameterKey> keys = new ArrayList<ParameterKey>();
-        for (ExecutionParameter parameter : this.parameters) {
-            keys.add(parameter.getKey());
-        }
-        return keys;
     }
 
     public ExecutionParametersType getType() {

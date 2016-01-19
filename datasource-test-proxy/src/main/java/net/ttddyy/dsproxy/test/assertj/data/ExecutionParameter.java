@@ -10,7 +10,7 @@ import java.sql.SQLType;
 public abstract class ExecutionParameter {
 
     /**
-     * Only for param keys. Do not care whether it is from params, setNull, or registerOut.
+     * Only for param keys. Do not care whether it is from setParams, setNullParams, or registerOutParams.
      */
     public static class ParamKeyOnlyExecution extends ExecutionParameter {
         public ParamKeyOnlyExecution(ParameterKey parameterKey) {
@@ -19,12 +19,12 @@ public abstract class ExecutionParameter {
     }
 
     /**
-     * For set... operations.
+     * For setParam operations.
      */
-    public static class ParamExecution extends ExecutionParameter {
+    public static class SetParamExecution extends ExecutionParameter {
         private Object value;
 
-        public ParamExecution(ParameterKey parameterKey, Object value) {
+        public SetParamExecution(ParameterKey parameterKey, Object value) {
             super(parameterKey);
             this.value = value;
         }
@@ -77,11 +77,11 @@ public abstract class ExecutionParameter {
     }
 
     public static ExecutionParameter param(int paramIndex, Object value) {
-        return new ParamExecution(new ParameterKey(paramIndex), value);
+        return new SetParamExecution(new ParameterKey(paramIndex), value);
     }
 
     public static ExecutionParameter param(String paramName, Object value) {
-        return new ParamExecution(new ParameterKey(paramName), value);
+        return new SetParamExecution(new ParameterKey(paramName), value);
     }
 
     /**
