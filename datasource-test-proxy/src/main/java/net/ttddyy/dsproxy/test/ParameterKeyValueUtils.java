@@ -20,15 +20,18 @@ public class ParameterKeyValueUtils {
     private static RegisterOutParameterValueConverter registerOutParameterValueConverter = new RegisterOutParameterValueConverter();
 
     public static ParameterKeyValue createSetParam(int index, Object value) {
-        return new ParameterKeyValue(index, value, value != null ? value.toString() : null, ParameterKeyValue.OperationType.SET_PARAM);
+        String displayValue = value == null ? null : value.toString();
+        return new ParameterKeyValue(index, value, displayValue, ParameterKeyValue.OperationType.SET_PARAM);
     }
 
     public static ParameterKeyValue createSetParam(String name, Object value) {
-        return new ParameterKeyValue(name, value, ParameterKeyValue.OperationType.SET_PARAM);
+        String displayValue = value == null ? null : value.toString();
+        return new ParameterKeyValue(name, value, displayValue, ParameterKeyValue.OperationType.SET_PARAM);
     }
 
     public static ParameterKeyValue createSetParam(ParameterKey key, Object value) {
-        return new ParameterKeyValue(key, value, ParameterKeyValue.OperationType.SET_PARAM);
+        String displayValue = value == null ? null : value.toString();
+        return new ParameterKeyValue(key, value, displayValue, ParameterKeyValue.OperationType.SET_PARAM);
     }
 
     public static ParameterKeyValue createSetNull(int index, SQLType sqlType) {
@@ -59,15 +62,18 @@ public class ParameterKeyValueUtils {
     }
 
     public static ParameterKeyValue createRegisterOut(int index, Object value) {
-        return new ParameterKeyValue(index, value, ParameterKeyValue.OperationType.REGISTER_OUT);
+        String displayValue = registerOutParameterValueConverter.getDisplayValue(value);
+        return new ParameterKeyValue(index, value, displayValue, ParameterKeyValue.OperationType.REGISTER_OUT);
     }
 
     public static ParameterKeyValue createRegisterOut(String name, Object value) {
-        return new ParameterKeyValue(name, value, ParameterKeyValue.OperationType.REGISTER_OUT);
+        String displayValue = registerOutParameterValueConverter.getDisplayValue(value);
+        return new ParameterKeyValue(name, value, displayValue, ParameterKeyValue.OperationType.REGISTER_OUT);
     }
 
     public static ParameterKeyValue createRegisterOut(ParameterKey key, Object value) {
-        return new ParameterKeyValue(key, value, ParameterKeyValue.OperationType.REGISTER_OUT);
+        String displayValue = registerOutParameterValueConverter.getDisplayValue(value);
+        return new ParameterKeyValue(key, value, displayValue, ParameterKeyValue.OperationType.REGISTER_OUT);
     }
 
     public static SortedSet<ParameterKeyValue> filterBy(SortedSet<ParameterKeyValue> parameters, ParameterKeyValue.OperationType... operationTypes) {
