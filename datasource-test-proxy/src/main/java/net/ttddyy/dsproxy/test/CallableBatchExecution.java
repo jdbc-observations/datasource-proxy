@@ -25,7 +25,7 @@ public class CallableBatchExecution extends BaseQueryExecution implements BatchP
         private SortedSet<ParameterKeyValue> parameters = new TreeSet<ParameterKeyValue>();
 
         @Override
-        public SortedSet<ParameterKeyValue> getParameters() {
+        public SortedSet<ParameterKeyValue> getAllParameters() {
             return this.parameters;
         }
 

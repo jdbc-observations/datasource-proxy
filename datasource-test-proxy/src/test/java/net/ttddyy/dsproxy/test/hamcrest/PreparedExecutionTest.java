@@ -35,10 +35,10 @@ public class PreparedExecutionTest {
     @Test
     public void testParams() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParameters().add(createSetParam(1, "foo"));
-        pe.getParameters().add(createSetParam(2, "bar"));
-        pe.getParameters().add(createSetParam(3, "baz"));
-        pe.getParameters().add(createSetParam(4, 100));
+        pe.getAllParameters().add(createSetParam(1, "foo"));
+        pe.getAllParameters().add(createSetParam(2, "bar"));
+        pe.getAllParameters().add(createSetParam(3, "baz"));
+        pe.getAllParameters().add(createSetParam(4, 100));
         assertThat(pe, paramsByIndex(hasEntry(2, (Object) "bar")));
         assertThat(pe, paramsByIndex(hasEntry(4, (Object) 100)));
     }
@@ -46,9 +46,9 @@ public class PreparedExecutionTest {
     @Test
     public void testParamIndexes() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParameters().add(createSetParam(1, "foo"));
-        pe.getParameters().add(createSetParam(2, "bar"));
-        pe.getParameters().add(createSetParam(3, "baz"));
+        pe.getAllParameters().add(createSetParam(1, "foo"));
+        pe.getAllParameters().add(createSetParam(2, "bar"));
+        pe.getAllParameters().add(createSetParam(3, "baz"));
         assertThat(pe, paramIndexes(hasItem(1)));
         assertThat(pe, paramIndexes(hasSize(3)));
     }
@@ -56,8 +56,8 @@ public class PreparedExecutionTest {
     @Test
     public void testParamValue() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParameters().add(createSetParam(1, "foo"));
-        pe.getParameters().add(createSetParam(100, 100));
+        pe.getAllParameters().add(createSetParam(1, "foo"));
+        pe.getAllParameters().add(createSetParam(100, 100));
 
         assertThat(pe, param(1, is((Object) "foo")));
 
@@ -68,8 +68,8 @@ public class PreparedExecutionTest {
     @Test
     public void testParamValueWithClass() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParameters().add(createSetParam(1, "foo"));
-        pe.getParameters().add(createSetParam(100, 100));
+        pe.getAllParameters().add(createSetParam(1, "foo"));
+        pe.getAllParameters().add(createSetParam(100, 100));
 
         assertThat(pe, param(1, String.class, is("foo")));
         assertThat(pe, param(1, String.class, startsWith("foo")));

@@ -36,7 +36,7 @@ public class PreparedExecution extends BaseQueryExecution implements QueryHolder
     }
 
     @Override
-    public SortedSet<ParameterKeyValue> getParameters() {
+    public SortedSet<ParameterKeyValue> getAllParameters() {
         return this.parameters;
     }
 

@@ -31,7 +31,7 @@ public class ParameterHolderMatcherTest {
     private static class MockIndexOnlyParamHolder implements ParameterHolder, ParameterByIndexHolder {
 
         @Override
-        public SortedSet<ParameterKeyValue> getParameters() {
+        public SortedSet<ParameterKeyValue> getAllParameters() {
             return null;
         }
 
@@ -65,7 +65,7 @@ public class ParameterHolderMatcherTest {
     private static class MockNameOnlyParamHolder implements ParameterHolder, ParameterByNameHolder {
 
         @Override
-        public SortedSet<ParameterKeyValue> getParameters() {
+        public SortedSet<ParameterKeyValue> getAllParameters() {
             return null;
         }
 

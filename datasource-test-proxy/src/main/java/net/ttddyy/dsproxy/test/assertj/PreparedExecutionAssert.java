@@ -76,7 +76,7 @@ public class PreparedExecutionAssert extends AbstractExecutionAssert<PreparedExe
      */
     public PreparedExecutionAssert containsParamValuesExactly(Object... paramValues) {
 
-        SortedSet<ParameterKeyValue> actualKeyValues = this.actual.getParameters();
+        SortedSet<ParameterKeyValue> actualKeyValues = this.actual.getAllParameters();
         if (!isContainsParamValuesExactly(actualKeyValues, paramValues)) {
             String failureMessage = getFailureMessageForValuesExactly(actualKeyValues, paramValues);
             failWithMessage(failureMessage);

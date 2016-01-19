@@ -39,12 +39,12 @@ public class PreparedBatchExecutionMathcerTest {
     @Test
     public void testBatchSize() {
         PreparedBatchExecution.PreparedBatchExecutionEntry entry1 = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry1.getParameters().add(createSetParam(10, "FOO"));
-        entry1.getParameters().add(createSetParam(11, "BAR"));
+        entry1.getAllParameters().add(createSetParam(10, "FOO"));
+        entry1.getAllParameters().add(createSetParam(11, "BAR"));
 
         PreparedBatchExecution.PreparedBatchExecutionEntry entry2 = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry2.getParameters().add(createSetParam(20, "FOO"));
-        entry2.getParameters().add(createSetParam(21, "BAR"));
+        entry2.getAllParameters().add(createSetParam(20, "FOO"));
+        entry2.getAllParameters().add(createSetParam(21, "BAR"));
 
         PreparedBatchExecution pbe = new PreparedBatchExecution();
         pbe.getBatchExecutionEntries().add(entry1);
@@ -57,9 +57,9 @@ public class PreparedBatchExecutionMathcerTest {
     public void testBatch() {
 
         PreparedBatchExecution.PreparedBatchExecutionEntry entry = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry.getParameters().add(createSetParam(1, "FOO"));
-        entry.getParameters().add(createSetParam(2, "BAR"));
-        entry.getParameters().add(createSetParam(10, 100));
+        entry.getAllParameters().add(createSetParam(1, "FOO"));
+        entry.getAllParameters().add(createSetParam(2, "BAR"));
+        entry.getAllParameters().add(createSetParam(10, 100));
 
         PreparedBatchExecution pbe = new PreparedBatchExecution();
         pbe.getBatchExecutionEntries().add(entry);
@@ -83,9 +83,9 @@ public class PreparedBatchExecutionMathcerTest {
     public void testBatchByIndex() {
 
         PreparedBatchExecution.PreparedBatchExecutionEntry entry = new PreparedBatchExecution.PreparedBatchExecutionEntry();
-        entry.getParameters().add(createSetParam(1, "FOO"));
-        entry.getParameters().add(createSetParam(2, "BAR"));
-        entry.getParameters().add(createSetParam(3, 100));
+        entry.getAllParameters().add(createSetParam(1, "FOO"));
+        entry.getAllParameters().add(createSetParam(2, "BAR"));
+        entry.getAllParameters().add(createSetParam(3, 100));
 
 
         PreparedBatchExecution pbe = new PreparedBatchExecution();

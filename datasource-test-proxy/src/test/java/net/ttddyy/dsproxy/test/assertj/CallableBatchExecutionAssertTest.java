@@ -93,8 +93,8 @@ public class CallableBatchExecutionAssertTest {
     @Test
     public void batchWithContainsParams() {
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.getParameters().add(createSetParam(1, "foo"));
-        entry.getParameters().add(createSetParam("bar", "BAR"));
+        entry.getAllParameters().add(createSetParam(1, "foo"));
+        entry.getAllParameters().add(createSetParam("bar", "BAR"));
 
         CallableBatchExecution cbe = new CallableBatchExecution();
         cbe.getBatchExecutionEntries().add(entry);
@@ -169,8 +169,8 @@ public class CallableBatchExecutionAssertTest {
     @Test
     public void containsParamsWithSetNullParameters() {
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.getParameters().add(createSetNull(1, Types.VARCHAR));
-        entry.getParameters().add(createSetNull("bar", Types.DATE));
+        entry.getAllParameters().add(createSetNull(1, Types.VARCHAR));
+        entry.getAllParameters().add(createSetNull("bar", Types.DATE));
 
         CallableBatchExecution cbe = new CallableBatchExecution();
         cbe.getBatchExecutionEntries().add(entry);
@@ -212,8 +212,8 @@ public class CallableBatchExecutionAssertTest {
     @Test
     public void containsParamsWithSetNullParametersOnlyKeys() {
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.getParameters().add(createSetNull(1, Types.VARCHAR));
-        entry.getParameters().add(createSetNull("bar", Types.DATE));
+        entry.getAllParameters().add(createSetNull(1, Types.VARCHAR));
+        entry.getAllParameters().add(createSetNull("bar", Types.DATE));
 
         CallableBatchExecution cbe = new CallableBatchExecution();
         cbe.getBatchExecutionEntries().add(entry);
@@ -256,10 +256,10 @@ public class CallableBatchExecutionAssertTest {
     @Test
     public void containsParamsWithRegisterOutParameters() {
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.getParameters().add(createRegisterOut(1, Types.BOOLEAN));
-        entry.getParameters().add(createRegisterOut("bar", Types.DOUBLE));
-        entry.getParameters().add(createRegisterOut(2, JDBCType.VARCHAR));
-        entry.getParameters().add(createRegisterOut("foo", JDBCType.BIGINT));
+        entry.getAllParameters().add(createRegisterOut(1, Types.BOOLEAN));
+        entry.getAllParameters().add(createRegisterOut("bar", Types.DOUBLE));
+        entry.getAllParameters().add(createRegisterOut(2, JDBCType.VARCHAR));
+        entry.getAllParameters().add(createRegisterOut("foo", JDBCType.BIGINT));
 
         CallableBatchExecution cbe = new CallableBatchExecution();
         cbe.getBatchExecutionEntries().add(entry);
@@ -323,12 +323,12 @@ public class CallableBatchExecutionAssertTest {
     @Test
     public void containsParamsWithMixedParameterTypes() {
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.getParameters().add(createSetParam(1, "foo"));
-        entry.getParameters().add(createSetParam("foo", "FOO"));
-        entry.getParameters().add(createSetNull(2, Types.VARCHAR));
-        entry.getParameters().add(createSetNull("bar", Types.DATE));
-        entry.getParameters().add(createRegisterOut(3, Types.BOOLEAN));
-        entry.getParameters().add(createRegisterOut("baz", Types.BIGINT));
+        entry.getAllParameters().add(createSetParam(1, "foo"));
+        entry.getAllParameters().add(createSetParam("foo", "FOO"));
+        entry.getAllParameters().add(createSetNull(2, Types.VARCHAR));
+        entry.getAllParameters().add(createSetNull("bar", Types.DATE));
+        entry.getAllParameters().add(createRegisterOut(3, Types.BOOLEAN));
+        entry.getAllParameters().add(createRegisterOut("baz", Types.BIGINT));
 
         CallableBatchExecution cbe = new CallableBatchExecution();
         cbe.getBatchExecutionEntries().add(entry);
@@ -358,8 +358,8 @@ public class CallableBatchExecutionAssertTest {
     @Test
     public void batchParamKeysWithContainsParamsExactly() {
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.getParameters().add(createSetParam(1, "foo"));
-        entry.getParameters().add(createSetParam("bar", "BAR"));
+        entry.getAllParameters().add(createSetParam(1, "foo"));
+        entry.getAllParameters().add(createSetParam("bar", "BAR"));
 
         CallableBatchExecution cbe = new CallableBatchExecution();
         cbe.getBatchExecutionEntries().add(entry);
@@ -408,8 +408,8 @@ public class CallableBatchExecutionAssertTest {
     @Test
     public void batchParamKeysWithContainsParamsExactlyForSetNullParameters() {
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.getParameters().add(createSetNull(1, Types.VARCHAR));
-        entry.getParameters().add(createSetNull("bar", Types.DATE));
+        entry.getAllParameters().add(createSetNull(1, Types.VARCHAR));
+        entry.getAllParameters().add(createSetNull("bar", Types.DATE));
 
         CallableBatchExecution cbe = new CallableBatchExecution();
         cbe.getBatchExecutionEntries().add(entry);
@@ -458,8 +458,8 @@ public class CallableBatchExecutionAssertTest {
     @Test
     public void batchParamKeysWithContainsParamsExactlyForRegisterOutParameters() {
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.getParameters().add(createRegisterOut(1, Types.BOOLEAN));
-        entry.getParameters().add(createRegisterOut("bar", Types.DOUBLE));
+        entry.getAllParameters().add(createRegisterOut(1, Types.BOOLEAN));
+        entry.getAllParameters().add(createRegisterOut("bar", Types.DOUBLE));
 
         CallableBatchExecution cbe = new CallableBatchExecution();
         cbe.getBatchExecutionEntries().add(entry);
@@ -509,12 +509,12 @@ public class CallableBatchExecutionAssertTest {
     public void testBatchParamKeyNames() {
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
 
-        entry.getParameters().add(createSetParam(1, "foo"));
-        entry.getParameters().add(createSetParam("foo", "FOO"));
-        entry.getParameters().add(createSetNull(2, Types.VARCHAR));
-        entry.getParameters().add(createSetNull("bar", Types.DATE));
-        entry.getParameters().add(createRegisterOut(3, Types.BOOLEAN));
-        entry.getParameters().add(createRegisterOut("baz", Types.BIGINT));
+        entry.getAllParameters().add(createSetParam(1, "foo"));
+        entry.getAllParameters().add(createSetParam("foo", "FOO"));
+        entry.getAllParameters().add(createSetNull(2, Types.VARCHAR));
+        entry.getAllParameters().add(createSetNull("bar", Types.DATE));
+        entry.getAllParameters().add(createRegisterOut(3, Types.BOOLEAN));
+        entry.getAllParameters().add(createRegisterOut("baz", Types.BIGINT));
 
         CallableBatchExecution cbe = new CallableBatchExecution();
         cbe.getBatchExecutionEntries().add(entry);
@@ -537,12 +537,12 @@ public class CallableBatchExecutionAssertTest {
     @Test
     public void testBatchParamKeyIndexes() {
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.getParameters().add(createSetParam(1, "foo"));
-        entry.getParameters().add(createSetParam("foo", "FOO"));
-        entry.getParameters().add(createSetNull(2, Types.VARCHAR));
-        entry.getParameters().add(createSetNull("bar", Types.DATE));
-        entry.getParameters().add(createRegisterOut(3, Types.BOOLEAN));
-        entry.getParameters().add(createRegisterOut("baz", Types.BIGINT));
+        entry.getAllParameters().add(createSetParam(1, "foo"));
+        entry.getAllParameters().add(createSetParam("foo", "FOO"));
+        entry.getAllParameters().add(createSetNull(2, Types.VARCHAR));
+        entry.getAllParameters().add(createSetNull("bar", Types.DATE));
+        entry.getAllParameters().add(createRegisterOut(3, Types.BOOLEAN));
+        entry.getAllParameters().add(createRegisterOut("baz", Types.BIGINT));
 
         CallableBatchExecution cbe = new CallableBatchExecution();
         cbe.getBatchExecutionEntries().add(entry);
@@ -565,12 +565,12 @@ public class CallableBatchExecutionAssertTest {
     @Test
     public void testBatchParamKeys() {
         CallableBatchExecution.CallableBatchExecutionEntry entry = new CallableBatchExecution.CallableBatchExecutionEntry();
-        entry.getParameters().add(createSetParam(1, "foo"));
-        entry.getParameters().add(createSetParam("foo", "FOO"));
-        entry.getParameters().add(createSetNull(2, Types.VARCHAR));
-        entry.getParameters().add(createSetNull("bar", Types.DATE));
-        entry.getParameters().add(createRegisterOut(3, Types.BOOLEAN));
-        entry.getParameters().add(createRegisterOut("baz", Types.BIGINT));
+        entry.getAllParameters().add(createSetParam(1, "foo"));
+        entry.getAllParameters().add(createSetParam("foo", "FOO"));
+        entry.getAllParameters().add(createSetNull(2, Types.VARCHAR));
+        entry.getAllParameters().add(createSetNull("bar", Types.DATE));
+        entry.getAllParameters().add(createRegisterOut(3, Types.BOOLEAN));
+        entry.getAllParameters().add(createRegisterOut("baz", Types.BIGINT));
 
         CallableBatchExecution cbe = new CallableBatchExecution();
         cbe.getBatchExecutionEntries().add(entry);

@@ -8,7 +8,7 @@ import java.util.SortedSet;
  */
 public interface ParameterHolder {
 
-    SortedSet<ParameterKeyValue> getParameters();
+    SortedSet<ParameterKeyValue> getAllParameters();
 
     SortedSet<ParameterKeyValue> getSetParams();
 

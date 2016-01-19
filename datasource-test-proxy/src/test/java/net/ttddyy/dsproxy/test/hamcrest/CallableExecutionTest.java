@@ -36,10 +36,10 @@ public class CallableExecutionTest {
     @Test
     public void testParamsByName() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam("foo", "FOO"));
-        ce.getParameters().add(createSetParam("bar", "BAR"));
-        ce.getParameters().add(createSetParam("baz", "BAZ"));
-        ce.getParameters().add(createSetParam("number", 100));
+        ce.getAllParameters().add(createSetParam("foo", "FOO"));
+        ce.getAllParameters().add(createSetParam("bar", "BAR"));
+        ce.getAllParameters().add(createSetParam("baz", "BAZ"));
+        ce.getAllParameters().add(createSetParam("number", 100));
         assertThat(ce, paramsByName(hasEntry("bar", (Object) "BAR")));
         assertThat(ce, paramsByName(hasEntry("number", (Object) 100)));
     }
@@ -47,10 +47,10 @@ public class CallableExecutionTest {
     @Test
     public void testParamsByIndex() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam(1, "FOO"));
-        ce.getParameters().add(createSetParam(2, "BAR"));
-        ce.getParameters().add(createSetParam(3, "BAZ"));
-        ce.getParameters().add(createSetParam(10, 100));
+        ce.getAllParameters().add(createSetParam(1, "FOO"));
+        ce.getAllParameters().add(createSetParam(2, "BAR"));
+        ce.getAllParameters().add(createSetParam(3, "BAZ"));
+        ce.getAllParameters().add(createSetParam(10, 100));
         assertThat(ce, paramsByIndex(hasEntry(2, (Object) "BAR")));
         assertThat(ce, paramsByIndex(hasEntry(10, (Object) 100)));
     }
@@ -59,9 +59,9 @@ public class CallableExecutionTest {
     @Test
     public void testParamNames() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam("foo", "FOO"));
-        ce.getParameters().add(createSetParam("bar", "BAR"));
-        ce.getParameters().add(createSetParam("baz", "BAZ"));
+        ce.getAllParameters().add(createSetParam("foo", "FOO"));
+        ce.getAllParameters().add(createSetParam("bar", "BAR"));
+        ce.getAllParameters().add(createSetParam("baz", "BAZ"));
         assertThat(ce, paramNames(hasItem("foo")));
         assertThat(ce, paramNames(hasSize(3)));
     }
@@ -69,9 +69,9 @@ public class CallableExecutionTest {
     @Test
     public void testParamIndexes() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam(1, "FOO"));
-        ce.getParameters().add(createSetParam(2, "BAR"));
-        ce.getParameters().add(createSetParam(3, "BAZ"));
+        ce.getAllParameters().add(createSetParam(1, "FOO"));
+        ce.getAllParameters().add(createSetParam(2, "BAR"));
+        ce.getAllParameters().add(createSetParam(3, "BAZ"));
         assertThat(ce, paramIndexes(hasItem(1)));
         assertThat(ce, paramIndexes(hasSize(3)));
     }
@@ -79,8 +79,8 @@ public class CallableExecutionTest {
     @Test
     public void testParamValueByName() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam("foo", "FOO"));
-        ce.getParameters().add(createSetParam("number", 100));
+        ce.getAllParameters().add(createSetParam("foo", "FOO"));
+        ce.getAllParameters().add(createSetParam("number", 100));
 
         assertThat(ce, ParameterHolderAssertions.param("foo", is((Object) "FOO")));
 
@@ -91,8 +91,8 @@ public class CallableExecutionTest {
     @Test
     public void testParamValueByIndex() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam(1, "FOO"));
-        ce.getParameters().add(createSetParam(2, 100));
+        ce.getAllParameters().add(createSetParam(1, "FOO"));
+        ce.getAllParameters().add(createSetParam(2, 100));
 
         assertThat(ce, ParameterHolderAssertions.param(1, is((Object) "FOO")));
 

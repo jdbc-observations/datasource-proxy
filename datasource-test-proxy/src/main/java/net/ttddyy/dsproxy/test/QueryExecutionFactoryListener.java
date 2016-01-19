@@ -179,7 +179,7 @@ public class QueryExecutionFactoryListener implements QueryExecutionListener {
             keyValue = createSetParam(parameterKey, value);
         }
 
-        holder.getParameters().add(keyValue);
+        holder.getAllParameters().add(keyValue);
     }
 
     private ParameterKey getParameterKey(Object key) {

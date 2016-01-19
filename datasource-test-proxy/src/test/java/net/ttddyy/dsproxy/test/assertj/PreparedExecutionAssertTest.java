@@ -64,9 +64,9 @@ public class PreparedExecutionAssertTest {
     @Test
     public void testContainsParams() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParameters().add(createSetParam(1, "foo"));
-        pe.getParameters().add(createSetParam(2, "bar"));
-        pe.getParameters().add(createSetNull(3, Types.BIT));
+        pe.getAllParameters().add(createSetParam(1, "foo"));
+        pe.getAllParameters().add(createSetParam(2, "bar"));
+        pe.getAllParameters().add(createSetNull(3, Types.BIT));
 
         // successful call
         DataSourceProxyAssertions.assertThat(pe).containsParams(param(1, "foo"), param(2, "bar"), nullParam(3, Types.BIT));
@@ -138,8 +138,8 @@ public class PreparedExecutionAssertTest {
     @Test
     public void testContainsNullParam() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParameters().add(createSetParam(1, "foo"));
-        pe.getParameters().add(createSetNull(2, Types.VARCHAR));
+        pe.getAllParameters().add(createSetParam(1, "foo"));
+        pe.getAllParameters().add(createSetNull(2, Types.VARCHAR));
 
         // successful call
         DataSourceProxyAssertions.assertThat(pe)
@@ -226,8 +226,8 @@ public class PreparedExecutionAssertTest {
     @Test
     public void testParamIndex() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParameters().add(createSetParam(1, "foo"));
-        pe.getParameters().add(createSetNull(2, Types.VARCHAR));
+        pe.getAllParameters().add(createSetParam(1, "foo"));
+        pe.getAllParameters().add(createSetNull(2, Types.VARCHAR));
 
         // successful case
         DataSourceProxyAssertions.assertThat(pe).containsParamIndex(1);
@@ -252,8 +252,8 @@ public class PreparedExecutionAssertTest {
     @Test
     public void testParamIndexes() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParameters().add(createSetParam(1, "foo"));
-        pe.getParameters().add(createSetNull(2, Types.VARCHAR));
+        pe.getAllParameters().add(createSetParam(1, "foo"));
+        pe.getAllParameters().add(createSetNull(2, Types.VARCHAR));
 
 
         // successful case
@@ -279,9 +279,9 @@ public class PreparedExecutionAssertTest {
     @Test
     public void testContainsParamValuesExactly() {
         PreparedExecution pe = new PreparedExecution();
-        pe.getParameters().add(createSetParam(2, 100));
-        pe.getParameters().add(createSetParam(1, "foo"));
-        pe.getParameters().add(createSetNull(3, Types.VARCHAR));
+        pe.getAllParameters().add(createSetParam(2, 100));
+        pe.getAllParameters().add(createSetParam(1, "foo"));
+        pe.getAllParameters().add(createSetNull(3, Types.VARCHAR));
 
 
         // successful case

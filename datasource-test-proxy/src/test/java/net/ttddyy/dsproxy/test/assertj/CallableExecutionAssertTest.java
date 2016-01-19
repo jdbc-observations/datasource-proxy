@@ -70,8 +70,8 @@ public class CallableExecutionAssertTest {
     @Test
     public void testContainsParams() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam(1, "foo"));
-        ce.getParameters().add(createSetParam("bar", "BAR"));
+        ce.getAllParameters().add(createSetParam(1, "foo"));
+        ce.getAllParameters().add(createSetParam("bar", "BAR"));
 
         // successful call
         DataSourceProxyAssertions.assertThat(ce).containsParams(param(1, "foo"), param("bar", "BAR"));
@@ -115,12 +115,12 @@ public class CallableExecutionAssertTest {
     @Test
     public void containsParamsWithMixedParameterTypes() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam(1, "foo"));
-        ce.getParameters().add(createSetParam("foo", "FOO"));
-        ce.getParameters().add(createSetNull(2, Types.VARCHAR));
-        ce.getParameters().add(createSetNull("bar", Types.DATE));
-        ce.getParameters().add(createRegisterOut(3, Types.BOOLEAN));
-        ce.getParameters().add(createRegisterOut("baz", Types.BIGINT));
+        ce.getAllParameters().add(createSetParam(1, "foo"));
+        ce.getAllParameters().add(createSetParam("foo", "FOO"));
+        ce.getAllParameters().add(createSetNull(2, Types.VARCHAR));
+        ce.getAllParameters().add(createSetNull("bar", Types.DATE));
+        ce.getAllParameters().add(createRegisterOut(3, Types.BOOLEAN));
+        ce.getAllParameters().add(createRegisterOut("baz", Types.BIGINT));
 
         // successful call
         DataSourceProxyAssertions.assertThat(ce).containsParams(param(1, "foo"), param("foo", "FOO"),
@@ -144,8 +144,8 @@ public class CallableExecutionAssertTest {
     @Test
     public void paramKeysWithContainsParamsExactly() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam(1, "foo"));
-        ce.getParameters().add(createSetParam("bar", "BAR"));
+        ce.getAllParameters().add(createSetParam(1, "foo"));
+        ce.getAllParameters().add(createSetParam("bar", "BAR"));
 
         // successful case
         DataSourceProxyAssertions.assertThat(ce).containsParamsExactly(param(1, "foo"), param("bar", "BAR"));
@@ -191,8 +191,8 @@ public class CallableExecutionAssertTest {
     @Test
     public void paramKeysWithContainsParamsExactlyForSetNullParameters() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetNull(1, Types.VARCHAR));
-        ce.getParameters().add(createSetNull("bar", Types.DATE));
+        ce.getAllParameters().add(createSetNull(1, Types.VARCHAR));
+        ce.getAllParameters().add(createSetNull("bar", Types.DATE));
 
         // successful case
         DataSourceProxyAssertions.assertThat(ce).containsParamsExactly(nullParam(1, Types.VARCHAR), nullParam("bar", Types.DATE));
@@ -237,8 +237,8 @@ public class CallableExecutionAssertTest {
     @Test
     public void paramKeysWithContainsParamsExactlyForRegisterOutParameters() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createRegisterOut(1, Types.BOOLEAN));
-        ce.getParameters().add(createRegisterOut("bar", Types.DOUBLE));
+        ce.getAllParameters().add(createRegisterOut(1, Types.BOOLEAN));
+        ce.getAllParameters().add(createRegisterOut("bar", Types.DOUBLE));
 
         // successful case
         DataSourceProxyAssertions.assertThat(ce).containsParamsExactly(outParam(1, Types.BOOLEAN), outParam("bar", Types.DOUBLE));
@@ -264,12 +264,12 @@ public class CallableExecutionAssertTest {
     @Test
     public void containsParamNames() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam(1, "foo"));
-        ce.getParameters().add(createSetParam("foo", "FOO"));
-        ce.getParameters().add(createSetNull(2, Types.VARCHAR));
-        ce.getParameters().add(createSetNull("bar", Types.DATE));
-        ce.getParameters().add(createRegisterOut(3, Types.BOOLEAN));
-        ce.getParameters().add(createRegisterOut("baz", Types.BIGINT));
+        ce.getAllParameters().add(createSetParam(1, "foo"));
+        ce.getAllParameters().add(createSetParam("foo", "FOO"));
+        ce.getAllParameters().add(createSetNull(2, Types.VARCHAR));
+        ce.getAllParameters().add(createSetNull("bar", Types.DATE));
+        ce.getAllParameters().add(createRegisterOut(3, Types.BOOLEAN));
+        ce.getAllParameters().add(createRegisterOut("baz", Types.BIGINT));
 
         // successful case
         DataSourceProxyAssertions.assertThat(ce).containsParamNames("foo", "bar", "baz");
@@ -287,12 +287,12 @@ public class CallableExecutionAssertTest {
     @Test
     public void containsParamName() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam(1, "foo"));
-        ce.getParameters().add(createSetParam("foo", "FOO"));
-        ce.getParameters().add(createSetNull(2, Types.VARCHAR));
-        ce.getParameters().add(createSetNull("bar", Types.DATE));
-        ce.getParameters().add(createRegisterOut(3, Types.BOOLEAN));
-        ce.getParameters().add(createRegisterOut("baz", Types.BIGINT));
+        ce.getAllParameters().add(createSetParam(1, "foo"));
+        ce.getAllParameters().add(createSetParam("foo", "FOO"));
+        ce.getAllParameters().add(createSetNull(2, Types.VARCHAR));
+        ce.getAllParameters().add(createSetNull("bar", Types.DATE));
+        ce.getAllParameters().add(createRegisterOut(3, Types.BOOLEAN));
+        ce.getAllParameters().add(createRegisterOut("baz", Types.BIGINT));
 
         // successful case
         DataSourceProxyAssertions.assertThat(ce).containsParamName("foo");
@@ -311,12 +311,12 @@ public class CallableExecutionAssertTest {
     @Test
     public void paramKeyIndexes() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam(1, "foo"));
-        ce.getParameters().add(createSetParam("foo", "FOO"));
-        ce.getParameters().add(createSetNull(2, Types.VARCHAR));
-        ce.getParameters().add(createSetNull("bar", Types.DATE));
-        ce.getParameters().add(createRegisterOut(3, Types.BOOLEAN));
-        ce.getParameters().add(createRegisterOut("baz", Types.BIGINT));
+        ce.getAllParameters().add(createSetParam(1, "foo"));
+        ce.getAllParameters().add(createSetParam("foo", "FOO"));
+        ce.getAllParameters().add(createSetNull(2, Types.VARCHAR));
+        ce.getAllParameters().add(createSetNull("bar", Types.DATE));
+        ce.getAllParameters().add(createRegisterOut(3, Types.BOOLEAN));
+        ce.getAllParameters().add(createRegisterOut("baz", Types.BIGINT));
 
         // successful case
         DataSourceProxyAssertions.assertThat(ce).containsParamIndexes(1, 2, 3);
@@ -336,12 +336,12 @@ public class CallableExecutionAssertTest {
     @Test
     public void paramKeyIndex() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam(1, "foo"));
-        ce.getParameters().add(createSetParam("foo", "FOO"));
-        ce.getParameters().add(createSetNull(2, Types.VARCHAR));
-        ce.getParameters().add(createSetNull("bar", Types.DATE));
-        ce.getParameters().add(createRegisterOut(3, Types.BOOLEAN));
-        ce.getParameters().add(createRegisterOut("baz", Types.BIGINT));
+        ce.getAllParameters().add(createSetParam(1, "foo"));
+        ce.getAllParameters().add(createSetParam("foo", "FOO"));
+        ce.getAllParameters().add(createSetNull(2, Types.VARCHAR));
+        ce.getAllParameters().add(createSetNull("bar", Types.DATE));
+        ce.getAllParameters().add(createRegisterOut(3, Types.BOOLEAN));
+        ce.getAllParameters().add(createRegisterOut("baz", Types.BIGINT));
 
         // successful case
         DataSourceProxyAssertions.assertThat(ce).containsParamIndex(1);
@@ -361,12 +361,12 @@ public class CallableExecutionAssertTest {
     @Test
     public void containsParamKeys() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam(1, "foo"));
-        ce.getParameters().add(createSetParam("foo", "FOO"));
-        ce.getParameters().add(createSetNull(2, Types.VARCHAR));
-        ce.getParameters().add(createSetNull("bar", Types.DATE));
-        ce.getParameters().add(createRegisterOut(3, Types.BOOLEAN));
-        ce.getParameters().add(createRegisterOut("baz", Types.BIGINT));
+        ce.getAllParameters().add(createSetParam(1, "foo"));
+        ce.getAllParameters().add(createSetParam("foo", "FOO"));
+        ce.getAllParameters().add(createSetNull(2, Types.VARCHAR));
+        ce.getAllParameters().add(createSetNull("bar", Types.DATE));
+        ce.getAllParameters().add(createRegisterOut(3, Types.BOOLEAN));
+        ce.getAllParameters().add(createRegisterOut("baz", Types.BIGINT));
 
         // successful case
         DataSourceProxyAssertions.assertThat(ce).containsParamKeys(1);
@@ -395,12 +395,12 @@ public class CallableExecutionAssertTest {
     @Test
     public void containsParamKey() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam(1, "foo"));
-        ce.getParameters().add(createSetParam("foo", "FOO"));
-        ce.getParameters().add(createSetNull(2, Types.VARCHAR));
-        ce.getParameters().add(createSetNull("bar", Types.DATE));
-        ce.getParameters().add(createRegisterOut(3, Types.BOOLEAN));
-        ce.getParameters().add(createRegisterOut("baz", Types.BIGINT));
+        ce.getAllParameters().add(createSetParam(1, "foo"));
+        ce.getAllParameters().add(createSetParam("foo", "FOO"));
+        ce.getAllParameters().add(createSetNull(2, Types.VARCHAR));
+        ce.getAllParameters().add(createSetNull("bar", Types.DATE));
+        ce.getAllParameters().add(createRegisterOut(3, Types.BOOLEAN));
+        ce.getAllParameters().add(createRegisterOut("baz", Types.BIGINT));
 
         // successful case
         DataSourceProxyAssertions.assertThat(ce).containsParamKey(1);
@@ -437,12 +437,12 @@ public class CallableExecutionAssertTest {
     @Test
     public void testContainsParam() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam(1, "foo"));
-        ce.getParameters().add(createSetParam("foo", "FOO"));
-        ce.getParameters().add(createSetNull(2, Types.VARCHAR));
-        ce.getParameters().add(createSetNull("bar", Types.DATE));
-        ce.getParameters().add(createRegisterOut(3, Types.BOOLEAN));
-        ce.getParameters().add(createRegisterOut("baz", Types.BIGINT));
+        ce.getAllParameters().add(createSetParam(1, "foo"));
+        ce.getAllParameters().add(createSetParam("foo", "FOO"));
+        ce.getAllParameters().add(createSetNull(2, Types.VARCHAR));
+        ce.getAllParameters().add(createSetNull("bar", Types.DATE));
+        ce.getAllParameters().add(createRegisterOut(3, Types.BOOLEAN));
+        ce.getAllParameters().add(createRegisterOut("baz", Types.BIGINT));
 
         // successful call
         DataSourceProxyAssertions.assertThat(ce).containsParam(1, "foo").containsParam("foo", "FOO");
@@ -544,12 +544,12 @@ public class CallableExecutionAssertTest {
     @Test
     public void testContainsNullParam() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam(1, "foo"));
-        ce.getParameters().add(createSetParam("foo", "FOO"));
-        ce.getParameters().add(createSetNull(2, Types.VARCHAR));
-        ce.getParameters().add(createSetNull("bar", Types.DATE));
-        ce.getParameters().add(createRegisterOut(3, Types.BOOLEAN));
-        ce.getParameters().add(createRegisterOut("baz", Types.BIGINT));
+        ce.getAllParameters().add(createSetParam(1, "foo"));
+        ce.getAllParameters().add(createSetParam("foo", "FOO"));
+        ce.getAllParameters().add(createSetNull(2, Types.VARCHAR));
+        ce.getAllParameters().add(createSetNull("bar", Types.DATE));
+        ce.getAllParameters().add(createRegisterOut(3, Types.BOOLEAN));
+        ce.getAllParameters().add(createRegisterOut("baz", Types.BIGINT));
 
         // successful call
         DataSourceProxyAssertions.assertThat(ce)
@@ -643,14 +643,14 @@ public class CallableExecutionAssertTest {
     @Test
     public void testContainsOutParam() {
         CallableExecution ce = new CallableExecution();
-        ce.getParameters().add(createSetParam(1, "foo"));
-        ce.getParameters().add(createSetParam("foo", "FOO"));
-        ce.getParameters().add(createSetNull(2, Types.VARCHAR));
-        ce.getParameters().add(createSetNull("bar", Types.DATE));
-        ce.getParameters().add(createRegisterOut(3, Types.BOOLEAN));
-        ce.getParameters().add(createRegisterOut(4, JDBCType.BIGINT));
-        ce.getParameters().add(createRegisterOut("baz", Types.DATE));
-        ce.getParameters().add(createRegisterOut("qux", JDBCType.VARCHAR));
+        ce.getAllParameters().add(createSetParam(1, "foo"));
+        ce.getAllParameters().add(createSetParam("foo", "FOO"));
+        ce.getAllParameters().add(createSetNull(2, Types.VARCHAR));
+        ce.getAllParameters().add(createSetNull("bar", Types.DATE));
+        ce.getAllParameters().add(createRegisterOut(3, Types.BOOLEAN));
+        ce.getAllParameters().add(createRegisterOut(4, JDBCType.BIGINT));
+        ce.getAllParameters().add(createRegisterOut("baz", Types.DATE));
+        ce.getAllParameters().add(createRegisterOut("qux", JDBCType.VARCHAR));
 
         // successful call
         DataSourceProxyAssertions.assertThat(ce)

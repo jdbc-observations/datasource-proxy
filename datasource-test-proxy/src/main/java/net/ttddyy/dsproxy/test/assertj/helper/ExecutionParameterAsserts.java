@@ -89,7 +89,7 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
 
     public void assertParameterKeys(ParameterHolder parameterHolder, ExecutionParameters params, boolean isCallable) {
 
-        SortedSet<ParameterKey> actualAllKeys = toParamKeys(parameterHolder.getParameters());
+        SortedSet<ParameterKey> actualAllKeys = toParamKeys(parameterHolder.getAllParameters());
 
         // first check any param key only items
         SortedSet<ParameterKey> expectedParamKeyOnlyKeys = getExpectedParamExecutionKeys(params, ExecutionParameter.ParamKeyOnlyExecution.class);
@@ -98,7 +98,7 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
 //            return;
         }
 
-        SortedSet<ParameterKeyValue> actualParamValues = parameterHolder.getParameters();
+        SortedSet<ParameterKeyValue> actualParamValues = parameterHolder.getAllParameters();
         SortedSet<ParameterKey> actualSetParamKeys = toParamKeys(filterBy(actualParamValues, ParameterKeyValue.OperationType.SET_PARAM));
         SortedSet<ParameterKey> actualSetNullParamKeys = toParamKeys(filterBy(actualParamValues, ParameterKeyValue.OperationType.SET_NULL));
         SortedSet<ParameterKey> actualOutParamKeys = toParamKeys(filterBy(actualParamValues, ParameterKeyValue.OperationType.REGISTER_OUT));
@@ -302,7 +302,7 @@ public class ExecutionParameterAsserts extends AbstractHelperAsserts {
 
     private <T extends ParameterHolder> SortedMap<String, Object> getAllParamsForDisplay(T entry) {
         SortedMap<String, Object> sorted = new TreeMap<String, Object>();
-        for (ParameterKeyValue keyValue : entry.getParameters()) {
+        for (ParameterKeyValue keyValue : entry.getAllParameters()) {
             sorted.put(keyValue.getKey().getKeyAsString(), keyValue.getDisplayValue());  // display {key=val, key2=val2}
         }
 
