@@ -7,6 +7,7 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 
+import java.sql.SQLType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -165,7 +166,11 @@ public class QueryExecutionFactoryListener implements QueryExecutionListener {
         ParameterKeyValue keyValue;
         if (ParameterSetOperation.isSetNullParameterOperation(setOperation)) {
             ParameterKey parameterKey = getParameterKey(key);
-            keyValue = createSetNull(parameterKey, value);
+            if (value instanceof Integer) {
+                keyValue = createSetNull(parameterKey, (Integer) value);
+            } else {
+                keyValue = createSetNull(parameterKey, (SQLType) value);
+            }
         } else if (ParameterSetOperation.isRegisterOutParameterOperation(setOperation)) {
             ParameterKey parameterKey = getParameterKey(key);
             keyValue = createRegisterOut(parameterKey, value);

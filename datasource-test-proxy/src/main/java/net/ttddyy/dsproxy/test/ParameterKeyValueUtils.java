@@ -1,7 +1,10 @@
 package net.ttddyy.dsproxy.test;
 
+import net.ttddyy.dsproxy.listener.RegisterOutParameterValueConverter;
+import net.ttddyy.dsproxy.listener.SetNullParameterValueConverter;
 import net.ttddyy.dsproxy.proxy.ParameterKey;
 
+import java.sql.SQLType;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,8 +16,11 @@ import java.util.TreeSet;
  */
 public class ParameterKeyValueUtils {
 
+    private static SetNullParameterValueConverter setNullValueConverter = new SetNullParameterValueConverter();
+    private static RegisterOutParameterValueConverter registerOutParameterValueConverter = new RegisterOutParameterValueConverter();
+
     public static ParameterKeyValue createSetParam(int index, Object value) {
-        return new ParameterKeyValue(index, value, ParameterKeyValue.OperationType.SET_PARAM);
+        return new ParameterKeyValue(index, value, value != null ? value.toString() : null, ParameterKeyValue.OperationType.SET_PARAM);
     }
 
     public static ParameterKeyValue createSetParam(String name, Object value) {
@@ -25,16 +31,31 @@ public class ParameterKeyValueUtils {
         return new ParameterKeyValue(key, value, ParameterKeyValue.OperationType.SET_PARAM);
     }
 
-    public static ParameterKeyValue createSetNull(int index, Object value) {
-        return new ParameterKeyValue(index, value, ParameterKeyValue.OperationType.SET_NULL);
+    public static ParameterKeyValue createSetNull(int index, SQLType sqlType) {
+        return new ParameterKeyValue(index, sqlType, sqlType.getName(), ParameterKeyValue.OperationType.SET_NULL);
     }
 
-    public static ParameterKeyValue createSetNull(String name, Object value) {
-        return new ParameterKeyValue(name, value, ParameterKeyValue.OperationType.SET_NULL);
+    public static ParameterKeyValue createSetNull(int index, int sqlType) {
+        String displayValue = setNullValueConverter.getDisplayValue(sqlType);
+        return new ParameterKeyValue(index, sqlType, displayValue, ParameterKeyValue.OperationType.SET_NULL);
     }
 
-    public static ParameterKeyValue createSetNull(ParameterKey key, Object value) {
-        return new ParameterKeyValue(key, value, ParameterKeyValue.OperationType.SET_NULL);
+    public static ParameterKeyValue createSetNull(String name, SQLType sqlType) {
+        return new ParameterKeyValue(name, sqlType, sqlType.getName(), ParameterKeyValue.OperationType.SET_NULL);
+    }
+
+    public static ParameterKeyValue createSetNull(String name, int sqlType) {
+        String displayValue = setNullValueConverter.getDisplayValue(sqlType);
+        return new ParameterKeyValue(name, sqlType, displayValue, ParameterKeyValue.OperationType.SET_NULL);
+    }
+
+    public static ParameterKeyValue createSetNull(ParameterKey key, SQLType sqlType) {
+        return new ParameterKeyValue(key, sqlType, sqlType.getName(), ParameterKeyValue.OperationType.SET_NULL);
+    }
+
+    public static ParameterKeyValue createSetNull(ParameterKey key, int sqlType) {
+        String displayValue = setNullValueConverter.getDisplayValue(sqlType);
+        return new ParameterKeyValue(key, sqlType, displayValue, ParameterKeyValue.OperationType.SET_NULL);
     }
 
     public static ParameterKeyValue createRegisterOut(int index, Object value) {
@@ -90,7 +111,7 @@ public class ParameterKeyValueUtils {
     public static <T> Map<Integer, T> toKeyIndexMap(SortedSet<ParameterKeyValue> keyValues) {
         Map<Integer, T> result = new LinkedHashMap<Integer, T>();
         for (ParameterKeyValue keyValue : keyValues) {
-            result.put(keyValue.getKey().getIndex(), (T)keyValue.getValue());
+            result.put(keyValue.getKey().getIndex(), (T) keyValue.getValue());
         }
         return result;
     }
@@ -99,7 +120,7 @@ public class ParameterKeyValueUtils {
     public static <T> Map<String, T> toKeyNameMap(SortedSet<ParameterKeyValue> keyValues) {
         Map<String, T> result = new LinkedHashMap<String, T>();
         for (ParameterKeyValue keyValue : keyValues) {
-            result.put(keyValue.getKey().getName(), (T)keyValue.getValue());
+            result.put(keyValue.getKey().getName(), (T) keyValue.getValue());
         }
         return result;
     }

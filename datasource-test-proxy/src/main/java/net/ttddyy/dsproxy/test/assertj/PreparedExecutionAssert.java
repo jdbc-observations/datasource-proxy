@@ -1,6 +1,5 @@
 package net.ttddyy.dsproxy.test.assertj;
 
-import net.ttddyy.dsproxy.listener.SetNullParameterValueConverter;
 import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.test.ParameterKeyValue;
 import net.ttddyy.dsproxy.test.PreparedExecution;
@@ -20,7 +19,6 @@ import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toParamKeyMap;
  */
 public class PreparedExecutionAssert extends AbstractExecutionAssert<PreparedExecutionAssert, PreparedExecution> {
 
-    private SetNullParameterValueConverter setNullValueConverter = new SetNullParameterValueConverter();
     private ExecutionParameterAsserts parameterAsserts = new ExecutionParameterAsserts(this.info);
 
     public PreparedExecutionAssert(PreparedExecution actual) {
@@ -136,14 +134,7 @@ public class PreparedExecutionAssert extends AbstractExecutionAssert<PreparedExe
 
         for (ParameterKeyValue keyValue : keyValues) {
             int index = keyValue.getKey().getIndex();
-            Object value;
-            if (keyValue.isSetNull()) {
-                Integer sqlType = (Integer) keyValue.getValue();
-                value = this.setNullValueConverter.getDisplayValue(sqlType);
-            } else {
-                value = keyValue.getValue();
-            }
-            actualValueMapToDisplay.put(index, value);
+            actualValueMapToDisplay.put(index, keyValue.getDisplayValue());
         }
         return actualValueMapToDisplay.toString();
     }
@@ -195,8 +186,7 @@ public class PreparedExecutionAssert extends AbstractExecutionAssert<PreparedExe
             ParameterKey actualKey = actualKeyValue.getKey();
             if (!expected.containsKey(actualKey)) {  // map may contains value=null, thus cannot compare the result of get with null
                 // expected doesn't have the index.
-                Object value = actualKeyValue.isSetNull() ? setNullValueConverter.getDisplayValue((Integer) actualKeyValue.getValue()) : actualKeyValue.getValue();
-                extra.put(actualKey.getIndex(), value);
+                extra.put(actualKey.getIndex(), actualKeyValue.getDisplayValue());
             }
         }
         return extra.toString();
