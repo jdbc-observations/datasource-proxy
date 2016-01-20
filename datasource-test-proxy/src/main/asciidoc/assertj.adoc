@@ -1,0 +1,226 @@
+= Assert with AssertJ
+
+== DataSource
+
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+    ProxyTestDataSource ds = new ProxyTestDataSource();
+    // perform logic with datasource...
+
+    // check num of executions
+    assertThat(ds).hasExecutionCount(3);
+    assertThat(ds).hasStatementCount(3);
+    assertThat(ds).hasBatchStatementCount(3);
+    assertThat(ds).hasStatementOrBatchStatementCount(3);
+    assertThat(ds).hasPreparedCount(3);
+    assertThat(ds).hasBatchPreparedCount(3);
+    assertThat(ds).hasPreparedOrBatchPreparedCount(3);
+    assertThat(ds).hasCallableCount(3);
+    assertThat(ds).hasBatchCallableCount(3);
+    assertThat(ds).hasCallableOrBatchCallableCount(3);
+
+    // check num of queries
+    assertThat(ds).hasTotalQueryCount(3);
+    assertThat(ds).hasSelectCount(3);
+    assertThat(ds).hasInsertCount(3);
+    assertThat(ds).hasUpdateCount(3);
+    assertThat(ds).hasDeleteCount(3);
+    assertThat(ds).hasOtherCount(3);
+
+
+----
+
+== QueryExecutions
+
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+    ProxyTestDataSource ds = new ProxyTestDataSource();
+    // perform logic with datasource...
+
+    QueryExecution qe = ds.getQueryExecutions(0);
+
+    assertThat(qe).isSuccess();
+    assertThat(qe).isFailure();
+
+    assertThat(qe).isBatch();
+    assertThat(qe).isStatement();
+    assertThat(qe).isBatchStatement();
+    assertThat(qe).isStatementOrBatchStatement();
+    assertThat(qe).isPrepared();
+    assertThat(qe).isBatchPrepared();
+    assertThat(qe).isPreparedOrBatchPrepared();
+    assertThat(qe).isCallable();
+    assertThat(qe).isBatchCallable();
+    assertThat(qe).isCallableOrBatchCallable();
+
+    assertThat(qe).asStatement();       // follows StatementExecutionAssert
+    assertThat(qe).asBatchStatement();  // follows StatementBatchExecutionAssert
+    assertThat(qe).asPrepared();        // follows PreparedExecutionAssert
+    assertThat(qe).asBatchPrepared();   // follows PreparedBatchExecutionAssert
+    assertThat(qe).asCallable();        // follows CallableExecutionAssert
+    assertThat(qe).asBatchCallable();   // follows CallableBatchExecutionAssert
+
+    assertThat(qe).asStatement().isSelect();
+    assertThat(qe).asPrepared().containsParam(1, "value").containsNullParam(1, Types.INTEGER);
+----
+
+== Statement
+
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+    ProxyTestDataSource ds = new ProxyTestDataSource();
+    // perform logic with datasource...
+
+    StatementExecution se = ds.getFirstStatement();
+
+    assertThat(se).isSuccess();
+    assertThat(se).isFailure();
+
+    assertThat(se.getQuery()).isEqualTo("...");  // string assertion
+    assertThat(se).isSelect();
+    assertThat(se).isInsert();
+    assertThat(se).isUpdate();
+    assertThat(se).isDelete();
+----
+
+
+== Batch Statement
+
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+    ProxyTestDataSource ds = new ProxyTestDataSource();
+    // perform logic with datasource...
+
+    StatementBatchExecution sbe = ds.getFirstBatchStatement();
+
+    assertThat(sbe).isSuccess();
+    assertThat(sbe).isFailure();
+
+    assertThat(sbe).hasBatchSize(3);
+
+    // check batch queries
+    assertThat(sbe.getQueries().get(0)).isEqualTo("...");
+    assertThat(sbe.getQueries()).query(atIndex(0)).isEqualTo("...");  // string assertion
+    assertThat(ds.getFirstBatchStatement()).queries().contains("ABC", atIndex(3));  // list assertion
+
+    assertThat(sbe).contains(QueryType.SELECT, atIndex(0));
+    assertThat(sbe).contains(QueryType.SELECT, 0);
+
+    assertThat(sbe).hasInsertCount(2);  // num of insert statements
+----
+
+== Prepared Statement
+
+
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+    ProxyTestDataSource ds = new ProxyTestDataSource();
+    // perform logic with datasource...
+
+    PreparedExecution pe = ds.getFirstPrepared();
+
+    assertThat(pe).isSuccess();
+    assertThat(pe).isFailure();
+
+    assertThat(pe.getQuery()).isEqualTo("...");  // string assertion
+
+    assertThat(pe).containsParam(1, "foo").containsParam(2, "bar").containsNullParam(3, Types.INTEGER);
+    assertThat(pe).containsParams(param(1, "foo"), param(2, "bar"), nullParam(3));
+    assertThat(pe).containsParamIndex(2);
+    assertThat(pe).containsParamIndexes(1, 2, 3);
+    assertThat(pe).containsParamValuesExactly("value", 100, null, 12);
+----
+
+== Batch Prepared Statement
+
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+    ProxyTestDataSource ds = new ProxyTestDataSource();
+    // perform logic with datasource...
+
+    PreparedBatchExecution pbe = ds.getFirstBatchPrepared();
+
+    assertThat(pbe).isSuccess();
+    assertThat(pbe).isFailure();
+
+    assertThat(pbe.getQuery()).isEqualTo("...");  // string assertion
+
+    assertThat(pbe).hasBatchSize(3);
+
+    assertThat(pbe).batch(0, containsParamIndexes(3));
+    assertThat(pbe).batch(0, containsParamIndexes(1, 2, 3, 4));
+
+    assertThat(pbe).batch(0, containsParams(param(1, "foo"), param(2, 100), nullParam(3), nullParam(4, Types.VARCHAR));
+    assertThat(pbe).batch(0, containsParams(param(2, 100)));
+    assertThat(pbe).batch(0, containsParamsExactly(param(1, "foo"), param(2, 100), nullParam(3), nullParam(4, Types.VARCHAR)));
+----
+
+
+== Callable Statement
+
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+    ProxyTestDataSource ds = new ProxyTestDataSource();
+    // perform logic with datasource...
+
+    CallableExecution ce = ds.getFirstCallable();
+
+    assertThat(ce).isSuccess();
+    assertThat(ce).isFailure();
+
+    assertThat(ce.getQuery()).isEqualTo("...");  // string assertion
+
+    assertThat(ce).containsParam(1, "value").containsParam("key", "value")
+                  .containsNullParam(10).containsNullParam("bar").containsNullParam(11, Types.INTEGER)
+                  .containsOutParam(20, Types.INTEGER).containsOutParam(21, JDBCType.INTEGER);
+
+    assertThat(ce).containsParamIndex(1).containsParamName("foo").containsParamKey(2).containsParamKey("bar");
+    assertThat(ce).containsParamIndexes(1, 2).containsParamNames("foo", "bar").containsParamKeys("baz", 3);
+
+    assertThat(ce).containsParams(param("key", "value"), param(1, "value"),
+                                  nullParam("foo"), nullParam(2, Types.INTEGER),
+                                  outParam("outKey", Types.INTEGER));
+
+    assertThat(ce).containsParamsExactly(param("key", "value"), param(1, "value"),
+                                         nullParam("foo"), nullParam(2, Types.INTEGER),
+                                         outParam("outKey", Types.INTEGER));
+----
+
+== Batch Callable Statement
+
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+    ProxyTestDataSource ds = new ProxyTestDataSource();
+    // perform logic with datasource...
+
+    CallableBatchExecution cbe = ds.getFirstBatchCallable();
+
+    assertThat(cbe).isSuccess();
+    assertThat(cbe).isFailure();
+
+    assertThat(cbe.getQuery()).isEqualTo("...");  // string assertion
+
+    assertThat(cbe).hasBatchSize(3);
+
+    assertThat(cbe).batch(0, containsParams(param("key", "value"), param(1, "value"),
+                                            nullParam("key-null", Types.INTEGER), nullParam(10),
+                                            outParam("key-out", Types.INTEGER),
+                                            outParam(10, JDBCType.INTEGER)));
+
+    assertThat(cbe).batch(0, containsParamsExactly(param("key", "value"), param(1, "value"),
+                                                   nullParam("key-null", Types.INTEGER), nullParam(10),
+                                                   outParam("key-out", Types.INTEGER),
+                                                   outParam(10, JDBCType.INTEGER)));
+
+    assertThat(cbe).batch(0, containsParamIndexes(1, 2));
+    assertThat(cbe).batch(0, containsParamNames("key", "key2"));
+    assertThat(cbe).batch(0, containsParamKeys("key", 1));
+----
