@@ -12,8 +12,6 @@ import java.util.List;
  */
 public class ProxyTestDataSource extends ProxyDataSource {
 
-    // TODO: add clear() or reset() method
-
     private QueryExecutionFactoryListener queryExecutionFactoryListener = new QueryExecutionFactoryListener();
 
 
@@ -120,13 +118,17 @@ public class ProxyTestDataSource extends ProxyDataSource {
 
     private <T extends QueryExecution> T getFirstQueryExecution(Class<T> classToFilter) {
         List<T> filtered = getQueryExecutionsFilteredBy(classToFilter);
-        // TODO: if there is no element
+        if (filtered.isEmpty()) {
+            return null;
+        }
         return filtered.get(0);
     }
 
     private <T extends QueryExecution> T getLastQueryExecution(Class<T> classToFilter) {
         List<T> filtered = getQueryExecutionsFilteredBy(classToFilter);
-        // TODO: if there is no element
+        if (filtered.isEmpty()) {
+            return null;
+        }
         return filtered.get(filtered.size() - 1);
     }
 

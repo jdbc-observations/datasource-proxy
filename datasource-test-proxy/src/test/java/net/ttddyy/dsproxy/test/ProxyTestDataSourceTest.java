@@ -138,6 +138,36 @@ public class ProxyTestDataSourceTest {
     }
 
     @Test
+    public void testGetExecutionsWithEmptyExecution() {
+        ProxyTestDataSource ds = new ProxyTestDataSource();
+
+        assertThat(ds.getStatements()).hasSize(0);
+        assertThat(ds.getFirstStatement()).isNull();
+        assertThat(ds.getLastStatement()).isNull();
+
+        assertThat(ds.getBatchStatements()).hasSize(0);
+        assertThat(ds.getFirstBatchStatement()).isNull();
+        assertThat(ds.getLastBatchStatement()).isNull();
+
+        assertThat(ds.getPrepareds()).hasSize(0);
+        assertThat(ds.getFirstPrepared()).isNull();
+        assertThat(ds.getLastPrepared()).isNull();
+
+        assertThat(ds.getBatchPrepareds()).hasSize(0);
+        assertThat(ds.getFirstBatchPrepared()).isNull();
+        assertThat(ds.getLastBatchPrepared()).isNull();
+
+        assertThat(ds.getCallables()).hasSize(0);
+        assertThat(ds.getFirstCallable()).isNull();
+        assertThat(ds.getLastCallable()).isNull();
+
+        assertThat(ds.getBatchCallables()).hasSize(0);
+        assertThat(ds.getFirstBatchCallable()).isNull();
+        assertThat(ds.getLastBatchCallable()).isNull();
+
+    }
+
+    @Test
     public void reset() throws Exception {
         ProxyTestDataSource ds = new ProxyTestDataSource(this.databaseTestRule.dataSource);
 
