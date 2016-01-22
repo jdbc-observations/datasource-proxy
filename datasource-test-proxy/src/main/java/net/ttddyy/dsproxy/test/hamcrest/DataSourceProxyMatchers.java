@@ -1012,40 +1012,40 @@ public class DataSourceProxyMatchers {
      * Matcher to examine parameter by index is {@code setNull} operation with given {@link java.sql.Types}.
      * <p>
      * Example:
-     * <pre> assertThat(parameterByIndexHolder, paramSetNull(1, is(Types.VARCHAR))); </pre>
+     * <pre> assertThat(parameterByIndexHolder, nullParam(1, is(Types.VARCHAR))); </pre>
      */
-    public static Matcher<? super ParameterHolder> paramSetNull(int index, int sqlType) {
-        return ParameterHolderAssertions.paramSetNull(index, sqlType);
+    public static Matcher<? super ParameterHolder> nullParam(int index, int sqlType) {
+        return ParameterHolderAssertions.nullParam(index, sqlType);
     }
 
     /**
      * Matcher to examine parameter by name is {@code setNull} operation with given {@link java.sql.Types}.
      * <p>
      * Example:
-     * <pre> assertThat(parameterByNameHolder, paramSetNull("foo", is(Types.VARCHAR))); </pre>
+     * <pre> assertThat(parameterByNameHolder, nullParam("foo", is(Types.VARCHAR))); </pre>
      */
-    public static Matcher<? super ParameterHolder> paramSetNull(String name, int sqlType) {
-        return ParameterHolderAssertions.paramSetNull(name, sqlType);
+    public static Matcher<? super ParameterHolder> nullParam(String name, int sqlType) {
+        return ParameterHolderAssertions.nullParam(name, sqlType);
     }
 
     /**
      * Matcher to examine parameter by name is {@code setNull} operation.
      * <p>
      * Example:
-     * <pre> assertThat(parameterByNameHolder, paramSetNull("foo")); </pre>
+     * <pre> assertThat(parameterByNameHolder, nullParam("foo")); </pre>
      */
-    public static Matcher<? super ParameterHolder> paramSetNull(String name) {
-        return ParameterHolderAssertions.paramSetNull(name);
+    public static Matcher<? super ParameterHolder> nullParam(String name) {
+        return ParameterHolderAssertions.nullParam(name);
     }
 
     /**
      * Matcher to examine parameter by index is {@code setNull} operation.
      * <p>
      * Example:
-     * <pre> assertThat(parameterByIndexHolder, paramSetNull(1)); </pre>
+     * <pre> assertThat(parameterByIndexHolder, nullParam(1)); </pre>
      */
-    public static Matcher<? super ParameterHolder> paramSetNull(int index) {
-        return ParameterHolderAssertions.paramSetNull(index);
+    public static Matcher<? super ParameterHolder> nullParam(int index) {
+        return ParameterHolderAssertions.nullParam(index);
     }
 
 

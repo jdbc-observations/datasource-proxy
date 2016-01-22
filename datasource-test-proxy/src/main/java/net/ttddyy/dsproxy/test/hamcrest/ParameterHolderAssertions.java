@@ -544,9 +544,9 @@ public class ParameterHolderAssertions {
      * Matcher to examine parameter by index is {@code setNull} operation with given {@link java.sql.Types}.
      * <p>
      * Example:
-     * <pre> assertThat(parameterByIndexHolder, paramSetNull(1, is(Types.VARCHAR))); </pre>
+     * <pre> assertThat(parameterByIndexHolder, nullParam(1, is(Types.VARCHAR))); </pre>
      */
-    public static Matcher<? super ParameterHolder> paramSetNull(final int index, int sqlType) {
+    public static Matcher<? super ParameterHolder> nullParam(final int index, int sqlType) {
         SqlTypeMatcher sqlTypeMatcher = new SqlTypeMatcher(sqlType, "NULL[", "]");
         return new ParameterHolderMatcher.ParameterByIndexMatcher<Integer>(sqlTypeMatcher) {
             @Override
@@ -572,9 +572,9 @@ public class ParameterHolderAssertions {
      * Matcher to examine parameter by name is {@code setNull} operation with given {@link java.sql.Types}.
      * <p>
      * Example:
-     * <pre> assertThat(parameterByNameHolder, paramSetNull("foo", is(Types.VARCHAR))); </pre>
+     * <pre> assertThat(parameterByNameHolder, nullParam("foo", is(Types.VARCHAR))); </pre>
      */
-    public static Matcher<? super ParameterHolder> paramSetNull(final String name, int sqlType) {
+    public static Matcher<? super ParameterHolder> nullParam(final String name, int sqlType) {
         SqlTypeMatcher sqlTypeMatcher = new SqlTypeMatcher(sqlType, "NULL[", "]");
         return new ParameterHolderMatcher.ParameterByNameMatcher<Integer>(sqlTypeMatcher) {
             @Override
@@ -600,9 +600,9 @@ public class ParameterHolderAssertions {
      * Matcher to examine parameter by name is {@code setNull} operation.
      * <p>
      * Example:
-     * <pre> assertThat(parameterByNameHolder, paramSetNull("foo")); </pre>
+     * <pre> assertThat(parameterByNameHolder, nullParam("foo")); </pre>
      */
-    public static Matcher<? super ParameterHolder> paramSetNull(final String name) {
+    public static Matcher<? super ParameterHolder> nullParam(final String name) {
         EmptyParameterHolderMatcher emptyMatcher = new EmptyParameterHolderMatcher();
         return new ParameterHolderMatcher.ParameterByNameMatcher<ParameterHolder>(emptyMatcher) {
             @Override
@@ -628,9 +628,9 @@ public class ParameterHolderAssertions {
      * Matcher to examine parameter by index is {@code setNull} operation.
      * <p>
      * Example:
-     * <pre> assertThat(parameterByIndexHolder, paramSetNull(1)); </pre>
+     * <pre> assertThat(parameterByIndexHolder, nullParam(1)); </pre>
      */
-    public static Matcher<? super ParameterHolder> paramSetNull(final int index) {
+    public static Matcher<? super ParameterHolder> nullParam(final int index) {
         EmptyParameterHolderMatcher emptyMatcher = new EmptyParameterHolderMatcher();
         return new ParameterHolderMatcher.ParameterByIndexMatcher<ParameterHolder>(emptyMatcher) {
             @Override

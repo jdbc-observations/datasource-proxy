@@ -33,7 +33,6 @@ import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramAs
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramAsTimestamp;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramIndexes;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramNames;
-import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramSetNull;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsByIndex;
 import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramsByName;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -373,12 +372,12 @@ public class ParameterHolderAssertionsTest {
         ParameterByIndexHolder holder = mock(ParameterByIndexHolder.class);
         given(holder.getSetNullParamsByIndex()).willReturn(map);
 
-        Assert.assertThat(holder, paramSetNull(10, Types.ARRAY));
-        Assert.assertThat(holder, paramSetNull(10));
+        Assert.assertThat(holder, ParameterHolderAssertions.nullParam(10, Types.ARRAY));
+        Assert.assertThat(holder, ParameterHolderAssertions.nullParam(10));
 
         // index out of range
         try {
-            Assert.assertThat(holder, paramSetNull(100, Types.ARRAY));
+            Assert.assertThat(holder, ParameterHolderAssertions.nullParam(100, Types.ARRAY));
             fail("assertion should fail");
         } catch (AssertionError e) {
             assertThat(e).hasMessage("\nExpected: parameter index 100\n     but: parameter index 100 doesn't exist.");
@@ -386,7 +385,7 @@ public class ParameterHolderAssertionsTest {
 
         // type mismatch
         try {
-            Assert.assertThat(holder, paramSetNull(10, Types.BIT));
+            Assert.assertThat(holder, ParameterHolderAssertions.nullParam(10, Types.BIT));
             fail("assertion should fail");
         } catch (AssertionError e) {
             assertThat(e).hasMessage("\nExpected: params[10] is NULL[BIT:-7]\n     but: params[10] was NULL[ARRAY:2003]");
@@ -394,7 +393,7 @@ public class ParameterHolderAssertionsTest {
 
         // unknown sql type
         try {
-            Assert.assertThat(holder, paramSetNull(1, Types.BIT));
+            Assert.assertThat(holder, ParameterHolderAssertions.nullParam(1, Types.BIT));
             fail("assertion should fail");
         } catch (AssertionError e) {
             assertThat(e).hasMessage("\nExpected: params[1] is NULL[BIT:-7]\n     but: params[1] was NULL[UNKNOWN:9999]");
@@ -403,7 +402,7 @@ public class ParameterHolderAssertionsTest {
 
         // not exist
         try {
-            Assert.assertThat(holder, paramSetNull(100));
+            Assert.assertThat(holder, ParameterHolderAssertions.nullParam(100));
             fail("assertion should fail");
         } catch (AssertionError e) {
             assertThat(e).hasMessage("\nExpected: params[100] is NULL\n     but: setNull indexes are [<1>, <10>]");
@@ -420,12 +419,12 @@ public class ParameterHolderAssertionsTest {
         ParameterByNameHolder holder = mock(ParameterByNameHolder.class);
         given(holder.getSetNullParamsByName()).willReturn(map);
 
-        Assert.assertThat(holder, paramSetNull("foo", Types.ARRAY));
-        Assert.assertThat(holder, paramSetNull("foo"));
+        Assert.assertThat(holder, ParameterHolderAssertions.nullParam("foo", Types.ARRAY));
+        Assert.assertThat(holder, ParameterHolderAssertions.nullParam("foo"));
 
         // no key
         try {
-            Assert.assertThat(holder, paramSetNull("NOT_EXIST", Types.ARRAY));
+            Assert.assertThat(holder, ParameterHolderAssertions.nullParam("NOT_EXIST", Types.ARRAY));
             fail("assertion should fail");
         } catch (AssertionError e) {
             assertThat(e).hasMessage("\nExpected: parameter name NOT_EXIST\n     but: parameter name NOT_EXIST doesn't exist.");
@@ -433,7 +432,7 @@ public class ParameterHolderAssertionsTest {
 
         // type mismatch
         try {
-            Assert.assertThat(holder, paramSetNull("foo", Types.BIT));
+            Assert.assertThat(holder, ParameterHolderAssertions.nullParam("foo", Types.BIT));
             fail("assertion should fail");
         } catch (AssertionError e) {
             assertThat(e).hasMessage("\nExpected: params[foo] is NULL[BIT:-7]\n     but: params[foo] was NULL[ARRAY:2003]");
@@ -441,7 +440,7 @@ public class ParameterHolderAssertionsTest {
 
         // unknown sql type
         try {
-            Assert.assertThat(holder, paramSetNull("bar", Types.BIT));
+            Assert.assertThat(holder, ParameterHolderAssertions.nullParam("bar", Types.BIT));
             fail("assertion should fail");
         } catch (AssertionError e) {
             assertThat(e).hasMessage("\nExpected: params[bar] is NULL[BIT:-7]\n     but: params[bar] was NULL[UNKNOWN:9999]");
@@ -450,7 +449,7 @@ public class ParameterHolderAssertionsTest {
 
         // not exist
         try {
-            Assert.assertThat(holder, paramSetNull("NOT_EXIST"));
+            Assert.assertThat(holder, ParameterHolderAssertions.nullParam("NOT_EXIST"));
             fail("assertion should fail");
         } catch (AssertionError e) {
             assertThat(e).hasMessage("\nExpected: params[NOT_EXIST] is NULL\n     but: setNull names are [\"bar\", \"foo\"]");

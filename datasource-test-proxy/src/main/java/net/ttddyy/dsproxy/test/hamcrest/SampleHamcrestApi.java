@@ -25,7 +25,7 @@ import static net.ttddyy.dsproxy.test.hamcrest.DataSourceProxyMatchers.isPrepare
 import static net.ttddyy.dsproxy.test.hamcrest.DataSourceProxyMatchers.isPreparedOrBatchPrepared;
 import static net.ttddyy.dsproxy.test.hamcrest.DataSourceProxyMatchers.isStatement;
 import static net.ttddyy.dsproxy.test.hamcrest.DataSourceProxyMatchers.isStatementOrBatchStatement;
-import static net.ttddyy.dsproxy.test.hamcrest.DataSourceProxyMatchers.paramSetNull;
+import static net.ttddyy.dsproxy.test.hamcrest.DataSourceProxyMatchers.nullParam;
 import static net.ttddyy.dsproxy.test.hamcrest.OutParameterHolderAssertions.outParam;
 import static net.ttddyy.dsproxy.test.hamcrest.OutParameterHolderAssertions.outParamIndexes;
 import static net.ttddyy.dsproxy.test.hamcrest.OutParameterHolderAssertions.outParamNames;
@@ -52,9 +52,13 @@ import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.sta
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.totalQueryCount;
 import static net.ttddyy.dsproxy.test.hamcrest.ProxyTestDataSourceAssertions.updateCount;
 import static net.ttddyy.dsproxy.test.hamcrest.QueriesHolderAssertions.queries;
+import static net.ttddyy.dsproxy.test.hamcrest.QueriesHolderAssertions.queryTypes;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.batch;
+import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.batchCallable;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.batchPrepared;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.batchStatement;
+import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.callable;
+import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.callableOrBatchCallable;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.failure;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.prepared;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.preparedOrBatchPrepared;
@@ -63,6 +67,7 @@ import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.statemen
 import static net.ttddyy.dsproxy.test.hamcrest.QueryExecutionAssertions.success;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.query;
 import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.queryType;
+import static net.ttddyy.dsproxy.test.hamcrest.QueryHolderAssertions.select;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItem;
@@ -161,6 +166,9 @@ public class SampleHamcrestApi {
         assertThat(qe, prepared());
         assertThat(qe, batchPrepared());
         assertThat(qe, preparedOrBatchPrepared());
+        assertThat(qe, callable());
+        assertThat(qe, batchCallable());
+        assertThat(qe, callableOrBatchCallable());
 
     }
 
@@ -176,21 +184,32 @@ public class SampleHamcrestApi {
     private void batchStatementExecution() {
         StatementBatchExecution sbe = new StatementBatchExecution();
 
+        assertThat(sbe, success());
+        assertThat(sbe, failure());
+
         // check batch queries
         assertThat(sbe, queries(0, is("foo")));   // string matcher
         assertThat(sbe, queries(hasItems("foo", "bar")));  // collection matcher
+        assertThat(sbe, queryTypes(0, select()));
+        assertThat(sbe, queryTypes(0, is(select())));
     }
 
     private void preparedStatementExecution() {
         PreparedExecution pe = new PreparedExecution();
 
-        assertThat(pe, query(is("FOO")));
+        assertThat(pe, success());
+        assertThat(pe, failure());
+
+        assertThat(pe, query(is("FOO")));  // string matcher
 
         // check parameters
         assertThat(pe, paramsByIndex(hasEntry(10, (Object) "FOO")));
         assertThat(pe, param(10, is((Object) 100)));
         assertThat(pe, param(10, Integer.class, is(100)));
         assertThat(pe, paramAsInteger(10, is(100)));
+        assertThat(pe, nullParam(10));
+        assertThat(pe, nullParam(10, Types.INTEGER));
+
 //        assertThat(pe, paramNull(10));
 //        assertThat(pe, paramNull(10, Types.INTEGER));
         assertThat(pe, allOf(paramAsInteger(10, is(100)), paramAsInteger(11, is(101))));
@@ -262,10 +281,10 @@ public class SampleHamcrestApi {
         assertThat(cbe, batch(0, param(10, is((Object) 100))));
         assertThat(cbe, batch(0, param(10, Integer.class, is(100))));
         assertThat(cbe, batch(0, paramAsInteger(10, is(100))));
-        assertThat(cbe, batch(0, paramSetNull("foo")));  // TODO: paramSetNull => paramNull
-        assertThat(cbe, batch(0, paramSetNull("foo", Types.INTEGER)));  // TODO: paramSetNull => paramNull
-        assertThat(cbe, batch(0, paramSetNull(10)));  // TODO: paramSetNull => paramNull
-        assertThat(cbe, batch(0, paramSetNull(10, Types.INTEGER)));  // TODO: paramSetNull => paramNull
+        assertThat(cbe, batch(0, nullParam("foo")));
+        assertThat(cbe, batch(0, nullParam("foo", Types.INTEGER)));
+        assertThat(cbe, batch(0, nullParam(10)));
+        assertThat(cbe, batch(0, nullParam(10, Types.INTEGER)));
 //        assertThat(cbe, batch(0, paramNull("foo", Types.INTEGER)));
 //        assertThat(cbe, batch(0, paramNull(10)));
 //        assertThat(cbe, batch(0, paramNull(10, Types.INTEGER)));
