@@ -11,7 +11,6 @@ import java.util.TreeSet;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterBy;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterByKeyType;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyIndexMap;
-import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyValueMap;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -55,13 +54,6 @@ public class PreparedBatchExecution extends BaseQueryExecution implements QueryH
             indexes.addAll(getParamsByIndex().keySet());
             indexes.addAll(getSetNullParamsByIndex().keySet());
             return indexes;
-        }
-
-        @Override
-        public List<Object> getParamValues() {
-            List<Object> list = new ArrayList<Object>();
-            list.addAll(toKeyValueMap(getSetParams()).values());
-            return list;
         }
 
     }

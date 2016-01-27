@@ -158,13 +158,11 @@ public class QueryExecutionFactoryListenerTest {
         PreparedBatchExecution.PreparedBatchExecutionEntry batchEntry1 = (PreparedBatchExecution.PreparedBatchExecutionEntry) pbe.getBatchExecutionEntries().get(0);
         assertThat(batchEntry1.getParamIndexes()).hasSize(2).containsSequence(1, 2);
         assertThat(batchEntry1.getParamsByIndex()).hasSize(2).containsEntry(1, 100).containsEntry(2, 200);
-        assertThat(batchEntry1.getParamValues()).hasSize(2).containsSequence(100, 200);
         assertThat(batchEntry1.getSetNullParamsByIndex()).isEmpty();
         assertThat(pbe.getBatchExecutionEntries().get(1)).isInstanceOf(PreparedBatchExecution.PreparedBatchExecutionEntry.class);
         PreparedBatchExecution.PreparedBatchExecutionEntry batchEntry2 = (PreparedBatchExecution.PreparedBatchExecutionEntry) pbe.getBatchExecutionEntries().get(1);
         assertThat(batchEntry2.getParamIndexes()).hasSize(3).containsSequence(10, 20, 30);
         assertThat(batchEntry2.getParamsByIndex()).hasSize(2).containsEntry(10, 1000).containsEntry(20, 2000);
-        assertThat(batchEntry2.getParamValues()).hasSize(2).containsSequence(1000, 2000);
         assertThat(batchEntry2.getSetNullParamsByIndex()).hasSize(1).containsEntry(30, Types.INTEGER);
     }
 

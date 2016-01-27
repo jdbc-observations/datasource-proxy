@@ -12,7 +12,6 @@ import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterBy;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.filterByKeyType;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyIndexMap;
 import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyNameMap;
-import static net.ttddyy.dsproxy.test.ParameterKeyValueUtils.toKeyValueMap;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -101,15 +100,6 @@ public class CallableBatchExecution extends BaseQueryExecution implements BatchP
         public List<Integer> getOutParamIndexes() {
             return new ArrayList<Integer>(getOutParamsByIndex().keySet());
         }
-
-        // TOOD: need this??
-        @Override
-        public List<Object> getParamValues() {
-            List<Object> list = new ArrayList<Object>();
-            list.addAll(toKeyValueMap(getSetParams()).values());
-            return list;
-        }
-
 
     }
 
