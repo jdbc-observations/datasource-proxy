@@ -59,7 +59,7 @@ public class ParameterHolderAssertions {
             @Override
             public Map<? extends Integer, ?> featureValueOf(ParameterByIndexHolder actual) {
                 this.descForExpected.appendText("parameters as a ");
-                return actual.getParamsByIndex();
+                return actual.getSetParamsByIndex();
             }
         };
     }
@@ -167,7 +167,7 @@ public class ParameterHolderAssertions {
         return new ParameterHolderMatcher.ParameterByIndexMatcher<Object>(matcher) {
             @Override
             public Object featureValueOf(ParameterByIndexHolder actual) {
-                return actual.getParamsByIndex().get(index);
+                return actual.getSetParamsByIndex().get(index);
             }
 
             @Override
@@ -234,12 +234,12 @@ public class ParameterHolderAssertions {
             @Override
             @SuppressWarnings("unchecked")
             public T featureValueOf(ParameterByIndexHolder actual) {
-                return (T) actual.getParamsByIndex().get(index);
+                return (T) actual.getSetParamsByIndex().get(index);
             }
 
             @Override
             public boolean validateParameterByIndex(ParameterByIndexHolder actual, Description descForExpected, Description descForFailure) {
-                Object value = actual.getParamsByIndex().get(index);
+                Object value = actual.getSetParamsByIndex().get(index);
                 if (value == null) {
                     descForExpected.appendText("parameter index " + index);
                     descForFailure.appendText("parameter index " + index + " doesn't exist.");

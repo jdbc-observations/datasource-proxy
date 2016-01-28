@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public interface ParameterByIndexHolder extends ParameterHolder {
 
-    Map<Integer, Object> getParamsByIndex();
+    Map<Integer, Object> getSetParamsByIndex();
 
     /**
      * setNull operations.

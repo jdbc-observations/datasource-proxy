@@ -63,7 +63,7 @@ public class CallableExecution extends BaseQueryExecution implements QueryHolder
     }
 
     @Override
-    public Map<Integer, Object> getParamsByIndex() {
+    public Map<Integer, Object> getSetParamsByIndex() {
         return toKeyIndexMap(filterByKeyType(getSetParams(), ParameterKey.ParameterKeyType.BY_INDEX));
     }
 
@@ -98,7 +98,7 @@ public class CallableExecution extends BaseQueryExecution implements QueryHolder
     @Override
     public List<Integer> getParamIndexes() {
         List<Integer> indexes = new ArrayList<Integer>();
-        indexes.addAll(getParamsByIndex().keySet());
+        indexes.addAll(getSetParamsByIndex().keySet());
         indexes.addAll(getSetNullParamsByIndex().keySet());
         return indexes;
     }

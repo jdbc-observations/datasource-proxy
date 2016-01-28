@@ -46,7 +46,7 @@ public class ParameterHolderMatcherTest {
         }
 
         @Override
-        public Map<Integer, Object> getParamsByIndex() {
+        public Map<Integer, Object> getSetParamsByIndex() {
             return null;
         }
 
