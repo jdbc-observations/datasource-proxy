@@ -4,3 +4,4 @@ Tadaya Tsuyukubo
 // ======================================================================================
 
 include::assertj.adoc[]
+include::hamcrest.adoc[]
