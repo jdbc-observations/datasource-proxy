@@ -77,15 +77,11 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 
 /**
+ * API compilation check with hamcrest.
+ *
  * @author Tadaya Tsuyukubo
  */
-public class SampleHamcrestApi {
-
-    public static void main(String[] args) {
-
-    }
-    // TODO: outparam, setnull, paramAs...,  alias matcher methods
-    // TODO: add more tests in ParameterHolderAssertionsTest
+public class HamcrestAssertionApiCheck {
 
     private void testDataSource() {
         ProxyTestDataSource ds = new ProxyTestDataSource();
@@ -175,9 +171,13 @@ public class SampleHamcrestApi {
     private void statementExecution() {
         StatementExecution se = new StatementExecution();
 
-        // check query with StringMatcher
-        assertThat(se, query(is("foo")));
-        assertThat(se, query(startsWith("foo")));
+        assertThat(se, success());
+        assertThat(se, failure());
+
+        // query with StringMatcher
+        assertThat(se, query(is("...")));
+        assertThat(se, query(startsWith("...")));
+
         assertThat(se, queryType(QueryType.SELECT));
     }
 
@@ -187,10 +187,8 @@ public class SampleHamcrestApi {
         assertThat(sbe, success());
         assertThat(sbe, failure());
 
-        // check batch queries
-        assertThat(sbe, queries(0, is("foo")));   // string matcher
-        assertThat(sbe, queries(hasItems("foo", "bar")));  // collection matcher
-        assertThat(sbe, queryTypes(0, select()));
+        assertThat(sbe, queries(0, is("...")));   // string matcher
+        assertThat(sbe, queries(hasItems("...", "...")));  // collection matcher
         assertThat(sbe, queryTypes(0, is(select())));
     }
 
@@ -202,61 +200,85 @@ public class SampleHamcrestApi {
 
         assertThat(pe, query(is("FOO")));  // string matcher
 
-        // check parameters
-        assertThat(pe, paramsByIndex(hasEntry(10, (Object) "FOO")));
-        assertThat(pe, param(10, is((Object) 100)));
-        assertThat(pe, param(10, Integer.class, is(100)));
-        assertThat(pe, paramAsInteger(10, is(100)));
-        assertThat(pe, nullParam(10));
+        // parameter indexes
+        assertThat(pe, paramIndexes(1, 2, 3));
+        assertThat(pe, paramIndexes(hasItem(1)));  // integer collection matcher
+
+        // parameters
+        assertThat(pe, param(1, Integer.class, is(100)));
+        assertThat(pe, param(1, is((Object) 100)));  // Object matcher
+        assertThat(pe, paramAsInteger(1, is(100)));
+        assertThat(pe, paramsByIndex(hasEntry(1, (Object) "FOO")));  // map matcher
+
+        // setNull parameters
         assertThat(pe, nullParam(10, Types.INTEGER));
+        assertThat(pe, nullParam(10));
 
-//        assertThat(pe, paramNull(10));
-//        assertThat(pe, paramNull(10, Types.INTEGER));
-        assertThat(pe, allOf(paramAsInteger(10, is(100)), paramAsInteger(11, is(101))));
-
+        assertThat(pe, allOf(paramAsInteger(1, is(100)), paramAsInteger(2, is(200)), nullParam(3)));
     }
 
     private void preparedBatchStatementExecution() {
         PreparedBatchExecution pbe = new PreparedBatchExecution();
 
+        assertThat(pbe, success());
+        assertThat(pbe, failure());
+
         assertThat(pbe, query(is("FOO")));
 
         // check batch executions
         assertThat(pbe, batchSize(10));
-        assertThat(pbe, batch(0, paramIndexes(hasItem(10))));
-        assertThat(pbe, batch(0, paramsByIndex(hasEntry(10, (Object) "FOO"))));
-        assertThat(pbe, batch(0, param(10, is((Object) 100))));
-        assertThat(pbe, batch(0, param(10, Integer.class, is(100))));
-        assertThat(pbe, batch(0, paramAsInteger(10, is(100))));
-//        assertThat(pbe, batch(0, paramNull(10)));
-//        assertThat(pbe, batch(0, paramNull(10, Types.INTEGER)));
-        assertThat(pbe, batch(0, allOf(paramAsInteger(10, is(100)), paramAsInteger(11, is(101)))));
+
+        assertThat(pbe, batch(0, paramIndexes(1, 2, 3)));
+        assertThat(pbe, batch(0, paramIndexes(hasItem(11))));    // integer collection matcher
+
+        assertThat(pbe, batch(0, param(1, Integer.class, is(100))));
+        assertThat(pbe, batch(0, param(1, is((Object) 100))));  // Object matcher
+        assertThat(pbe, batch(0, paramAsInteger(1, is(100))));
+        assertThat(pbe, batch(0, paramsByIndex(hasEntry(11, (Object) "FOO"))));  // map matcher
+
+        // setNull parameters
+        assertThat(pbe, batch(0, nullParam(10, Types.INTEGER)));
+        assertThat(pbe, batch(0, nullParam(10)));
+
+        assertThat(pbe, batch(0, allOf(paramAsInteger(1, is(100)), paramAsInteger(2, is(200)), nullParam(3))));
     }
 
     private void callableStatementExecution() {
         CallableExecution ce = new CallableExecution();
 
+        assertThat(ce, success());
+        assertThat(ce, failure());
 
         assertThat(ce, query(is("FOO")));
 
-        // check parameters
-        assertThat(ce, paramNames(hasItem("foo")));
-        assertThat(ce, paramIndexes(hasItem(10)));
+
+        // parameter names/indexes
+        assertThat(ce, paramNames("foo", "bar", "baz"));
+        assertThat(ce, paramNames(hasItem("foo")));  // string collection matcher
+        assertThat(ce, paramIndexes(1, 2, 3));
+        assertThat(ce, paramIndexes(hasItem(11)));    // integer collection matcher
+
+        // parameters with map matcher
         assertThat(ce, paramsByName(hasEntry("foo", (Object) "FOO")));
-        assertThat(ce, paramsByIndex(hasEntry(10, (Object) "FOO")));
+        assertThat(ce, paramsByIndex(hasEntry(1, (Object) "FOO")));
+
+        // parameters
         assertThat(ce, param("foo", is((Object) 100)));
         assertThat(ce, param("foo", Integer.class, is(100)));
-//        assertThat(ce, paramAsInteger("foo", is(100)));
-        assertThat(ce, param(10, is((Object) 100)));
-        assertThat(ce, param(10, Integer.class, is(100)));
-        assertThat(ce, paramAsInteger(10, is(100)));
-//        assertThat(ce, paramNull("foo"));
-//        assertThat(ce, paramNull("foo", Types.INTEGER));
-//        assertThat(ce, paramNull(10));
-//        assertThat(ce, paramNull(10, Types.INTEGER));
-//        assertThat(ce, allOf(paramAsInteger(10, is(100)), paramAsInteger("foo", is(100))));
+        assertThat(ce, paramAsInteger("foo", is(100)));
+        assertThat(ce, param(1, is((Object) 100)));
+        assertThat(ce, param(1, Integer.class, is(100)));
+        assertThat(ce, paramAsInteger(1, is(100)));
 
-        // out parameters
+        // setNull parameters
+        assertThat(ce, nullParam("bar"));
+        assertThat(ce, nullParam("bar", Types.INTEGER));
+        assertThat(ce, nullParam(2));
+        assertThat(ce, nullParam(2, Types.INTEGER));
+
+        assertThat(ce, allOf(paramAsInteger(1, is(100)), paramAsInteger("foo", is(100)), nullParam("bar")));
+
+        // registerOut parameters
         assertThat(ce, outParamNames(hasItem("foo")));
         assertThat(ce, outParamIndexes(hasItem(10)));
         assertThat(ce, outParam("foo", Types.INTEGER));
@@ -264,32 +286,49 @@ public class SampleHamcrestApi {
         assertThat(ce, outParam(10, Types.INTEGER));
         assertThat(ce, outParam(10, JDBCType.INTEGER));
         assertThat(ce, allOf(outParam("foo", JDBCType.INTEGER), outParam(10, Types.INTEGER)));
+
+        assertThat(ce, allOf(paramAsInteger(10, is(100)), paramAsInteger("foo", is(100)), outParam("bar", JDBCType.INTEGER)));
     }
 
     private void callableBatchStatementExecution() {
         CallableBatchExecution cbe = new CallableBatchExecution();
 
+        assertThat(cbe, success());
+        assertThat(cbe, failure());
+
         assertThat(cbe, query(is("FOO")));
 
-//        assertThat(cbe, batch(0, paramNames(hasItem("foo"))));
-        assertThat(cbe, batch(0, paramIndexes(hasItem(10))));
+        assertThat(cbe, batchSize(10));
+
+        // parameter names/indexes
+        assertThat(cbe, batch(0, paramNames("foo", "bar", "baz")));
+        assertThat(cbe, batch(0, paramNames(hasItem("foo"))));
+        assertThat(cbe, batch(0, paramIndexes(1, 2, 3)));
+        assertThat(cbe, batch(0, paramIndexes(hasItem(1))));
+
+        // parameters with map matcher
         assertThat(cbe, batch(0, paramsByName(hasEntry("foo", (Object) "FOO"))));
-        assertThat(cbe, batch(0, paramsByIndex(hasEntry(10, (Object) "FOO"))));
+        assertThat(cbe, batch(0, paramsByIndex(hasEntry(1, (Object) "FOO"))));
+
+
+        // parameters
         assertThat(cbe, batch(0, param("foo", is((Object) 100))));
         assertThat(cbe, batch(0, param("foo", Integer.class, is(100))));
-//        assertThat(cbe, batch(0, paramAsInteger("foo", is(100))));
-        assertThat(cbe, batch(0, param(10, is((Object) 100))));
-        assertThat(cbe, batch(0, param(10, Integer.class, is(100))));
-        assertThat(cbe, batch(0, paramAsInteger(10, is(100))));
-        assertThat(cbe, batch(0, nullParam("foo")));
-        assertThat(cbe, batch(0, nullParam("foo", Types.INTEGER)));
-        assertThat(cbe, batch(0, nullParam(10)));
-        assertThat(cbe, batch(0, nullParam(10, Types.INTEGER)));
-//        assertThat(cbe, batch(0, paramNull("foo", Types.INTEGER)));
-//        assertThat(cbe, batch(0, paramNull(10)));
-//        assertThat(cbe, batch(0, paramNull(10, Types.INTEGER)));
-//        assertThat(cbe, batch(0, allOf(paramAsInteger(10, is(100)), paramAsInteger("foo", is(100)))));
+        assertThat(cbe, batch(0, paramAsInteger("foo", is(100))));
+        assertThat(cbe, batch(0, param(1, is((Object) 100))));
+        assertThat(cbe, batch(0, param(1, Integer.class, is(100))));
+        assertThat(cbe, batch(0, paramAsInteger(1, is(100))));
 
+        // setNull parameters
+        assertThat(cbe, batch(0, nullParam("bar")));
+        assertThat(cbe, batch(0, nullParam("bar", Types.INTEGER)));
+        assertThat(cbe, batch(0, nullParam(2)));
+        assertThat(cbe, batch(0, nullParam(2, Types.INTEGER)));
+
+        assertThat(cbe, batch(0, allOf(paramAsInteger(1, is(100)), paramAsInteger("foo", is(100)), nullParam("bar"))));
+
+
+        // registerOut parameters
         assertThat(cbe, batch(0, outParamNames(hasItem("foo"))));
         assertThat(cbe, batch(0, outParamIndexes(hasItem(10))));
         assertThat(cbe, batch(0, outParam("foo", Types.INTEGER)));
@@ -297,6 +336,8 @@ public class SampleHamcrestApi {
         assertThat(cbe, batch(0, outParam(10, Types.INTEGER)));
         assertThat(cbe, batch(0, outParam(10, JDBCType.INTEGER)));
         assertThat(cbe, batch(0, allOf(outParam("foo", JDBCType.INTEGER), outParam(10, Types.INTEGER))));
+
+        assertThat(cbe, batch(0, allOf(paramAsInteger("foo", is(100)), outParam("bar", Types.INTEGER), nullParam("baz"))));
     }
 
 }

@@ -1,16 +1,13 @@
 package net.ttddyy.dsproxy.test.assertj;
 
 import net.ttddyy.dsproxy.QueryType;
-import net.ttddyy.dsproxy.test.BatchParameterHolder;
 import net.ttddyy.dsproxy.test.CallableBatchExecution;
 import net.ttddyy.dsproxy.test.CallableExecution;
 import net.ttddyy.dsproxy.test.PreparedBatchExecution;
 import net.ttddyy.dsproxy.test.PreparedExecution;
 import net.ttddyy.dsproxy.test.ProxyTestDataSource;
-import net.ttddyy.dsproxy.test.QueryExecution;
 import net.ttddyy.dsproxy.test.StatementBatchExecution;
 import net.ttddyy.dsproxy.test.StatementExecution;
-import org.junit.Assert;
 
 import java.sql.Types;
 
@@ -23,51 +20,16 @@ import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsP
 import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParamNames;
 import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParams;
 import static net.ttddyy.dsproxy.test.assertj.data.ExecutionParameters.containsParamsExactly;
-import static net.ttddyy.dsproxy.test.hamcrest.DataSourceProxyMatchers.batch;
-import static net.ttddyy.dsproxy.test.hamcrest.ParameterHolderAssertions.paramIndexes;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.atIndex;
 
 /**
+ * API compilation check with AssertJ.
+ *
  * @author Tadaya Tsuyukubo
  */
-public class SampleAssertJAPI {
+public class AssertJAssertionApiCheck {
 
-/*
-    @Test
-    public void aa() {
-        QueryExecution qe = new StatementExecution();
-        QueriesHolder queriesHolder = new StatementBatchExecution();
-        StatementBatchExecution sbe = new StatementBatchExecution();
-        CallableBatchExecution cbe = new CallableBatchExecution();
-
-        ProxyTestDataSource ds = new ProxyTestDataSource();
-        ds.getQueryExecutions().add(qe);
-
-        new ProxyTestDataSourceAssert(ds).hasExecutionCount(10);
-
-        assertThat(sbe).queries();
-        Assertions.assertThat("String").startsWith("");
-
-        assertThat(cbe.getQuery()).startsWith("ABC");
-        assertThat(cbe).batch(0).paramAsString("key", "value").paramAs("foo", String.class, "");
-        BatchExecutionEntry be = cbe.getBatchExecutionEntries().get(0);
-
-        assertThat(be).params();
-
-    }
-*/
-
-    public void test() {
-        QueryExecution qe = null;
-        BatchParameterHolder bph = null;
-        Assert.assertThat(qe, batch());
-        Assert.assertThat(bph, batch(1, paramIndexes(1)));
-
-
-        // assertThat(extractBatch(ds)).
-
-    }
 
     private void testDataSource() {
         ProxyTestDataSource ds = new ProxyTestDataSource();
@@ -84,6 +46,12 @@ public class SampleAssertJAPI {
         assertThat(ds).hasBatchCallableCount(3);
         assertThat(ds).hasCallableOrBatchCallableCount(3);
 
+        assertThat(ds).hasTotalQueryCount(3);
+        assertThat(ds).hasSelectCount(3);
+        assertThat(ds).hasInsertCount(3);
+        assertThat(ds).hasUpdateCount(3);
+        assertThat(ds).hasDeleteCount(3);
+        assertThat(ds).hasOtherCount(3);
 
 
 //        // each execution
@@ -216,6 +184,7 @@ public class SampleAssertJAPI {
 
         assertThat(ce).isSuccess();
         assertThat(ce).isFailure();
+        assertThat(ce.getQuery()).isEqualTo("...");
 
         assertThat(ce).containsParam("key", "value")
                 .containsParam(10, "value")
@@ -251,7 +220,7 @@ public class SampleAssertJAPI {
 //        assertThat(cbe).batch(0).param("key", "value").paramAsString("key", "value");
 //        assertThat(cbe).batch(0).param(10, "value").paramAsString(10, "value");
 //        assertThat(cbe).batch(0).outParam(10, "value").outParamAsString(10, "value");
-//        assertThat(cbe).batch(0).paramSetNull(10);
+//        assertThat(cbe).batch(0).nullParam(10);
 
         assertThat(cbe).batch(0, containsParams(param("key", "value"), param("key", "value")));
         assertThat(cbe).batch(0, containsParams(param("key", "value"), param(10, "value"), param("a", 100), outParam("key", Types.INTEGER), nullParam("key")));
