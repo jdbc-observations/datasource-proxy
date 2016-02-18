@@ -1,4 +1,4 @@
-package net.ttddyy.dsproxy.listener;
+package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
@@ -15,5 +15,4 @@ public interface QueryLogEntryCreator {
 
     String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName);
 
-    String getLogEntryAsJson(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName);
 }

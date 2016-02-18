@@ -1,8 +1,8 @@
 package net.ttddyy.dsproxy.support.jndi;
 
-import net.ttddyy.dsproxy.listener.CommonsLogLevel;
+import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.listener.SLF4JLogLevel;
+import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
@@ -42,9 +42,9 @@ import java.util.Set;
  *
  * <i>listeners</i> parameter:
  * <ul>
- * <li> <b>sysout</b>:   alias to `net.ttddyy.dsproxy.listener.SystemOutQueryLoggingListener`
- * <li> <b>commons</b>:  alias to `net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener`
- * <li> <b>slf4j</b>:    alias to `net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener`
+ * <li> <b>sysout</b>:   alias to `net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener`
+ * <li> <b>commons</b>:  alias to `net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener`
+ * <li> <b>slf4j</b>:    alias to `net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener`
  * <li> <b>count</b>:    alias to `net.ttddyy.dsproxy.listener.DataSourceQueryCountListener`
  * <li> <b>x.y.z.MyQueryExecutionListener</b>: Fully qualified class name of `QueryExecutionListener` implementation
  * </ul>

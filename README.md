@@ -107,8 +107,8 @@ DataSource dataSource =
 <bean id="listeners" class="net.ttddyy.dsproxy.listener.ChainListener">
   <property name="listeners">
     <list>
-      <bean class="net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener">
-      <!-- <bean class="net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener"> -->
+      <bean class="net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener">
+      <!-- <bean class="net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener"> -->
         <property name="logLevel" value="INFO"/> <!-- Default is DEBUG -->
       </bean>
       <bean class="net.ttddyy.dsproxy.listener.DataSourceQueryCountListener"/>

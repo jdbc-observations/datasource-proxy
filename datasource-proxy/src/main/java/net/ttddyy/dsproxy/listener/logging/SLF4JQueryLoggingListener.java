@@ -1,4 +1,4 @@
-package net.ttddyy.dsproxy.listener;
+package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.support.SLF4JLogUtils;
 import org.slf4j.Logger;

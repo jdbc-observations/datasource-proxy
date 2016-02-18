@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.test;
 
-import net.ttddyy.dsproxy.listener.RegisterOutParameterValueConverter;
-import net.ttddyy.dsproxy.listener.SetNullParameterValueConverter;
+import net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverter;
+import net.ttddyy.dsproxy.listener.logging.SetNullParameterValueConverter;
 import net.ttddyy.dsproxy.proxy.ParameterKey;
 
 import java.util.Arrays;

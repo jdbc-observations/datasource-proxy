@@ -1,4 +1,4 @@
-package net.ttddyy.dsproxy.listener;
+package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.ExecutionInfoBuilder;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.mock;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class OracleOutputParameterLogEntryCreatorTest {
+public class OutputParameterJsonLogEntryCreatorTest {
 
     @Test
     public void outParams() throws Exception {
@@ -81,12 +81,9 @@ public class OracleOutputParameterLogEntryCreatorTest {
         executionInfo.setStatement(cs);   // add mock statement
 
 
-        OracleOutputParameterLogEntryCreator creator = new OracleOutputParameterLogEntryCreator();
+        OutputParameterJsonLogEntryCreator creator = new OutputParameterJsonLogEntryCreator();
 
-        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), false);
-        assertThat(entry).containsOnlyOnce("OutParams:[(1=100,foo=101),(2=200,bar=201)]");
-
-        String jsonEntry = creator.getLogEntryAsJson(executionInfo, Lists.newArrayList(queryInfo), false);
+        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), false);
         assertThat(jsonEntry).containsOnlyOnce("\"outParams\":[{\"1\":\"100\",\"foo\":\"101\"},{\"2\":\"200\",\"bar\":\"201\"}]");
 
 

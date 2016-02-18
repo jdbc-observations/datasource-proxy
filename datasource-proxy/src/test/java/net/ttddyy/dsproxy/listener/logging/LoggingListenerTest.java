@@ -1,7 +1,6 @@
-package net.ttddyy.dsproxy;
+package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.listener.CommonsLogLevel;
-import net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener;
+import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;

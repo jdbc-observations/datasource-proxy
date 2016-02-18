@@ -1,4 +1,4 @@
-package net.ttddyy.dsproxy.listener;
+package net.ttddyy.dsproxy.listener.logging;
 
 /**
  * Output query logging to System.out.

@@ -1,5 +1,22 @@
 # ChangeLog
 
+## 1.4
+
+
+- Query logging related listeners has updated package 
+  - package has changed from `net.ttddyy.dsproxy.listener` to `net.ttddyy.dsproxy.listener.logging`
+
+
+- classes for logging entry creation has been updated
+  - `QueryLogEntryCreator#getLogEntryAsJson` has been removed.
+  - JSON style log entry creators is pulled up to `DefaultJsonQueryLogEntryCreator`
+  - To use JSON style logging, you can set the `QueryLogEntryCreator` to `[Commons|SLF4J|SystemOut]QueryLoggingListener#setQueryLogEntryCreator()`
+  - `OracleOutputParameterLogEntryCreator` has been split to `OutputParameterLogEntryCreator` and `OutputParameterJsonLogEntryCreator`
+
+
+
+
+
 ## 1.3.3
 
 - update `DefaultQueryLogEntryCreator` to allow subclasses to override log entry details

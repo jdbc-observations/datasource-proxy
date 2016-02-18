@@ -1,4 +1,4 @@
-package net.ttddyy.dsproxy.listener;
+package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 
@@ -12,8 +12,8 @@ import java.util.Map;
  * Used to convert parameter value to display value.
  *
  * @author Tadaya Tsuyukubo
- * @see net.ttddyy.dsproxy.listener.RegisterOutParameterValueConverter
- * @see net.ttddyy.dsproxy.listener.SetNullParameterValueConverter
+ * @see RegisterOutParameterValueConverter
+ * @see SetNullParameterValueConverter
  * @since 1.4
  */
 public interface ParameterValueConverter {

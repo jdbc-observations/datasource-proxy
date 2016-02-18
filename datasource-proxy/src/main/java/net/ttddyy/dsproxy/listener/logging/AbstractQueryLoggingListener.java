@@ -1,7 +1,8 @@
-package net.ttddyy.dsproxy.listener;
+package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 
 import java.util.List;
 
@@ -13,7 +14,6 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
 
     protected QueryLogEntryCreator queryLogEntryCreator = new DefaultQueryLogEntryCreator();
     protected boolean writeDataSourceName = true;
-    protected boolean writeAsJson = false;
 
     @Override
     public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
@@ -26,11 +26,7 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
     }
 
     protected String getEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        if (this.writeAsJson) {
-            return this.queryLogEntryCreator.getLogEntryAsJson(execInfo, queryInfoList, this.writeDataSourceName);
-        } else {
-            return this.queryLogEntryCreator.getLogEntry(execInfo, queryInfoList, this.writeDataSourceName);
-        }
+        return this.queryLogEntryCreator.getLogEntry(execInfo, queryInfoList, this.writeDataSourceName);
     }
 
     protected abstract void writeLog(String message);
@@ -62,10 +58,6 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
 
     public void setWriteDataSourceName(boolean writeDataSourceName) {
         this.writeDataSourceName = writeDataSourceName;
-    }
-
-    public void setWriteAsJson(boolean writeAsJson) {
-        this.writeAsJson = writeAsJson;
     }
 
 }

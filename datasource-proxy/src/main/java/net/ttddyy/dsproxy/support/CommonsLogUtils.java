@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy.support;
 
-import net.ttddyy.dsproxy.listener.CommonsLogLevel;
+import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
 import org.apache.commons.logging.Log;
 
 /**

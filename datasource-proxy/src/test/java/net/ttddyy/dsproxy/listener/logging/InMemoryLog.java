@@ -1,4 +1,4 @@
-package net.ttddyy.dsproxy;
+package net.ttddyy.dsproxy.listener.logging;
 
 import org.apache.commons.logging.Log;
 

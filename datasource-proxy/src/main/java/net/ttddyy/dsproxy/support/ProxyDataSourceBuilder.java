@@ -1,12 +1,13 @@
 package net.ttddyy.dsproxy.support;
 
-import net.ttddyy.dsproxy.listener.CommonsLogLevel;
-import net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener;
+import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
+import net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.listener.SLF4JLogLevel;
-import net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener;
-import net.ttddyy.dsproxy.listener.SystemOutQueryLoggingListener;
+import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
+import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
+import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
+import net.ttddyy.dsproxy.listener.logging.DefaultJsonQueryLogEntryCreator;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 
@@ -69,7 +70,7 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Register {@link net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener}.
+     * Register {@link CommonsQueryLoggingListener}.
      *
      * @return builder
      */
@@ -79,7 +80,7 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Register {@link net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener}.
+     * Register {@link CommonsQueryLoggingListener}.
      *
      * @param logLevel log level for commons
      * @return builder
@@ -91,7 +92,7 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Register {@link net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener}.
+     * Register {@link CommonsQueryLoggingListener}.
      *
      * @param loggerName logger name
      * @return builder
@@ -104,7 +105,7 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Register {@link net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener}.
+     * Register {@link CommonsQueryLoggingListener}.
      *
      * @param logLevel   log level for commons
      * @param loggerName logger name
@@ -119,7 +120,7 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Register {@link net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener}.
+     * Register {@link SLF4JQueryLoggingListener}.
      *
      * @return builder
      */
@@ -129,7 +130,7 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Register {@link net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener}.
+     * Register {@link SLF4JQueryLoggingListener}.
      *
      * @param logLevel log level for slf4j
      * @return builder
@@ -141,7 +142,7 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Register {@link net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener}.
+     * Register {@link SLF4JQueryLoggingListener}.
      *
      * @param loggerName logger name
      * @return builder
@@ -154,7 +155,7 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Register {@link net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener}.
+     * Register {@link SLF4JQueryLoggingListener}.
      *
      * @param logLevel   log level for commons
      * @param loggerName logger name
@@ -169,7 +170,7 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Register {@link net.ttddyy.dsproxy.listener.SystemOutQueryLoggingListener}.
+     * Register {@link SystemOutQueryLoggingListener}.
      *
      * @return builder
      */
@@ -266,7 +267,7 @@ public class ProxyDataSourceBuilder {
                 listener.setLoggerName(this.loggerName);
             }
             if (this.jsonFormat) {
-                listener.setWriteAsJson(true);
+                listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
             }
             listeners.add(listener);
         }
@@ -279,14 +280,14 @@ public class ProxyDataSourceBuilder {
                 listener.setLoggerName(this.loggerName);
             }
             if (this.jsonFormat) {
-                listener.setWriteAsJson(true);
+                listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
             }
             listeners.add(listener);
         }
         if (this.createSysOutQueryListener) {
             SystemOutQueryLoggingListener listener = new SystemOutQueryLoggingListener();
             if (this.jsonFormat) {
-                listener.setWriteAsJson(true);
+                listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
             }
             listeners.add(listener);
         }

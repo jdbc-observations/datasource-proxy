@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy.support;
 
-import net.ttddyy.dsproxy.listener.SLF4JLogLevel;
+import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
 import org.slf4j.Logger;
 
 /**

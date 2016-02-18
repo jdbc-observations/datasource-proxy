@@ -1,6 +1,5 @@
-package net.ttddyy.dsproxy.listener;
+package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.InMemoryLog;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +28,7 @@ public class CommonsQueryLoggingListenerTest {
     public void defaultLoggerName() {
         CommonsQueryLoggingListener listener = new CommonsQueryLoggingListener();
         String name = ((InMemoryLog) listener.log).getName();
-        assertThat(name).as("Default logger name").isEqualTo("net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener");
+        assertThat(name).as("Default logger name").isEqualTo("net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener");
     }
 
     @Test

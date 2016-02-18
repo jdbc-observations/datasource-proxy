@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.support;
 
-import net.ttddyy.dsproxy.listener.CommonsLogLevel;
-import net.ttddyy.dsproxy.listener.SLF4JLogLevel;
+import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
+import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
 
 /**
  * Builder for QueryCountLogging related classes.
