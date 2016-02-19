@@ -1,3 +1,4 @@
+[[assert-with-hamcrest]]
 == Assert with Hamcrest
 
 === DataSource

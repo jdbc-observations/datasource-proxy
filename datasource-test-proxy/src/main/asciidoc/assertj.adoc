@@ -1,3 +1,4 @@
+[[assert-with-assertj]]
 == Assert with AssertJ
 
 === DataSource

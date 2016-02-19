@@ -1,3 +1,4 @@
+[[assert-with-assertequals]]
 == Assert with assertEquals
 
 This section describes how to assert `ProxyTestDataSource` with simple `assertEquals` from JUnit or TestNG.
