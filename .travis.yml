@@ -1,3 +1,11 @@
 language: java
+
 jdk:
   - oraclejdk8
+
+script:
+  - bash ./publish-doc.sh
+
+env:
+  global:
+    secure: Q8rLWOmsGH01i5NIZKYxEYL5/uWDqDbbM5qghBcK0MerRSaqgEOsKhb3sLToOoP3VTe94x0qHYW14fDatMjnenPNMEea2zOUrKRCzk1I20swjjtPjucxRmjTQU1PZ3GsmHctEzooq2Sf18bCmpZdGtAi3GqX4mRD3PqgwR3dyzw=
