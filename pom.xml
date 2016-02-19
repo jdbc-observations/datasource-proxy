@@ -182,6 +182,27 @@
           <groupId>org.asciidoctor</groupId>
           <artifactId>asciidoctor-maven-plugin</artifactId>
           <version>${asciidoctor.version}</version>
+          <executions>
+            <execution>
+              <id>output-html</id>
+              <phase>generate-resources</phase>
+              <goals>
+                <goal>process-asciidoc</goal>
+              </goals>
+              <configuration>
+                <sourceDocumentName>index.adoc</sourceDocumentName>
+                <backend>html5</backend>
+                <sourceHighlighter>highlightjs</sourceHighlighter>
+                <attributes>
+                  <toc>left</toc>
+                  <highlightjs-theme>github</highlightjs-theme>
+                  <setanchors/>
+                  <icons>font</icons>
+                  <sectnums/>
+                </attributes>
+              </configuration>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
 
