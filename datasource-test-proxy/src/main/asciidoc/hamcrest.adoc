@@ -1,6 +1,6 @@
-= Assert with Hamcrest
+== Assert with Hamcrest
 
-== DataSource
+=== DataSource
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -51,7 +51,7 @@
     assertThat(ds, allOf(updateCount(3), deleteCount(1)));
 ----
 
-== QueryExecutions
+=== QueryExecutions
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -77,7 +77,7 @@
     assertThat(qe, callableOrBatchCallable());
 ----
 
-== Statement
+=== Statement
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -98,7 +98,7 @@
 ----
 
 
-== Batch Statement
+=== Batch Statement
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -116,7 +116,7 @@
     assertThat(sbe, queryTypes(0, is(select())));
 ----
 
-== Prepared Statement
+=== Prepared Statement
 
 
 [source,java,indent=0]
@@ -149,7 +149,7 @@
     assertThat(pe, allOf(paramAsInteger(1, is(100)), paramAsInteger(2, is(200)), nullParam(3)));
 ----
 
-== Batch Prepared Statement
+=== Batch Prepared Statement
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -183,7 +183,7 @@
 ----
 
 
-== Callable Statement
+=== Callable Statement
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -238,7 +238,7 @@
 ----
 
 
-== Batch Callable Statement
+=== Batch Callable Statement
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]

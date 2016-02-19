@@ -1,6 +1,6 @@
-= Assert with AssertJ
+== Assert with AssertJ
 
-== DataSource
+=== DataSource
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -31,7 +31,7 @@
 
 ----
 
-== QueryExecutions
+=== QueryExecutions
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -66,7 +66,7 @@
     assertThat(qe).asPrepared().containsParam(1, "value").containsNullParam(1, Types.INTEGER);
 ----
 
-== Statement
+=== Statement
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -87,7 +87,7 @@
 ----
 
 
-== Batch Statement
+=== Batch Statement
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -113,7 +113,7 @@
     assertThat(sbe).hasInsertCount(2);  // num of insert statements
 ----
 
-== Prepared Statement
+=== Prepared Statement
 
 
 [source,java,indent=0]
@@ -136,7 +136,7 @@
     assertThat(pe).containsParamValuesExactly("value", 100, null, 12);
 ----
 
-== Batch Prepared Statement
+=== Batch Prepared Statement
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -162,7 +162,7 @@
 ----
 
 
-== Callable Statement
+=== Callable Statement
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -193,7 +193,7 @@
                                          outParam("outKey", Types.INTEGER));
 ----
 
-== Batch Callable Statement
+=== Batch Callable Statement
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]

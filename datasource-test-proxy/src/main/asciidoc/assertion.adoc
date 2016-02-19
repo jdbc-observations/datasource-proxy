@@ -1,8 +1,8 @@
-= Assert with assertEquals
+== Assert with assertEquals
 
 This section describes how to assert `ProxyTestDataSource` with simple `assertEquals` from JUnit or TestNG.
 
-== DataSource
+=== DataSource
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -20,7 +20,7 @@ This section describes how to assert `ProxyTestDataSource` with simple `assertEq
     assertEquals(3, ds.getBatchCallables().size());
 ----
 
-== QueryExecutions
+=== QueryExecutions
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -40,7 +40,7 @@ This section describes how to assert `ProxyTestDataSource` with simple `assertEq
     assertTrue(qe instanceof CallableBatchExecution);
 ----
 
-== Statement
+=== Statement
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -57,7 +57,7 @@ This section describes how to assert `ProxyTestDataSource` with simple `assertEq
 ----
 
 
-== Batch Statement
+=== Batch Statement
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -75,7 +75,7 @@ This section describes how to assert `ProxyTestDataSource` with simple `assertEq
     assertEquals("FOO", queries.get(0));
 ----
 
-== Prepared Statement
+=== Prepared Statement
 
 
 [source,java,indent=0]
@@ -108,7 +108,7 @@ This section describes how to assert `ProxyTestDataSource` with simple `assertEq
     assertTrue(setNullByIndex.containsKey(2));
 ----
 
-== Batch Prepared Statement
+=== Batch Prepared Statement
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -149,7 +149,7 @@ This section describes how to assert `ProxyTestDataSource` with simple `assertEq
 ----
 
 
-== Callable Statement
+=== Callable Statement
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
@@ -215,7 +215,7 @@ This section describes how to assert `ProxyTestDataSource` with simple `assertEq
 ----
 
 
-== Batch Callable Statement
+=== Batch Callable Statement
 
 [source,java,indent=0]
 [subs="verbatim,attributes"]
