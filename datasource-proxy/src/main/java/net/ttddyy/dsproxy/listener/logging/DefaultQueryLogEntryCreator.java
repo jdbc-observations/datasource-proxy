@@ -2,13 +2,12 @@ package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.TreeMap;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -188,7 +187,8 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
     /**
      * Write query parameters.
      *
-     * <p>default: Params:[(1=foo,2=100),(1=bar,2=101)],
+     * <p>default for prepared: Params:[(foo,100),(bar,101)],
+     * <p>default for callable: Params:[(1=foo,key=100),(1=bar,key=101)],
      *
      * @param sb            StringBuilder to write
      * @param execInfo      execution info
@@ -196,23 +196,28 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
      * @since 1.3.3
      */
     protected void writeParamsEntry(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+
+        boolean isPrepared = execInfo.getStatementType() == StatementType.PREPARED;
+
         sb.append("Params:[");
 
         for (QueryInfo queryInfo : queryInfoList) {
             for (List<ParameterSetOperation> parameters : queryInfo.getParametersList()) {
-                Map<String, String> paramMap = getParametersToDisplay(parameters);
-                // parameters per batch
-                writeParamsForSingleEntry(sb, paramMap, execInfo, queryInfoList);
+                SortedMap<String, String> paramMap = getParametersToDisplay(parameters);
+
+                // parameters per batch.
+                //   for prepared: (val1,val2,...)
+                //   for callable: (key1=val1,key2-val2,...)
+                if (isPrepared) {
+                    writeParamsEntryForSinglePreparedEntry(sb, paramMap, execInfo, queryInfoList);
+                } else {
+                    writeParamsForSingleCallableEntry(sb, paramMap, execInfo, queryInfoList);
+                }
+
+
             }
         }
 
-//        switch (execInfo.getStatementType()) {
-//            case PREPARED:
-//                writeParamsEntryForPrepared(sb, execInfo, queryInfoList);
-//                break;
-//            case CALLABLE:
-//                break;
-//        }
         chompIfEndWith(sb, ',');
         sb.append("]");
     }
@@ -220,25 +225,22 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
     /**
      * Write query parameters for PreparedStatement.
      *
-     * <p>default: Params:[(1=foo,2=100),(1=bar,2=101)],
+     * <p>default: Params:[(foo,100),(bar,101)],
      *
      * @param sb            StringBuilder to write
+     * @param paramMap      sorted parameters map
      * @param execInfo      execution info
      * @param queryInfoList query info list
      * @since 1.4
      */
-    protected void writeParamsEntryForPrepared(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        for (QueryInfo queryInfo : queryInfoList) {
-            for (List<ParameterSetOperation> parameters : queryInfo.getParametersList()) {
-                Collection<String> paramMap = getParametersToDisplay(parameters).values();
-
-
-                // parameters per batch
-//                writeParamsForSingleEntry(sb, paramMap, execInfo, queryInfoList);
-            }
+    protected void writeParamsEntryForSinglePreparedEntry(StringBuilder sb, SortedMap<String, String> paramMap, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+        sb.append("(");
+        for (Map.Entry<String, String> paramEntry : paramMap.entrySet()) {
+            sb.append(paramEntry.getValue());
+            sb.append(",");
         }
         chompIfEndWith(sb, ',');
-        sb.append("]");
+        sb.append("),");
     }
 
     /**
@@ -247,18 +249,14 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
      * <p>default: (1=foo,2=100),
      *
      * @param sb            StringBuilder to write
-     * @param paramMap      parameters map
+     * @param paramMap      sorted parameters map
      * @param execInfo      execution info
      * @param queryInfoList query info list
-     * @since 1.3.3
+     * @since 1.4
      */
-    protected void writeParamsForSingleEntry(StringBuilder sb, Map<String, String> paramMap, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        // sort
-        SortedMap<String, String> sortedParamMap = new TreeMap<String, String>(new StringAsIntegerComparator());
-        sortedParamMap.putAll(paramMap);
-
+    protected void writeParamsForSingleCallableEntry(StringBuilder sb, SortedMap<String, String> paramMap, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
         sb.append("(");
-        for (Map.Entry<String, String> paramEntry : sortedParamMap.entrySet()) {
+        for (Map.Entry<String, String> paramEntry : paramMap.entrySet()) {
             sb.append(paramEntry.getKey());
             sb.append("=");
             sb.append(paramEntry.getValue());

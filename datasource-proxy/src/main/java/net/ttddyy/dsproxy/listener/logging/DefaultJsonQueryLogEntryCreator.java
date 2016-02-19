@@ -282,23 +282,6 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
         return sb.toString();
     }
 
-    /**
-     * populate param map with sorted by key.
-     *
-     * @param params list of ParameterSetOperation
-     * @return a map: key=index/name as string,  value=first value
-     * @since 1.4
-     */
-    protected Map<String, String> getParametersToDisplay(List<ParameterSetOperation> params) {
-        // populate param map with sorted by key: key=index/name, value=first value
-        Map<String, String> paramMap = new TreeMap<String, String>(new StringAsIntegerComparator());
-        for (ParameterSetOperation param : params) {
-            String key = getParameterKeyToDisplay(param);
-            String value = getParameterValueToDisplay(param);
-            paramMap.put(key, value);
-        }
-        return paramMap;
-    }
 
     /**
      * @return parameterIndex or parameterName as String

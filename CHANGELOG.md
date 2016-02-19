@@ -13,8 +13,8 @@
   - To use JSON style logging, you can set the `QueryLogEntryCreator` to `[Commons|SLF4J|SystemOut]QueryLoggingListener#setQueryLogEntryCreator()`
   - `OracleOutputParameterLogEntryCreator` has been split to `OutputParameterLogEntryCreator` and `OutputParameterJsonLogEntryCreator`
 
-
-
+- `DefaultQueryLogEntryCreator#writeParamsForSingleEntry()` has split to `writeParamsEntryForSinglePreparedEntry()` and `writeParamsForSingleCallableEntry()`
+- When logging prepared statement, do not include parameter index. ex: Params:[(foo,100),(bar,200)]
 
 
 ## 1.3.3

@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
@@ -84,9 +85,9 @@ public abstract class AbstractQueryLogEntryCreator implements QueryLogEntryCreat
      * @return a map: key=index/name as string,  value=first value
      * @since 1.4
      */
-    protected Map<String, String> getParametersToDisplay(List<ParameterSetOperation> params) {
+    protected SortedMap<String, String> getParametersToDisplay(List<ParameterSetOperation> params) {
         // populate param map with sorted by key: key=index/name, value=first value
-        Map<String, String> paramMap = new TreeMap<String, String>(new StringAsIntegerComparator());
+        SortedMap<String, String> paramMap = new TreeMap<String, String>(new StringAsIntegerComparator());
         for (ParameterSetOperation param : params) {
             String key = getParameterKeyToDisplay(param);
             String value = getParameterValueToDisplay(param);

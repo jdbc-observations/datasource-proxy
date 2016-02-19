@@ -98,7 +98,7 @@ public class DefaultQueryLogEntryCreatorTest {
         DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Prepared, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(1=foo,2=100)]");
+        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Prepared, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(foo,100)]");
 
     }
 
@@ -130,7 +130,7 @@ public class DefaultQueryLogEntryCreatorTest {
         DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(1=foo,2=100),(1=bar,2=200)]");
+        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(foo,100),(bar,200)]");
 
     }
 
@@ -226,7 +226,7 @@ public class DefaultQueryLogEntryCreatorTest {
         DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-        assertThat(entry).containsOnlyOnce("Params:[(1=foo,2=100,3=FOO),(1=bar,2=200,3=BAR)]");
+        assertThat(entry).containsOnlyOnce("Params:[(foo,100,FOO),(bar,200,BAR)]");
 
     }
 
