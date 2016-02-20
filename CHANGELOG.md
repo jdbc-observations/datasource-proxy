@@ -16,6 +16,7 @@
 - `DefaultQueryLogEntryCreator#writeParamsForSingleEntry()` has split to `writeParamsEntryForSinglePreparedEntry()` and `writeParamsForSingleCallableEntry()`
 - When logging prepared statement, do not include parameter index. ex: Params:[(foo,100),(bar,200)]
 
+- Added `JULQueryLoggingListener` which uses JUL(Java Utils Logging) to log executed queries 
 
 ## 1.3.3
 
