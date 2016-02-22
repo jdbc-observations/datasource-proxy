@@ -30,11 +30,13 @@ public class ProxyDataSourceBuilder {
 
     private boolean createCommonsQueryListener;
     private CommonsLogLevel commonsLogLevel;
+    private String commonsLoggerName;
     private boolean createSlf4jQueryListener;
     private SLF4JLogLevel slf4jLogLevel;
+    private String slf4jLoggerName;
     private boolean createJULQueryListener;
     private Level julLogLevel;
-    private String loggerName;
+    private String julLoggerName;
     private boolean createSysOutQueryListener;
     private boolean createDataSourceQueryCountListener;
     private boolean jsonFormat;
@@ -98,13 +100,13 @@ public class ProxyDataSourceBuilder {
     /**
      * Register {@link CommonsQueryLoggingListener}.
      *
-     * @param loggerName logger name
+     * @param commonsLoggerName commons logger name
      * @return builder
      * @since 1.3.1
      */
-    public ProxyDataSourceBuilder logQueryByCommons(String loggerName) {
+    public ProxyDataSourceBuilder logQueryByCommons(String commonsLoggerName) {
         this.createCommonsQueryListener = true;
-        this.loggerName = loggerName;
+        this.commonsLoggerName = commonsLoggerName;
         return this;
     }
 
@@ -112,14 +114,14 @@ public class ProxyDataSourceBuilder {
      * Register {@link CommonsQueryLoggingListener}.
      *
      * @param logLevel   log level for commons
-     * @param loggerName logger name
+     * @param commonsLoggerName commons logger name
      * @return builder
      * @since 1.3.1
      */
-    public ProxyDataSourceBuilder logQueryByCommons(CommonsLogLevel logLevel, String loggerName) {
+    public ProxyDataSourceBuilder logQueryByCommons(CommonsLogLevel logLevel, String commonsLoggerName) {
         this.createCommonsQueryListener = true;
         this.commonsLogLevel = logLevel;
-        this.loggerName = loggerName;
+        this.commonsLoggerName = commonsLoggerName;
         return this;
     }
 
@@ -148,13 +150,13 @@ public class ProxyDataSourceBuilder {
     /**
      * Register {@link SLF4JQueryLoggingListener}.
      *
-     * @param loggerName logger name
+     * @param slf4jLoggerName SLF4J logger name
      * @return builder
      * @since 1.3.1
      */
-    public ProxyDataSourceBuilder logQueryBySlf4j(String loggerName) {
+    public ProxyDataSourceBuilder logQueryBySlf4j(String slf4jLoggerName) {
         this.createSlf4jQueryListener = true;
-        this.loggerName = loggerName;
+        this.slf4jLoggerName = slf4jLoggerName;
         return this;
     }
 
@@ -162,14 +164,14 @@ public class ProxyDataSourceBuilder {
      * Register {@link SLF4JQueryLoggingListener}.
      *
      * @param logLevel   log level for slf4j
-     * @param loggerName logger name
+     * @param slf4jLoggerName SLF4J logger name
      * @return builder
      * @since 1.3.1
      */
-    public ProxyDataSourceBuilder logQueryBySlf4j(SLF4JLogLevel logLevel, String loggerName) {
+    public ProxyDataSourceBuilder logQueryBySlf4j(SLF4JLogLevel logLevel, String slf4jLoggerName) {
         this.createSlf4jQueryListener = true;
         this.slf4jLogLevel = logLevel;
-        this.loggerName = loggerName;
+        this.slf4jLoggerName = slf4jLoggerName;
         return this;
     }
 
@@ -200,13 +202,13 @@ public class ProxyDataSourceBuilder {
     /**
      * Register {@link JULQueryLoggingListener}.
      *
-     * @param loggerName logger name
+     * @param julLoggerName JUL logger name
      * @return builder
      * @since 1.4
      */
-    public ProxyDataSourceBuilder logQueryByJUL(String loggerName) {
+    public ProxyDataSourceBuilder logQueryByJUL(String julLoggerName) {
         this.createJULQueryListener = true;
-        this.loggerName = loggerName;
+        this.julLoggerName = julLoggerName;
         return this;
     }
 
@@ -214,14 +216,14 @@ public class ProxyDataSourceBuilder {
      * Register {@link JULQueryLoggingListener}.
      *
      * @param logLevel   log level for JUL
-     * @param loggerName logger name
+     * @param julLoggerName JUL logger name
      * @return builder
      * @since 1.4
      */
-    public ProxyDataSourceBuilder logQueryByJUL(Level logLevel, String loggerName) {
+    public ProxyDataSourceBuilder logQueryByJUL(Level logLevel, String julLoggerName) {
         this.createJULQueryListener = true;
         this.julLogLevel = logLevel;
-        this.loggerName = loggerName;
+        this.julLoggerName = julLoggerName;
         return this;
     }
 
@@ -319,8 +321,8 @@ public class ProxyDataSourceBuilder {
             if (this.commonsLogLevel != null) {
                 listener.setLogLevel(this.commonsLogLevel);
             }
-            if (this.loggerName != null && !this.loggerName.isEmpty()) {
-                listener.setLoggerName(this.loggerName);
+            if (this.commonsLoggerName != null && !this.commonsLoggerName.isEmpty()) {
+                listener.setLoggerName(this.commonsLoggerName);
             }
             if (this.jsonFormat) {
                 listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
@@ -332,8 +334,8 @@ public class ProxyDataSourceBuilder {
             if (this.slf4jLogLevel != null) {
                 listener.setLogLevel(this.slf4jLogLevel);
             }
-            if (this.loggerName != null && !this.loggerName.isEmpty()) {
-                listener.setLoggerName(this.loggerName);
+            if (this.slf4jLoggerName != null && !this.slf4jLoggerName.isEmpty()) {
+                listener.setLoggerName(this.slf4jLoggerName);
             }
             if (this.jsonFormat) {
                 listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
@@ -345,8 +347,8 @@ public class ProxyDataSourceBuilder {
             if (this.julLogLevel != null) {
                 listener.setLogLevel(this.julLogLevel);
             }
-            if (this.loggerName != null && !this.loggerName.isEmpty()) {
-                listener.setLoggerName(this.loggerName);
+            if (this.julLoggerName != null && !this.julLoggerName.isEmpty()) {
+                listener.setLoggerName(this.julLoggerName);
             }
             if (this.jsonFormat) {
                 listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
