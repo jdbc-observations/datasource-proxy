@@ -1,6 +1,10 @@
 #!/bin/bash -x
 set -e # exit with nonzero exit code if anything fails
 
+
+# DISABLE document publishing for now
+exit 0
+
 cd $HOME
 rm -fr gh-pages
 
