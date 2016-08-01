@@ -6,6 +6,8 @@ import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 
 import javax.sql.DataSource;
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -17,7 +19,7 @@ import java.util.logging.Logger;
  *
  * @author Tadaya Tsuyukubo
  */
-public class ProxyDataSource implements DataSource {
+public class ProxyDataSource implements DataSource, Closeable {
     private DataSource dataSource;
     private InterceptorHolder interceptorHolder = new InterceptorHolder();  // default
     private String dataSourceName = "";
@@ -112,5 +114,12 @@ public class ProxyDataSource implements DataSource {
 
     public void setInterceptorHolder(InterceptorHolder interceptorHolder) {
         this.interceptorHolder = interceptorHolder;
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (dataSource instanceof Closeable) {
+            ((Closeable) dataSource).close();
+        }
     }
 }
