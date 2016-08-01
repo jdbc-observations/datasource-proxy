@@ -2,13 +2,11 @@
 
 ## 1.4
 
-
-- Query logging related listeners has updated package 
-  - package has changed from `net.ttddyy.dsproxy.listener` to `net.ttddyy.dsproxy.listener.logging`
-
+- Move logging relate listeners to sub package
+  - from `net.ttddyy.dsproxy.listener` to `net.ttddyy.dsproxy.listener.logging`
 
 - classes for logging entry creation has been updated
-  - `QueryLogEntryCreator#getLogEntryAsJson` has been removed.
+  - `QueryLogEntryCreator#getLogEntryAsJson` has removed.
   - JSON style log entry creators is pulled up to `DefaultJsonQueryLogEntryCreator`
   - To use JSON style logging, you can set the `QueryLogEntryCreator` to `[Commons|SLF4J|SystemOut]QueryLoggingListener#setQueryLogEntryCreator()`
   - `OracleOutputParameterLogEntryCreator` has been split to `OutputParameterLogEntryCreator` and `OutputParameterJsonLogEntryCreator`
@@ -16,7 +14,9 @@
 - `DefaultQueryLogEntryCreator#writeParamsForSingleEntry()` has split to `writeParamsEntryForSinglePreparedEntry()` and `writeParamsForSingleCallableEntry()`
 - When logging prepared statement, do not include parameter index. ex: Params:[(foo,100),(bar,200)]
 
-- Added `JULQueryLoggingListener` which uses JUL(Java Utils Logging) to log executed queries 
+- Add `JULQueryLoggingListener` which uses JUL(Java Utils Logging) to log executed queries
+
+- Update logging for `setNull` and `registerOutParameter` to include sqltype
 
 ## 1.3.3
 
