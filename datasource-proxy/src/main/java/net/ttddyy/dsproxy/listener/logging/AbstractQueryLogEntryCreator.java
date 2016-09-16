@@ -53,7 +53,9 @@ public abstract class AbstractQueryLogEntryCreator implements QueryLogEntryCreat
             }
 
             try {
-                return Integer.compare(Integer.parseInt(left), Integer.parseInt(right));
+                int leftInt = Integer.parseInt(left);
+                int rightInt = Integer.parseInt(right);
+                return (leftInt < rightInt) ? -1 : ((leftInt == rightInt) ? 0 : 1);
             } catch (NumberFormatException e) {
                 return left.compareTo(right);  // use String comparison
             }

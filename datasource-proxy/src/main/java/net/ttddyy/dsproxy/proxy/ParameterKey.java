@@ -57,7 +57,7 @@ public class ParameterKey implements Comparable<ParameterKey> {
                 return (this.index == other.index) ? 0 : (this.index < other.index ? -1 : 1);
             } else {
                 if (isIntString(other.name)) {
-                    return Integer.compare(this.index, Integer.parseInt(other.name));
+                    return compareInt(this.index, Integer.parseInt(other.name));
                 } else {
                     return -1;  // this(number) first
                 }
@@ -65,7 +65,7 @@ public class ParameterKey implements Comparable<ParameterKey> {
         } else {
             if (other.isByIndex()) {
                 if (isIntString(this.name)) {
-                    return Integer.compare(Integer.parseInt(this.name), other.index);
+                    return compareInt(Integer.parseInt(this.name), other.index);
                 } else {
                     return 1;  // other(number) first
                 }
@@ -75,7 +75,7 @@ public class ParameterKey implements Comparable<ParameterKey> {
                 boolean bothAreIntString = thisIsIntString && otherIsIntString;
 
                 if (bothAreIntString) {
-                    return Integer.compare(Integer.parseInt(this.name), Integer.parseInt(other.name));
+                    return compareInt(Integer.parseInt(this.name), Integer.parseInt(other.name));
                 } else if (thisIsIntString || otherIsIntString) {
                     return thisIsIntString ? -1 : 1;  // number first
                 } else {
@@ -94,6 +94,10 @@ public class ParameterKey implements Comparable<ParameterKey> {
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+
+    private int compareInt(int left, int right) {
+        return (left < right) ? -1 : ((left == right) ? 0 : 1);
     }
 
     @Override

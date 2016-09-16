@@ -2,8 +2,6 @@
 
 ## 1.4
 
-- Update minimum jdk to java7+
-
 - Move logging relate listeners to sub package
   - from `net.ttddyy.dsproxy.listener` to `net.ttddyy.dsproxy.listener.logging`
 

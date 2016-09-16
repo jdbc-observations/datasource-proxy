@@ -56,8 +56,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.6</source>
+          <target>1.6</target>
           <testSource>1.8</testSource>
           <testTarget>1.8</testTarget>
         </configuration>
@@ -85,7 +85,7 @@
         <configuration>
           <signature>
             <groupId>org.codehaus.mojo.signature</groupId>
-            <artifactId>java17</artifactId>
+            <artifactId>java16</artifactId>
             <version>1.0</version>
           </signature>
         </configuration>
@@ -137,6 +137,15 @@
       <artifactId>aopalliance</artifactId>
       <optional>true</optional>
     </dependency>
+
+
+    <dependency>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>animal-sniffer-annotations</artifactId>
+      <version>1.15</version>
+      <optional>true</optional>
+    </dependency>
+
 
 
     <dependency>

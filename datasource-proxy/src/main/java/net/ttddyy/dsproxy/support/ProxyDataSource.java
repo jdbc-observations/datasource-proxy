@@ -4,6 +4,7 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
+import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
 import javax.sql.DataSource;
 import java.io.Closeable;
@@ -96,6 +97,7 @@ public class ProxyDataSource implements DataSource, Closeable {
         return dataSourceName;
     }
 
+    @IgnoreJRERequirement
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         return dataSource.getParentLogger();  // JDBC4.1 (jdk7+)
     }
