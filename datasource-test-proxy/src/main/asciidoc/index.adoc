@@ -1,8 +1,0 @@
-= datasource-test-proxy User Guide
-Tadaya Tsuyukubo
-
-// ======================================================================================
-
-include::assertj.adoc[]
-include::hamcrest.adoc[]
-include::assertion.adoc[]
