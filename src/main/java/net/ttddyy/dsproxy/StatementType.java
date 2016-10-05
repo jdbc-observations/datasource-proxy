@@ -12,6 +12,9 @@ public enum StatementType {
     STATEMENT, PREPARED, CALLABLE;
 
     /**
+     * @param statement statement
+     * @param <T> statement type
+     * @return statement type
      * @since 1.3.1
      */
     public static <T extends Statement> StatementType valueOf(T statement) {

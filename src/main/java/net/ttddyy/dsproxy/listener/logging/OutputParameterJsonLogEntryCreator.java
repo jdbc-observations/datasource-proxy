@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * In addition to {@link net.ttddyy.dsproxy.listener.DefaultQueryLogEntryCreator}, append output parameter values to the log for {@link CallableStatement}.
+ * In addition to {@link DefaultJsonQueryLogEntryCreator}, append output parameter values to the log for {@link CallableStatement}.
  *
  * @author Parikshit Navgire (navgire@optymyze.com)
  * @author Tadaya Tsuyukubo

@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 public class ParameterSetOperation {
 
     /**
-     * Check the given operation is {@link java.sql.CallableStatement#registerOutParameter" method by method name.
+     * Check the given operation is {@link java.sql.CallableStatement#registerOutParameter} method by method name.
      *
      * @param operation a parameter set operation
      * @return true if it is a {@code registerOutParameter} operation

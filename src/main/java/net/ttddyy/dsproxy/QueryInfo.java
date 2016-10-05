@@ -67,6 +67,7 @@ public class QueryInfo {
      * parameter sets operations for the execution.
      * For batch Prepared/Callable executions, this list will have N number of elements.
      *
+     * @return list of prameter operation list
      * @since 1.4
      */
     public List<List<ParameterSetOperation>> getParametersList() {

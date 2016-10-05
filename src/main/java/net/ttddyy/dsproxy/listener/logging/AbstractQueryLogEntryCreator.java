@@ -99,6 +99,7 @@ public abstract class AbstractQueryLogEntryCreator implements QueryLogEntryCreat
     }
 
     /**
+     * @param param parameter set operation
      * @return parameterIndex or parameterName as String
      * @since 1.4
      */
@@ -124,7 +125,7 @@ public abstract class AbstractQueryLogEntryCreator implements QueryLogEntryCreat
 
 
     /**
-     * @param param
+     * @param param parameter set operation
      * @return value to display
      * @since 1.4
      */
@@ -133,7 +134,7 @@ public abstract class AbstractQueryLogEntryCreator implements QueryLogEntryCreat
     }
 
     /**
-     * @param param
+     * @param param parameter set operation
      * @return value to display
      * @since 1.4
      */
@@ -142,7 +143,7 @@ public abstract class AbstractQueryLogEntryCreator implements QueryLogEntryCreat
     }
 
     /**
-     * @param param
+     * @param param parameter set operation
      * @return value to display
      * @since 1.4
      */
@@ -151,7 +152,7 @@ public abstract class AbstractQueryLogEntryCreator implements QueryLogEntryCreat
     }
 
     /**
-     * @param setNullParameterValueConverter
+     * @param setNullParameterValueConverter parameter value converter
      * @since 1.4
      */
     public void setSetNullParameterValueConverter(ParameterValueConverter setNullParameterValueConverter) {
@@ -159,7 +160,7 @@ public abstract class AbstractQueryLogEntryCreator implements QueryLogEntryCreat
     }
 
     /**
-     * @param registerOutParameterValueConverter
+     * @param registerOutParameterValueConverter parameter value converter
      * @since 1.4
      */
     public void setRegisterOutParameterValueConverter(ParameterValueConverter registerOutParameterValueConverter) {
