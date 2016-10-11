@@ -209,7 +209,7 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
                 //   for prepared: (val1,val2,...)
                 //   for callable: (key1=val1,key2-val2,...)
                 if (isPrepared) {
-                    writeParamsEntryForSinglePreparedEntry(sb, paramMap, execInfo, queryInfoList);
+                    writeParamsForSinglePreparedEntry(sb, paramMap, execInfo, queryInfoList);
                 } else {
                     writeParamsForSingleCallableEntry(sb, paramMap, execInfo, queryInfoList);
                 }
@@ -233,7 +233,7 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
      * @param queryInfoList query info list
      * @since 1.4
      */
-    protected void writeParamsEntryForSinglePreparedEntry(StringBuilder sb, SortedMap<String, String> paramMap, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    protected void writeParamsForSinglePreparedEntry(StringBuilder sb, SortedMap<String, String> paramMap, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
         sb.append("(");
         for (Map.Entry<String, String> paramEntry : paramMap.entrySet()) {
             sb.append(paramEntry.getValue());
