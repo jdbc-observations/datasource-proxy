@@ -2,7 +2,7 @@
 
 ## 1.4
 
-- Move logging relate listeners to sub package
+- Move logging related listeners to sub package
   - from `net.ttddyy.dsproxy.listener` to `net.ttddyy.dsproxy.listener.logging`
 
 - classes for logging entry creation has been updated
@@ -13,8 +13,31 @@
 
 - `DefaultQueryLogEntryCreator#writeParamsForSingleEntry()` has split to `writeParamsEntryForSinglePreparedEntry()` and `writeParamsForSingleCallableEntry()`
 
-- When logging prepared statement, do not include parameter index. ex: Params:[(foo,100),(bar,200)]
-  - for json, ex: "params": [["foo","100"],["bar":"200"]]
+- When logging prepared statement, do not include parameter index.
+
+  Before(v1.3.3):
+
+  ```
+  ..., Params:[(1=1,2=foo),(1=2,2=bar)]
+  ..., Params:[(1=3,2=FOO),(1=4,2=BAR)]
+  ```
+
+  ```json
+  ..., "params":[{"1":"1","2":"foo"},{"1":"2","2":"bar"}]}
+  ..., "params":[{"1":"3","2":"FOO"},{"1":"4","2":"BAR"}]}
+  ```
+
+  Now:
+
+  ```
+  ..., Params:[(1,foo),(2,bar)]
+  ..., Params:[(3,FOO),(4,BAR)]
+  ```
+
+  ```json
+  ..., "params":[["1","foo"],["2","bar"]]}
+  ..., "params":[["3","FOO"],["4","BAR"]]}
+  ```
 
 - Add `JULQueryLoggingListener` which uses JUL(Java Utils Logging) to log executed queries
 
