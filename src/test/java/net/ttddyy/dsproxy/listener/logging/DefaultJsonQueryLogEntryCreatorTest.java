@@ -96,7 +96,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
         String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Prepared\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{\"1\":\"foo\",\"2\":\"100\"}]}");
+        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Prepared\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[[\"foo\",\"100\"]]}");
     }
 
     @Test
@@ -127,7 +127,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
         String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Prepared\", \"batch\":true, \"querySize\":1, \"batchSize\":2, \"query\":[\"select 1\"], \"params\":[{\"1\":\"foo\",\"2\":\"100\"},{\"1\":\"bar\",\"2\":\"200\"}]}");
+        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Prepared\", \"batch\":true, \"querySize\":1, \"batchSize\":2, \"query\":[\"select 1\"], \"params\":[[\"foo\",\"100\"],[\"bar\",\"200\"]]}");
     }
 
     @Test
@@ -220,7 +220,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
         String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-        assertThat(jsonEntry).containsOnlyOnce("\"params\":[{\"1\":\"foo\",\"2\":\"100\",\"3\":\"FOO\"},{\"1\":\"bar\",\"2\":\"200\",\"3\":\"BAR\"}]");
+        assertThat(jsonEntry).containsOnlyOnce("\"params\":[[\"foo\",\"100\",\"FOO\"],[\"bar\",\"200\",\"BAR\"]]");
     }
 
     @Test

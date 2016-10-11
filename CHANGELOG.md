@@ -12,7 +12,9 @@
   - `OracleOutputParameterLogEntryCreator` has been split to `OutputParameterLogEntryCreator` and `OutputParameterJsonLogEntryCreator`
 
 - `DefaultQueryLogEntryCreator#writeParamsForSingleEntry()` has split to `writeParamsEntryForSinglePreparedEntry()` and `writeParamsForSingleCallableEntry()`
+
 - When logging prepared statement, do not include parameter index. ex: Params:[(foo,100),(bar,200)]
+  - for json, ex: "params": [["foo","100"],["bar":"200"]]
 
 - Add `JULQueryLoggingListener` which uses JUL(Java Utils Logging) to log executed queries
 

@@ -192,7 +192,8 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
     /**
      * Write query parameters as json.
      *
-     * <p>default: "params":[{"1":"foo","2":"100"},{"1":"bar","2":"101"}],
+     * <p>default for prepared: "params":[["foo","100"],["bar","101"]],
+     * <p>default for callable: "params":[{"1":"foo","2":"100"},{"1":"bar","2":"101"}],
      *
      * @param sb            StringBuilder to write
      * @param execInfo      execution info
@@ -200,13 +201,18 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
      * @since 1.3.3
      */
     protected void writeParamsEntryForJson(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+        boolean isPrepared = execInfo.getStatementType() == StatementType.PREPARED;
         sb.append("\"params\":[");
         for (QueryInfo queryInfo : queryInfoList) {
 
             for (List<ParameterSetOperation> parameters : queryInfo.getParametersList()) {
-                Map<String, String> paramMap = getParametersToDisplay(parameters);
+                SortedMap<String, String> paramMap = getParametersToDisplay(parameters);
                 // parameters per batch
-                writeParamsForSingleEntryForJson(sb, paramMap, execInfo, queryInfoList);
+                if (isPrepared) {
+                    writeParamsForSinglePreparedEntryForJson(sb, paramMap, execInfo, queryInfoList);
+                } else {
+                    writeParamsForSingleCallableEntryForJson(sb, paramMap, execInfo, queryInfoList);
+                }
             }
         }
         chompIfEndWith(sb, ',');
@@ -217,22 +223,45 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
     /**
      * Write parameters for single execution as json.
      *
-     * <p>default: {"1":"foo","2":"100"},
+     * <p>default: ["foo","100"],
      *
      * @param sb            StringBuilder to write
-     * @param paramMap      parameters map
+     * @param paramMap      sorted parameters map
      * @param execInfo      execution info
      * @param queryInfoList query info list
-     * @since 1.3.3
+     * @since 1.4
      */
-    protected void writeParamsForSingleEntryForJson(StringBuilder sb, Map<String, String> paramMap, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        // sort
-        SortedMap<String, String> sortedParamMap = new TreeMap<String, String>(new StringAsIntegerComparator());
-        sortedParamMap.putAll(paramMap);
+    protected void writeParamsForSinglePreparedEntryForJson(StringBuilder sb, SortedMap<String, String> paramMap, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+        sb.append("[");
+        for (Map.Entry<String, String> paramEntry : paramMap.entrySet()) {
+            Object value = paramEntry.getValue();
+            if (value == null) {
+                sb.append("null");
+            } else {
+                sb.append("\"");
+                sb.append(escapeSpecialCharacterForJson(value.toString()));
+                sb.append("\"");
+            }
+            sb.append(",");
+        }
+        chompIfEndWith(sb, ',');
+        sb.append("],");
+    }
 
-
+    /**
+     * Write parameters for single execution.
+     *
+     * <p>default: {"1"="foo","2"="100"},
+     *
+     * @param sb            StringBuilder to write
+     * @param paramMap      sorted parameters map
+     * @param execInfo      execution info
+     * @param queryInfoList query info list
+     * @since 1.4
+     */
+    protected void writeParamsForSingleCallableEntryForJson(StringBuilder sb, Map<String, String> paramMap, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
         sb.append("{");
-        for (Map.Entry<String, String> paramEntry : sortedParamMap.entrySet()) {
+        for (Map.Entry<String, String> paramEntry : paramMap.entrySet()) {
             String key = paramEntry.getKey();
             Object value = paramEntry.getValue();
             sb.append("\"");
