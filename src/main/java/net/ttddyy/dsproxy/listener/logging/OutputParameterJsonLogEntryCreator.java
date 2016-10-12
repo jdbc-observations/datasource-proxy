@@ -58,7 +58,7 @@ public class OutputParameterJsonLogEntryCreator extends DefaultJsonQueryLogEntry
             Object value = getOutputValueForDisplay(key, st);
 
             sb.append("\"");
-            sb.append(escapeSpecialCharacterForJson(key.toString()));
+            sb.append(escapeSpecialCharacter(key.toString()));
             sb.append("\":");
 
             if (value == null) {
