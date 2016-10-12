@@ -8,7 +8,7 @@
 - classes for logging entry creation has been updated
   - `QueryLogEntryCreator#getLogEntryAsJson` has removed.
   - JSON style log entry creators is pulled up to `DefaultJsonQueryLogEntryCreator`
-  - To use JSON style logging, you can set the `QueryLogEntryCreator` to `[Commons|SLF4J|SystemOut]QueryLoggingListener#setQueryLogEntryCreator()`
+  - To use JSON style logging, you can set the `QueryLogEntryCreator` to `[Commons|SLF4J|JUL|SystemOut]QueryLoggingListener#setQueryLogEntryCreator()`
   - `OracleOutputParameterLogEntryCreator` has been split to `OutputParameterLogEntryCreator` and `OutputParameterJsonLogEntryCreator`
 
 - `DefaultQueryLogEntryCreator#writeParamsForSingleEntry()` has split to `writeParamsEntryForSinglePreparedEntry()` and `writeParamsForSingleCallableEntry()`
@@ -42,6 +42,7 @@
 - Add `JULQueryLoggingListener` which uses JUL(Java Utils Logging) to log executed queries
 
 - Update logging for `setNull` and `registerOutParameter` to include sqltype
+    e.g.: `NULL(VARCHAR)`, `OUTPUT(VARCHAR[12])`
 
 ## 1.3.3
 
