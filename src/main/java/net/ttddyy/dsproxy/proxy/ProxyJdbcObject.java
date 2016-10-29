@@ -11,6 +11,7 @@ package net.ttddyy.dsproxy.proxy;
  * @see net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler
  * @see net.ttddyy.dsproxy.proxy.jdk.PreparedStatementInvocationHandler
  * @see net.ttddyy.dsproxy.proxy.jdk.CallableStatementInvocationHandler
+ * @see net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler
  */
 public interface ProxyJdbcObject {
 
