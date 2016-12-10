@@ -17,18 +17,8 @@ import static net.ttddyy.dsproxy.proxy.jdk.StatementResultSetResultInvocationHan
 public class ResultSetProxyJdbcProxyFactory extends JdkJdbcProxyFactory {
 
     @Override
-    public Statement createStatement(Statement statement, InterceptorHolder interceptorHolder) {
-        return super.createStatement(statementResultSetResultProxy(statement, Statement.class), interceptorHolder);
-    }
-
-    @Override
     public Statement createStatement(Statement statement, InterceptorHolder interceptorHolder, String dataSourceName) {
         return super.createStatement(statementResultSetResultProxy(statement, Statement.class), interceptorHolder, dataSourceName);
-    }
-
-    @Override
-    public PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query, InterceptorHolder interceptorHolder) {
-        return super.createPreparedStatement(statementResultSetResultProxy(preparedStatement, PreparedStatement.class), query, interceptorHolder);
     }
 
     @Override

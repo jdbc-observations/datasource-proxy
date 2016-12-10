@@ -13,6 +13,14 @@ import java.util.Map;
 import static java.lang.Boolean.TRUE;
 import static java.lang.String.format;
 
+/**
+ * Allows {@link java.sql.ResultSet} to be consumed more than once.
+ *
+ * @author Liam Williams
+ * @see net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler
+ * @see net.ttddyy.dsproxy.proxy.jdk.ResultSetProxyJdbcProxyFactory
+ * @see net.ttddyy.dsproxy.proxy.jdk.StatementResultSetResultInvocationHandler
+ */
 public class ResultSetProxyLogic {
 
     private final Map<String, Integer> columnNameToIndex;
