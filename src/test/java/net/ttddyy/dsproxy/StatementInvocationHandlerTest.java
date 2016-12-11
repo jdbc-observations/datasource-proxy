@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +18,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 
 /**
@@ -61,6 +64,7 @@ public class StatementInvocationHandlerTest {
         Exception ex = null;
         try {
             statement.executeUpdate(query);
+            fail("select query with executeUpdate() should fail");
         } catch (Exception e) {
             ex = e;
         }
@@ -72,9 +76,6 @@ public class StatementInvocationHandlerTest {
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
         assertThat(beforeQueries, hasSize(1));
         assertThat(beforeQueries.get(0).getQuery(), is(query));
-
-        ExecutionInfo beforeExec = lastQueryListener.getBeforeExecInfo();
-        assertThat(beforeExec.getThrowable(), is(nullValue()));
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
         assertThat(afterQueries, hasSize(1));
@@ -202,5 +203,16 @@ public class StatementInvocationHandlerTest {
         int count = TestUtils.countTable(jdbcDataSource, "emp");
         assertThat("2 existing data(foo,bar) and 3 insert(FOO,BAR,BAZ).", count, is(5));
 
+    }
+
+    @Test
+    public void sameInstanceOfExecutionInfo() throws Exception {
+        final String query = "select * from emp;";
+        statement.executeQuery(query);
+
+        ExecutionInfo before = lastQueryListener.getBeforeExecInfo();
+        ExecutionInfo after = lastQueryListener.getAfterExecInfo();
+
+        Assertions.assertThat(before).as("before and after uses same ExecutionInfo instance").isSameAs(after);
     }
 }

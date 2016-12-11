@@ -59,6 +59,12 @@ public class ExecutionInfo {
         this.dataSourceName = dataSourceName;
     }
 
+    /**
+     * Contains query execution result.
+     * Only available after successful query execution.
+     *
+     * @return result of query
+     */
     public Object getResult() {
         return result;
     }
@@ -67,6 +73,12 @@ public class ExecutionInfo {
         this.result = result;
     }
 
+    /**
+     * Duration of query execution.
+     * Only available after successful query execution.
+     *
+     * @return query execution time
+     */
     public long getElapsedTime() {
         return elapsedTime;
     }
@@ -79,6 +91,12 @@ public class ExecutionInfo {
         return throwable;
     }
 
+    /**
+     * Contains an exception thrown while query was executed.
+     * Contains value only when an exception has thrown, otherwise {@code null}.
+     *
+     * @param throwable an error thrown while executing a query
+     */
     public void setThrowable(Throwable throwable) {
         this.throwable = throwable;
     }
@@ -91,6 +109,12 @@ public class ExecutionInfo {
         this.statementType = statementType;
     }
 
+    /**
+     * Indicate whether the query execution was successful or not.
+     * Contains valid value only after the query execution.
+     *
+     * @return true when query has successfully executed
+     */
     public boolean isSuccess() {
         return isSuccess;
     }

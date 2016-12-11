@@ -44,8 +44,11 @@
 - Update logging for `setNull` and `registerOutParameter` to include sqltype
     e.g.: `NULL(VARCHAR)`, `OUTPUT(VARCHAR[12])`
 
-- `ResultSetProxyJdbcProxyFactory` to create a proxy `ResultSet` that can be consumed more than once.  
+- `ResultSetProxyJdbcProxyFactory` to create a proxy `ResultSet` that can be consumed more than once.
   Thanks _Liam Williams_ for this contribution!!
+
+- `QueryExecutionListener` receives same instance of `ExecutionInfo` in `beforeQuery` and `afterQuery` methods
+
 
 ## 1.3.3
 

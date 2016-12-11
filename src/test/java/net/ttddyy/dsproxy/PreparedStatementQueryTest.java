@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,11 +14,12 @@ import java.sql.PreparedStatement;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * @author Tadaya Tsuyukubo
  */
-public class PreapareStatementQueryTest {
+public class PreparedStatementQueryTest {
 
     private DataSource jdbcDataSource;
     private TestListener testListener;
@@ -55,6 +57,7 @@ public class PreapareStatementQueryTest {
         try {
             // executeUpdate cannot execute select query 
             stat.executeUpdate();
+            fail("select query with executeUpdate() should fail");
         } catch (Exception e) {
             ex = e;
         }
@@ -66,10 +69,6 @@ public class PreapareStatementQueryTest {
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
         assertThat(beforeQueries).hasSize(1);
         assertThat(beforeQueries.get(0).getQuery()).isEqualTo(query);
-
-        ExecutionInfo beforeExec = lastQueryListener.getBeforeExecInfo();
-        assertThat(beforeExec).isNotNull();
-        assertThat(beforeExec.getThrowable()).isNull();
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
         assertThat(afterQueries).hasSize(1);
@@ -333,6 +332,18 @@ public class PreapareStatementQueryTest {
         int count = TestUtils.countTable(jdbcDataSource, "emp");
         assertThat(count).isEqualTo(5).as("2 existing data(foo,bar) and 3 insert(FOO,BAR,BAZ).");
 
+    }
+
+    @Test
+    public void sameInstanceOfExecutionInfo() throws Exception {
+        final String query = "select * from emp;";
+        PreparedStatement stat = connection.prepareStatement(query);
+        stat.executeQuery();
+
+        ExecutionInfo before = lastQueryListener.getBeforeExecInfo();
+        ExecutionInfo after = lastQueryListener.getAfterExecInfo();
+
+        Assertions.assertThat(before).as("before and after uses same ExecutionInfo instance").isSameAs(after);
     }
 
 }

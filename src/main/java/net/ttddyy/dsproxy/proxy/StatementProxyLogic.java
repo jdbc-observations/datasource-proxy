@@ -136,10 +136,11 @@ public class StatementProxyLogic {
             }
         }
 
-        final QueryExecutionListener listener = interceptorHolder.getListener();
-        listener.beforeQuery(new ExecutionInfo(dataSourceName, this.stmt, isBatchExecute, batchSize, method, args), queries);
-
         final ExecutionInfo execInfo = new ExecutionInfo(dataSourceName, this.stmt, isBatchExecute, batchSize, method, args);
+
+        final QueryExecutionListener listener = interceptorHolder.getListener();
+        listener.beforeQuery(execInfo, queries);
+
         // Invoke method on original Statement.
         try {
             final long beforeTime = System.currentTimeMillis();
