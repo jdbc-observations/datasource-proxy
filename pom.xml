@@ -150,6 +150,10 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <!-- disable java8 doclint for @see reference to generic class -->
+          <additionalparam>-Xdoclint:none</additionalparam>
+        </configuration>
       </plugin>
 
       <plugin>
