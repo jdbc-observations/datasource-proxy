@@ -80,6 +80,27 @@ Name:"MyProxy", Time:6, Total:1, Success:1, Failure:0, Select:1, Insert:0, Updat
 
 Available in [maven central repo](http://search.maven.org/#search|ga|1|datasource-proxy).
 
+### Snapshot
+
+snapshot is available via [oss sonatype snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/net/ttddyy/datasource-proxy/).
+
+To download snapshot jars, enable sonatype snapshot repository:
+
+
+```xml
+<repositories>
+  <repository>
+    <id>sonatype-snapshots-repo</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    <releases>
+      <enabled>false</enabled>
+    </releases>
+    <snapshots>
+      <enabled>true</enabled>
+    </snapshots>
+  </repository>
+</repositories>
+```
 
 ## how to use
 
