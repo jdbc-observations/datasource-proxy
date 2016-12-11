@@ -20,6 +20,7 @@ import static java.lang.String.format;
  * @see net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler
  * @see net.ttddyy.dsproxy.proxy.jdk.ResultSetProxyJdbcProxyFactory
  * @see net.ttddyy.dsproxy.proxy.jdk.StatementResultSetResultInvocationHandler
+ * @since 1.4
  */
 public class ResultSetProxyLogic {
 

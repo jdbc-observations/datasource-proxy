@@ -12,8 +12,8 @@ import java.sql.Statement;
  * This proxies any {@link java.sql.ResultSet} results so that they can be consumed more than once.
  *
  * @param <T> The {@link java.sql.Statement} type the proxy is for.
- *
  * @author Liam Williams
+ * @since 1.4
  */
 class StatementResultSetResultInvocationHandler<T extends Statement> implements InvocationHandler {
 

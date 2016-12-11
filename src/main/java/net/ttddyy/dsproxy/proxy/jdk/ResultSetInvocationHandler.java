@@ -18,6 +18,7 @@ import static java.util.Arrays.stream;
  * Proxy InvocationHandler for {@link java.sql.ResultSet}.
  *
  * @author Liam Williams
+ * @since 1.4
  */
 public class ResultSetInvocationHandler implements InvocationHandler {
 

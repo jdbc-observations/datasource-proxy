@@ -13,6 +13,7 @@ import static net.ttddyy.dsproxy.proxy.jdk.StatementResultSetResultInvocationHan
  * {@link java.sql.ResultSet} results so that they can be consumed more than once.
  *
  * @author Liam Williams
+ * @since 1.4
  */
 public class ResultSetProxyJdbcProxyFactory extends JdkJdbcProxyFactory {
 
