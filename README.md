@@ -1,7 +1,7 @@
 # datasource-proxy
 
 [![Build Status](https://travis-ci.org/ttddyy/datasource-proxy.svg?branch=master)](https://travis-ci.org/ttddyy/datasource-proxy)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.ttddyy/datasource-proxy/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.ttddyy/datasource-proxy/)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.ttddyy/datasource-proxy/badge.svg)]([maven-central_badge])
 [![Download](https://api.bintray.com/packages/ttddyy/maven/datasource-proxy/images/download.svg) ](https://bintray.com/ttddyy/maven/datasource-proxy/_latestVersion)
 
 
@@ -66,9 +66,11 @@ Name:"MyProxy", Time:6, Total:1, Success:1, Failure:0, Select:1, Insert:0, Updat
 <dependency>
   <groupId>net.ttddyy</groupId>
   <artifactId>datasource-proxy</artifactId>
-  <version>1.3.1</version>
+  <version>[LATEST_VERSION]</version>
 </dependency>
 ```
+
+- latest version is: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.ttddyy/datasource-proxy/badge.svg)]([maven-central_badge])
 
 - No dependencies to other libraries, everything is optional.
     - For example, if you want to use slf4j logger with `SLF4JQueryLoggingListener`, then you need slf4j library.
@@ -201,3 +203,7 @@ Example projects: https://github.com/ttddyy/datasource-proxy-examples
 - [Documentation] (https://github.com/ttddyy/datasource-proxy/wiki/_pages)
 - **[Javadoc (API)](https://github.com/ttddyy/datasource-proxy/wiki/Javadoc)**
 - [Change Log](./CHANGELOG.md)
+
+----
+
+[maven-central_badge]: https://maven-badges.herokuapp.com/maven-central/net.ttddyy/datasource-proxy/

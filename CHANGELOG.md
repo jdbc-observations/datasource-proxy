@@ -13,7 +13,7 @@
 
 - `DefaultQueryLogEntryCreator#writeParamsForSingleEntry()` has split to `writeParamsEntryForSinglePreparedEntry()` and `writeParamsForSingleCallableEntry()`
 
-- When logging prepared statement, do not include parameter index.
+- Do not include parameter index for logging prepared statement.
 
   Before(v1.3.3):
 
