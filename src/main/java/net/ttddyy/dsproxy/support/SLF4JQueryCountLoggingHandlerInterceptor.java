@@ -28,4 +28,8 @@ public class SLF4JQueryCountLoggingHandlerInterceptor extends AbstractQueryCount
         this.logLevel = logLevel;
     }
 
+    public void setLogName(String logName) {
+        logger = LoggerFactory.getLogger(logName);
+    }
+
 }
