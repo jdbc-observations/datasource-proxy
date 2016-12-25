@@ -16,6 +16,8 @@ import java.util.List;
  * If you want to manage when to reset the counter, you can disable this filter to clear the counter by setting
  * filter parameter <em>clearQueryCounter</em> to {@code false}.
  *
+ * <p><em>loggerName</em> parameter(Optional): create a logger instance by this name if specified.
+ *
  * <pre>
  * {@code
  *   <filter>
@@ -28,6 +30,10 @@ import java.util.List;
  *     <init-param>
  *       <param-name>clearQueryCounter</param-name>
  *       <param-value>false</param-value>
+ *     <init-param>
+ *     <init-param>
+ *       <param-name>loggerName</param-name>
+ *       <param-value>myLogger</param-value>
  *     <init-param>
  *   </filter>
  * }
@@ -42,6 +48,7 @@ public abstract class AbstractQueryCountLoggingServletFilter implements Filter {
     public static final String CLEAR_QUERY_COUNTER_PARAM = "clearQueryCounter";
     public static final String LOG_LEVEL_PARAM = "logLevel";
     public static final String FORMAT_PARAM = "format";
+    public static final String LOGGER_NAME = "loggerName";
 
     protected boolean clearQueryCounter = true;
     protected boolean writeAsJson = false;
@@ -54,6 +61,11 @@ public abstract class AbstractQueryCountLoggingServletFilter implements Filter {
         String clearQueryCounterParam = filterConfig.getInitParameter(CLEAR_QUERY_COUNTER_PARAM);
         if (clearQueryCounterParam != null && "false".equalsIgnoreCase(clearQueryCounterParam)) {
             this.clearQueryCounter = false;
+        }
+
+        String loggerName = filterConfig.getInitParameter(LOGGER_NAME);
+        if (loggerName != null) {
+            resetLogger(loggerName);
         }
 
         String logLevelParam = filterConfig.getInitParameter(LOG_LEVEL_PARAM);
@@ -98,6 +110,15 @@ public abstract class AbstractQueryCountLoggingServletFilter implements Filter {
     protected abstract void initLogLevelFromFilterConfigIfSpecified(String logLevelParam);
 
     protected abstract void writeLog(String message);
+
+    /**
+     * Callback method to reset the logger object in concrete class when log name is specified.
+     *
+     * @param loggerName logger name
+     * @since 1.4.1
+     */
+    protected abstract void resetLogger(String loggerName);
+
 
     public void setClearQueryCounter(boolean clearQueryCounter) {
         this.clearQueryCounter = clearQueryCounter;

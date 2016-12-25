@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SLF4JQueryCountLoggingServletFilter extends AbstractQueryCountLoggingServletFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(SLF4JQueryCountLoggingServletFilter.class);
+    private Logger logger = LoggerFactory.getLogger(SLF4JQueryCountLoggingServletFilter.class);
     private SLF4JLogLevel logLevel = SLF4JLogLevel.DEBUG;
 
     @Override
@@ -23,6 +23,11 @@ public class SLF4JQueryCountLoggingServletFilter extends AbstractQueryCountLoggi
     @Override
     protected void writeLog(String message) {
         SLF4JLogUtils.writeLog(logger, this.logLevel, message);
+    }
+
+    @Override
+    protected void resetLogger(String loggerName) {
+        this.logger = LoggerFactory.getLogger(loggerName);
     }
 
     public void setLogLevel(SLF4JLogLevel logLevel) {

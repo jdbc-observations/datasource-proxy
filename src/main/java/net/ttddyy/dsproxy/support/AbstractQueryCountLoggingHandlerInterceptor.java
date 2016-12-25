@@ -44,6 +44,24 @@ public abstract class AbstractQueryCountLoggingHandlerInterceptor extends Handle
 
     protected abstract void writeLog(String logEntry);
 
+    /**
+     * Specify logger name.
+     *
+     * @param loggerName logger name
+     * @since 1.4.1
+     */
+    public void setLoggerName(String loggerName) {
+        resetLogger(loggerName);
+    }
+
+    /**
+     * Callback method to reset the logger object in concrete class when log name is specified.
+     *
+     * @param loggerName logger name
+     * @since 1.4.1
+     */
+    protected void resetLogger(String loggerName) {
+    }
 
     public void setClearQueryCounter(boolean clearQueryCounter) {
         this.clearQueryCounter = clearQueryCounter;

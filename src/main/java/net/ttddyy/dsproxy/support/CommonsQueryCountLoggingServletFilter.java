@@ -19,7 +19,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class CommonsQueryCountLoggingServletFilter extends AbstractQueryCountLoggingServletFilter {
 
-    private static final Log log = LogFactory.getLog(CommonsQueryCountLoggingServletFilter.class);
+    private Log log = LogFactory.getLog(CommonsQueryCountLoggingServletFilter.class);
     private CommonsLogLevel logLevel = CommonsLogLevel.DEBUG;  // default
 
     public CommonsQueryCountLoggingServletFilter() {
@@ -40,6 +40,11 @@ public class CommonsQueryCountLoggingServletFilter extends AbstractQueryCountLog
     @Override
     protected void writeLog(String message) {
         CommonsLogUtils.writeLog(log, this.logLevel, message);
+    }
+
+    @Override
+    protected void resetLogger(String loggerName) {
+        this.log = LogFactory.getLog(loggerName);
     }
 
     public void setLogLevel(CommonsLogLevel logLevel) {

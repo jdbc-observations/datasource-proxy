@@ -2,8 +2,9 @@
 
 ## 1.4.1
 
-- add `setLog`/`setLogger` to `{Commons|SLF4J|JUL}QueryLoggingListner` to allow users to set custom logger.
+- Add `setLog`/`setLogger` to `{Commons|SLF4J|JUL}QueryLoggingListener` to allow users to set custom logger.
 
+- Update `~QueryCountLoggingServletFilter` to allow configuring logger by name
 
 ## 1.4
 

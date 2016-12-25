@@ -16,4 +16,9 @@ public class SystemOutQueryCountLoggingServletFilter extends AbstractQueryCountL
     protected void writeLog(String message) {
         System.out.println(message);
     }
+
+    @Override
+    protected void resetLogger(String loggerName) {
+        // NO-OP
+    }
 }
