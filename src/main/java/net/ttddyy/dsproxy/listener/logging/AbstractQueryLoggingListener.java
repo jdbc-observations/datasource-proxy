@@ -44,8 +44,6 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
     /**
      * Callback method to reset the logger object in concrete class when log name is specified.
      *
-     * TODO: may change to abstract method
-     *
      * @param loggerName logger name
      * @since 1.3.1
      */

@@ -27,4 +27,15 @@ public class SLF4JQueryLoggingListener extends AbstractQueryLoggingListener {
     protected void resetLogger(String loggerName) {
         this.logger = LoggerFactory.getLogger(loggerName);
     }
+
+    /**
+     * Override {@link Logger} instance.
+     *
+     * @param logger new logger instance
+     * @since 1.4.1
+     */
+    public void setLogger(Logger logger) {
+        this.logger = logger;
+    }
+
 }
