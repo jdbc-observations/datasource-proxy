@@ -29,4 +29,14 @@ public class SLF4JQueryCountLoggingRequestListener extends AbstractQueryCountLog
         SLF4JLogUtils.writeLog(logger, logLevel, logEntry);
     }
 
+    /**
+     * Override {@link Logger} instance.
+     *
+     * @param logger new log instance
+     * @since 1.4.1
+     */
+    public void setLogger(Logger logger) {
+        this.logger = logger;
+    }
+
 }

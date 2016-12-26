@@ -28,4 +28,15 @@ public class SLF4JQueryCountLoggingHandlerInterceptor extends AbstractQueryCount
         this.logLevel = logLevel;
     }
 
+
+    /**
+     * Override {@link Logger} instance.
+     *
+     * @param logger new log instance
+     * @since 1.4.1
+     */
+    public void setLogger(Logger logger) {
+        this.logger = logger;
+    }
+
 }

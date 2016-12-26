@@ -35,4 +35,14 @@ public class CommonsQueryCountLoggingRequestListener extends AbstractQueryCountL
         CommonsLogUtils.writeLog(log, logLevel, logEntry);
     }
 
+    /**
+     * Override {@link Log} instance.
+     *
+     * @param log new log instance
+     * @since 1.4.1
+     */
+    public void setLog(Log log) {
+        this.log = log;
+    }
+
 }

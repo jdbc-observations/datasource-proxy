@@ -34,4 +34,14 @@ public class SLF4JQueryCountLoggingServletFilter extends AbstractQueryCountLoggi
         this.logLevel = logLevel;
     }
 
+    /**
+     * Override {@link Logger} instance.
+     *
+     * @param logger new log instance
+     * @since 1.4.1
+     */
+    public void setLogger(Logger logger) {
+        this.logger = logger;
+    }
+
 }
