@@ -207,13 +207,12 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
 
                 // parameters per batch.
                 //   for prepared: (val1,val2,...)
-                //   for callable: (key1=val1,key2-val2,...)
+                //   for callable: (key1=val1,key2=val2,...)
                 if (isPrepared) {
                     writeParamsForSinglePreparedEntry(sb, paramMap, execInfo, queryInfoList);
                 } else {
                     writeParamsForSingleCallableEntry(sb, paramMap, execInfo, queryInfoList);
                 }
-
 
             }
         }

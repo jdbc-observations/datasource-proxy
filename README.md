@@ -39,13 +39,13 @@ Query execution:
 
 ```sql
 Name:MyProxy, Time:1, Success:True, Type:Statement, Batch:False, QuerySize:1, BatchSize:0, Query:["CREATE TABLE users(id INT, name VARCHAR(255))"], Params:[]
-Name:MyProxy, Time:1, Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:["INSERT INTO users (id, name) VALUES (?, ?)"], Params:[(1=1,2=foo),(1=2,2=bar)]
+Name:MyProxy, Time:1, Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:["INSERT INTO users (id, name) VALUES (?, ?)"], Params:[(1,foo),(2,bar)]
 ```
 
 ```json
 // JSON output
 {"name":"MyProxy", "time":1, "success":true, "type":"Statement", "batch":false, "querySize":1, "batchSize":0, "query":["CREATE TABLE users(id INT, name VARCHAR(255))"], "params":[]}
-{"name":"MyProxy", "time":0, "success":true, "type":"Prepared", "batch":true, "querySize":1, "batchSize":3, "query":["INSERT INTO users (id, name) VALUES (?, ?)"], "params":[{"1":"1","2":"foo"},{"1":"2","2":"bar"},{"1":"3","2":"baz"}]}
+{"name":"MyProxy", "time":0, "success":true, "type":"Prepared", "batch":true, "querySize":1, "batchSize":3, "query":["INSERT INTO users (id, name) VALUES (?, ?)"], "params":[["1","foo"],["2","bar"],[3","baz"]]}
 ```
 
 Query metrics:
