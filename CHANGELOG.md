@@ -6,6 +6,11 @@
 
 - Update `~QueryCountLoggingServletFilter` to allow configuring logger by name
 
+- Add query count logging implementation for JUL(Java Util Logging)
+  - `JULQueryCountLoggingHandlerInterceptor`
+  - `JULQueryCountLoggingRequestListener`
+  - `JULQueryCountLoggingServletFilter`
+
 ## 1.4
 
 - Move logging related listeners to sub package
