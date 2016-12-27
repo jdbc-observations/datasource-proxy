@@ -28,6 +28,10 @@ public class SLF4JQueryCountLoggingHandlerInterceptor extends AbstractQueryCount
         this.logLevel = logLevel;
     }
 
+    @Override
+    protected void resetLogger(String loggerName) {
+        this.logger = LoggerFactory.getLogger(loggerName);
+    }
 
     /**
      * Override {@link Logger} instance.

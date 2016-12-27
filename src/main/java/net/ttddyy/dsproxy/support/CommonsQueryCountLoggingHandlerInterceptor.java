@@ -33,6 +33,11 @@ public class CommonsQueryCountLoggingHandlerInterceptor extends AbstractQueryCou
         this.logLevel = logLevel;
     }
 
+    @Override
+    protected void resetLogger(String loggerName) {
+        this.log = LogFactory.getLog(loggerName);
+    }
+
     /**
      * Override {@link Log} instance.
      *
