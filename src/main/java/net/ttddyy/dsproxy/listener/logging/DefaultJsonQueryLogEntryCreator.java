@@ -242,7 +242,7 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
     /**
      * Write parameters for single execution.
      *
-     * <p>default: {"1"="foo","2"="100"},
+     * <p>default: {"1"="foo","bar"="100"},
      *
      * @param sb            StringBuilder to write
      * @param paramMap      sorted parameters map

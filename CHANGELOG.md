@@ -1,6 +1,6 @@
 # ChangeLog
 
-## 1.4.1
+## 1.4.1 _(SNAPSHOT)_
 
 - Add `setLog`/`setLogger` to `{Commons|SLF4J|JUL}QueryLoggingListener` to allow users to set custom logger.
 
@@ -29,25 +29,25 @@
   Before(v1.3.3):
 
   ```
-  ..., Params:[(1=1,2=foo),(1=2,2=bar)]
-  ..., Params:[(1=3,2=FOO),(1=4,2=BAR)]
+  ..., Params:[(1=10,2=foo),(1=20,2=bar)]
+  ..., Params:[(1=30,2=FOO),(1=40,2=BAR)]
   ```
 
   ```json
-  ..., "params":[{"1":"1","2":"foo"},{"1":"2","2":"bar"}]}
-  ..., "params":[{"1":"3","2":"FOO"},{"1":"4","2":"BAR"}]}
+  ..., "params":[{"1":"10","2":"foo"},{"1":"20","2":"bar"}]}
+  ..., "params":[{"1":"30","2":"FOO"},{"1":"40","2":"BAR"}]}
   ```
 
   Now:
 
   ```
-  ..., Params:[(1,foo),(2,bar)]
-  ..., Params:[(3,FOO),(4,BAR)]
+  ..., Params:[(10,foo),(20,bar)]
+  ..., Params:[(30,FOO),(40,BAR)]
   ```
 
   ```json
-  ..., "params":[["1","foo"],["2","bar"]]}
-  ..., "params":[["3","FOO"],["4","BAR"]]}
+  ..., "params":[["10","foo"],["20","bar"]]}
+  ..., "params":[["30","FOO"],["40","BAR"]]}
   ```
 
 - Add `JULQueryLoggingListener` which uses JUL(Java Utils Logging) to log executed queries
