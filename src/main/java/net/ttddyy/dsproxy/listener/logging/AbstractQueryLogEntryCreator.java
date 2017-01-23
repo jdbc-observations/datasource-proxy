@@ -114,6 +114,9 @@ public abstract class AbstractQueryLogEntryCreator implements QueryLogEntryCreat
         if (ParameterSetOperation.isSetNullParameterOperation(param)) {
             // for setNull
             value = getDisplayValueForSetNull(param);
+        } else if (ParameterSetOperation.isSetXXXParameterOperation(param)) {
+            // for setXXX with null value
+            value = getDisplayValueForSetNull(param);
         } else if (ParameterSetOperation.isRegisterOutParameterOperation(param)) {
             // for registerOutParameter
             value = getDisplayValueForRegisterOutParameter(param);
