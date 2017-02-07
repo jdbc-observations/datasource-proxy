@@ -35,19 +35,6 @@ public class ParameterSetOperation {
         return StatementMethodNames.PARAMETER_METHOD_SET_NULL.equals(methodName);
     }
 
-    /**
-     * Check the given operation is {@code setXXX} method by method name with passing null value.
-     *
-     * @param operation a parameter set operation
-     * @return true if it is a {@code setXXX} operation with null value
-     * @since 1.4
-     */
-    public static boolean isSetXXXParameterOperation(ParameterSetOperation operation) {
-        String methodName = operation.getMethod().getName();
-        Object arg = operation.getArgs()[1];
-        return methodName.startsWith("set") && arg == null;
-    }
-
     private Method method;
     private Object[] args;
 

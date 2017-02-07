@@ -114,9 +114,6 @@ public abstract class AbstractQueryLogEntryCreator implements QueryLogEntryCreat
         if (ParameterSetOperation.isSetNullParameterOperation(param)) {
             // for setNull
             value = getDisplayValueForSetNull(param);
-        } else if (ParameterSetOperation.isSetXXXParameterOperation(param)) {
-            // for setXXX with null value
-            value = getDisplayValueForSetNull(param);
         } else if (ParameterSetOperation.isRegisterOutParameterOperation(param)) {
             // for registerOutParameter
             value = getDisplayValueForRegisterOutParameter(param);
@@ -151,7 +148,8 @@ public abstract class AbstractQueryLogEntryCreator implements QueryLogEntryCreat
      * @since 1.4
      */
     public String getDisplayValue(ParameterSetOperation param) {
-        return param.getArgs()[1].toString();
+        Object value = param.getArgs()[1];
+        return value == null ? null : value.toString();
     }
 
     /**
