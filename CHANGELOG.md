@@ -10,6 +10,9 @@
   - `JULQueryCountLoggingHandlerInterceptor`
   - `JULQueryCountLoggingRequestListener`
   - `JULQueryCountLoggingServletFilter`
+  
+- Fix writing log with `null` in parameter set methods. (e.g: `setString(1, null);` )
+
 
 ## 1.4
 

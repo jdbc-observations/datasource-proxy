@@ -148,7 +148,8 @@ public abstract class AbstractQueryLogEntryCreator implements QueryLogEntryCreat
      * @since 1.4
      */
     public String getDisplayValue(ParameterSetOperation param) {
-        return param.getArgs()[1].toString();
+        Object value = param.getArgs()[1];
+        return value == null ? null : value.toString();
     }
 
     /**

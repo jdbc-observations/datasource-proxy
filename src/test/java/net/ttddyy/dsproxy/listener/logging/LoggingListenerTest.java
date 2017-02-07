@@ -89,6 +89,18 @@ public class LoggingListenerTest {
     }
 
     @Test
+    public void testPreparedStatementWithNullParam() throws Exception {
+        Connection connection = proxyDataSource.getConnection();
+        PreparedStatement statement = connection.prepareStatement("select ? as nullCol, name from emp where id = ?");
+        statement.setString(1, null);
+        statement.setInt(2, 2);
+        statement.executeQuery();
+
+        final InMemoryLog log = getInMemoryLog();
+        verifyMessage(CommonsLogLevel.DEBUG, log, "select ? as nullCol, name from emp where id = ?");
+    }
+
+    @Test
     public void testPreparedStatementWithBatch() throws Exception {
         Connection connection = proxyDataSource.getConnection();
         PreparedStatement statement = connection.prepareStatement("update emp set name = ? where id = ?");

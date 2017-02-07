@@ -93,12 +93,13 @@ public class DefaultQueryLogEntryCreatorTest {
                 .query("select 1")
                 .param(1, "foo")
                 .param(2, 100)
+                .param(3, null)  // mimic "setString(3, null)"
                 .build();
 
         DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Prepared, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(foo,100)]");
+        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Prepared, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(foo,100,null)]");
 
     }
 

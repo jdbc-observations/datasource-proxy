@@ -91,12 +91,13 @@ public class DefaultJsonQueryLogEntryCreatorTest {
                 .query("select 1")
                 .param(1, "foo")
                 .param(2, 100)
+                .param(3, null)  // mimic "setString(3, null)"
                 .build();
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
         String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Prepared\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[[\"foo\",\"100\"]]}");
+        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Prepared\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[[\"foo\",\"100\",null]]}");
     }
 
     @Test
