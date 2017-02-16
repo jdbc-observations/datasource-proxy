@@ -13,6 +13,7 @@
   
 - Fix writing log with `null` in parameter set methods. (e.g: `setString(1, null);` )
 
+- Add `SlowQueryListener` that triggers callback method when query takes longer than specified threshold time. 
 
 ## 1.4
 
