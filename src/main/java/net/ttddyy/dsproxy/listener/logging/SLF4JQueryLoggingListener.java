@@ -38,4 +38,11 @@ public class SLF4JQueryLoggingListener extends AbstractQueryLoggingListener {
         this.logger = logger;
     }
 
+    /**
+     * @return logger
+     * @since 1.4.1
+     */
+    public Logger getLogger() {
+        return logger;
+    }
 }

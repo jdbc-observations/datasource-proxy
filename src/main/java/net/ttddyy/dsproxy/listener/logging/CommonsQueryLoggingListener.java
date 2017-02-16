@@ -38,4 +38,11 @@ public class CommonsQueryLoggingListener extends AbstractQueryLoggingListener {
         this.log = log;
     }
 
+    /**
+     * @return log
+     * @since 1.4.1
+     */
+    public Log getLog() {
+        return log;
+    }
 }
