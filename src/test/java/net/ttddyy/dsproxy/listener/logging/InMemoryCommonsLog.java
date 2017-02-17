@@ -12,21 +12,12 @@ import java.util.List;
  */
 public class InMemoryCommonsLog implements Log {
 
-    private String name;
-
     private List<Object> debugMessages = new ArrayList<Object>();
     private List<Object> errorMessages = new ArrayList<Object>();
     private List<Object> fatalMessages = new ArrayList<Object>();
     private List<Object> infoMessages = new ArrayList<Object>();
     private List<Object> traceMessages = new ArrayList<Object>();
     private List<Object> warnMessages = new ArrayList<Object>();
-
-    public InMemoryCommonsLog() {
-    }
-
-    public InMemoryCommonsLog(String name) {
-        this.name = name;
-    }
 
     public void clear() {
         debugMessages.clear();
@@ -109,10 +100,6 @@ public class InMemoryCommonsLog implements Log {
         this.fatalMessages.add(message);
     }
 
-
-    public String getName() {
-        return this.name;
-    }
 
     public List<Object> getDebugMessages() {
         return this.debugMessages;
