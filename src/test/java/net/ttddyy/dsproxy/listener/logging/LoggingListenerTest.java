@@ -2,7 +2,6 @@ package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
-import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +15,10 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -25,84 +27,77 @@ public class LoggingListenerTest {
     private DataSource jdbcDataSource;
     private ProxyDataSource proxyDataSource;
     private CommonsQueryLoggingListener loggingListener;
+    private InMemoryCommonsLog inMemoryLog;
 
     @Before
     public void setup() throws Exception {
-        // TODO: clean up logger intercept mechanism
-        System.setProperty("org.apache.commons.logging.Log", InMemoryLog.class.getCanonicalName());
 
-        loggingListener = new CommonsQueryLoggingListener();
+        this.inMemoryLog = new InMemoryCommonsLog();
+
+        this.loggingListener = new CommonsQueryLoggingListener();
+        this.loggingListener.setLog(this.inMemoryLog);
 
         // real datasource
-        jdbcDataSource = TestUtils.getDataSourceWithData();
+        this.jdbcDataSource = TestUtils.getDataSourceWithData();
 
-        proxyDataSource = new ProxyDataSource();
-        proxyDataSource.setDataSource(jdbcDataSource);
-        proxyDataSource.setListener(loggingListener);
+        this.proxyDataSource = new ProxyDataSource();
+        this.proxyDataSource.setDataSource(this.jdbcDataSource);
+        this.proxyDataSource.addListener(this.loggingListener);
     }
 
     @After
     public void teardown() throws Exception {
-        TestUtils.shutdown(jdbcDataSource);
-
-        InMemoryLog.clear();
-        System.setProperty("org.apache.commons.logging.Log", "");
+        TestUtils.shutdown(this.jdbcDataSource);
     }
 
 
     @Test
     public void testStatement() throws Exception {
-        Connection connection = proxyDataSource.getConnection();
+        Connection connection = this.proxyDataSource.getConnection();
         Statement statement = connection.createStatement();
         statement.executeQuery("select * from emp");
 
-
-        final InMemoryLog log = getInMemoryLog();
-        verifyMessage(CommonsLogLevel.DEBUG, log, "select * from emp");
+        verifyMessage(CommonsLogLevel.DEBUG, this.inMemoryLog, "select * from emp");
     }
 
     @Test
     public void testStatementWithBatch() throws Exception {
-        Connection connection = proxyDataSource.getConnection();
+        Connection connection = this.proxyDataSource.getConnection();
         Statement statement = connection.createStatement();
         statement.addBatch("select * from emp where id = 1");
         statement.addBatch("select * from emp where id = 2");
         statement.executeBatch();
 
-        final InMemoryLog log = getInMemoryLog();
-
         // this is batch execution, so query call will be just one time
-        verifyMessage(CommonsLogLevel.DEBUG, log, "select * from emp where id = 1");
-        verifyMessage(CommonsLogLevel.DEBUG, log, "select * from emp where id = 2");
+        verifyMessage(CommonsLogLevel.DEBUG, this.inMemoryLog, "select * from emp where id = 1");
+        verifyMessage(CommonsLogLevel.DEBUG, this.inMemoryLog, "select * from emp where id = 2");
     }
 
     @Test
     public void testPreparedStatement() throws Exception {
-        Connection connection = proxyDataSource.getConnection();
+        Connection connection = this.proxyDataSource.getConnection();
         PreparedStatement statement = connection.prepareStatement("select * from emp where id = ?");
         statement.setInt(1, 2);
         statement.executeQuery();
 
 
-        final InMemoryLog log = getInMemoryLog();
-        verifyMessage(CommonsLogLevel.DEBUG, log, "select * from emp where id = ?");
+        verifyMessage(CommonsLogLevel.DEBUG, this.inMemoryLog, "select * from emp where id = ?");
     }
 
     @Test
     public void testPreparedStatementWithNullParam() throws Exception {
-        Connection connection = proxyDataSource.getConnection();
+        Connection connection = this.proxyDataSource.getConnection();
         PreparedStatement statement = connection.prepareStatement("select ? as nullCol, name from emp where id = ?");
         statement.setString(1, null);
         statement.setInt(2, 2);
         statement.executeQuery();
 
-        final InMemoryLog log = getInMemoryLog();
-        verifyMessage(CommonsLogLevel.DEBUG, log, "select ? as nullCol, name from emp where id = ?");
+        verifyMessage(CommonsLogLevel.DEBUG, this.inMemoryLog, "select ? as nullCol, name from emp where id = ?");
     }
 
     @Test
     public void testPreparedStatementWithBatch() throws Exception {
-        Connection connection = proxyDataSource.getConnection();
+        Connection connection = this.proxyDataSource.getConnection();
         PreparedStatement statement = connection.prepareStatement("update emp set name = ? where id = ?");
         statement.setString(1, "BAZ");
         statement.setInt(2, 3);
@@ -121,19 +116,11 @@ public class LoggingListenerTest {
         statement.executeBatch();
 
 
-        final InMemoryLog log = getInMemoryLog();
-        verifyMessage(CommonsLogLevel.DEBUG, log, "update emp set name = ? where id = ?");
-        verifyMessage(CommonsLogLevel.DEBUG, log, "[(FOO,1),(BAR,2)]");
+        verifyMessage(CommonsLogLevel.DEBUG, this.inMemoryLog, "update emp set name = ? where id = ?");
+        verifyMessage(CommonsLogLevel.DEBUG, this.inMemoryLog, "[(FOO,1),(BAR,2)]");
     }
 
-    private InMemoryLog getInMemoryLog() {
-        final InMemoryLog log = (InMemoryLog) LogFactory.getLog(CommonsQueryLoggingListener.class);
-        LogFactory.releaseAll(); // release the Log cache
-        return log;
-    }
-
-
-    private void verifyMessage(CommonsLogLevel logLevel, InMemoryLog log, String... queries) {
+    private void verifyMessage(CommonsLogLevel logLevel, InMemoryCommonsLog log, String... queries) {
         Map<CommonsLogLevel, List> messages = new HashMap<CommonsLogLevel, List>();
         messages.put(CommonsLogLevel.DEBUG, log.getDebugMessages());
         messages.put(CommonsLogLevel.ERROR, log.getErrorMessages());

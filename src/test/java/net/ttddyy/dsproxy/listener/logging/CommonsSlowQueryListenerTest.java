@@ -2,7 +2,6 @@ package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,13 +22,7 @@ public class CommonsSlowQueryListenerTest {
     @Before
     public void setup() throws Exception {
         this.listener = new CommonsSlowQueryListener();
-        this.listener.setLog(new InMemoryLog());
-    }
-
-    @After
-    public void teardown() throws Exception {
-        // since it stores logs in static variable, need to clear them
-        InMemoryLog.clear();
+        this.listener.setLog(new InMemoryCommonsLog());
     }
 
     @Test
@@ -47,7 +40,7 @@ public class CommonsSlowQueryListenerTest {
         TimeUnit.MILLISECONDS.sleep(100);
         this.listener.afterQuery(executionInfo, queryInfos);
 
-        InMemoryLog log = (InMemoryLog) this.listener.getLog();
+        InMemoryCommonsLog log = (InMemoryCommonsLog) this.listener.getLog();
         List<Object> messages = log.getDebugMessages();
         assertThat(messages).hasSize(1);
         assertThat((String) messages.get(0)).contains("SELECT 1");

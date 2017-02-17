@@ -10,25 +10,25 @@ import java.util.List;
  *
  * @author Tadaya Tsuyukubo
  */
-public class InMemoryLog implements Log {
+public class InMemoryCommonsLog implements Log {
 
-    private static String name;
+    private String name;
 
-    private static List<Object> debugMessages = new ArrayList<Object>();
-    private static List<Object> errorMessages = new ArrayList<Object>();
-    private static List<Object> fatalMessages = new ArrayList<Object>();
-    private static List<Object> infoMessages = new ArrayList<Object>();
-    private static List<Object> traceMessages = new ArrayList<Object>();
-    private static List<Object> warnMessages = new ArrayList<Object>();
+    private List<Object> debugMessages = new ArrayList<Object>();
+    private List<Object> errorMessages = new ArrayList<Object>();
+    private List<Object> fatalMessages = new ArrayList<Object>();
+    private List<Object> infoMessages = new ArrayList<Object>();
+    private List<Object> traceMessages = new ArrayList<Object>();
+    private List<Object> warnMessages = new ArrayList<Object>();
 
-    public InMemoryLog() {
+    public InMemoryCommonsLog() {
     }
 
-    public InMemoryLog(String name) {
+    public InMemoryCommonsLog(String name) {
         this.name = name;
     }
 
-    public static void clear() {
+    public void clear() {
         debugMessages.clear();
         errorMessages.clear();
         fatalMessages.clear();
@@ -62,79 +62,79 @@ public class InMemoryLog implements Log {
     }
 
     public void trace(Object message) {
-        traceMessages.add(message);
+        this.traceMessages.add(message);
     }
 
     public void trace(Object message, Throwable t) {
-        traceMessages.add(message);
+        this.traceMessages.add(message);
     }
 
     public void debug(Object message) {
-        debugMessages.add(message);
+        this.debugMessages.add(message);
     }
 
     public void debug(Object message, Throwable t) {
-        debugMessages.add(message);
+        this.debugMessages.add(message);
     }
 
     public void info(Object message) {
-        infoMessages.add(message);
+        this.infoMessages.add(message);
     }
 
     public void info(Object message, Throwable t) {
-        infoMessages.add(message);
+        this.infoMessages.add(message);
     }
 
     public void warn(Object message) {
-        warnMessages.add(message);
+        this.warnMessages.add(message);
     }
 
     public void warn(Object message, Throwable t) {
-        warnMessages.add(message);
+        this.warnMessages.add(message);
     }
 
     public void error(Object message) {
-        errorMessages.add(message);
+        this.errorMessages.add(message);
     }
 
     public void error(Object message, Throwable t) {
-        errorMessages.add(message);
+        this.errorMessages.add(message);
     }
 
     public void fatal(Object message) {
-        fatalMessages.add(message);
+        this.fatalMessages.add(message);
     }
 
     public void fatal(Object message, Throwable t) {
-        fatalMessages.add(message);
+        this.fatalMessages.add(message);
     }
 
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public List<Object> getDebugMessages() {
-        return debugMessages;
+        return this.debugMessages;
     }
 
     public List<Object> getErrorMessages() {
-        return errorMessages;
+        return this.errorMessages;
     }
 
     public List<Object> getFatalMessages() {
-        return fatalMessages;
+        return this.fatalMessages;
     }
 
     public List<Object> getInfoMessages() {
-        return infoMessages;
+        return this.infoMessages;
     }
 
     public List<Object> getTraceMessages() {
-        return traceMessages;
+        return this.traceMessages;
     }
 
     public List<Object> getWarnMessages() {
-        return warnMessages;
+        return this.warnMessages;
     }
 }
