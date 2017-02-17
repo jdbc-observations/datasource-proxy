@@ -2,7 +2,8 @@
 
 ## 1.4.1 _(SNAPSHOT)_
 
-- Add `setLog`/`setLogger` to `{Commons|SLF4J|JUL}QueryLoggingListener` to allow users to set custom logger.
+- Add `setLog`/`setLogger` to `{Commons|SLF4J|JUL}QueryLoggingListener` to allow users to set custom logger.  
+  Also added getters as well.
 
 - Update `~QueryCountLoggingServletFilter` to allow configuring logger by name
 
@@ -13,7 +14,12 @@
   
 - Fix writing log with `null` in parameter set methods. (e.g: `setString(1, null);` )
 
-- Add `SlowQueryListener` that triggers callback method when query takes longer than specified threshold time. 
+- Add `SlowQueryListener` that triggers callback method when query takes longer than specified threshold time.  
+  Also, added slow query logging listeners:
+  - `CommonsSlowQueryListener`
+  - `JULSlowQueryListener`
+  - `SLF4JSlowQueryListener`
+  - `SystemOutSlowQueryListener`
 
 ## 1.4
 

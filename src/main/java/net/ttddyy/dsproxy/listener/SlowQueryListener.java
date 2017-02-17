@@ -18,6 +18,10 @@ import java.util.concurrent.TimeUnit;
  * is called. The callback is called only once for the target query if it exceeds the threshold time.
  *
  * @author Tadaya Tsuyukubo
+ * @see net.ttddyy.dsproxy.listener.logging.CommonsSlowQueryListener
+ * @see net.ttddyy.dsproxy.listener.logging.JULSlowQueryListener
+ * @see net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener
+ * @see net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener
  * @since 1.4.1
  */
 public class SlowQueryListener implements QueryExecutionListener {
