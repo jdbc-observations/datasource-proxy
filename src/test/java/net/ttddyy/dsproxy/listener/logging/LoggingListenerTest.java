@@ -121,7 +121,7 @@ public class LoggingListenerTest {
     }
 
     private void verifyMessage(CommonsLogLevel logLevel, InMemoryCommonsLog log, String... queries) {
-        Map<CommonsLogLevel, List> messages = new HashMap<CommonsLogLevel, List>();
+        Map<CommonsLogLevel, List<String>> messages = new HashMap<CommonsLogLevel, List<String>>();
         messages.put(CommonsLogLevel.DEBUG, log.getDebugMessages());
         messages.put(CommonsLogLevel.ERROR, log.getErrorMessages());
         messages.put(CommonsLogLevel.FATAL, log.getFatalMessages());
@@ -129,20 +129,17 @@ public class LoggingListenerTest {
         messages.put(CommonsLogLevel.TRACE, log.getTraceMessages());
         messages.put(CommonsLogLevel.WARN, log.getWarnMessages());
 
-        for (Map.Entry<CommonsLogLevel, List> entry : messages.entrySet()) {
+        for (Map.Entry<CommonsLogLevel, List<String>> entry : messages.entrySet()) {
             CommonsLogLevel msgLevel = entry.getKey();
-            List<?> messageList = entry.getValue();
+            List<String> messageList = entry.getValue();
 
             int expectedMsgSize = (msgLevel == logLevel) ? queries.length : 0;
-
             assertThat(messageList, hasSize(expectedMsgSize));
+
             if (expectedMsgSize > 0) {
                 for (int i = 0; i < queries.length; i++) {
                     final String query = queries[i];
-
-                    assertThat(messageList.get(i), is(instanceOf(String.class)));
-                    String message = (String) messageList.get(i);
-                    assertThat(message, containsString(query));
+                    assertThat(messageList.get(i), containsString(query));
                 }
             }
         }

@@ -41,8 +41,8 @@ public class CommonsSlowQueryListenerTest {
         this.listener.afterQuery(executionInfo, queryInfos);
 
         InMemoryCommonsLog log = (InMemoryCommonsLog) this.listener.getLog();
-        List<Object> messages = log.getDebugMessages();
+        List<String> messages = log.getDebugMessages();
         assertThat(messages).hasSize(1);
-        assertThat((String) messages.get(0)).contains("SELECT 1");
+        assertThat(messages.get(0)).contains("SELECT 1");
     }
 }
