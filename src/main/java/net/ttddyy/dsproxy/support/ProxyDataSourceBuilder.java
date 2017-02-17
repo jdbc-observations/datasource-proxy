@@ -322,7 +322,7 @@ public class ProxyDataSourceBuilder {
                 listener.setLogLevel(this.commonsLogLevel);
             }
             if (this.commonsLoggerName != null && !this.commonsLoggerName.isEmpty()) {
-                listener.setLoggerName(this.commonsLoggerName);
+                listener.setLog(this.commonsLoggerName);
             }
             if (this.jsonFormat) {
                 listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
@@ -335,7 +335,7 @@ public class ProxyDataSourceBuilder {
                 listener.setLogLevel(this.slf4jLogLevel);
             }
             if (this.slf4jLoggerName != null && !this.slf4jLoggerName.isEmpty()) {
-                listener.setLoggerName(this.slf4jLoggerName);
+                listener.setLogger(this.slf4jLoggerName);
             }
             if (this.jsonFormat) {
                 listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
@@ -348,7 +348,7 @@ public class ProxyDataSourceBuilder {
                 listener.setLogLevel(this.julLogLevel);
             }
             if (this.julLoggerName != null && !this.julLoggerName.isEmpty()) {
-                listener.setLoggerName(this.julLoggerName);
+                listener.setLogger(this.julLoggerName);
             }
             if (this.jsonFormat) {
                 listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());

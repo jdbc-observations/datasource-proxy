@@ -23,8 +23,22 @@ public class SLF4JQueryLoggingListener extends AbstractQueryLoggingListener {
         this.logLevel = logLevel;
     }
 
+    /**
+     * @deprecated use {{@link #setLogger(String)}}
+     */
     @Override
+    @Deprecated
     protected void resetLogger(String loggerName) {
+        this.logger = LoggerFactory.getLogger(loggerName);
+    }
+
+    /**
+     * Override {@link Logger} instance that has specified logger name.
+     *
+     * @param loggerName logger name
+     * @since 1.4.1
+     */
+    public void setLogger(String loggerName) {
         this.logger = LoggerFactory.getLogger(loggerName);
     }
 

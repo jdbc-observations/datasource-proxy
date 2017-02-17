@@ -20,6 +20,10 @@
   - `JULSlowQueryListener`
   - `SLF4JSlowQueryListener`
   - `SystemOutSlowQueryListener`
+  
+- Deprecate `{Commons|SLF4J|JUL}QueryLoggingListener#resetLogger()` methods.  
+  Use newly added `setLog(String)` or `setLogger(String)` method instead.
+
 
 ## 1.4
 

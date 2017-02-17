@@ -34,15 +34,15 @@ public class CommonsQueryLoggingListenerTest {
     @Test
     public void defaultLoggerName() {
         CommonsQueryLoggingListener listener = new CommonsQueryLoggingListener();
-        String name = ((NameAwareLog) listener.log).name;
+        String name = ((NameAwareLog) listener.getLog()).name;
         assertThat(name).as("Default logger name").isEqualTo("net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener");
     }
 
     @Test
-    public void setLoggerName() {
+    public void setLogName() {
         CommonsQueryLoggingListener listener = new CommonsQueryLoggingListener();
-        listener.setLoggerName("my.logger");
-        String name = ((NameAwareLog) listener.log).name;
+        listener.setLog("my.logger");
+        String name = ((NameAwareLog) listener.getLog()).name;
         assertThat(name).as("Updated logger name").isEqualTo("my.logger");
     }
 

@@ -36,7 +36,9 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
      *
      * @param loggerName logger name
      * @since 1.3.1
+     * @deprecated use <code>setLog(String)</code> or <code>setLogger(String)</code>
      */
+    @Deprecated
     public void setLoggerName(String loggerName) {
         resetLogger(loggerName);
     }
@@ -46,7 +48,9 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
      *
      * @param loggerName logger name
      * @since 1.3.1
+     * @deprecated use <code>setLog(String)</code> or <code>setLogger(String)</code>
      */
+    @Deprecated
     protected void resetLogger(String loggerName) {
     }
 

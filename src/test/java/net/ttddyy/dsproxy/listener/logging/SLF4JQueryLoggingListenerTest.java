@@ -1,6 +1,5 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,15 +13,15 @@ public class SLF4JQueryLoggingListenerTest {
     @Test
     public void defaultLoggerName() {
         SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener();
-        assertThat(listener.logger.getName())
+        assertThat(listener.getLogger().getName())
                 .as("Default logger name").isEqualTo("net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener");
     }
 
     @Test
     public void setLoggerName() {
         SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener();
-        listener.setLoggerName("my.logger");
-        assertThat(listener.logger.getName()).as("Updated logger name").isEqualTo("my.logger");
+        listener.setLogger("my.logger");
+        assertThat(listener.getLogger().getName()).as("Updated logger name").isEqualTo("my.logger");
     }
 
 }

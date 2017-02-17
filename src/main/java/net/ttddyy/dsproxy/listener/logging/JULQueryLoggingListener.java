@@ -23,8 +23,22 @@ public class JULQueryLoggingListener extends AbstractQueryLoggingListener {
         this.logLevel = logLevel;
     }
 
+    /**
+     * @deprecated use {{@link #setLogger(String)}}
+     */
     @Override
+    @Deprecated
     protected void resetLogger(String loggerName) {
+        this.logger = Logger.getLogger(loggerName);
+    }
+
+    /**
+     * Override {@link Logger} instance that has specified logger name
+     *
+     * @param loggerName new logger name
+     * @since 1.4.1
+     */
+    public void setLogger(String loggerName) {
         this.logger = Logger.getLogger(loggerName);
     }
 
