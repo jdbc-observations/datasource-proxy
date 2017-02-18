@@ -13,7 +13,7 @@ import org.apache.commons.logging.LogFactory;
 public class CommonsSlowQueryListener extends AbstractSlowQueryLoggingListener {
 
     protected Log log = LogFactory.getLog(CommonsQueryLoggingListener.class);
-    protected CommonsLogLevel logLevel = CommonsLogLevel.DEBUG; // default DEBUG
+    protected CommonsLogLevel logLevel = CommonsLogLevel.WARN; // default WARN
 
     @Override
     protected void writeLog(String message) {

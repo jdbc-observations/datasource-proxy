@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 public class SLF4JSlowQueryListener extends AbstractSlowQueryLoggingListener {
 
     protected Logger logger = LoggerFactory.getLogger(SLF4JQueryLoggingListener.class);
-    protected SLF4JLogLevel logLevel = SLF4JLogLevel.DEBUG; // default DEBUG
+    protected SLF4JLogLevel logLevel = SLF4JLogLevel.WARN; // default WARN
 
     @Override
     protected void writeLog(String message) {

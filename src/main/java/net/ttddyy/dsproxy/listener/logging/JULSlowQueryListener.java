@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class JULSlowQueryListener extends AbstractSlowQueryLoggingListener {
 
     protected Logger logger = Logger.getLogger(JULQueryLoggingListener.class.getName());
-    protected Level logLevel = Level.FINE; // default FINE
+    protected Level logLevel = Level.WARNING; // default WARNING
 
     @Override
     protected void writeLog(String message) {
