@@ -23,7 +23,7 @@ public class JULSlowQueryListener extends AbstractSlowQueryLoggingListener {
         this.logLevel = logLevel;
     }
 
-    protected void setLogger(String loggerName) {
+    public void setLogger(String loggerName) {
         setLogger(Logger.getLogger(loggerName));
     }
 

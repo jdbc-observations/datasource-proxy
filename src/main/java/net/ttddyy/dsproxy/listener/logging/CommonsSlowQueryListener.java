@@ -24,7 +24,7 @@ public class CommonsSlowQueryListener extends AbstractSlowQueryLoggingListener {
         this.logLevel = logLevel;
     }
 
-    protected void setLog(String logName) {
+    public void setLog(String logName) {
         setLog(LogFactory.getLog(logName));
     }
 
