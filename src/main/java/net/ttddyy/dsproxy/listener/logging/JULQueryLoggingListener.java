@@ -59,4 +59,13 @@ public class JULQueryLoggingListener extends AbstractQueryLoggingListener {
     public Logger getLogger() {
         return logger;
     }
+
+    /**
+     * @return log level to write
+     * @since 1.4.1
+     */
+    public Level getLogLevel() {
+        return logLevel;
+    }
+
 }

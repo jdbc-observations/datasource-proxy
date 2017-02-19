@@ -59,4 +59,13 @@ public class CommonsQueryLoggingListener extends AbstractQueryLoggingListener {
     public Log getLog() {
         return log;
     }
+
+    /**
+     * @return log level to write
+     * @since 1.4.1
+     */
+    public CommonsLogLevel getLogLevel() {
+        return logLevel;
+    }
+
 }

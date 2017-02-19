@@ -4,6 +4,8 @@ import net.ttddyy.dsproxy.support.CommonsLogUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Log slow query using Commons-Logging.
  *
@@ -14,6 +16,14 @@ public class CommonsSlowQueryListener extends AbstractSlowQueryLoggingListener {
 
     protected Log log = LogFactory.getLog(CommonsQueryLoggingListener.class);
     protected CommonsLogLevel logLevel = CommonsLogLevel.WARN; // default WARN
+
+    public CommonsSlowQueryListener() {
+    }
+
+    public CommonsSlowQueryListener(long threshold, TimeUnit thresholdTimeUnit) {
+        this.threshold = threshold;
+        this.thresholdTimeUnit = thresholdTimeUnit;
+    }
 
     @Override
     protected void writeLog(String message) {

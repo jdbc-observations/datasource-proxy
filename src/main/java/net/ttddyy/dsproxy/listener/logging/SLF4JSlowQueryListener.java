@@ -4,6 +4,8 @@ import net.ttddyy.dsproxy.support.SLF4JLogUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Log slow query using SLF4j.
  *
@@ -14,6 +16,14 @@ public class SLF4JSlowQueryListener extends AbstractSlowQueryLoggingListener {
 
     protected Logger logger = LoggerFactory.getLogger(SLF4JQueryLoggingListener.class);
     protected SLF4JLogLevel logLevel = SLF4JLogLevel.WARN; // default WARN
+
+    public SLF4JSlowQueryListener() {
+    }
+
+    public SLF4JSlowQueryListener(long threshold, TimeUnit thresholdTimeUnit) {
+        this.threshold = threshold;
+        this.thresholdTimeUnit = thresholdTimeUnit;
+    }
 
     @Override
     protected void writeLog(String message) {
