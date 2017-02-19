@@ -47,4 +47,11 @@ public class JULSlowQueryListenerTest {
         assertThat(messages.get(0)).contains("SELECT 1");
     }
 
+    @Test
+    public void defaultLoggerName() {
+        JULSlowQueryListener listener = new JULSlowQueryListener();
+        assertThat(listener.getLogger().getName())
+                .as("Default logger name").isEqualTo("net.ttddyy.dsproxy.listener.logging.JULSlowQueryListener");
+    }
+
 }

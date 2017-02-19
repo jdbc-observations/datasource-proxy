@@ -47,4 +47,11 @@ public class SLF4JSlowQueryListenerTest {
         assertThat(messages.get(0)).contains("SELECT 1");
     }
 
+    @Test
+    public void defaultLoggerName() {
+        SLF4JSlowQueryListener listener = new SLF4JSlowQueryListener();
+        assertThat(listener.getLogger().getName())
+                .as("Default logger name").isEqualTo("net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener");
+    }
+
 }
