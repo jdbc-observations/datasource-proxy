@@ -1,7 +1,9 @@
 package net.ttddyy.dsproxy.listener.logging;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
@@ -14,8 +16,17 @@ import java.util.logging.Logger;
  */
 public class InMemoryJULLogger extends Logger {
 
-    // TODO: add other levels if needed
-    private List<String> fineMessages = new ArrayList<String>();
+    private Map<Level, List<String>> messages = new HashMap<Level, List<String>>();
+
+    {
+        this.messages.put(Level.SEVERE, new ArrayList<String>());
+        this.messages.put(Level.WARNING, new ArrayList<String>());
+        this.messages.put(Level.INFO, new ArrayList<String>());
+        this.messages.put(Level.CONFIG, new ArrayList<String>());
+        this.messages.put(Level.FINE, new ArrayList<String>());
+        this.messages.put(Level.FINER, new ArrayList<String>());
+        this.messages.put(Level.FINEST, new ArrayList<String>());
+    }
 
 
     public InMemoryJULLogger() {
@@ -30,11 +41,7 @@ public class InMemoryJULLogger extends Logger {
     public void log(LogRecord record) {
         String message = record.getMessage();
         Level level = record.getLevel();
-        if (level == Level.FINE) {
-            this.fineMessages.add(message);
-        } else {
-            throw new UnsupportedOperationException("log level " + level + " is not supported yet.");
-        }
+        this.messages.get(level).add(message);
     }
 
     @Override
@@ -42,11 +49,31 @@ public class InMemoryJULLogger extends Logger {
         return true;  // always record log regardless of level
     }
 
-    public List<String> getFineMessages() {
-        return fineMessages;
+    public List<String> getSevereMessages() {
+        return this.messages.get(Level.SEVERE);
     }
 
-    public void setFineMessages(List<String> fineMessages) {
-        this.fineMessages = fineMessages;
+    public List<String> getWarningMessages() {
+        return this.messages.get(Level.WARNING);
+    }
+
+    public List<String> getInfoMessages() {
+        return this.messages.get(Level.INFO);
+    }
+
+    public List<String> getConfigMessages() {
+        return this.messages.get(Level.CONFIG);
+    }
+
+    public List<String> getFineMessages() {
+        return this.messages.get(Level.FINE);
+    }
+
+    public List<String> getFinerMessages() {
+        return this.messages.get(Level.FINER);
+    }
+
+    public List<String> getFinestMessages() {
+        return this.messages.get(Level.FINEST);
     }
 }

@@ -42,7 +42,7 @@ public class SLF4JSlowQueryListenerTest {
         this.listener.afterQuery(executionInfo, queryInfos);
 
         InMemorySLF4JLogger logger = (InMemorySLF4JLogger) this.listener.getLogger();
-        List<String> messages = logger.getDebugMessages();
+        List<String> messages = logger.getWarnMessages();
         assertThat(messages).hasSize(1);
         assertThat(messages.get(0)).contains("SELECT 1");
     }

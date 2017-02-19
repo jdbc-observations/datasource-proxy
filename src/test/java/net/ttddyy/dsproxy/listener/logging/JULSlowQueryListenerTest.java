@@ -42,7 +42,7 @@ public class JULSlowQueryListenerTest {
         this.listener.afterQuery(executionInfo, queryInfos);
 
         InMemoryJULLogger logger = (InMemoryJULLogger) this.listener.getLogger();
-        List<String> messages = logger.getFineMessages();
+        List<String> messages = logger.getWarningMessages();
         assertThat(messages).hasSize(1);
         assertThat(messages.get(0)).contains("SELECT 1");
     }
