@@ -81,4 +81,11 @@ public class SlowQueryListener implements QueryExecutionListener {
         return executor;
     }
 
+    public long getThreshold() {
+        return threshold;
+    }
+
+    public TimeUnit getThresholdTimeUnit() {
+        return thresholdTimeUnit;
+    }
 }

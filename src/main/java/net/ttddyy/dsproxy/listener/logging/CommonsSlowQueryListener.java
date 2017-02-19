@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class CommonsSlowQueryListener extends AbstractSlowQueryLoggingListener {
 
-    protected Log log = LogFactory.getLog(CommonsQueryLoggingListener.class);
+    protected Log log = LogFactory.getLog(CommonsSlowQueryListener.class);
     protected CommonsLogLevel logLevel = CommonsLogLevel.WARN; // default WARN
 
     public CommonsSlowQueryListener() {
@@ -44,6 +44,10 @@ public class CommonsSlowQueryListener extends AbstractSlowQueryLoggingListener {
 
     public Log getLog() {
         return log;
+    }
+
+    public CommonsLogLevel getLogLevel() {
+        return logLevel;
     }
 
 }

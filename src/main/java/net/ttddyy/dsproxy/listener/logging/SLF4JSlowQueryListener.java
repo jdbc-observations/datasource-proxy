@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class SLF4JSlowQueryListener extends AbstractSlowQueryLoggingListener {
 
-    protected Logger logger = LoggerFactory.getLogger(SLF4JQueryLoggingListener.class);
+    protected Logger logger = LoggerFactory.getLogger(SLF4JSlowQueryListener.class);
     protected SLF4JLogLevel logLevel = SLF4JLogLevel.WARN; // default WARN
 
     public SLF4JSlowQueryListener() {
@@ -44,6 +44,10 @@ public class SLF4JSlowQueryListener extends AbstractSlowQueryLoggingListener {
 
     public Logger getLogger() {
         return logger;
+    }
+
+    public SLF4JLogLevel getLogLevel() {
+        return logLevel;
     }
 
 }
