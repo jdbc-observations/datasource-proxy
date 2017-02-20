@@ -21,6 +21,12 @@
   - `SLF4JSlowQueryListener`
   - `SystemOutSlowQueryListener`
   
+  In `ProxyDataSourceBuilder`, these methods are added:
+  - `logSlowQueryByCommons()`
+  - `logSlowQueryByJUL()`
+  - `logSlowQueryBySlf4j()`
+  - `logSlowQueryToSysOut()`
+
 - Deprecate `{Commons|SLF4J|JUL}QueryLoggingListener#resetLogger()` methods.  
   Use newly added `setLog(String)` or `setLogger(String)` method instead.
 
