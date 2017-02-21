@@ -177,11 +177,25 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
         sb.append("Query:[");
         for (QueryInfo queryInfo : queryInfoList) {
             sb.append("\"");
-            sb.append(queryInfo.getQuery());
+            sb.append(formatQuery(queryInfo.getQuery()));
             sb.append("\",");
         }
         chompIfEndWith(sb, ',');
         sb.append("], ");
+    }
+
+    /**
+     * Callback method to allow alternating given query for logging.
+     *
+     * Subclass can override this method to change the given query.
+     * For example, it can call BasicFormatterImpl in hibernate to format the query.
+     *
+     * @param query a query to format
+     * @return formatted query
+     * @since 1.4.1
+     */
+    protected String formatQuery(String query) {
+        return query;
     }
 
     /**

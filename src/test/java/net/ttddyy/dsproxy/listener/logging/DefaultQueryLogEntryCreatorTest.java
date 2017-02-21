@@ -308,6 +308,22 @@ public class DefaultQueryLogEntryCreatorTest {
     }
 
     @Test
+    public void formatQuery() throws Exception {
+        ExecutionInfo executionInfo = ExecutionInfoBuilder.create().build();
+        QueryInfo select = QueryInfoBuilder.create().query("select 1").build();
+
+        DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator() {
+            @Override
+            protected String formatQuery(String query) {
+                return query + " formatted";
+            }
+        };
+
+        String result = creator.getLogEntry(executionInfo, Arrays.asList(select), true);
+        assertThat(result).containsOnlyOnce("Query:[\"select 1 formatted\"]");
+    }
+
+    @Test
     public void querySize() throws Exception {
         ExecutionInfo executionInfo = ExecutionInfoBuilder.create().build();
         QueryInfo select1 = QueryInfoBuilder.create().query("select 1").build();

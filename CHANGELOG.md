@@ -26,6 +26,21 @@
   - `logSlowQueryByJUL()`
   - `logSlowQueryBySlf4j()`
   - `logSlowQueryToSysOut()`
+  
+- Add `DefaultQueryLogEntryCreator#formatQuery()` method.  
+  Subclass can override this method to provides formatted query.  
+  Example with `BasicFormatterImpl` in Hibernate.
+  ```java
+    public class PrettyQueryEntryCreator extends DefaultQueryLogEntryCreator {
+      private Formatter formatter = FormatStyle.BASIC.getFormatter();  // from hibernate
+          
+      @Override
+      protected String formatQuery(String query) {
+        return this.formatter.format(query);
+      }
+    }
+  ```
+  
 
 - Deprecate `{Commons|SLF4J|JUL}QueryLoggingListener#resetLogger()` methods.  
   Use newly added `setLog(String)` or `setLogger(String)` method instead.
