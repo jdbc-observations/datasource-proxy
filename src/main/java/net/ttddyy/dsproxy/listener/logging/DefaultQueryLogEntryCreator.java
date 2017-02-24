@@ -15,9 +15,17 @@ import java.util.SortedMap;
  */
 public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
 
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
+    private boolean multiline = false;
+
     @Override
     public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName) {
         final StringBuilder sb = new StringBuilder();
+
+        if (this.multiline) {
+            sb.append(LINE_SEPARATOR);
+        }
 
         if (writeDataSourceName) {
             writeDataSourceNameEntry(sb, execInfo, queryInfoList);
@@ -28,6 +36,10 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
 
         // Success
         writeResultEntry(sb, execInfo, queryInfoList);
+
+        if (this.multiline) {
+            sb.append(LINE_SEPARATOR);
+        }
 
         // Type
         writeTypeEntry(sb, execInfo, queryInfoList);
@@ -41,8 +53,16 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
         // BatchSize
         writeBatchSizeEntry(sb, execInfo, queryInfoList);
 
+        if (this.multiline) {
+            sb.append(LINE_SEPARATOR);
+        }
+
         // Queries
         writeQueriesEntry(sb, execInfo, queryInfoList);
+
+        if (this.multiline) {
+            sb.append(LINE_SEPARATOR);
+        }
 
         // Params
         writeParamsEntry(sb, execInfo, queryInfoList);
@@ -279,5 +299,15 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
         sb.append("),");
     }
 
+
+    /**
+     * Enable multiline output in {@link #getLogEntry(ExecutionInfo, List, boolean)}.
+     *
+     * @param multiline return multi lined log entry when true is set
+     * @since 1.4.1
+     */
+    public void setMultiline(boolean multiline) {
+        this.multiline = multiline;
+    }
 
 }

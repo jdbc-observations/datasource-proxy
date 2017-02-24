@@ -396,4 +396,22 @@ public class DefaultQueryLogEntryCreatorTest {
         assertThat(result).containsOnlyOnce("BatchSize:100");
     }
 
+
+    @Test
+    public void multiline() throws Exception {
+        DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
+        creator.setMultiline(true);
+
+        ExecutionInfo executionInfo = ExecutionInfoBuilder.create().build();
+        String result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+
+        assertThat(result).hasLineCount(5);
+        String[] lines = result.split(System.getProperty("line.separator"));
+        assertThat(lines[0]).isEqualTo("");
+        assertThat(lines[1]).contains("Name", "Time", "Success");
+        assertThat(lines[2]).contains("Type", "Batch", "QuerySize", "BatchSize");
+        assertThat(lines[3]).contains("Query");
+        assertThat(lines[4]).contains("Params");
+    }
+
 }
