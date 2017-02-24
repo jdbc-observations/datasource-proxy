@@ -29,6 +29,7 @@
   
 - Add `DefaultQueryLogEntryCreator#formatQuery()` method.  
   Subclass can override this method to provides formatted query.  
+
   Example with `BasicFormatterImpl` in Hibernate.
   ```java
     public class PrettyQueryEntryCreator extends DefaultQueryLogEntryCreator {
@@ -40,7 +41,17 @@
       }
     }
   ```
-  
+
+- Add `DefaultQueryLogEntryCreator#setMultiline()` method.  
+  When this flag is set to true, multi lined log entry will be used for logging.  
+
+  sample log output:
+  ```
+    Name:MyDS, Time:0, Success:True, 
+    Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, 
+    Query:["INSERT INTO users (id, name) VALUES (?, ?)"], 
+    Params:[(1,foo),(2,bar)]
+  ```
 
 - Deprecate `{Commons|SLF4J|JUL}QueryLoggingListener#resetLogger()` methods.  
   Use newly added `setLog(String)` or `setLogger(String)` method instead.
