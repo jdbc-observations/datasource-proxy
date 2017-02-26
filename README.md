@@ -12,8 +12,13 @@ Provide proxy classes for JDBC API to intercept executing queries.
 ## feature
 
 - Query and Parameter Logging  
-  You can log executing database queries and parameters with choice of your logging framework(commons, slf4j, sysout).
+  You can log executing database queries and parameters with choice of your logging framework(commons, slf4j, 
+  java util logging, sysout, or your own).
   Output can be formatted as JSON.
+
+- Slow Query Detector and Logger  
+  You can add callbacks for slow queries that take longer than threshold time you specified.  
+  Slow query loggers are available out of the box.
 
 - Query Metrics  
   You can collect statistics of executed query such as total time, number of select, insert, update, delete queries, etc.
@@ -114,8 +119,9 @@ Create `ProxyDataSource` class and pass it as a `DataSource` to your application
 DataSource dataSource = 
     ProxyDataSourceBuilder
         .create(actualDataSource)
-        .logQueryByCommons(INFO)    // logQueryBySlf4j(), logQueryToSysOut()
+        .logQueryByCommons(INFO)    // logQueryBySlf4j(), logQueryByJUL(), logQueryToSysOut()
         .countQuery()
+        .logSlowQueryByCommons(10, TimeUnit.MINUTES)  // also by sl4j, jul, system out
         .build();
 ```
 
