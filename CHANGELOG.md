@@ -27,11 +27,13 @@
   - `logSlowQueryBySlf4j()`
   - `logSlowQueryToSysOut()`
   
-- Add `DefaultQueryLogEntryCreator#formatQuery()` method.  
+- Add support to easily apply formatters on each query for logging.  
+  `DefaultQueryLogEntryCreator#formatQuery()` method has added.  
   Subclass can override this method to provides formatted query.  
 
   Example with `BasicFormatterImpl` in Hibernate.
   ```java
+    // set this instance to logging listeners
     public class PrettyQueryEntryCreator extends DefaultQueryLogEntryCreator {
       private Formatter formatter = FormatStyle.BASIC.getFormatter();  // from hibernate
           
@@ -42,7 +44,8 @@
     }
   ```
 
-- Add `DefaultQueryLogEntryCreator#setMultiline()` method.  
+- Add multiline output support for query logging.  
+  `DefaultQueryLogEntryCreator` now has `setMultiline()` method.    
   When this flag is set to true, multi lined log entry will be used for logging.  
 
   sample log output:
