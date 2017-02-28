@@ -310,4 +310,11 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
         this.multiline = multiline;
     }
 
+    /**
+     * @return true if multiline output is enabled
+     * @since 1.4.1
+     */
+    public boolean isMultiline() {
+        return multiline;
+    }
 }

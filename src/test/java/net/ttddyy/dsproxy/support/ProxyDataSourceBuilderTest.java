@@ -2,17 +2,20 @@ package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.listener.ChainListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.logging.AbstractQueryLoggingListener;
+import net.ttddyy.dsproxy.listener.logging.AbstractSlowQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
 import net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsSlowQueryListener;
+import net.ttddyy.dsproxy.listener.logging.DefaultQueryLogEntryCreator;
 import net.ttddyy.dsproxy.listener.logging.JULQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.JULSlowQueryListener;
+import net.ttddyy.dsproxy.listener.logging.QueryLogEntryCreator;
 import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
 import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener;
-import org.apache.commons.logging.Log;
 import org.junit.Test;
 
 import java.util.List;
@@ -221,6 +224,51 @@ public class ProxyDataSourceBuilderTest {
     public void buildSysOutSlowQueryListener() {
         ProxyDataSource ds = ProxyDataSourceBuilder.create().logSlowQueryToSysOut(10, TimeUnit.SECONDS).build();
         getAndVerifyListener(ds, SystemOutSlowQueryListener.class);
+    }
+
+    @Test
+    public void multiline() {
+        ProxyDataSource ds;
+
+        ds = ProxyDataSourceBuilder.create().multiline().logQueryByCommons().build();
+        verifyMultiline(ds, CommonsQueryLoggingListener.class);
+
+        ds = ProxyDataSourceBuilder.create().multiline().logQueryBySlf4j().build();
+        verifyMultiline(ds, SLF4JQueryLoggingListener.class);
+
+        ds = ProxyDataSourceBuilder.create().multiline().logQueryByJUL().build();
+        verifyMultiline(ds, JULQueryLoggingListener.class);
+
+        ds = ProxyDataSourceBuilder.create().multiline().logQueryToSysOut().build();
+        verifyMultiline(ds, SystemOutQueryLoggingListener.class);
+
+
+        long threshold = 10;
+        TimeUnit timeUnit = TimeUnit.SECONDS;
+        ds = ProxyDataSourceBuilder.create().multiline().logSlowQueryByCommons(threshold, timeUnit).build();
+        verifyMultiline(ds, CommonsSlowQueryListener.class);
+
+        ds = ProxyDataSourceBuilder.create().multiline().logSlowQueryBySlf4j(threshold, timeUnit).build();
+        verifyMultiline(ds, SLF4JSlowQueryListener.class);
+
+        ds = ProxyDataSourceBuilder.create().multiline().logSlowQueryByJUL(threshold, timeUnit).build();
+        verifyMultiline(ds, JULSlowQueryListener.class);
+
+        ds = ProxyDataSourceBuilder.create().multiline().logSlowQueryToSysOut(threshold, timeUnit).build();
+        verifyMultiline(ds, SystemOutSlowQueryListener.class);
+    }
+
+    private void verifyMultiline(ProxyDataSource ds, Class<? extends QueryExecutionListener> listenerClass) {
+        QueryExecutionListener listener = getAndVerifyListener(ds, listenerClass);
+
+        QueryLogEntryCreator entryCreator;
+        if (listener instanceof AbstractQueryLoggingListener) {
+            entryCreator = ((AbstractQueryLoggingListener) listener).getQueryLogEntryCreator();
+        } else {
+            entryCreator = ((AbstractSlowQueryLoggingListener) listener).getQueryLogEntryCreator();
+        }
+        assertThat(entryCreator).isInstanceOf(DefaultQueryLogEntryCreator.class);
+        assertThat(((DefaultQueryLogEntryCreator) entryCreator).isMultiline()).as("multiline output").isTrue();
     }
 
 

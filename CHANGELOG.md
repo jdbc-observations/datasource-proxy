@@ -45,8 +45,9 @@
   ```
 
 - Add multiline output support for query logging.  
-  `DefaultQueryLogEntryCreator` now has `setMultiline()` method.    
-  When this flag is set to true, multi lined log entry will be used for logging.  
+  `DefaultQueryLogEntryCreator` now has `setMultiline()` method, and `ProxyDataSourceBuilder` also has added 
+  `multiline()` method.     
+  When multiline is enabled, logged query entries become multi lined.  
 
   sample log output:
   ```
@@ -54,6 +55,17 @@
     Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, 
     Query:["INSERT INTO users (id, name) VALUES (?, ?)"], 
     Params:[(1,foo),(2,bar)]
+  ```
+
+  set up with builder:
+  ```java
+    DataSource dataSource = 
+        ProxyDataSourceBuilder
+            .create(actualDataSource)
+            .logQueryByCommons(INFO)
+            .logSlowQueryByCommons(10, TimeUnit.MINUTES)
+            .multiline()   // applies to both query logger and slow query logger
+            .build();
   ```
 
 - Deprecate `{Commons|SLF4J|JUL}QueryLoggingListener#resetLogger()` methods.  

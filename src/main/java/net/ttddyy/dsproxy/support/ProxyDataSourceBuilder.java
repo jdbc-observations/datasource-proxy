@@ -6,6 +6,7 @@ import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
 import net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsSlowQueryListener;
 import net.ttddyy.dsproxy.listener.logging.DefaultJsonQueryLogEntryCreator;
+import net.ttddyy.dsproxy.listener.logging.DefaultQueryLogEntryCreator;
 import net.ttddyy.dsproxy.listener.logging.JULQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.JULSlowQueryListener;
 import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
@@ -33,52 +34,58 @@ public class ProxyDataSourceBuilder {
     private DataSource dataSource;
     private String dataSourceName;
 
-    // for building CommonsQueryLoggingListener
+    // for building QueryLoggingListeners
+
+    // CommonsQueryLoggingListener
     private boolean createCommonsQueryListener;
     private CommonsLogLevel commonsLogLevel;
     private String commonsLoggerName;
 
-    // for building CommonsSlowQueryListener
+    // for SLF4JQueryLoggingListener
+    private boolean createSlf4jQueryListener;
+    private SLF4JLogLevel slf4jLogLevel;
+    private String slf4jLoggerName;
+
+    // for JULQueryLoggingListener
+    private boolean createJulQueryListener;
+    private Level julLogLevel;
+    private String julLoggerName;
+
+    // for SystemOutQueryLoggingListener
+    private boolean createSysOutQueryListener;
+
+
+    // For building  SlowQueryListeners
+
+    // for CommonsSlowQueryListener
     private boolean createCommonsSlowQueryListener;
     private TimeUnit commonsSlowQueryTimeUnit;
     private long commonsSlowQueryTime;
     private CommonsLogLevel commonsSlowQueryLogLevel;
     private String commonsSlowQueryLogName;
 
-    // for building SLF4JQueryLoggingListener
-    private boolean createSlf4jQueryListener;
-    private SLF4JLogLevel slf4jLogLevel;
-    private String slf4jLoggerName;
-
-    // for building SLF4JSlowQueryListener
+    // for SLF4JSlowQueryListener
     private boolean createSlf4jSlowQueryListener;
     private TimeUnit slf4jSlowQueryTimeUnit;
     private long slf4jSlowQueryTime;
     private SLF4JLogLevel slf4jSlowQueryLogLevel;
     private String slf4jSlowQueryLoggerName;
 
-    // for building JULQueryLoggingListener
-    private boolean createJulQueryListener;
-    private Level julLogLevel;
-    private String julLoggerName;
-
-    // for building JULSlowQueryListener
+    // for JULSlowQueryListener
     private boolean createJulSlowQueryListener;
     private TimeUnit julSlowQueryTimeUnit;
     private long julSlowQueryTime;
     private Level julSlowQueryLogLevel;
     private String julSlowQueryLoggerName;
 
-    // for building SystemOutQueryLoggingListener
-    private boolean createSysOutQueryListener;
-
-    // for building SystemOutSlowQueryListener
+    // for SystemOutSlowQueryListener
     private boolean createSysOutSlowQueryListener;
     private TimeUnit sysOutSlowQueryTimeUnit;
     private long sysOutSlowQueryTime;
 
     private boolean createDataSourceQueryCountListener;
     private boolean jsonFormat;
+    private boolean multiline;
     private List<QueryExecutionListener> queryExecutionListeners = new ArrayList<QueryExecutionListener>();
 
     private ParameterTransformer parameterTransformer;
@@ -511,6 +518,17 @@ public class ProxyDataSourceBuilder {
         return this;
     }
 
+    /**
+     * Use multiline output for logging query.
+     *
+     * @return builder
+     * @since 1.4.1
+     */
+    public ProxyDataSourceBuilder multiline() {
+        this.multiline = true;
+        return this;
+    }
+
     public ProxyDataSource build() {
         ProxyDataSource proxyDataSource = new ProxyDataSource();
 
@@ -588,6 +606,9 @@ public class ProxyDataSourceBuilder {
         if (this.jsonFormat) {
             listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
         }
+        if (this.multiline) {
+            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
+        }
         return listener;
     }
 
@@ -598,6 +619,9 @@ public class ProxyDataSourceBuilder {
         }
         if (this.commonsSlowQueryLogName != null) {
             listener.setLog(this.commonsSlowQueryLogName);
+        }
+        if (this.multiline) {
+            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
         return listener;
     }
@@ -613,6 +637,9 @@ public class ProxyDataSourceBuilder {
         if (this.jsonFormat) {
             listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
         }
+        if (this.multiline) {
+            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
+        }
         return listener;
     }
 
@@ -623,6 +650,9 @@ public class ProxyDataSourceBuilder {
         }
         if (this.slf4jSlowQueryLoggerName != null) {
             listener.setLogger(this.slf4jSlowQueryLoggerName);
+        }
+        if (this.multiline) {
+            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
         return listener;
     }
@@ -638,6 +668,9 @@ public class ProxyDataSourceBuilder {
         if (this.jsonFormat) {
             listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
         }
+        if (this.multiline) {
+            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
+        }
         return listener;
     }
 
@@ -649,6 +682,9 @@ public class ProxyDataSourceBuilder {
         if (this.julSlowQueryLoggerName != null) {
             listener.setLogger(this.julSlowQueryLoggerName);
         }
+        if (this.multiline) {
+            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
+        }
         return listener;
     }
 
@@ -657,11 +693,24 @@ public class ProxyDataSourceBuilder {
         if (this.jsonFormat) {
             listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
         }
+        if (this.multiline) {
+            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
+        }
         return listener;
     }
 
     private SystemOutSlowQueryListener buildSysOutSlowQueryListener() {
-        return new SystemOutSlowQueryListener(this.sysOutSlowQueryTime, this.sysOutSlowQueryTimeUnit);
+        SystemOutSlowQueryListener listener = new SystemOutSlowQueryListener(this.sysOutSlowQueryTime, this.sysOutSlowQueryTimeUnit);
+        if (this.multiline) {
+            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
+        }
+        return listener;
+    }
+
+    private DefaultQueryLogEntryCreator buildMultilineQueryLogEntryCreator() {
+        DefaultQueryLogEntryCreator entryCreator = new DefaultQueryLogEntryCreator();
+        entryCreator.setMultiline(true);
+        return entryCreator;
     }
 
 }
