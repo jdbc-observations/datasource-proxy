@@ -51,9 +51,9 @@
 
   sample log output:
   ```
-    Name:MyDS, Time:0, Success:True, 
-    Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, 
-    Query:["INSERT INTO users (id, name) VALUES (?, ?)"], 
+    Name:MyDS, Time:0, Success:True
+    Type:Prepared, Batch:True, QuerySize:1, BatchSize:2 
+    Query:["INSERT INTO users (id, name) VALUES (?, ?)"] 
     Params:[(1,foo),(2,bar)]
   ```
 

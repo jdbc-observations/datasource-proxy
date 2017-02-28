@@ -38,6 +38,7 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
         writeResultEntry(sb, execInfo, queryInfoList);
 
         if (this.multiline) {
+            sb.delete(sb.length() - 2, sb.length());  // delete last ", "
             sb.append(LINE_SEPARATOR);
         }
 
@@ -54,6 +55,7 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
         writeBatchSizeEntry(sb, execInfo, queryInfoList);
 
         if (this.multiline) {
+            sb.delete(sb.length() - 2, sb.length());  // delete last ", "
             sb.append(LINE_SEPARATOR);
         }
 
@@ -61,6 +63,7 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
         writeQueriesEntry(sb, execInfo, queryInfoList);
 
         if (this.multiline) {
+            sb.delete(sb.length() - 2, sb.length());  // delete last ", "
             sb.append(LINE_SEPARATOR);
         }
 

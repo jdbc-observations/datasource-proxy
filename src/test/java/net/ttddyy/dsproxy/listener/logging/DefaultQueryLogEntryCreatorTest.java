@@ -19,6 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class DefaultQueryLogEntryCreatorTest {
 
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
     @Test
     public void getLogEntryForStatement() throws Exception {
         Method method = Object.class.getMethod("toString");
@@ -42,6 +44,16 @@ public class DefaultQueryLogEntryCreatorTest {
 
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Statement, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[()]");
+
+        // check multiline
+        creator.setMultiline(true);
+        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+        assertThat(entry).isEqualTo(
+                "" + LINE_SEPARATOR +
+                        "Name:foo, Time:100, Success:True" + LINE_SEPARATOR +
+                        "Type:Statement, Batch:False, QuerySize:1, BatchSize:0" + LINE_SEPARATOR +
+                        "Query:[\"select 1\"]" + LINE_SEPARATOR +
+                        "Params:[()]");
 
     }
 
@@ -69,6 +81,16 @@ public class DefaultQueryLogEntryCreatorTest {
 
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo1, queryInfo2), true);
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Statement, Batch:True, QuerySize:2, BatchSize:2, Query:[\"select 1\",\"select 2\"], Params:[(),()]");
+
+        // check multiline
+        creator.setMultiline(true);
+        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo1, queryInfo2), true);
+        assertThat(entry).isEqualTo(
+                "" + LINE_SEPARATOR +
+                        "Name:foo, Time:100, Success:True" + LINE_SEPARATOR +
+                        "Type:Statement, Batch:True, QuerySize:2, BatchSize:2" + LINE_SEPARATOR +
+                        "Query:[\"select 1\",\"select 2\"]" + LINE_SEPARATOR +
+                        "Params:[(),()]");
 
     }
 
@@ -100,6 +122,16 @@ public class DefaultQueryLogEntryCreatorTest {
 
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Prepared, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(foo,100,null)]");
+
+        // check multiline
+        creator.setMultiline(true);
+        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+        assertThat(entry).isEqualTo(
+                "" + LINE_SEPARATOR +
+                        "Name:foo, Time:100, Success:True" + LINE_SEPARATOR +
+                        "Type:Prepared, Batch:False, QuerySize:1, BatchSize:0" + LINE_SEPARATOR +
+                        "Query:[\"select 1\"]" + LINE_SEPARATOR +
+                        "Params:[(foo,100,null)]");
 
     }
 
@@ -133,6 +165,15 @@ public class DefaultQueryLogEntryCreatorTest {
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(foo,100),(bar,200)]");
 
+        // check multiline
+        creator.setMultiline(true);
+        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+        assertThat(entry).isEqualTo(
+                "" + LINE_SEPARATOR +
+                        "Name:foo, Time:100, Success:True" + LINE_SEPARATOR +
+                        "Type:Prepared, Batch:True, QuerySize:1, BatchSize:2" + LINE_SEPARATOR +
+                        "Query:[\"select 1\"]" + LINE_SEPARATOR +
+                        "Params:[(foo,100),(bar,200)]");
     }
 
     @Test
@@ -162,6 +203,16 @@ public class DefaultQueryLogEntryCreatorTest {
 
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Callable, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(id=100,name=foo)]");
+
+        // check multiline
+        creator.setMultiline(true);
+        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+        assertThat(entry).isEqualTo(
+                "" + LINE_SEPARATOR +
+                        "Name:foo, Time:100, Success:True" + LINE_SEPARATOR +
+                        "Type:Callable, Batch:False, QuerySize:1, BatchSize:0" + LINE_SEPARATOR +
+                        "Query:[\"select 1\"]" + LINE_SEPARATOR +
+                        "Params:[(id=100,name=foo)]");
 
     }
 
@@ -195,6 +246,15 @@ public class DefaultQueryLogEntryCreatorTest {
         String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Callable, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(id=100,name=foo),(id=200,name=bar)]");
 
+        // check multiline
+        creator.setMultiline(true);
+        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+        assertThat(entry).isEqualTo(
+                "" + LINE_SEPARATOR +
+                        "Name:foo, Time:100, Success:True" + LINE_SEPARATOR +
+                        "Type:Callable, Batch:True, QuerySize:1, BatchSize:2" + LINE_SEPARATOR +
+                        "Query:[\"select 1\"]" + LINE_SEPARATOR +
+                        "Params:[(id=100,name=foo),(id=200,name=bar)]");
     }
 
     @Test
@@ -406,7 +466,7 @@ public class DefaultQueryLogEntryCreatorTest {
         String result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
 
         assertThat(result).hasLineCount(5);
-        String[] lines = result.split(System.getProperty("line.separator"));
+        String[] lines = result.split(LINE_SEPARATOR);
         assertThat(lines[0]).isEqualTo("");
         assertThat(lines[1]).contains("Name", "Time", "Success");
         assertThat(lines[2]).contains("Type", "Batch", "QuerySize", "BatchSize");
