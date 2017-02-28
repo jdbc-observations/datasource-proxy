@@ -16,7 +16,7 @@ Provide proxy classes for JDBC API to intercept executing queries.
   java util logging, sysout, or your own).
   Output can be formatted as JSON.
 
-- Slow Query Detector and Logger  
+- Slow Query Detector and Loggers  
   You can add callbacks for slow queries that take longer than threshold time you specified.  
   Slow query loggers are available out of the box.
 
@@ -175,15 +175,19 @@ DataSource dataSource =
 **By Servlet Filter (`javax.servlet.Filter`):**  
 - `CommonsQueryCountLoggingServletFilter` 
 - `SLF4JQueryCountLoggingServletFilter` 
+- `JULQueryCountLoggingServletFilter` 
 - `SystemOutQueryCountLoggingServletFilter` 
 
 **By Servlet Request Listener (`javax.servlet.ServletRequestListener`):**
 - `CommonsQueryCountLoggingRequestListener`
 - `SLF4JQueryCountLoggingRequestListener`
+- `JULQueryCountLoggingRequestListener`
+- `SystemOutQueryCountLoggingRequestListener`
   
 **By Spring HandlerInterceptor (`org.springframework.web.servlet.HandlerInterceptor`):**
 - `CommonsQueryCountLoggingHandlerInterceptor`
 - `SLF4JQueryCountLoggingHandlerInterceptor`
+- `JULQueryCountLoggingHandlerInterceptor`
 - `SystemOutQueryCountLoggingHandlerInterceptor`
 
 
