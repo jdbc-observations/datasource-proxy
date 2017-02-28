@@ -57,31 +57,26 @@ public class ProxyDataSourceBuilder {
 
     // For building  SlowQueryListeners
 
+    private long slowQueryThreshold;
+    private TimeUnit slowQueryTimeUnit;
+
     // for CommonsSlowQueryListener
     private boolean createCommonsSlowQueryListener;
-    private TimeUnit commonsSlowQueryTimeUnit;
-    private long commonsSlowQueryTime;
     private CommonsLogLevel commonsSlowQueryLogLevel;
     private String commonsSlowQueryLogName;
 
     // for SLF4JSlowQueryListener
     private boolean createSlf4jSlowQueryListener;
-    private TimeUnit slf4jSlowQueryTimeUnit;
-    private long slf4jSlowQueryTime;
     private SLF4JLogLevel slf4jSlowQueryLogLevel;
     private String slf4jSlowQueryLoggerName;
 
     // for JULSlowQueryListener
     private boolean createJulSlowQueryListener;
-    private TimeUnit julSlowQueryTimeUnit;
-    private long julSlowQueryTime;
     private Level julSlowQueryLogLevel;
     private String julSlowQueryLoggerName;
 
     // for SystemOutSlowQueryListener
     private boolean createSysOutSlowQueryListener;
-    private TimeUnit sysOutSlowQueryTimeUnit;
-    private long sysOutSlowQueryTime;
 
     private boolean createDataSourceQueryCountListener;
     private boolean jsonFormat;
@@ -216,8 +211,8 @@ public class ProxyDataSourceBuilder {
      */
     public ProxyDataSourceBuilder logSlowQueryByCommons(long thresholdTime, TimeUnit timeUnit, CommonsLogLevel logLevel, String logName) {
         this.createCommonsSlowQueryListener = true;
-        this.commonsSlowQueryTimeUnit = timeUnit;
-        this.commonsSlowQueryTime = thresholdTime;
+        this.slowQueryThreshold = thresholdTime;
+        this.slowQueryTimeUnit = timeUnit;
         this.commonsSlowQueryLogLevel = logLevel;
         this.commonsSlowQueryLogName = logName;
         return this;
@@ -318,8 +313,8 @@ public class ProxyDataSourceBuilder {
      */
     public ProxyDataSourceBuilder logSlowQueryBySlf4j(long thresholdTime, TimeUnit timeUnit, SLF4JLogLevel logLevel, String loggerName) {
         this.createSlf4jSlowQueryListener = true;
-        this.slf4jSlowQueryTimeUnit = timeUnit;
-        this.slf4jSlowQueryTime = thresholdTime;
+        this.slowQueryThreshold = thresholdTime;
+        this.slowQueryTimeUnit = timeUnit;
         this.slf4jSlowQueryLogLevel = logLevel;
         this.slf4jSlowQueryLoggerName = loggerName;
         return this;
@@ -422,8 +417,8 @@ public class ProxyDataSourceBuilder {
      */
     public ProxyDataSourceBuilder logSlowQueryByJUL(long thresholdTime, TimeUnit timeUnit, Level logLevel, String loggerName) {
         this.createJulSlowQueryListener = true;
-        this.julSlowQueryTimeUnit = timeUnit;
-        this.julSlowQueryTime = thresholdTime;
+        this.slowQueryThreshold = thresholdTime;
+        this.slowQueryTimeUnit = timeUnit;
         this.julSlowQueryLogLevel = logLevel;
         this.julSlowQueryLoggerName = loggerName;
         return this;
@@ -449,8 +444,8 @@ public class ProxyDataSourceBuilder {
      */
     public ProxyDataSourceBuilder logSlowQueryToSysOut(long thresholdTime, TimeUnit timeUnit) {
         this.createSysOutSlowQueryListener = true;
-        this.sysOutSlowQueryTime = thresholdTime;
-        this.sysOutSlowQueryTimeUnit = timeUnit;
+        this.slowQueryThreshold = thresholdTime;
+        this.slowQueryTimeUnit = timeUnit;
         return this;
     }
 
@@ -613,7 +608,7 @@ public class ProxyDataSourceBuilder {
     }
 
     private CommonsSlowQueryListener buildCommonsSlowQueryListener() {
-        CommonsSlowQueryListener listener = new CommonsSlowQueryListener(this.commonsSlowQueryTime, this.commonsSlowQueryTimeUnit);
+        CommonsSlowQueryListener listener = new CommonsSlowQueryListener(this.slowQueryThreshold, this.slowQueryTimeUnit);
         if (this.commonsSlowQueryLogLevel != null) {
             listener.setLogLevel(this.commonsSlowQueryLogLevel);
         }
@@ -644,7 +639,7 @@ public class ProxyDataSourceBuilder {
     }
 
     private SLF4JSlowQueryListener buildSlf4jSlowQueryListener() {
-        SLF4JSlowQueryListener listener = new SLF4JSlowQueryListener(this.slf4jSlowQueryTime, this.slf4jSlowQueryTimeUnit);
+        SLF4JSlowQueryListener listener = new SLF4JSlowQueryListener(this.slowQueryThreshold, this.slowQueryTimeUnit);
         if (this.slf4jSlowQueryLogLevel != null) {
             listener.setLogLevel(this.slf4jSlowQueryLogLevel);
         }
@@ -675,7 +670,7 @@ public class ProxyDataSourceBuilder {
     }
 
     private JULSlowQueryListener buildJulSlowQueryListener() {
-        JULSlowQueryListener listener = new JULSlowQueryListener(this.julSlowQueryTime, this.julSlowQueryTimeUnit);
+        JULSlowQueryListener listener = new JULSlowQueryListener(this.slowQueryThreshold, this.slowQueryTimeUnit);
         if (this.julSlowQueryLogLevel != null) {
             listener.setLogLevel(this.julSlowQueryLogLevel);
         }
@@ -700,7 +695,7 @@ public class ProxyDataSourceBuilder {
     }
 
     private SystemOutSlowQueryListener buildSysOutSlowQueryListener() {
-        SystemOutSlowQueryListener listener = new SystemOutSlowQueryListener(this.sysOutSlowQueryTime, this.sysOutSlowQueryTimeUnit);
+        SystemOutSlowQueryListener listener = new SystemOutSlowQueryListener(this.slowQueryThreshold, this.slowQueryTimeUnit);
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
