@@ -40,15 +40,25 @@ Provide proxy classes for JDBC API to intercept executing queries.
 ## log example
 
 
-Query execution:
+Query execution(single line):
 
 ```sql
 Name:MyProxy, Time:1, Success:True, Type:Statement, Batch:False, QuerySize:1, BatchSize:0, Query:["CREATE TABLE users(id INT, name VARCHAR(255))"], Params:[]
-Name:MyProxy, Time:1, Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:["INSERT INTO users (id, name) VALUES (?, ?)"], Params:[(1,foo),(2,bar)]
+Name:MyProxy, Time:5, Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:["INSERT INTO users (id, name) VALUES (?, ?)"], Params:[(1,foo),(2,bar)]
 ```
 
+Query execution(multiple lines):
+
+```sql
+Name:MyProxy, Time:3, Success:True
+Type:Callable, Batch:True, QuerySize:1, BatchSize:2
+Query:["{call getEmployer (?, ?)}"]
+Params:[(id=100,name=foo),(id=200,name=bar)]
+```
+
+JSON output:
+
 ```json
-// JSON output
 {"name":"MyProxy", "time":1, "success":true, "type":"Statement", "batch":false, "querySize":1, "batchSize":0, "query":["CREATE TABLE users(id INT, name VARCHAR(255))"], "params":[]}
 {"name":"MyProxy", "time":0, "success":true, "type":"Prepared", "batch":true, "querySize":1, "batchSize":3, "query":["INSERT INTO users (id, name) VALUES (?, ?)"], "params":[["1","foo"],["2","bar"],[3","baz"]]}
 ```
