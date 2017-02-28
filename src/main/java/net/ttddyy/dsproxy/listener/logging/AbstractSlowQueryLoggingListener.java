@@ -38,4 +38,9 @@ public abstract class AbstractSlowQueryLoggingListener extends SlowQueryListener
     public void setQueryLogEntryCreator(QueryLogEntryCreator queryLogEntryCreator) {
         this.queryLogEntryCreator = queryLogEntryCreator;
     }
+
+    public QueryLogEntryCreator getQueryLogEntryCreator() {
+        return queryLogEntryCreator;
+    }
+
 }

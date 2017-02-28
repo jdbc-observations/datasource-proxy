@@ -58,6 +58,14 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
         this.queryLogEntryCreator = queryLogEntryCreator;
     }
 
+    /**
+     * @return query log entry creator
+     * @since 1.4.1
+     */
+    public QueryLogEntryCreator getQueryLogEntryCreator() {
+        return queryLogEntryCreator;
+    }
+
     public void setWriteDataSourceName(boolean writeDataSourceName) {
         this.writeDataSourceName = writeDataSourceName;
     }
