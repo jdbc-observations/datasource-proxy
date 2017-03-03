@@ -1,6 +1,6 @@
 # ChangeLog
 
-## 1.4.1 _(SNAPSHOT)_
+## 1.4.1
 
 - Add `setLog`/`setLogger` to `{Commons|SLF4J|JUL}QueryLoggingListener` to allow users to set custom logger.  
   Also added getters as well.
