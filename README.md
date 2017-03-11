@@ -211,6 +211,10 @@ DataSource dataSource =
 Example projects: https://github.com/ttddyy/datasource-proxy-examples
 
 
+## unit test support
+
+- [datasource-assertions](https://github.com/ttddyy/datasource-assertions)
+
 ---
 
 # docs
