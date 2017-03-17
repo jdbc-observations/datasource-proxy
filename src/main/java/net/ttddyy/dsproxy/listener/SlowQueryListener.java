@@ -41,6 +41,12 @@ public class SlowQueryListener implements QueryExecutionListener {
                 // if it's still in map, that means it's still running
                 Long startTimeInMills = inExecution.get(execInfo);
                 if (startTimeInMills != null) {
+                    // populate elapsed time
+                    if (execInfo.getElapsedTime() == 0) {
+                        long elapsedTime = System.currentTimeMillis() - startTimeInMills;
+                        execInfo.setElapsedTime(elapsedTime);
+                    }
+
                     onSlowQuery(execInfo, queryInfoList, startTimeInMills);
                 }
             }
