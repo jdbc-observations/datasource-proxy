@@ -28,8 +28,8 @@ public class ChainListener implements QueryExecutionListener {
         }
     }
 
-    public void addListener(QueryExecutionListener listner) {
-        this.listeners.add(listner);
+    public void addListener(QueryExecutionListener listener) {
+        this.listeners.add(listener);
     }
 
     public List<QueryExecutionListener> getListeners() {
