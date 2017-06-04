@@ -1,9 +1,9 @@
 package net.ttddyy.dsproxy.transform;
 
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,9 +17,14 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.typeCompatibleWith;
 import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -55,9 +60,8 @@ public class TransformInfoForQueryTest {
         Statement stmt = mock(Statement.class);
         QueryTransformer queryTransformer = getMockQueryTransformer(1);
         InterceptorHolder interceptors = new InterceptorHolder(QueryExecutionListener.DEFAULT, queryTransformer);
-        JdbcProxyFactory proxyFactory = mock(JdbcProxyFactory.class);
 
-        StatementInvocationHandler handler = new StatementInvocationHandler(stmt, interceptors, "my-ds", proxyFactory, null);
+        StatementInvocationHandler handler = new StatementInvocationHandler(stmt, interceptors, "my-ds", null);
 
         Method method = Statement.class.getMethod("execute", String.class);
         Object[] args = new Object[]{"my-query"};
@@ -81,9 +85,8 @@ public class TransformInfoForQueryTest {
         Statement stmt = mock(Statement.class);
         QueryTransformer queryTransformer = getMockQueryTransformer(2);
         InterceptorHolder interceptors = new InterceptorHolder(QueryExecutionListener.DEFAULT, queryTransformer);
-        JdbcProxyFactory proxyFactory = mock(JdbcProxyFactory.class);
 
-        StatementInvocationHandler handler = new StatementInvocationHandler(stmt, interceptors, "my-ds", proxyFactory, null);
+        StatementInvocationHandler handler = new StatementInvocationHandler(stmt, interceptors, "my-ds", null);
 
         Method method = Statement.class.getMethod("addBatch", String.class);
 

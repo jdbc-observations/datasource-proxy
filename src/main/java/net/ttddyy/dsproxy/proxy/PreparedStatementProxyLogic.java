@@ -26,6 +26,65 @@ import java.util.Map;
  */
 public class PreparedStatementProxyLogic {
 
+    /**
+     * Builder for {@link PreparedStatementProxyLogic}.
+     *
+     * @since 1.4.2
+     */
+    public static class Builder {
+        private PreparedStatement ps;
+        private String query;
+        private InterceptorHolder interceptorHolder;
+        private String dataSourceName;
+        private JdbcProxyFactory jdbcProxyFactory;
+        private Connection proxyConnection;
+
+        public static Builder create() {
+            return new Builder();
+        }
+
+        public PreparedStatementProxyLogic build() {
+            PreparedStatementProxyLogic logic = new PreparedStatementProxyLogic();
+            logic.ps = this.ps;
+            logic.query = this.query;
+            logic.interceptorHolder = this.interceptorHolder;
+            logic.dataSourceName = this.dataSourceName;
+            logic.jdbcProxyFactory = this.jdbcProxyFactory;
+            logic.proxyConnection = this.proxyConnection;
+            return logic;
+        }
+
+        public Builder setPreparedStatement(PreparedStatement ps) {
+            this.ps = ps;
+            return this;
+        }
+
+        public Builder setQuery(String query) {
+            this.query = query;
+            return this;
+        }
+
+        public Builder setInterceptorHolder(InterceptorHolder interceptorHolder) {
+            this.interceptorHolder = interceptorHolder;
+            return this;
+        }
+
+        public Builder setDataSourceName(String dataSourceName) {
+            this.dataSourceName = dataSourceName;
+            return this;
+        }
+
+        public Builder setJdbcProxyFactory(JdbcProxyFactory jdbcProxyFactory) {
+            this.jdbcProxyFactory = jdbcProxyFactory;
+            return this;
+        }
+
+        public Builder setProxyConnection(Connection proxyConnection) {
+            this.proxyConnection = proxyConnection;
+            return this;
+        }
+    }
+
     private PreparedStatement ps;
     private String query;
     private String dataSourceName;
@@ -39,18 +98,6 @@ public class PreparedStatementProxyLogic {
     private List<Map<ParameterKey, ParameterSetOperation>> batchParameters = new ArrayList<Map<ParameterKey, ParameterSetOperation>>();
 
     private Connection proxyConnection;
-
-    public PreparedStatementProxyLogic() {
-    }
-
-    public PreparedStatementProxyLogic(PreparedStatement ps, String query, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory, Connection proxyConnection) {
-        this.ps = ps;
-        this.query = query;
-        this.interceptorHolder = interceptorHolder;
-        this.dataSourceName = dataSourceName;
-        this.jdbcProxyFactory = jdbcProxyFactory;
-        this.proxyConnection = proxyConnection;
-    }
 
     public Object invoke(Method method, Object[] args) throws Throwable {
 

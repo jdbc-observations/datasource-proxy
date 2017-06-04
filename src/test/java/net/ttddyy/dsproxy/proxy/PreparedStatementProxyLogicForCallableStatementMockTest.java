@@ -738,7 +738,14 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
     }
 
     private PreparedStatementProxyLogic getProxyLogic(CallableStatement cs, String query, InterceptorHolder interceptorHolder, Connection proxyConnection) {
-        return new PreparedStatementProxyLogic(cs, query, interceptorHolder, DS_NAME, new JdkJdbcProxyFactory(), proxyConnection);
+        return PreparedStatementProxyLogic.Builder.create()
+                .setPreparedStatement(cs)
+                .setQuery(query)
+                .setInterceptorHolder(interceptorHolder)
+                .setDataSourceName(DS_NAME)
+                .setJdbcProxyFactory(new JdkJdbcProxyFactory())
+                .setProxyConnection(proxyConnection)
+                .build();
     }
 
 

@@ -24,6 +24,46 @@ import java.util.Set;
  */
 public class StatementProxyLogic {
 
+    public static class Builder {
+        private Statement stmt;
+        private InterceptorHolder interceptorHolder;
+        private String dataSourceName;
+        private Connection proxyConnection;
+
+        public static Builder create() {
+            return new Builder();
+        }
+
+        public StatementProxyLogic build() {
+            StatementProxyLogic logic = new StatementProxyLogic();
+            logic.stmt = this.stmt;
+            logic.interceptorHolder = this.interceptorHolder;
+            logic.dataSourceName = this.dataSourceName;
+            logic.proxyConnection = this.proxyConnection;
+            return logic;
+        }
+
+        public Builder setStatement(Statement statement) {
+            this.stmt = statement;
+            return this;
+        }
+
+        public Builder setInterceptorHolder(InterceptorHolder interceptorHolder) {
+            this.interceptorHolder = interceptorHolder;
+            return this;
+        }
+
+        public Builder setDataSourceName(String dataSourceName) {
+            this.dataSourceName = dataSourceName;
+            return this;
+        }
+
+        public Builder setProxyConnection(Connection proxyConnection) {
+            this.proxyConnection = proxyConnection;
+            return this;
+        }
+    }
+
     private static final Set<String> METHODS_TO_INTERCEPT = Collections.unmodifiableSet(
             new HashSet<String>() {
                 {
@@ -42,20 +82,8 @@ public class StatementProxyLogic {
     private InterceptorHolder interceptorHolder;
     private String dataSourceName;
     private List<String> batchQueries = new ArrayList<String>();
-    private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
     private Connection proxyConnection;
 
-    public StatementProxyLogic() {
-    }
-
-    public StatementProxyLogic(Statement stmt, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory,
-                               Connection proxyConnection) {
-        this.stmt = stmt;
-        this.interceptorHolder = interceptorHolder;
-        this.dataSourceName = dataSourceName;
-        this.jdbcProxyFactory = jdbcProxyFactory;
-        this.proxyConnection = proxyConnection;
-    }
 
     public Object invoke(Method method, Object[] args) throws Throwable {
 

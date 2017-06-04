@@ -181,7 +181,14 @@ public class PreparedStatementProxyLogicMockTest {
 
     private PreparedStatementProxyLogic getProxyLogic(PreparedStatement ps, String query, QueryExecutionListener listener, Connection proxyConnection) {
         InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
-        return new PreparedStatementProxyLogic(ps, query, interceptorHolder, DS_NAME, new JdkJdbcProxyFactory(), proxyConnection);
+        return PreparedStatementProxyLogic.Builder.create()
+                .setPreparedStatement(ps)
+                .setQuery(query)
+                .setInterceptorHolder(interceptorHolder)
+                .setDataSourceName(DS_NAME)
+                .setJdbcProxyFactory(new JdkJdbcProxyFactory())
+                .setProxyConnection(proxyConnection)
+                .build();
     }
 
     @SuppressWarnings("unchecked")

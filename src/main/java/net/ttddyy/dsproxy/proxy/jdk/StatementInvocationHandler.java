@@ -19,9 +19,13 @@ public class StatementInvocationHandler implements InvocationHandler {
     private StatementProxyLogic delegate;
 
     public StatementInvocationHandler(
-            Statement stmt, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory,
-            Connection proxyConnection) {
-        delegate = new StatementProxyLogic(stmt, interceptorHolder, dataSourceName, jdbcProxyFactory, proxyConnection);
+            Statement stmt, InterceptorHolder interceptorHolder, String dataSourceName, Connection proxyConnection) {
+        this.delegate = StatementProxyLogic.Builder.create()
+                .setStatement(stmt)
+                .setInterceptorHolder(interceptorHolder)
+                .setDataSourceName(dataSourceName)
+                .setProxyConnection(proxyConnection)
+                .build();
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

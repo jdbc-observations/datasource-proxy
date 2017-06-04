@@ -3,7 +3,6 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -430,7 +429,13 @@ public class StatementProxyLogicMockTest {
 
     private StatementProxyLogic getProxyLogic(Statement statement, QueryExecutionListener listener, Connection proxyConnection) {
         InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
-        return new StatementProxyLogic(statement, interceptorHolder, DS_NAME, new JdkJdbcProxyFactory(), proxyConnection);
+
+        return StatementProxyLogic.Builder.create()
+                .setStatement(statement)
+                .setInterceptorHolder(interceptorHolder)
+                .setDataSourceName(DS_NAME)
+                .setProxyConnection(proxyConnection)
+                .build();
     }
 
     @SuppressWarnings("unchecked")
