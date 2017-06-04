@@ -74,7 +74,7 @@ public class StatementQueryTransformTest {
         QueryExecutionListener queryListener = mock(QueryExecutionListener.class);
         InterceptorHolder interceptorHolder = new InterceptorHolder(queryListener, transformer);
 
-        return new JdkJdbcProxyFactory().createConnection(rawDatasource.getConnection(), interceptorHolder);
+        return new JdkJdbcProxyFactory().createConnection(rawDatasource.getConnection(), interceptorHolder, "myDS");
     }
 
 

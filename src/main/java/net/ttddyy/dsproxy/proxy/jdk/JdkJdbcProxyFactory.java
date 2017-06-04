@@ -25,29 +25,16 @@ public class JdkJdbcProxyFactory implements JdbcProxyFactory {
                 new DataSourceInvocationHandler(dataSource, interceptorHolder, dataSourceName, this));
     }
 
-    public Connection createConnection(Connection connection, InterceptorHolder interceptorHolder) {
-        return createConnection(connection, interceptorHolder, "");
-    }
-
     public Connection createConnection(Connection connection, InterceptorHolder interceptorHolder, String dataSourceName) {
         return (Connection) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
                 new Class[]{ProxyJdbcObject.class, Connection.class},
                 new ConnectionInvocationHandler(connection, interceptorHolder, dataSourceName, this));
     }
 
-    public Statement createStatement(Statement statement, InterceptorHolder interceptorHolder) {
-        return createStatement(statement, interceptorHolder, "");
-    }
-
     public Statement createStatement(Statement statement, InterceptorHolder interceptorHolder, String dataSourceName) {
         return (Statement) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
                 new Class[]{ProxyJdbcObject.class, Statement.class},
                 new StatementInvocationHandler(statement, interceptorHolder, dataSourceName, this));
-    }
-
-    public PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query,
-                                                     InterceptorHolder interceptorHolder) {
-        return createPreparedStatement(preparedStatement, query, interceptorHolder, "");
     }
 
     public PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query,

@@ -22,15 +22,9 @@ public interface JdbcProxyFactory {
 
     DataSource createDataSource(DataSource dataSource, InterceptorHolder interceptorHolder, String dataSourceName);
 
-    Connection createConnection(Connection connection, InterceptorHolder interceptorHolder);
-
     Connection createConnection(Connection connection, InterceptorHolder interceptorHolder, String dataSourceName);
 
-    Statement createStatement(Statement statement, InterceptorHolder interceptorHolder);
-
     Statement createStatement(Statement statement, InterceptorHolder interceptorHolder, String dataSourceName);
-
-    PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query, InterceptorHolder interceptorHolder);
 
     PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query, InterceptorHolder interceptorHolder, String dataSourceName);
 

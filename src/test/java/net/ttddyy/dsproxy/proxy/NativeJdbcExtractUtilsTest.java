@@ -21,7 +21,7 @@ public class NativeJdbcExtractUtilsTest {
     @Test
     public void testGetConnection() {
         Connection source = mock(Connection.class);
-        Connection proxy = new JdkJdbcProxyFactory().createConnection(source, null);
+        Connection proxy = new JdkJdbcProxyFactory().createConnection(source, null, "myDS");
 
         // check proxy
         Connection result = NativeJdbcExtractUtils.getConnection(proxy);
@@ -35,7 +35,7 @@ public class NativeJdbcExtractUtilsTest {
     @Test
     public void testGetStatement() {
         Statement source = mock(Statement.class);
-        Statement proxy = new JdkJdbcProxyFactory().createStatement(source, null);
+        Statement proxy = new JdkJdbcProxyFactory().createStatement(source, null, "myDS");
 
         // check proxy
         Statement result = NativeJdbcExtractUtils.getStatement(proxy);
@@ -49,7 +49,7 @@ public class NativeJdbcExtractUtilsTest {
     @Test
     public void testGetPreparedStatement() {
         PreparedStatement source = mock(PreparedStatement.class);
-        PreparedStatement proxy = new JdkJdbcProxyFactory().createPreparedStatement(source, null, null);
+        PreparedStatement proxy = new JdkJdbcProxyFactory().createPreparedStatement(source, null, null, "myDS");
 
         // check proxy
         PreparedStatement result = NativeJdbcExtractUtils.getPreparedStatement(proxy);

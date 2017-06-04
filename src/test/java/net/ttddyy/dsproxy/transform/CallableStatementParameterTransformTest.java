@@ -78,7 +78,7 @@ public class CallableStatementParameterTransformTest {
         });
         InterceptorHolder interceptorHolder = new InterceptorHolder(queryListener, queryTransformer, paramTransformer);
 
-        return new JdkJdbcProxyFactory().createConnection(rawDatasource.getConnection(), interceptorHolder);
+        return new JdkJdbcProxyFactory().createConnection(rawDatasource.getConnection(), interceptorHolder, "myDS");
     }
 
     @Test

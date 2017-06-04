@@ -24,7 +24,7 @@ public class ProxyConnectionAdvice implements MethodInterceptor {
             return retVal;
         }
 
-        return jdbcProxyFactory.createConnection((Connection) retVal, null);
+        return jdbcProxyFactory.createConnection((Connection) retVal, null, "");
     }
 
     public JdbcProxyFactory getJdbcProxyFactory() {

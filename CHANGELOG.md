@@ -1,5 +1,12 @@
 # ChangeLog
 
+- On `JdbcProxyFactory`, methods that don't take `dataSourceName` are removed.
+  Instead, you need to specify `null`, empty String, or datasource name.
+  - `Connection createConnection(Connection connection, InterceptorHolder interceptorHolder);`
+  - `Statement createStatement(Statement statement, InterceptorHolder interceptorHolder);`
+  - `PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query, InterceptorHolder interceptorHolder);`
+
+
 ## 1.4.1
 
 - Add `setLog`/`setLogger` to `{Commons|SLF4J|JUL}QueryLoggingListener` to allow users to set custom logger.  
