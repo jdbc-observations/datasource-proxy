@@ -51,7 +51,7 @@ public class TransformInfoForParametersTest {
 
         JdbcProxyFactory jdbcProxyFactory = mock(JdbcProxyFactory.class);
         PreparedStatement ps = mock(PreparedStatement.class);
-        PreparedStatementProxyLogic proxyLogic = new PreparedStatementProxyLogic(ps, "my-query", interceptorHolder, "my-ds", jdbcProxyFactory);
+        PreparedStatementProxyLogic proxyLogic = new PreparedStatementProxyLogic(ps, "my-query", interceptorHolder, "my-ds", jdbcProxyFactory, null);
 
         Method method = PreparedStatement.class.getMethod("execute");
         Object[] args = new Object[]{};
@@ -76,7 +76,7 @@ public class TransformInfoForParametersTest {
 
         JdbcProxyFactory jdbcProxyFactory = mock(JdbcProxyFactory.class);
         PreparedStatement ps = mock(PreparedStatement.class);
-        PreparedStatementProxyLogic proxyLogic = new PreparedStatementProxyLogic(ps, "my-query", interceptorHolder, "my-ds", jdbcProxyFactory);
+        PreparedStatementProxyLogic proxyLogic = new PreparedStatementProxyLogic(ps, "my-query", interceptorHolder, "my-ds", jdbcProxyFactory, null);
 
         Method method = PreparedStatement.class.getMethod("addBatch");
         Object[] args = new Object[]{};
@@ -113,7 +113,7 @@ public class TransformInfoForParametersTest {
 
         JdbcProxyFactory jdbcProxyFactory = mock(JdbcProxyFactory.class);
         CallableStatement cs = mock(CallableStatement.class);
-        PreparedStatementProxyLogic proxyLogic = new PreparedStatementProxyLogic(cs, "my-query", interceptorHolder, "my-ds", jdbcProxyFactory);
+        PreparedStatementProxyLogic proxyLogic = new PreparedStatementProxyLogic(cs, "my-query", interceptorHolder, "my-ds", jdbcProxyFactory, null);
 
         Method method = PreparedStatement.class.getMethod("execute");
         Object[] args = new Object[]{};
@@ -138,7 +138,7 @@ public class TransformInfoForParametersTest {
 
         JdbcProxyFactory jdbcProxyFactory = mock(JdbcProxyFactory.class);
         CallableStatement cs = mock(CallableStatement.class);
-        PreparedStatementProxyLogic proxyLogic = new PreparedStatementProxyLogic(cs, "my-query", interceptorHolder, "my-ds", jdbcProxyFactory);
+        PreparedStatementProxyLogic proxyLogic = new PreparedStatementProxyLogic(cs, "my-query", interceptorHolder, "my-ds", jdbcProxyFactory, null);
 
         Method method = PreparedStatement.class.getMethod("addBatch");
         Object[] args = new Object[]{};

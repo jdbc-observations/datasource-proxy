@@ -41,8 +41,8 @@ public class ConnectionProxyLogic {
         this.jdbcProxyFactory = jdbcProxyFactory;
     }
 
-    public Object invoke(Method method, Object[] args) throws Throwable {
-
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        final Connection proxyConnection = (Connection) proxy;
         final String methodName = method.getName();
 
         if ("toString".equals(methodName)) {
@@ -92,18 +92,18 @@ public class ConnectionProxyLogic {
         // most of the time, spring and hibernate use prepareStatement to execute query as batch
         if ("createStatement".equals(methodName)) {
             // for normal statement, transforming query is handled inside of handler.
-            return jdbcProxyFactory.createStatement((Statement) retVal, interceptorHolder, dataSourceName);
+            return jdbcProxyFactory.createStatement((Statement) retVal, interceptorHolder, dataSourceName, proxyConnection);
         } else if ("prepareStatement".equals(methodName)) {
             if (ObjectArrayUtils.isFirstArgString(args)) {
                 final String query = (String) args[0];
                 return jdbcProxyFactory.createPreparedStatement((PreparedStatement) retVal, query,
-                        interceptorHolder, dataSourceName);
+                        interceptorHolder, dataSourceName, proxyConnection);
             }
         } else if ("prepareCall".equals(methodName)) {  // for stored procedure call
             if (ObjectArrayUtils.isFirstArgString(args)) {
                 final String query = (String) args[0];
                 return jdbcProxyFactory.createCallableStatement((CallableStatement) retVal, query,
-                        interceptorHolder, dataSourceName);
+                        interceptorHolder, dataSourceName, proxyConnection);
             }
         }
 

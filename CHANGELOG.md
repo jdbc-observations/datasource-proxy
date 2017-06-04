@@ -1,5 +1,7 @@
 # ChangeLog
 
+## 1.4.2-SNAPSHOT
+
 - On `JdbcProxyFactory`, methods that don't take `dataSourceName` are removed.
   Instead, you need to specify `null`, empty String, or datasource name.
   - `Connection createConnection(Connection connection, InterceptorHolder interceptorHolder);`

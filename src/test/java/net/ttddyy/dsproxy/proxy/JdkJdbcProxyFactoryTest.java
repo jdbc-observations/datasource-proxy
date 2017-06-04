@@ -37,7 +37,7 @@ public class JdkJdbcProxyFactoryTest {
         Statement stmt = mock(Statement.class);
         InterceptorHolder interceptors = mock(InterceptorHolder.class);
 
-        Statement result = factory.createStatement(stmt, interceptors, "my-ds");
+        Statement result = factory.createStatement(stmt, interceptors, "my-ds", null);
 
         assertThat(result, is(notNullValue()));
         assertThat(result, is(not(sameInstance(stmt))));
@@ -49,7 +49,7 @@ public class JdkJdbcProxyFactoryTest {
         PreparedStatement ps = mock(PreparedStatement.class);
         InterceptorHolder interceptors = mock(InterceptorHolder.class);
 
-        PreparedStatement result = factory.createPreparedStatement(ps, "my-query", interceptors, "my-ds");
+        PreparedStatement result = factory.createPreparedStatement(ps, "my-query", interceptors, "my-ds", null);
 
         assertThat(result, is(notNullValue()));
         assertThat(result, is(not(sameInstance(ps))));
@@ -61,7 +61,7 @@ public class JdkJdbcProxyFactoryTest {
         CallableStatement cs = mock(CallableStatement.class);
         InterceptorHolder interceptors = mock(InterceptorHolder.class);
 
-        CallableStatement result = factory.createCallableStatement(cs, "my-query", interceptors, "my-ds");
+        CallableStatement result = factory.createCallableStatement(cs, "my-query", interceptors, "my-ds", null);
 
         assertThat(result, is(notNullValue()));
         assertThat(result, is(not(sameInstance(cs))));

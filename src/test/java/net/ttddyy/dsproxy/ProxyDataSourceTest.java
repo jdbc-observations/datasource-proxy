@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 import java.sql.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertSame;
 
 
 /**
@@ -93,6 +94,33 @@ public class ProxyDataSourceTest {
         Connection conn = proxyDataSource.getConnection();
         CallableStatement st = conn.prepareCall("select * from emp");
         st.execute();
+    }
+
+    @Test
+    public void statementGetConnection() throws Exception {
+        Connection proxyConn = proxyDataSource.getConnection();
+        Statement st = proxyConn.createStatement();
+        Connection conn = st.getConnection();
+
+        assertThat(conn).isSameAs(proxyConn);
+    }
+
+    @Test
+    public void preparedGetConnection() throws Exception {
+        Connection proxyConn = proxyDataSource.getConnection();
+        PreparedStatement ps = proxyConn.prepareStatement("select * from emp");
+        Connection conn = ps.getConnection();
+
+        assertThat(conn).isSameAs(proxyConn);
+    }
+
+    @Test
+    public void callableGetConnection() throws Exception {
+        Connection proxyConn = proxyDataSource.getConnection();
+        CallableStatement cs = proxyConn.prepareCall("select * from emp");
+        Connection conn = cs.getConnection();
+
+        assertThat(conn).isSameAs(proxyConn);
     }
 
 }

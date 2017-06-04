@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy.jdk;
 
+import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.ConnectionProxyLogic;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
@@ -30,7 +31,7 @@ public class ConnectionInvocationHandler implements InvocationHandler {
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        return delegate.invoke(method, args);
+        return delegate.invoke(proxy, method, args);
     }
 
 }

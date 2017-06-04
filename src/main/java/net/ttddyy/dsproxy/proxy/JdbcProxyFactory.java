@@ -19,14 +19,13 @@ public interface JdbcProxyFactory {
      * use JDK proxy as default.
      */
     static final JdbcProxyFactory DEFAULT = new JdkJdbcProxyFactory();
-
     DataSource createDataSource(DataSource dataSource, InterceptorHolder interceptorHolder, String dataSourceName);
 
     Connection createConnection(Connection connection, InterceptorHolder interceptorHolder, String dataSourceName);
 
-    Statement createStatement(Statement statement, InterceptorHolder interceptorHolder, String dataSourceName);
+    Statement createStatement(Statement statement, InterceptorHolder interceptorHolder, String dataSourceName, Connection proxyConnection);
 
-    PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query, InterceptorHolder interceptorHolder, String dataSourceName);
+    PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query, InterceptorHolder interceptorHolder, String dataSourceName, Connection proxyConnection);
 
-    CallableStatement createCallableStatement(CallableStatement callableStatement, String query, InterceptorHolder interceptorHolder, String dataSourceName);
+    CallableStatement createCallableStatement(CallableStatement callableStatement, String query, InterceptorHolder interceptorHolder, String dataSourceName, Connection proxyConnection);
 }

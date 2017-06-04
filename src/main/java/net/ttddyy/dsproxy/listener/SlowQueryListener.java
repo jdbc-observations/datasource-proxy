@@ -17,6 +17,23 @@ import java.util.concurrent.TimeUnit;
  * When query takes more than specified threshold, {@link #onSlowQuery(ExecutionInfo, List, long)} callback method
  * is called. The callback is called only once for the target query if it exceeds the threshold time.
  *
+ * NOTE:
+ * {@link ExecutionInfo#elapsedTime} contains the time when callback is triggered which usually is the specified threshold time.
+ *
+ * If you want to log or do something with AFTER execution that has exceeded specified threshold time, use normal
+ * logging listener like following:
+ * {@code}
+ * long thresholdInMills = ...
+ * SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener(){
+ *      @Override
+ *      public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+ *          if (execInfo.getElapsedTime() >= thresholdInMills) {
+ *              super.afterQuery(execInfo, queryInfoList);
+ *          }
+ *      }
+ * };
+ * {@code}
+ *
  * @author Tadaya Tsuyukubo
  * @see net.ttddyy.dsproxy.listener.logging.CommonsSlowQueryListener
  * @see net.ttddyy.dsproxy.listener.logging.JULSlowQueryListener

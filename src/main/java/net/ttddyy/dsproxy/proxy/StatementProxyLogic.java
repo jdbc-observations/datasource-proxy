@@ -10,7 +10,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Proxy Logic implementation for {@link Statement} methods.
@@ -39,16 +43,18 @@ public class StatementProxyLogic {
     private String dataSourceName;
     private List<String> batchQueries = new ArrayList<String>();
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
+    private Connection proxyConnection;
 
     public StatementProxyLogic() {
     }
 
-    public StatementProxyLogic(
-            Statement stmt, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
+    public StatementProxyLogic(Statement stmt, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory,
+                               Connection proxyConnection) {
         this.stmt = stmt;
         this.interceptorHolder = interceptorHolder;
         this.dataSourceName = dataSourceName;
         this.jdbcProxyFactory = jdbcProxyFactory;
+        this.proxyConnection = proxyConnection;
     }
 
     public Object invoke(Method method, Object[] args) throws Throwable {
@@ -84,8 +90,7 @@ public class StatementProxyLogic {
         }
 
         if (StatementMethodNames.GET_CONNECTION_METHOD.contains(methodName)) {
-            final Connection conn = (Connection) MethodUtils.proceedExecution(method, stmt, args);
-            return jdbcProxyFactory.createConnection(conn, interceptorHolder, dataSourceName);
+            return this.proxyConnection;
         }
 
         if ("addBatch".equals(methodName) || "clearBatch".equals(methodName)) {

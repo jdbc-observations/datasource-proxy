@@ -38,15 +38,18 @@ public class PreparedStatementProxyLogic {
 
     private List<Map<ParameterKey, ParameterSetOperation>> batchParameters = new ArrayList<Map<ParameterKey, ParameterSetOperation>>();
 
+    private Connection proxyConnection;
+
     public PreparedStatementProxyLogic() {
     }
 
-    public PreparedStatementProxyLogic(PreparedStatement ps, String query, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
+    public PreparedStatementProxyLogic(PreparedStatement ps, String query, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory, Connection proxyConnection) {
         this.ps = ps;
         this.query = query;
         this.interceptorHolder = interceptorHolder;
         this.dataSourceName = dataSourceName;
         this.jdbcProxyFactory = jdbcProxyFactory;
+        this.proxyConnection = proxyConnection;
     }
 
     public Object invoke(Method method, Object[] args) throws Throwable {
@@ -82,8 +85,7 @@ public class PreparedStatementProxyLogic {
         }
 
         if (StatementMethodNames.GET_CONNECTION_METHOD.contains(methodName)) {
-            final Connection conn = (Connection) MethodUtils.proceedExecution(method, ps, args);
-            return jdbcProxyFactory.createConnection(conn, interceptorHolder, dataSourceName);
+            return this.proxyConnection;
         }
 
 

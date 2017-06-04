@@ -16,6 +16,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.sql.Wrapper;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -26,6 +27,9 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
     public void testDoGetNativeConnection() throws Exception {
         Connection org = mock(Connection.class);
         Connection proxy = new JdkJdbcProxyFactory().createConnection(org, null, "myDS");
+
+        boolean i = proxy instanceof Wrapper;
+        System.out.println(i);
 
         DataSourceProxyNativeJdbcExtractor extractor = new DataSourceProxyNativeJdbcExtractor();
         Connection result = extractor.doGetNativeConnection(proxy);
@@ -60,7 +64,7 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
     @Test
     public void testGetNativeStatement() throws Exception {
         Statement org = mock(Statement.class);
-        Statement proxy = new JdkJdbcProxyFactory().createStatement(org, null, "myDS");
+        Statement proxy = new JdkJdbcProxyFactory().createStatement(org, null, "myDS", null);
 
         DataSourceProxyNativeJdbcExtractor extractor = new DataSourceProxyNativeJdbcExtractor();
         Statement result = extractor.getNativeStatement(proxy);
@@ -77,7 +81,7 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
     public void testGetNativeStatementWithDelegate() throws Exception {
 
         Statement org = mock(Statement.class);
-        Statement proxy = new JdkJdbcProxyFactory().createStatement(org, null, "myDS");
+        Statement proxy = new JdkJdbcProxyFactory().createStatement(org, null, "myDS", null);
 
         NativeJdbcExtractor delegate = mock(NativeJdbcExtractor.class);
         Statement expected = mock(Statement.class);
@@ -96,7 +100,7 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
     @Test
     public void testGetNativePreparedStatement() throws Exception {
         PreparedStatement org = mock(PreparedStatement.class);
-        PreparedStatement proxy = new JdkJdbcProxyFactory().createPreparedStatement(org, null, null, "myDS");
+        PreparedStatement proxy = new JdkJdbcProxyFactory().createPreparedStatement(org, null, null, "myDS", null);
 
         DataSourceProxyNativeJdbcExtractor extractor = new DataSourceProxyNativeJdbcExtractor();
         PreparedStatement result = extractor.getNativePreparedStatement(proxy);
@@ -113,7 +117,7 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
     public void testGetNativePreparedStatementWithDelegate() throws Exception {
 
         PreparedStatement org = mock(PreparedStatement.class);
-        PreparedStatement proxy = new JdkJdbcProxyFactory().createPreparedStatement(org, null, null, "myDS");
+        PreparedStatement proxy = new JdkJdbcProxyFactory().createPreparedStatement(org, null, null, "myDS", null);
 
         NativeJdbcExtractor delegate = mock(NativeJdbcExtractor.class);
         PreparedStatement expected = mock(PreparedStatement.class);
@@ -132,7 +136,7 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
     @Test
     public void testGetNativeCallableStatement() throws Exception {
         CallableStatement org = mock(CallableStatement.class);
-        CallableStatement proxy = new JdkJdbcProxyFactory().createCallableStatement(org, null, null, null);
+        CallableStatement proxy = new JdkJdbcProxyFactory().createCallableStatement(org, null, null, null, null);
 
         DataSourceProxyNativeJdbcExtractor extractor = new DataSourceProxyNativeJdbcExtractor();
         CallableStatement result = extractor.getNativeCallableStatement(proxy);
@@ -149,7 +153,7 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
     public void testGetNativeCallableStatementWithDelegate() throws Exception {
 
         CallableStatement org = mock(CallableStatement.class);
-        CallableStatement proxy = new JdkJdbcProxyFactory().createCallableStatement(org, null, null, null);
+        CallableStatement proxy = new JdkJdbcProxyFactory().createCallableStatement(org, null, null, null, null);
 
         NativeJdbcExtractor delegate = mock(NativeJdbcExtractor.class);
         CallableStatement expected = mock(CallableStatement.class);

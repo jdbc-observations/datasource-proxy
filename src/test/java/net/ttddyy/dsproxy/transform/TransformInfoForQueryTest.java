@@ -57,7 +57,7 @@ public class TransformInfoForQueryTest {
         InterceptorHolder interceptors = new InterceptorHolder(QueryExecutionListener.DEFAULT, queryTransformer);
         JdbcProxyFactory proxyFactory = mock(JdbcProxyFactory.class);
 
-        StatementInvocationHandler handler = new StatementInvocationHandler(stmt, interceptors, "my-ds", proxyFactory);
+        StatementInvocationHandler handler = new StatementInvocationHandler(stmt, interceptors, "my-ds", proxyFactory, null);
 
         Method method = Statement.class.getMethod("execute", String.class);
         Object[] args = new Object[]{"my-query"};
@@ -83,7 +83,7 @@ public class TransformInfoForQueryTest {
         InterceptorHolder interceptors = new InterceptorHolder(QueryExecutionListener.DEFAULT, queryTransformer);
         JdbcProxyFactory proxyFactory = mock(JdbcProxyFactory.class);
 
-        StatementInvocationHandler handler = new StatementInvocationHandler(stmt, interceptors, "my-ds", proxyFactory);
+        StatementInvocationHandler handler = new StatementInvocationHandler(stmt, interceptors, "my-ds", proxyFactory, null);
 
         Method method = Statement.class.getMethod("addBatch", String.class);
 
