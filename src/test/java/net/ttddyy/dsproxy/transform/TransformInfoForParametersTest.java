@@ -174,7 +174,6 @@ public class TransformInfoForParametersTest {
                 .setQuery("my-query")
                 .setInterceptorHolder(interceptorHolder)
                 .setDataSourceName("my-ds")
-                .setJdbcProxyFactory(jdbcProxyFactory)
                 .setProxyConnection(null)
                 .build();
     }

@@ -186,7 +186,6 @@ public class PreparedStatementProxyLogicMockTest {
                 .setQuery(query)
                 .setInterceptorHolder(interceptorHolder)
                 .setDataSourceName(DS_NAME)
-                .setJdbcProxyFactory(new JdkJdbcProxyFactory())
                 .setProxyConnection(proxyConnection)
                 .build();
     }

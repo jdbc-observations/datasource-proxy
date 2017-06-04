@@ -36,7 +36,6 @@ public class PreparedStatementProxyLogic {
         private String query;
         private InterceptorHolder interceptorHolder;
         private String dataSourceName;
-        private JdbcProxyFactory jdbcProxyFactory;
         private Connection proxyConnection;
 
         public static Builder create() {
@@ -49,7 +48,6 @@ public class PreparedStatementProxyLogic {
             logic.query = this.query;
             logic.interceptorHolder = this.interceptorHolder;
             logic.dataSourceName = this.dataSourceName;
-            logic.jdbcProxyFactory = this.jdbcProxyFactory;
             logic.proxyConnection = this.proxyConnection;
             return logic;
         }
@@ -74,11 +72,6 @@ public class PreparedStatementProxyLogic {
             return this;
         }
 
-        public Builder setJdbcProxyFactory(JdbcProxyFactory jdbcProxyFactory) {
-            this.jdbcProxyFactory = jdbcProxyFactory;
-            return this;
-        }
-
         public Builder setProxyConnection(Connection proxyConnection) {
             this.proxyConnection = proxyConnection;
             return this;
@@ -93,7 +86,6 @@ public class PreparedStatementProxyLogic {
     // using a map, so that putting same key will override the entry.
     private Map<ParameterKey, ParameterSetOperation> parameters = new LinkedHashMap<ParameterKey, ParameterSetOperation>();
     private InterceptorHolder interceptorHolder;
-    private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
 
     private List<Map<ParameterKey, ParameterSetOperation>> batchParameters = new ArrayList<Map<ParameterKey, ParameterSetOperation>>();
 

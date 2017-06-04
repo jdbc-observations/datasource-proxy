@@ -20,14 +20,13 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
 
     public PreparedStatementInvocationHandler(
             PreparedStatement ps, String query, InterceptorHolder interceptorHolder, String dataSourceName,
-            JdbcProxyFactory jdbcProxyFactory, Connection proxyConnection) {
+            Connection proxyConnection) {
 
         this.delegate = PreparedStatementProxyLogic.Builder.create()
                 .setPreparedStatement(ps)
                 .setQuery(query)
                 .setInterceptorHolder(interceptorHolder)
                 .setDataSourceName(dataSourceName)
-                .setJdbcProxyFactory(jdbcProxyFactory)
                 .setProxyConnection(proxyConnection)
                 .build();
     }

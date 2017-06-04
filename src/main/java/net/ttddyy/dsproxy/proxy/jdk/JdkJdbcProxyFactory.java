@@ -34,7 +34,7 @@ public class JdkJdbcProxyFactory implements JdbcProxyFactory {
     public Statement createStatement(Statement statement, InterceptorHolder interceptorHolder, String dataSourceName, Connection proxyConnection) {
         return (Statement) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
                 new Class[]{ProxyJdbcObject.class, Statement.class},
-                new StatementInvocationHandler(statement, interceptorHolder, dataSourceName, this, proxyConnection));
+                new StatementInvocationHandler(statement, interceptorHolder, dataSourceName, proxyConnection));
     }
 
     public PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query,
@@ -43,7 +43,7 @@ public class JdkJdbcProxyFactory implements JdbcProxyFactory {
         return (PreparedStatement) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
                 new Class[]{ProxyJdbcObject.class, PreparedStatement.class},
                 new PreparedStatementInvocationHandler(
-                        preparedStatement, query, interceptorHolder, dataSourceName, this, proxyConnection));
+                        preparedStatement, query, interceptorHolder, dataSourceName, proxyConnection));
     }
 
     public CallableStatement createCallableStatement(CallableStatement callableStatement, String query,
@@ -52,6 +52,6 @@ public class JdkJdbcProxyFactory implements JdbcProxyFactory {
         return (CallableStatement) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
                 new Class[]{ProxyJdbcObject.class, CallableStatement.class},
                 new CallableStatementInvocationHandler(
-                        callableStatement, query, interceptorHolder, dataSourceName, this, proxyConnection));
+                        callableStatement, query, interceptorHolder, dataSourceName, proxyConnection));
     }
 }
