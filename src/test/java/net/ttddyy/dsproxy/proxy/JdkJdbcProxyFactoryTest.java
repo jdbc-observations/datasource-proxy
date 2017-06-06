@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.ConnectionIdManager;
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.junit.Test;
 
@@ -25,7 +27,7 @@ public class JdkJdbcProxyFactoryTest {
         Connection conn = mock(Connection.class);
         InterceptorHolder interceptors = mock(InterceptorHolder.class);
 
-        Connection result = factory.createConnection(conn, interceptors, "my-ds");
+        Connection result = factory.createConnection(conn, interceptors, getConnectionInfo());
 
         assertThat(result, is(notNullValue()));
         assertThat(result, is(not(sameInstance(conn))));
@@ -37,7 +39,7 @@ public class JdkJdbcProxyFactoryTest {
         Statement stmt = mock(Statement.class);
         InterceptorHolder interceptors = mock(InterceptorHolder.class);
 
-        Statement result = factory.createStatement(stmt, interceptors, "my-ds", null);
+        Statement result = factory.createStatement(stmt, interceptors, getConnectionInfo(), null);
 
         assertThat(result, is(notNullValue()));
         assertThat(result, is(not(sameInstance(stmt))));
@@ -49,7 +51,7 @@ public class JdkJdbcProxyFactoryTest {
         PreparedStatement ps = mock(PreparedStatement.class);
         InterceptorHolder interceptors = mock(InterceptorHolder.class);
 
-        PreparedStatement result = factory.createPreparedStatement(ps, "my-query", interceptors, "my-ds", null);
+        PreparedStatement result = factory.createPreparedStatement(ps, "my-query", interceptors, getConnectionInfo(), null);
 
         assertThat(result, is(notNullValue()));
         assertThat(result, is(not(sameInstance(ps))));
@@ -61,7 +63,7 @@ public class JdkJdbcProxyFactoryTest {
         CallableStatement cs = mock(CallableStatement.class);
         InterceptorHolder interceptors = mock(InterceptorHolder.class);
 
-        CallableStatement result = factory.createCallableStatement(cs, "my-query", interceptors, "my-ds", null);
+        CallableStatement result = factory.createCallableStatement(cs, "my-query", interceptors, getConnectionInfo(), null);
 
         assertThat(result, is(notNullValue()));
         assertThat(result, is(not(sameInstance(cs))));
@@ -73,12 +75,18 @@ public class JdkJdbcProxyFactoryTest {
         DataSource ds = mock(DataSource.class);
         InterceptorHolder interceptors = mock(InterceptorHolder.class);
 
-        DataSource result = factory.createDataSource(ds, interceptors, "my-ds");
+        DataSource result = factory.createDataSource(ds, interceptors, "my-ds", ConnectionIdManager.DEFAULT);
 
         assertThat(result, is(notNullValue()));
         assertThat(result, is(not(sameInstance(ds))));
         assertThat(result, is(instanceOf(ProxyJdbcObject.class)));
     }
 
+
+    private ConnectionInfo getConnectionInfo() {
+        ConnectionInfo connectionInfo = new ConnectionInfo();
+        connectionInfo.setDataSourceName("my-ds");
+        return connectionInfo;
+    }
 
 }

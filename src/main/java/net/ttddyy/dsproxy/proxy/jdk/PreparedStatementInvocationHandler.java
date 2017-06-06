@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy.jdk;
 
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.PreparedStatementProxyLogic;
@@ -19,14 +20,14 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
     private PreparedStatementProxyLogic delegate;
 
     public PreparedStatementInvocationHandler(
-            PreparedStatement ps, String query, InterceptorHolder interceptorHolder, String dataSourceName,
+            PreparedStatement ps, String query, InterceptorHolder interceptorHolder, ConnectionInfo connectionInfo,
             Connection proxyConnection) {
 
         this.delegate = PreparedStatementProxyLogic.Builder.create()
                 .setPreparedStatement(ps)
                 .setQuery(query)
                 .setInterceptorHolder(interceptorHolder)
-                .setDataSourceName(dataSourceName)
+                .setConnectionInfo(connectionInfo)
                 .setProxyConnection(proxyConnection)
                 .build();
     }

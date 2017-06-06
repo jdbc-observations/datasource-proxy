@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.support;
 
+import net.ttddyy.dsproxy.ConnectionIdManager;
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
@@ -25,6 +27,7 @@ public class ProxyDataSource implements DataSource, Closeable {
     private InterceptorHolder interceptorHolder = new InterceptorHolder();  // default
     private String dataSourceName = "";
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
+    private ConnectionIdManager connectionIdManager = ConnectionIdManager.DEFAULT;
 
     public ProxyDataSource() {
     }
@@ -52,7 +55,13 @@ public class ProxyDataSource implements DataSource, Closeable {
     }
 
     private Connection getConnectionProxy(Connection conn) {
-        return jdbcProxyFactory.createConnection(conn, interceptorHolder, dataSourceName);
+        long connectionId = this.connectionIdManager.getId(conn);
+
+        ConnectionInfo connectionInfo = new ConnectionInfo();
+        connectionInfo.setConnectionId(connectionId);
+        connectionInfo.setDataSourceName(this.dataSourceName);
+
+        return jdbcProxyFactory.createConnection(conn, interceptorHolder, connectionInfo);
     }
 
     public void setLogWriter(PrintWriter printWriter) throws SQLException {
@@ -116,6 +125,21 @@ public class ProxyDataSource implements DataSource, Closeable {
 
     public void setInterceptorHolder(InterceptorHolder interceptorHolder) {
         this.interceptorHolder = interceptorHolder;
+    }
+
+    /**
+     * @since 1.4.2
+     */
+    public ConnectionIdManager getConnectionIdManager() {
+        return connectionIdManager;
+    }
+
+
+    /**
+     * @since 1.4.2
+     */
+    public void setConnectionIdManager(ConnectionIdManager connectionIdManager) {
+        this.connectionIdManager = connectionIdManager;
     }
 
     @Override

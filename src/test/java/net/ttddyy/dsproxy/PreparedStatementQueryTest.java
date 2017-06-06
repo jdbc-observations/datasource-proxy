@@ -39,8 +39,11 @@ public class PreparedStatementQueryTest {
         // real datasource
         jdbcDataSource = TestUtils.getDataSourceWithData();
 
+        ConnectionInfo connectionInfo = new ConnectionInfo();
+        connectionInfo.setDataSourceName("myDS");
+
         final Connection conn = jdbcDataSource.getConnection();
-        connection = new JdkJdbcProxyFactory().createConnection(conn, interceptorHolder, "myDS");
+        connection = new JdkJdbcProxyFactory().createConnection(conn, interceptorHolder, connectionInfo);
     }
 
     @After

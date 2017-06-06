@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.transform;
 
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
@@ -58,7 +59,10 @@ public class PreparedStatementParameterTransformTest {
         });
         InterceptorHolder interceptorHolder = new InterceptorHolder(queryListener, queryTransformer, paramTransformer);
 
-        return new JdkJdbcProxyFactory().createConnection(rawDatasource.getConnection(), interceptorHolder, "myDS");
+        ConnectionInfo connectionInfo = new ConnectionInfo();
+        connectionInfo.setDataSourceName("myDS");
+
+        return new JdkJdbcProxyFactory().createConnection(rawDatasource.getConnection(), interceptorHolder, connectionInfo);
     }
 
     @Test

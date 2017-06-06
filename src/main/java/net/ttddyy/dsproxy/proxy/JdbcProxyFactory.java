@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.ConnectionIdManager;
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 
 import javax.sql.DataSource;
@@ -18,14 +20,22 @@ public interface JdbcProxyFactory {
     /**
      * use JDK proxy as default.
      */
-    static final JdbcProxyFactory DEFAULT = new JdkJdbcProxyFactory();
-    DataSource createDataSource(DataSource dataSource, InterceptorHolder interceptorHolder, String dataSourceName);
+    JdbcProxyFactory DEFAULT = new JdkJdbcProxyFactory();
 
-    Connection createConnection(Connection connection, InterceptorHolder interceptorHolder, String dataSourceName);
 
-    Statement createStatement(Statement statement, InterceptorHolder interceptorHolder, String dataSourceName, Connection proxyConnection);
+    DataSource createDataSource(DataSource dataSource, InterceptorHolder interceptorHolder, String dataSourceName,
+                                ConnectionIdManager connectionIdManager);
 
-    PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query, InterceptorHolder interceptorHolder, String dataSourceName, Connection proxyConnection);
+    Connection createConnection(Connection connection, InterceptorHolder interceptorHolder, ConnectionInfo connectionInfo);
 
-    CallableStatement createCallableStatement(CallableStatement callableStatement, String query, InterceptorHolder interceptorHolder, String dataSourceName, Connection proxyConnection);
+    Statement createStatement(Statement statement, InterceptorHolder interceptorHolder, ConnectionInfo connectionInfo,
+                              Connection proxyConnection);
+
+    PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query,
+                                              InterceptorHolder interceptorHolder, ConnectionInfo connectionInfo,
+                                              Connection proxyConnection);
+
+    CallableStatement createCallableStatement(CallableStatement callableStatement, String query,
+                                              InterceptorHolder interceptorHolder, ConnectionInfo connectionInfo,
+                                              Connection proxyConnection);
 }

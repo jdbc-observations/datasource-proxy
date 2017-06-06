@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
@@ -737,11 +738,14 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
     }
 
     private PreparedStatementProxyLogic getProxyLogic(CallableStatement cs, String query, InterceptorHolder interceptorHolder, Connection proxyConnection) {
+        ConnectionInfo connectionInfo = new ConnectionInfo();
+        connectionInfo.setDataSourceName(DS_NAME);
+
         return PreparedStatementProxyLogic.Builder.create()
                 .setPreparedStatement(cs)
                 .setQuery(query)
                 .setInterceptorHolder(interceptorHolder)
-                .setDataSourceName(DS_NAME)
+                .setConnectionInfo(connectionInfo)
                 .setProxyConnection(proxyConnection)
                 .build();
     }

@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
@@ -35,7 +36,7 @@ public class PreparedStatementProxyLogic {
         private PreparedStatement ps;
         private String query;
         private InterceptorHolder interceptorHolder;
-        private String dataSourceName;
+        private ConnectionInfo connectionInfo;
         private Connection proxyConnection;
 
         public static Builder create() {
@@ -47,7 +48,7 @@ public class PreparedStatementProxyLogic {
             logic.ps = this.ps;
             logic.query = this.query;
             logic.interceptorHolder = this.interceptorHolder;
-            logic.dataSourceName = this.dataSourceName;
+            logic.connectionInfo = this.connectionInfo;
             logic.proxyConnection = this.proxyConnection;
             return logic;
         }
@@ -67,8 +68,8 @@ public class PreparedStatementProxyLogic {
             return this;
         }
 
-        public Builder setDataSourceName(String dataSourceName) {
-            this.dataSourceName = dataSourceName;
+        public Builder setConnectionInfo(ConnectionInfo connectionInfo) {
+            this.connectionInfo = connectionInfo;
             return this;
         }
 
@@ -80,7 +81,7 @@ public class PreparedStatementProxyLogic {
 
     private PreparedStatement ps;
     private String query;
-    private String dataSourceName;
+    private ConnectionInfo connectionInfo;
 
     // when same key(index/name) is used for parameter set operation, old value will be replaced. To implement that logic
     // using a map, so that putting same key will override the entry.
@@ -108,7 +109,7 @@ public class PreparedStatementProxyLogic {
             sb.append("]");
             return sb.toString(); // differentiate toString message.
         } else if ("getDataSourceName".equals(methodName)) {
-            return dataSourceName;
+            return this.connectionInfo.getDataSourceName();
         } else if ("getTarget".equals(methodName)) {
             // ProxyJdbcObject interface has a method to return original object.
             return ps;
@@ -200,7 +201,7 @@ public class PreparedStatementProxyLogic {
             queries.add(queryInfo);
         }
 
-        final ExecutionInfo execInfo = new ExecutionInfo(dataSourceName, this.ps, isBatchExecution, batchSize, method, args);
+        final ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo.getDataSourceName(), this.ps, isBatchExecution, batchSize, method, args);
 
         final QueryExecutionListener listener = interceptorHolder.getListener();
         listener.beforeQuery(execInfo, queries);
@@ -232,7 +233,7 @@ public class PreparedStatementProxyLogic {
 
         // transform parameters
         final ParameterReplacer parameterReplacer = new ParameterReplacer(this.parameters);
-        final TransformInfo transformInfo = new TransformInfo(ps.getClass(), dataSourceName, query, isBatch, count);
+        final TransformInfo transformInfo = new TransformInfo(ps.getClass(), this.connectionInfo.getDataSourceName(), query, isBatch, count);
         final ParameterTransformer parameterTransformer = interceptorHolder.getParameterTransformer();
         parameterTransformer.transformParameters(parameterReplacer, transformInfo);
 
