@@ -170,7 +170,7 @@ public class StatementProxyLogic {
             }
         }
 
-        final ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo.getDataSourceName(), this.stmt, isBatchExecute, batchSize, method, args);
+        final ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo, this.stmt, isBatchExecute, batchSize, method, args);
 
         final QueryExecutionListener listener = interceptorHolder.getListener();
         listener.beforeQuery(execInfo, queries);
