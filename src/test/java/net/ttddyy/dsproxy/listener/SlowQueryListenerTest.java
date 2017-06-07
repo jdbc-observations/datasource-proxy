@@ -93,9 +93,9 @@ public class SlowQueryListenerTest {
         final AtomicLong executionTime = new AtomicLong(0);
         QueryLogEntryCreator queryLogEntryCreator = new DefaultQueryLogEntryCreator() {
             @Override
-            public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName) {
+            public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName, boolean writeConnectionId) {
                 executionTime.set(execInfo.getElapsedTime());
-                return super.getLogEntry(execInfo, queryInfoList, writeDataSourceName);
+                return super.getLogEntry(execInfo, queryInfoList, writeDataSourceName, writeConnectionId);
             }
         };
 

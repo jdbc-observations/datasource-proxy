@@ -20,7 +20,7 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
     private boolean multiline = false;
 
     @Override
-    public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName) {
+    public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName, boolean writeConnectionId) {
         final StringBuilder sb = new StringBuilder();
 
         if (this.multiline) {
@@ -29,6 +29,10 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
 
         if (writeDataSourceName) {
             writeDataSourceNameEntry(sb, execInfo, queryInfoList);
+        }
+
+        if (writeConnectionId) {
+            writeConnectionIdEntry(sb, execInfo, queryInfoList);
         }
 
         // Time
@@ -87,6 +91,22 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
         String name = execInfo.getDataSourceName();
         sb.append("Name:");
         sb.append(name == null ? "" : name);
+        sb.append(", ");
+    }
+
+    /**
+     * Write connection ID when enabled.
+     *
+     * <p>default: Connection: 1,
+     *
+     * @param sb            StringBuilder to write
+     * @param execInfo      execution info
+     * @param queryInfoList query info list
+     * @since 1.4.2
+     */
+    protected void writeConnectionIdEntry(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+        sb.append("Connection:");
+        sb.append(execInfo.getConnectionId());
         sb.append(", ");
     }
 

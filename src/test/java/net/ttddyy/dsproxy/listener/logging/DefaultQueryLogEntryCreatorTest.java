@@ -29,6 +29,7 @@ public class DefaultQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
+                .connectionId(10)
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -42,15 +43,27 @@ public class DefaultQueryLogEntryCreatorTest {
 
         DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
-        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
+        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Success:True, Type:Statement, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[()]");
+
+        // writeDataSourceName=false
+        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), false, true);
+        assertThat(entry).isEqualTo("Connection:10, Time:100, Success:True, Type:Statement, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[()]");
+
+        // writeConnectionId=false
+        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, false);
         assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Statement, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[()]");
+
+        // writeDataSourceName=false, writeConnectionId=false
+        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), false, false);
+        assertThat(entry).isEqualTo("Time:100, Success:True, Type:Statement, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[()]");
 
         // check multiline
         creator.setMultiline(true);
-        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
         assertThat(entry).isEqualTo(
                 "" + LINE_SEPARATOR +
-                        "Name:foo, Time:100, Success:True" + LINE_SEPARATOR +
+                        "Name:foo, Connection:10, Time:100, Success:True" + LINE_SEPARATOR +
                         "Type:Statement, Batch:False, QuerySize:1, BatchSize:0" + LINE_SEPARATOR +
                         "Query:[\"select 1\"]" + LINE_SEPARATOR +
                         "Params:[()]");
@@ -65,6 +78,7 @@ public class DefaultQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
+                .connectionId(10)
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -79,15 +93,15 @@ public class DefaultQueryLogEntryCreatorTest {
 
         DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
-        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo1, queryInfo2), true);
-        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Statement, Batch:True, QuerySize:2, BatchSize:2, Query:[\"select 1\",\"select 2\"], Params:[(),()]");
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo1, queryInfo2), true, true);
+        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Success:True, Type:Statement, Batch:True, QuerySize:2, BatchSize:2, Query:[\"select 1\",\"select 2\"], Params:[(),()]");
 
         // check multiline
         creator.setMultiline(true);
-        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo1, queryInfo2), true);
+        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo1, queryInfo2), true, true);
         assertThat(entry).isEqualTo(
                 "" + LINE_SEPARATOR +
-                        "Name:foo, Time:100, Success:True" + LINE_SEPARATOR +
+                        "Name:foo, Connection:10, Time:100, Success:True" + LINE_SEPARATOR +
                         "Type:Statement, Batch:True, QuerySize:2, BatchSize:2" + LINE_SEPARATOR +
                         "Query:[\"select 1\",\"select 2\"]" + LINE_SEPARATOR +
                         "Params:[(),()]");
@@ -102,6 +116,7 @@ public class DefaultQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
+                .connectionId(10)
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -120,15 +135,15 @@ public class DefaultQueryLogEntryCreatorTest {
 
         DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
-        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Prepared, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(foo,100,null)]");
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
+        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Success:True, Type:Prepared, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(foo,100,null)]");
 
         // check multiline
         creator.setMultiline(true);
-        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
         assertThat(entry).isEqualTo(
                 "" + LINE_SEPARATOR +
-                        "Name:foo, Time:100, Success:True" + LINE_SEPARATOR +
+                        "Name:foo, Connection:10, Time:100, Success:True" + LINE_SEPARATOR +
                         "Type:Prepared, Batch:False, QuerySize:1, BatchSize:0" + LINE_SEPARATOR +
                         "Query:[\"select 1\"]" + LINE_SEPARATOR +
                         "Params:[(foo,100,null)]");
@@ -143,6 +158,7 @@ public class DefaultQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
+                .connectionId(10)
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -162,15 +178,15 @@ public class DefaultQueryLogEntryCreatorTest {
 
         DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
-        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(foo,100),(bar,200)]");
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
+        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(foo,100),(bar,200)]");
 
         // check multiline
         creator.setMultiline(true);
-        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
         assertThat(entry).isEqualTo(
                 "" + LINE_SEPARATOR +
-                        "Name:foo, Time:100, Success:True" + LINE_SEPARATOR +
+                        "Name:foo, Connection:10, Time:100, Success:True" + LINE_SEPARATOR +
                         "Type:Prepared, Batch:True, QuerySize:1, BatchSize:2" + LINE_SEPARATOR +
                         "Query:[\"select 1\"]" + LINE_SEPARATOR +
                         "Params:[(foo,100),(bar,200)]");
@@ -184,6 +200,7 @@ public class DefaultQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
+                .connectionId(10)
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -201,15 +218,15 @@ public class DefaultQueryLogEntryCreatorTest {
 
         DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
-        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Callable, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(id=100,name=foo)]");
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
+        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Success:True, Type:Callable, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(id=100,name=foo)]");
 
         // check multiline
         creator.setMultiline(true);
-        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
         assertThat(entry).isEqualTo(
                 "" + LINE_SEPARATOR +
-                        "Name:foo, Time:100, Success:True" + LINE_SEPARATOR +
+                        "Name:foo, Connection:10, Time:100, Success:True" + LINE_SEPARATOR +
                         "Type:Callable, Batch:False, QuerySize:1, BatchSize:0" + LINE_SEPARATOR +
                         "Query:[\"select 1\"]" + LINE_SEPARATOR +
                         "Params:[(id=100,name=foo)]");
@@ -224,6 +241,7 @@ public class DefaultQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
+                .connectionId(10)
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -243,15 +261,15 @@ public class DefaultQueryLogEntryCreatorTest {
 
         DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
-        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-        assertThat(entry).isEqualTo("Name:foo, Time:100, Success:True, Type:Callable, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(id=100,name=foo),(id=200,name=bar)]");
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
+        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Success:True, Type:Callable, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(id=100,name=foo),(id=200,name=bar)]");
 
         // check multiline
         creator.setMultiline(true);
-        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+        entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
         assertThat(entry).isEqualTo(
                 "" + LINE_SEPARATOR +
-                        "Name:foo, Time:100, Success:True" + LINE_SEPARATOR +
+                        "Name:foo, Connection:10, Time:100, Success:True" + LINE_SEPARATOR +
                         "Type:Callable, Batch:True, QuerySize:1, BatchSize:2" + LINE_SEPARATOR +
                         "Query:[\"select 1\"]" + LINE_SEPARATOR +
                         "Params:[(id=100,name=foo),(id=200,name=bar)]");
@@ -265,6 +283,7 @@ public class DefaultQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
+                .connectionId(10)
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -286,7 +305,7 @@ public class DefaultQueryLogEntryCreatorTest {
 
         DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
-        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
         assertThat(entry).containsOnlyOnce("Params:[(foo,100,FOO),(bar,200,BAR)]");
 
     }
@@ -299,6 +318,7 @@ public class DefaultQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
+                .connectionId(10)
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -320,7 +340,7 @@ public class DefaultQueryLogEntryCreatorTest {
 
         DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
 
-        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
         assertThat(entry).containsOnlyOnce("Params:[(a-idx=foo,b-idx=FOO,c-idx=100),(a-idx=bar,b-idx=BAR,c-idx=200)]");
 
     }
@@ -334,17 +354,17 @@ public class DefaultQueryLogEntryCreatorTest {
 
         // Statement
         executionInfo = ExecutionInfoBuilder.create().statementType(StatementType.STATEMENT).build();
-        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(result).containsOnlyOnce("Type:Statement");
 
         // PreparedStatement
         executionInfo = ExecutionInfoBuilder.create().statementType(StatementType.PREPARED).build();
-        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(result).containsOnlyOnce("Type:Prepared");
 
         // CallableStatement
         executionInfo = ExecutionInfoBuilder.create().statementType(StatementType.CALLABLE).build();
-        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(result).containsOnlyOnce("Type:Callable");
     }
 
@@ -359,11 +379,11 @@ public class DefaultQueryLogEntryCreatorTest {
         String result;
 
         // single query
-        result = creator.getLogEntry(executionInfo, Arrays.asList(select1), true);
+        result = creator.getLogEntry(executionInfo, Arrays.asList(select1), true, true);
         assertThat(result).containsOnlyOnce("Query:[\"select 1\"]");
 
         // multiple query
-        result = creator.getLogEntry(executionInfo, Arrays.asList(select1, select2, select3), true);
+        result = creator.getLogEntry(executionInfo, Arrays.asList(select1, select2, select3), true, true);
         assertThat(result).containsOnlyOnce("Query:[\"select 1\",\"select 2\",\"select 3\"]");
     }
 
@@ -379,7 +399,7 @@ public class DefaultQueryLogEntryCreatorTest {
             }
         };
 
-        String result = creator.getLogEntry(executionInfo, Arrays.asList(select), true);
+        String result = creator.getLogEntry(executionInfo, Arrays.asList(select), true, true);
         assertThat(result).containsOnlyOnce("Query:[\"select 1 formatted\"]");
     }
 
@@ -394,11 +414,11 @@ public class DefaultQueryLogEntryCreatorTest {
         String result;
 
         // single query
-        result = creator.getLogEntry(executionInfo, Arrays.asList(select1), true);
+        result = creator.getLogEntry(executionInfo, Arrays.asList(select1), true, true);
         assertThat(result).containsOnlyOnce("QuerySize:1");
 
         // multiple query
-        result = creator.getLogEntry(executionInfo, Arrays.asList(select1, select2, select3), true);
+        result = creator.getLogEntry(executionInfo, Arrays.asList(select1, select2, select3), true, true);
         assertThat(result).containsOnlyOnce("QuerySize:3");
     }
 
@@ -411,12 +431,12 @@ public class DefaultQueryLogEntryCreatorTest {
 
         // success
         executionInfo = ExecutionInfoBuilder.create().success(true).build();
-        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(result).containsOnlyOnce("Success:True");
 
         // fail
         executionInfo = ExecutionInfoBuilder.create().success(false).build();
-        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(result).containsOnlyOnce("Success:False");
 
     }
@@ -430,12 +450,12 @@ public class DefaultQueryLogEntryCreatorTest {
 
         // success
         executionInfo = ExecutionInfoBuilder.create().batch(true).build();
-        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(result).containsOnlyOnce("Batch:True");
 
         // fail
         executionInfo = ExecutionInfoBuilder.create().batch(false).build();
-        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(result).containsOnlyOnce("Batch:False");
     }
 
@@ -448,11 +468,11 @@ public class DefaultQueryLogEntryCreatorTest {
 
         // default
         executionInfo = ExecutionInfoBuilder.create().build();
-        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(result).containsOnlyOnce("BatchSize:0");
 
         executionInfo = ExecutionInfoBuilder.create().batchSize(100).build();
-        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(result).containsOnlyOnce("BatchSize:100");
     }
 
@@ -463,7 +483,7 @@ public class DefaultQueryLogEntryCreatorTest {
         creator.setMultiline(true);
 
         ExecutionInfo executionInfo = ExecutionInfoBuilder.create().build();
-        String result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        String result = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
 
         assertThat(result).hasLineCount(5);
         String[] lines = result.split(LINE_SEPARATOR);
