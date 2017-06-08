@@ -53,27 +53,27 @@ public class PreparedStatementProxyLogic {
             return logic;
         }
 
-        public Builder setPreparedStatement(PreparedStatement ps) {
+        public Builder preparedStatement(PreparedStatement ps) {
             this.ps = ps;
             return this;
         }
 
-        public Builder setQuery(String query) {
+        public Builder query(String query) {
             this.query = query;
             return this;
         }
 
-        public Builder setInterceptorHolder(InterceptorHolder interceptorHolder) {
+        public Builder interceptorHolder(InterceptorHolder interceptorHolder) {
             this.interceptorHolder = interceptorHolder;
             return this;
         }
 
-        public Builder setConnectionInfo(ConnectionInfo connectionInfo) {
+        public Builder connectionInfo(ConnectionInfo connectionInfo) {
             this.connectionInfo = connectionInfo;
             return this;
         }
 
-        public Builder setProxyConnection(Connection proxyConnection) {
+        public Builder proxyConnection(Connection proxyConnection) {
             this.proxyConnection = proxyConnection;
             return this;
         }

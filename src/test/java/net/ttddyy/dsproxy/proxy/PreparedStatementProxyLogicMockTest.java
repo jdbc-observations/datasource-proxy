@@ -4,7 +4,6 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -186,11 +185,11 @@ public class PreparedStatementProxyLogicMockTest {
 
         InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
         return PreparedStatementProxyLogic.Builder.create()
-                .setPreparedStatement(ps)
-                .setQuery(query)
-                .setInterceptorHolder(interceptorHolder)
-                .setConnectionInfo(connectionInfo)
-                .setProxyConnection(proxyConnection)
+                .preparedStatement(ps)
+                .query(query)
+                .interceptorHolder(interceptorHolder)
+                .connectionInfo(connectionInfo)
+                .proxyConnection(proxyConnection)
                 .build();
     }
 

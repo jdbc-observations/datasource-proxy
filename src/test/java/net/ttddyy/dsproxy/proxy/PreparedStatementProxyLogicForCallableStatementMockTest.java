@@ -742,11 +742,11 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         connectionInfo.setDataSourceName(DS_NAME);
 
         return PreparedStatementProxyLogic.Builder.create()
-                .setPreparedStatement(cs)
-                .setQuery(query)
-                .setInterceptorHolder(interceptorHolder)
-                .setConnectionInfo(connectionInfo)
-                .setProxyConnection(proxyConnection)
+                .preparedStatement(cs)
+                .query(query)
+                .interceptorHolder(interceptorHolder)
+                .connectionInfo(connectionInfo)
+                .proxyConnection(proxyConnection)
                 .build();
     }
 

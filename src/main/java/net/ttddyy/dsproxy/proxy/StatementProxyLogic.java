@@ -44,22 +44,22 @@ public class StatementProxyLogic {
             return logic;
         }
 
-        public Builder setStatement(Statement statement) {
+        public Builder statement(Statement statement) {
             this.stmt = statement;
             return this;
         }
 
-        public Builder setInterceptorHolder(InterceptorHolder interceptorHolder) {
+        public Builder interceptorHolder(InterceptorHolder interceptorHolder) {
             this.interceptorHolder = interceptorHolder;
             return this;
         }
 
-        public Builder setConnectionInfo(ConnectionInfo connectionInfo) {
+        public Builder connectionInfo(ConnectionInfo connectionInfo) {
             this.connectionInfo = connectionInfo;
             return this;
         }
 
-        public Builder setProxyConnection(Connection proxyConnection) {
+        public Builder proxyConnection(Connection proxyConnection) {
             this.proxyConnection = proxyConnection;
             return this;
         }

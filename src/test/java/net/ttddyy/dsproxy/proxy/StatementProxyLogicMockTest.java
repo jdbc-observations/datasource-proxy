@@ -434,10 +434,10 @@ public class StatementProxyLogicMockTest {
         InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
 
         return StatementProxyLogic.Builder.create()
-                .setStatement(statement)
-                .setInterceptorHolder(interceptorHolder)
-                .setConnectionInfo(connectionInfo)
-                .setProxyConnection(proxyConnection)
+                .statement(statement)
+                .interceptorHolder(interceptorHolder)
+                .connectionInfo(connectionInfo)
+                .proxyConnection(proxyConnection)
                 .build();
     }
 
