@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.support;
 
+import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.listener.ChainListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.listener.logging.AbstractQueryLoggingListener;
@@ -16,6 +17,7 @@ import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener;
+import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import org.junit.Test;
 
 import java.util.List;
@@ -23,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -284,4 +287,29 @@ public class ProxyDataSourceBuilderTest {
 
         return (T) target;
     }
+
+    @Test
+    public void jdbcProxyFactory() {
+        ProxyDataSource ds;
+
+        ds = ProxyDataSourceBuilder.create().build();
+        assertThat(ds.getJdbcProxyFactory()).as("Default one should be used").isSameAs(JdbcProxyFactory.DEFAULT);
+
+        JdbcProxyFactory proxyFactory = mock(JdbcProxyFactory.class);
+        ds = ProxyDataSourceBuilder.create().jdbcProxyFactory(proxyFactory).build();
+        assertThat(ds.getJdbcProxyFactory()).isSameAs(proxyFactory);
+    }
+
+    @Test
+    public void connectionIdManager() {
+        ProxyDataSource ds;
+
+        ds = ProxyDataSourceBuilder.create().build();
+        assertThat(ds.getConnectionIdManager()).as("Default one should be used").isSameAs(ConnectionIdManager.DEFAULT);
+
+        ConnectionIdManager connectionIdManager = mock(ConnectionIdManager.class);
+        ds = ProxyDataSourceBuilder.create().connectionIdManager(connectionIdManager).build();
+        assertThat(ds.getConnectionIdManager()).isSameAs(connectionIdManager);
+    }
+
 }
