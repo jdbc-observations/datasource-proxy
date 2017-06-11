@@ -6,6 +6,10 @@ import java.sql.Connection;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
+ * Default implementation of {@link ConnectionIdManager}.
+ *
+ * This implementation returns sequentially increasing unique number as connection id.
+ *
  * @author Tadaya Tsuyukubo
  * @since 1.4.2
  */

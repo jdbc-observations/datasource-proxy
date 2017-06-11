@@ -2,8 +2,14 @@
 
 ## 1.4.2-SNAPSHOT
 
-- On `JdbcProxyFactory`, methods that don't take `dataSourceName` are removed.
-  Instead, you need to specify `null`, empty String, or datasource name.
+- Assign connection ID on each connection  
+  When a connection is obtained from DataSource(`DataSource.getConnection()`), sequentially increasing unique number 
+  is assigned as its connection ID. (default implementation: `DefaultConnectionIdManager`)  
+  The connection ID is printed as `Connection` in logging.
+
+- Remove methods that don't take `dataSourceName` on `JdbcProxyFactory`  
+  Instead, you need to specify `null`, empty String, or datasource name to the `dataSourceName` parameter.
+  Following methods are removed:
   - `Connection createConnection(Connection connection, InterceptorHolder interceptorHolder);`
   - `Statement createStatement(Statement statement, InterceptorHolder interceptorHolder);`
   - `PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query, InterceptorHolder interceptorHolder);`
