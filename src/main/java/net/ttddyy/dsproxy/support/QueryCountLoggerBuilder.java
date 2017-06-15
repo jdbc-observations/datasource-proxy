@@ -3,12 +3,16 @@ package net.ttddyy.dsproxy.support;
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
 import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
 
+import java.util.logging.Level;
+
 /**
  * Builder for QueryCountLogging related classes.
  *
  * @author Tadaya Tsuyukubo
  * @see net.ttddyy.dsproxy.support.CommonsQueryCountLoggingServletFilter
  * @see net.ttddyy.dsproxy.support.CommonsQueryCountLoggingHandlerInterceptor
+ * @see net.ttddyy.dsproxy.support.JULQueryCountLoggingServletFilter
+ * @see net.ttddyy.dsproxy.support.JULQueryCountLoggingHandlerInterceptor
  * @see net.ttddyy.dsproxy.support.SLF4JQueryCountLoggingServletFilter
  * @see net.ttddyy.dsproxy.support.SLF4JQueryCountLoggingHandlerInterceptor
  * @see net.ttddyy.dsproxy.support.SystemOutQueryCountLoggingServletFilter
@@ -20,6 +24,7 @@ public class QueryCountLoggerBuilder {
     private boolean writeAsJson = false;
     private CommonsLogLevel commonsLogLevel = CommonsLogLevel.DEBUG;
     private SLF4JLogLevel slf4jLogLevel = SLF4JLogLevel.DEBUG;
+    private Level julLogLevel = Level.FINE;
 
     public static QueryCountLoggerBuilder create() {
         return new QueryCountLoggerBuilder();
@@ -108,6 +113,66 @@ public class QueryCountLoggerBuilder {
         CommonsQueryCountLoggingHandlerInterceptor handlerInterceptor = new CommonsQueryCountLoggingHandlerInterceptor();
         if (this.commonsLogLevel != null) {
             handlerInterceptor.setLogLevel(this.commonsLogLevel);
+        }
+        handlerInterceptor.setWriteAsJson(this.writeAsJson);
+        return handlerInterceptor;
+    }
+
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.JULQueryCountLoggingServletFilter}.
+     *
+     * @return query-count-logger using Java Util Logging
+     * @since 1.4.2
+     */
+    public JULQueryCountLoggingServletFilter buildJULFilter() {
+        return buildJULFilter(null);
+    }
+
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.JULQueryCountLoggingServletFilter}.
+     *
+     * @param logLevel commons log level
+     * @return query-count-logger using Java Util Logging
+     * @since 1.4.2
+     */
+    public JULQueryCountLoggingServletFilter buildJULFilter(Level logLevel) {
+        if (logLevel != null) {
+            this.julLogLevel = logLevel;
+        }
+
+        JULQueryCountLoggingServletFilter filter = new JULQueryCountLoggingServletFilter();
+        if (this.julLogLevel != null) {
+            filter.setLogLevel(this.julLogLevel);
+        }
+        filter.setWriteAsJson(this.writeAsJson);
+        return filter;
+    }
+
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.JULQueryCountLoggingHandlerInterceptor}.
+     *
+     * @return query-count-logger using Java Util Logging
+     * @since 1.4.2
+     */
+    public JULQueryCountLoggingHandlerInterceptor buildJULHandlerInterceptor() {
+        return buildJULHandlerInterceptor(null);
+    }
+
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.JULQueryCountLoggingHandlerInterceptor}.
+     *
+     * @param logLevel commons log level
+     * @return query-count-logger using Java Util Logging
+     * @since 1.4.2
+     */
+    public JULQueryCountLoggingHandlerInterceptor buildJULHandlerInterceptor(Level logLevel) {
+        if (logLevel != null) {
+            this.julLogLevel = logLevel;
+        }
+
+        JULQueryCountLoggingHandlerInterceptor handlerInterceptor = new JULQueryCountLoggingHandlerInterceptor();
+        if (this.julLogLevel != null) {
+            handlerInterceptor.setLogLevel(this.julLogLevel);
         }
         handlerInterceptor.setWriteAsJson(this.writeAsJson);
         return handlerInterceptor;
