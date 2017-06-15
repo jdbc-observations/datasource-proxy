@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy.jdk;
 
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 
 import java.sql.CallableStatement;
@@ -19,17 +20,25 @@ import static net.ttddyy.dsproxy.proxy.jdk.StatementResultSetResultInvocationHan
 public class ResultSetProxyJdbcProxyFactory extends JdkJdbcProxyFactory {
 
     @Override
-    public Statement createStatement(Statement statement, InterceptorHolder interceptorHolder, String dataSourceName, Connection proxyConnection) {
-        return super.createStatement(statementResultSetResultProxy(statement, Statement.class), interceptorHolder, dataSourceName, proxyConnection);
+    public Statement createStatement(Statement statement, InterceptorHolder interceptorHolder,
+                                     ConnectionInfo connectionInfo, Connection proxyConnection) {
+        return super.createStatement(statementResultSetResultProxy(statement, Statement.class),
+                interceptorHolder, connectionInfo, proxyConnection);
     }
 
     @Override
-    public PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query, InterceptorHolder interceptorHolder, String dataSourceName, Connection proxyConnection) {
-        return super.createPreparedStatement(statementResultSetResultProxy(preparedStatement, PreparedStatement.class), query, interceptorHolder, dataSourceName, proxyConnection);
+    public PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query,
+                                                     InterceptorHolder interceptorHolder, ConnectionInfo connectionInfo,
+                                                     Connection proxyConnection) {
+        return super.createPreparedStatement(statementResultSetResultProxy(preparedStatement, PreparedStatement.class),
+                query, interceptorHolder, connectionInfo, proxyConnection);
     }
 
     @Override
-    public CallableStatement createCallableStatement(CallableStatement callableStatement, String query, InterceptorHolder interceptorHolder, String dataSourceName, Connection proxyConnection) {
-        return super.createCallableStatement(statementResultSetResultProxy(callableStatement, CallableStatement.class), query, interceptorHolder, dataSourceName, proxyConnection);
+    public CallableStatement createCallableStatement(CallableStatement callableStatement, String query,
+                                                     InterceptorHolder interceptorHolder, ConnectionInfo connectionInfo,
+                                                     Connection proxyConnection) {
+        return super.createCallableStatement(statementResultSetResultProxy(callableStatement, CallableStatement.class),
+                query, interceptorHolder, connectionInfo, proxyConnection);
     }
 }

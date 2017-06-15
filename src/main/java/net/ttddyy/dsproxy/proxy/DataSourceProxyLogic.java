@@ -1,5 +1,8 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.ConnectionIdManager;
+import net.ttddyy.dsproxy.ConnectionInfo;
+
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,16 +28,15 @@ public class DataSourceProxyLogic {
     private InterceptorHolder interceptorHolder;
     private String dataSourceName;
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
-
-    public DataSourceProxyLogic() {
-    }
+    private ConnectionIdManager connectionIdManager;
 
     public DataSourceProxyLogic(DataSource dataSource, InterceptorHolder interceptorHolder, String dataSourceName,
-                                JdbcProxyFactory jdbcProxyFactory) {
+                                JdbcProxyFactory jdbcProxyFactory, ConnectionIdManager connectionIdManager) {
         this.dataSource = dataSource;
         this.interceptorHolder = interceptorHolder;
         this.dataSourceName = dataSourceName;
         this.jdbcProxyFactory = jdbcProxyFactory;
+        this.connectionIdManager = connectionIdManager;
     }
 
     public Object invoke(Method method, Object[] args) throws Throwable {
@@ -69,7 +71,13 @@ public class DataSourceProxyLogic {
             final Object retVal = method.invoke(dataSource, args);
 
             if ("getConnection".equals(methodName)) {
-                return jdbcProxyFactory.createConnection((Connection) retVal, interceptorHolder, dataSourceName);
+                Connection conn = (Connection) retVal;
+                long connId = this.connectionIdManager.getId(conn);
+                ConnectionInfo connectionInfo = new ConnectionInfo();
+                connectionInfo.setConnectionId(connId);
+                connectionInfo.setDataSourceName(this.dataSourceName);
+
+                return jdbcProxyFactory.createConnection((Connection) retVal, interceptorHolder, connectionInfo);
             }
             return retVal;
         } catch (InvocationTargetException ex) {

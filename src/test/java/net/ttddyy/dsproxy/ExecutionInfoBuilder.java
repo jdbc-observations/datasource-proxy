@@ -17,6 +17,7 @@ public class ExecutionInfoBuilder {
     private boolean success;
     private boolean batch;
     private int batchSize;
+    private long connectionId;
 
     public static ExecutionInfoBuilder create() {
         return new ExecutionInfoBuilder();
@@ -72,6 +73,10 @@ public class ExecutionInfoBuilder {
         return this;
     }
 
+    public ExecutionInfoBuilder connectionId(int connectionId) {
+        this.connectionId = connectionId;
+        return this;
+    }
 
     public ExecutionInfo build() {
         ExecutionInfo executionInfo = new ExecutionInfo();
@@ -85,6 +90,7 @@ public class ExecutionInfoBuilder {
         executionInfo.setSuccess(success);
         executionInfo.setBatch(batch);
         executionInfo.setBatchSize(batchSize);
+        executionInfo.setConnectionId(this.connectionId);
         return executionInfo;
     }
 }

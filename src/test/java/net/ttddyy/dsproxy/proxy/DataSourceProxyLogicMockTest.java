@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
@@ -39,7 +40,7 @@ public class DataSourceProxyLogicMockTest {
     private DataSourceProxyLogic getProxyLogic(DataSource ds) {
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
         InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
-        return new DataSourceProxyLogic(ds, interceptorHolder, DS_NAME, new JdkJdbcProxyFactory());
+        return new DataSourceProxyLogic(ds, interceptorHolder, DS_NAME, new JdkJdbcProxyFactory(), ConnectionIdManager.DEFAULT);
     }
 
     private void verifyConnection(Connection conn) {

@@ -27,6 +27,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
+                .connectionId(10)
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -40,8 +41,20 @@ public class DefaultJsonQueryLogEntryCreatorTest {
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
+        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"time\":100, \"success\":true, \"type\":\"Statement\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{}]}");
+
+        // writeDataSourceName=false
+        jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), false, true);
+        assertThat(jsonEntry).isEqualTo("{\"connection\":10, \"time\":100, \"success\":true, \"type\":\"Statement\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{}]}");
+
+        // writeConnectionId=false
+        jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, false);
         assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Statement\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{}]}");
+
+        // writeDataSourceName=false, writeConnectionId=false
+        jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), false, false);
+        assertThat(jsonEntry).isEqualTo("{\"time\":100, \"success\":true, \"type\":\"Statement\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{}]}");
     }
 
     @Test
@@ -52,6 +65,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
+                .connectionId(10)
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -66,8 +80,8 @@ public class DefaultJsonQueryLogEntryCreatorTest {
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo1, queryInfo2), true);
-        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Statement\", \"batch\":true, \"querySize\":2, \"batchSize\":2, \"query\":[\"select 1\",\"select 2\"], \"params\":[{},{}]}");
+        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo1, queryInfo2), true, true);
+        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"time\":100, \"success\":true, \"type\":\"Statement\", \"batch\":true, \"querySize\":2, \"batchSize\":2, \"query\":[\"select 1\",\"select 2\"], \"params\":[{},{}]}");
     }
 
     @Test
@@ -78,6 +92,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
+                .connectionId(10)
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -96,8 +111,8 @@ public class DefaultJsonQueryLogEntryCreatorTest {
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Prepared\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[[\"foo\",\"100\",null]]}");
+        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
+        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"time\":100, \"success\":true, \"type\":\"Prepared\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[[\"foo\",\"100\",null]]}");
     }
 
     @Test
@@ -108,6 +123,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
+                .connectionId(10)
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -127,8 +143,8 @@ public class DefaultJsonQueryLogEntryCreatorTest {
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Prepared\", \"batch\":true, \"querySize\":1, \"batchSize\":2, \"query\":[\"select 1\"], \"params\":[[\"foo\",\"100\"],[\"bar\",\"200\"]]}");
+        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
+        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"time\":100, \"success\":true, \"type\":\"Prepared\", \"batch\":true, \"querySize\":1, \"batchSize\":2, \"query\":[\"select 1\"], \"params\":[[\"foo\",\"100\"],[\"bar\",\"200\"]]}");
     }
 
     @Test
@@ -139,6 +155,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
+                .connectionId(10)
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -156,8 +173,8 @@ public class DefaultJsonQueryLogEntryCreatorTest {
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Callable\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{\"id\":\"100\",\"name\":\"foo\"}]}");
+        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
+        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"time\":100, \"success\":true, \"type\":\"Callable\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{\"id\":\"100\",\"name\":\"foo\"}]}");
     }
 
     @Test
@@ -168,6 +185,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
+                .connectionId(10)
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -187,8 +205,8 @@ public class DefaultJsonQueryLogEntryCreatorTest {
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
-        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"time\":100, \"success\":true, \"type\":\"Callable\", \"batch\":true, \"querySize\":1, \"batchSize\":2, \"query\":[\"select 1\"], \"params\":[{\"id\":\"100\",\"name\":\"foo\"},{\"id\":\"200\",\"name\":\"bar\"}]}");
+        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
+        assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"time\":100, \"success\":true, \"type\":\"Callable\", \"batch\":true, \"querySize\":1, \"batchSize\":2, \"query\":[\"select 1\"], \"params\":[{\"id\":\"100\",\"name\":\"foo\"},{\"id\":\"200\",\"name\":\"bar\"}]}");
     }
 
     @Test
@@ -199,6 +217,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
+                .connectionId(10)
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -220,7 +239,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
         assertThat(jsonEntry).containsOnlyOnce("\"params\":[[\"foo\",\"100\",\"FOO\"],[\"bar\",\"200\",\"BAR\"]]");
     }
 
@@ -232,6 +251,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
+                .connectionId(10)
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -253,7 +273,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true);
+        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true);
         assertThat(jsonEntry).containsOnlyOnce("\"params\":[{\"a-idx\":\"foo\",\"b-idx\":\"FOO\",\"c-idx\":\"100\"},{\"a-idx\":\"bar\",\"b-idx\":\"BAR\",\"c-idx\":\"200\"}]");
     }
 
@@ -266,17 +286,17 @@ public class DefaultJsonQueryLogEntryCreatorTest {
 
         // Statement
         executionInfo = ExecutionInfoBuilder.create().statementType(StatementType.STATEMENT).build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(jsonResult).containsOnlyOnce("\"type\":\"Statement\"");
 
         // PreparedStatement
         executionInfo = ExecutionInfoBuilder.create().statementType(StatementType.PREPARED).build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(jsonResult).containsOnlyOnce("\"type\":\"Prepared\"");
 
         // CallableStatement
         executionInfo = ExecutionInfoBuilder.create().statementType(StatementType.CALLABLE).build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(jsonResult).containsOnlyOnce("\"type\":\"Callable\"");
     }
 
@@ -291,11 +311,11 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         String jsonResult;
 
         // single query
-        jsonResult = creator.getLogEntry(executionInfo, Arrays.asList(select1), true);
+        jsonResult = creator.getLogEntry(executionInfo, Arrays.asList(select1), true, true);
         assertThat(jsonResult).containsOnlyOnce("\"query\":[\"select 1\"]");
 
         // multiple query
-        jsonResult = creator.getLogEntry(executionInfo, Arrays.asList(select1, select2, select3), true);
+        jsonResult = creator.getLogEntry(executionInfo, Arrays.asList(select1, select2, select3), true, true);
         assertThat(jsonResult).containsOnlyOnce("\"query\":[\"select 1\",\"select 2\",\"select 3\"]");
     }
 
@@ -310,11 +330,11 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         String jsonResult;
 
         // single query
-        jsonResult = creator.getLogEntry(executionInfo, Arrays.asList(select1), true);
+        jsonResult = creator.getLogEntry(executionInfo, Arrays.asList(select1), true, true);
         assertThat(jsonResult).containsOnlyOnce("\"querySize\":1");
 
         // multiple query
-        jsonResult = creator.getLogEntry(executionInfo, Arrays.asList(select1, select2, select3), true);
+        jsonResult = creator.getLogEntry(executionInfo, Arrays.asList(select1, select2, select3), true, true);
         assertThat(jsonResult).containsOnlyOnce("\"querySize\":3");
     }
 
@@ -327,12 +347,12 @@ public class DefaultJsonQueryLogEntryCreatorTest {
 
         // success
         executionInfo = ExecutionInfoBuilder.create().success(true).build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(jsonResult).containsOnlyOnce("\"success\":true");
 
         // fail
         executionInfo = ExecutionInfoBuilder.create().success(false).build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(jsonResult).containsOnlyOnce("\"success\":false");
 
     }
@@ -346,12 +366,12 @@ public class DefaultJsonQueryLogEntryCreatorTest {
 
         // success
         executionInfo = ExecutionInfoBuilder.create().batch(true).build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(jsonResult).containsOnlyOnce("\"batch\":true");
 
         // fail
         executionInfo = ExecutionInfoBuilder.create().batch(false).build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(jsonResult).containsOnlyOnce("\"batch\":false");
     }
 
@@ -364,11 +384,11 @@ public class DefaultJsonQueryLogEntryCreatorTest {
 
         // default
         executionInfo = ExecutionInfoBuilder.create().build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(jsonResult).containsOnlyOnce("\"batchSize\":0");
 
         executionInfo = ExecutionInfoBuilder.create().batchSize(100).build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true);
+        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true);
         assertThat(jsonResult).containsOnlyOnce("\"batchSize\":100");
     }
 

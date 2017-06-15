@@ -17,12 +17,13 @@ import java.util.List;
 public abstract class AbstractSlowQueryLoggingListener extends SlowQueryListener {
 
     protected boolean writeDataSourceName = true;
+    protected boolean writeConnectionId = true;
     protected QueryLogEntryCreator queryLogEntryCreator = new DefaultQueryLogEntryCreator();
     protected String prefix;
 
     @Override
     protected void onSlowQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, long startTimeInMills) {
-        String entry = this.queryLogEntryCreator.getLogEntry(execInfo, queryInfoList, this.writeDataSourceName);
+        String entry = this.queryLogEntryCreator.getLogEntry(execInfo, queryInfoList, this.writeDataSourceName, this.writeConnectionId);
         if (this.prefix != null) {
             StringBuilder sb = new StringBuilder();
             sb.append(this.prefix);
@@ -43,4 +44,17 @@ public abstract class AbstractSlowQueryLoggingListener extends SlowQueryListener
         return queryLogEntryCreator;
     }
 
+    /**
+     * @since 1.4.2
+     */
+    public void setWriteDataSourceName(boolean writeDataSourceName) {
+        this.writeDataSourceName = writeDataSourceName;
+    }
+
+    /**
+     * @since 1.4.2
+     */
+    public void setWriteConnectionId(boolean writeConnectionId) {
+        this.writeConnectionId = writeConnectionId;
+    }
 }

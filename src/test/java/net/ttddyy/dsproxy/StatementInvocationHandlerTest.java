@@ -48,7 +48,10 @@ public class StatementInvocationHandlerTest {
         Connection connection = jdbcDataSource.getConnection();
         Statement stmt = connection.createStatement();
 
-        statement = new JdkJdbcProxyFactory().createStatement(stmt, interceptorHolder, "myDS", null);
+        ConnectionInfo connectionInfo = new ConnectionInfo();
+        connectionInfo.setDataSourceName("myDS");
+
+        statement = new JdkJdbcProxyFactory().createStatement(stmt, interceptorHolder, connectionInfo, null);
     }
 
     @After

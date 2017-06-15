@@ -18,12 +18,16 @@ import java.util.SortedMap;
 public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
 
     @Override
-    public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName) {
+    public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName, boolean writeConnectionId) {
         StringBuilder sb = new StringBuilder();
 
         sb.append("{");
         if (writeDataSourceName) {
             writeDataSourceNameEntry(sb, execInfo, queryInfoList);
+        }
+
+        if (writeConnectionId) {
+            writeConnectionIdEntry(sb, execInfo, queryInfoList);
         }
 
 
@@ -68,6 +72,22 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
         sb.append("\"name\":\"");
         sb.append(name == null ? "" : escapeSpecialCharacter(name));
         sb.append("\", ");
+    }
+
+    /**
+     * Write connection ID when enabled as json.
+     *
+     * <p>default: "connection":1,
+     *
+     * @param sb            StringBuilder to write
+     * @param execInfo      execution info
+     * @param queryInfoList query info list
+     * @since 1.4.2
+     */
+    protected void writeConnectionIdEntry(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+        sb.append("\"connection\":");
+        sb.append(execInfo.getConnectionId());
+        sb.append(", ");
     }
 
     /**

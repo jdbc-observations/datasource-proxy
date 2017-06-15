@@ -10,6 +10,7 @@ import java.sql.Statement;
  */
 public class ExecutionInfo {
     private String dataSourceName;
+    private long connectionId;
     private Method method;
     private Object[] methodArgs;
     private Object result;
@@ -24,8 +25,9 @@ public class ExecutionInfo {
     public ExecutionInfo() {
     }
 
-    public ExecutionInfo(String dataSourceName, Statement statement, boolean isBatch, int batchSize, Method method, Object[] methodArgs) {
-        this.dataSourceName = dataSourceName;
+    public ExecutionInfo(ConnectionInfo connectionInfo, Statement statement, boolean isBatch, int batchSize, Method method, Object[] methodArgs) {
+        this.dataSourceName = connectionInfo.getDataSourceName();
+        this.connectionId = connectionInfo.getConnectionId();
         this.statement = statement;
         this.isBatch = isBatch;
         this.batchSize = batchSize;
@@ -57,6 +59,20 @@ public class ExecutionInfo {
 
     public void setDataSourceName(String dataSourceName) {
         this.dataSourceName = dataSourceName;
+    }
+
+    /**
+     * @since 1.4.2
+     */
+    public long getConnectionId() {
+        return connectionId;
+    }
+
+    /**
+     * @since 1.4.2
+     */
+    public void setConnectionId(long connectionId) {
+        this.connectionId = connectionId;
     }
 
     /**

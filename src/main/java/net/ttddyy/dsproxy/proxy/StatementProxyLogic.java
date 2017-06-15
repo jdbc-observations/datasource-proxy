@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
@@ -27,7 +28,7 @@ public class StatementProxyLogic {
     public static class Builder {
         private Statement stmt;
         private InterceptorHolder interceptorHolder;
-        private String dataSourceName;
+        private ConnectionInfo connectionInfo;
         private Connection proxyConnection;
 
         public static Builder create() {
@@ -38,27 +39,27 @@ public class StatementProxyLogic {
             StatementProxyLogic logic = new StatementProxyLogic();
             logic.stmt = this.stmt;
             logic.interceptorHolder = this.interceptorHolder;
-            logic.dataSourceName = this.dataSourceName;
+            logic.connectionInfo = this.connectionInfo;
             logic.proxyConnection = this.proxyConnection;
             return logic;
         }
 
-        public Builder setStatement(Statement statement) {
+        public Builder statement(Statement statement) {
             this.stmt = statement;
             return this;
         }
 
-        public Builder setInterceptorHolder(InterceptorHolder interceptorHolder) {
+        public Builder interceptorHolder(InterceptorHolder interceptorHolder) {
             this.interceptorHolder = interceptorHolder;
             return this;
         }
 
-        public Builder setDataSourceName(String dataSourceName) {
-            this.dataSourceName = dataSourceName;
+        public Builder connectionInfo(ConnectionInfo connectionInfo) {
+            this.connectionInfo = connectionInfo;
             return this;
         }
 
-        public Builder setProxyConnection(Connection proxyConnection) {
+        public Builder proxyConnection(Connection proxyConnection) {
             this.proxyConnection = proxyConnection;
             return this;
         }
@@ -80,7 +81,7 @@ public class StatementProxyLogic {
 
     private Statement stmt;
     private InterceptorHolder interceptorHolder;
-    private String dataSourceName;
+    private ConnectionInfo connectionInfo;
     private List<String> batchQueries = new ArrayList<String>();
     private Connection proxyConnection;
 
@@ -102,7 +103,7 @@ public class StatementProxyLogic {
             sb.append("]");
             return sb.toString(); // differentiate toString message.
         } else if ("getDataSourceName".equals(methodName)) {
-            return dataSourceName;
+            return this.connectionInfo.getDataSourceName();
         } else if ("getTarget".equals(methodName)) {
             // ProxyJdbcObject interface has method to return original object.
             return stmt;
@@ -127,7 +128,7 @@ public class StatementProxyLogic {
                 final String query = (String) args[0];
                 final Class<? extends Statement> clazz = Statement.class;
                 final int batchCount = batchQueries.size();
-                final TransformInfo transformInfo = new TransformInfo(clazz, dataSourceName, query, true, batchCount);
+                final TransformInfo transformInfo = new TransformInfo(clazz, this.connectionInfo.getDataSourceName(), query, true, batchCount);
                 final String transformedQuery = queryTransformer.transformQuery(transformInfo);
                 args[0] = transformedQuery;  // replace to the new query
                 batchQueries.add(transformedQuery);
@@ -162,14 +163,14 @@ public class StatementProxyLogic {
             if (ObjectArrayUtils.isFirstArgString(args)) {
                 final QueryTransformer queryTransformer = interceptorHolder.getQueryTransformer();
                 final String query = (String) args[0];
-                final TransformInfo transformInfo = new TransformInfo(Statement.class, dataSourceName, query, false, 0);
+                final TransformInfo transformInfo = new TransformInfo(Statement.class, this.connectionInfo.getDataSourceName(), query, false, 0);
                 final String transformedQuery = queryTransformer.transformQuery(transformInfo);
                 args[0] = transformedQuery; // replace to the new query
                 queries.add(new QueryInfo(transformedQuery));
             }
         }
 
-        final ExecutionInfo execInfo = new ExecutionInfo(dataSourceName, this.stmt, isBatchExecute, batchSize, method, args);
+        final ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo, this.stmt, isBatchExecute, batchSize, method, args);
 
         final QueryExecutionListener listener = interceptorHolder.getListener();
         listener.beforeQuery(execInfo, queries);

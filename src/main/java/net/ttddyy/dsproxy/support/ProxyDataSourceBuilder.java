@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.support;
 
+import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
@@ -14,6 +15,7 @@ import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener;
+import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 
@@ -85,6 +87,9 @@ public class ProxyDataSourceBuilder {
 
     private ParameterTransformer parameterTransformer;
     private QueryTransformer queryTransformer;
+
+    private JdbcProxyFactory jdbcProxyFactory;
+    private ConnectionIdManager connectionIdManager;
 
     public static ProxyDataSourceBuilder create() {
         return new ProxyDataSourceBuilder();
@@ -524,6 +529,30 @@ public class ProxyDataSourceBuilder {
         return this;
     }
 
+    /**
+     * Register {@link JdbcProxyFactory}.
+     *
+     * @param jdbcProxyFactory a JdbcProxyFactory to register
+     * @return builder
+     * @since 1.4.2
+     */
+    public ProxyDataSourceBuilder jdbcProxyFactory(JdbcProxyFactory jdbcProxyFactory){
+        this.jdbcProxyFactory = jdbcProxyFactory;
+        return this;
+    }
+
+    /**
+     * Register {@link ConnectionIdManager}.
+     *
+     * @param connectionIdManager a ConnectionIdManager to register
+     * @return builder
+     * @since 1.4.2
+     */
+    public ProxyDataSourceBuilder connectionIdManager(ConnectionIdManager connectionIdManager){
+        this.connectionIdManager = connectionIdManager;
+        return this;
+    }
+
     public ProxyDataSource build() {
         ProxyDataSource proxyDataSource = new ProxyDataSource();
 
@@ -585,6 +614,14 @@ public class ProxyDataSourceBuilder {
         }
         if (this.parameterTransformer != null) {
             proxyDataSource.getInterceptorHolder().setParameterTransformer(this.parameterTransformer);
+        }
+
+        if (this.jdbcProxyFactory != null) {
+            proxyDataSource.setJdbcProxyFactory(this.jdbcProxyFactory);
+        }
+
+        if (this.connectionIdManager != null) {
+            proxyDataSource.setConnectionIdManager(this.connectionIdManager);
         }
 
         return proxyDataSource;

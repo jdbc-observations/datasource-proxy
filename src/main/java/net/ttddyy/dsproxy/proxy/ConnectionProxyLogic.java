@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.transform.TransformInfo;
 
 import java.lang.reflect.InvocationTargetException;
@@ -27,17 +28,17 @@ public class ConnectionProxyLogic {
 
     private Connection connection;
     private InterceptorHolder interceptorHolder;
-    private String dataSourceName;
+    private ConnectionInfo connectionInfo;
     private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
 
     public ConnectionProxyLogic() {
     }
 
     public ConnectionProxyLogic(
-            Connection connection, InterceptorHolder interceptorHolder, String dataSourceName, JdbcProxyFactory jdbcProxyFactory) {
+            Connection connection, InterceptorHolder interceptorHolder, ConnectionInfo connectionInfo, JdbcProxyFactory jdbcProxyFactory) {
         this.connection = connection;
         this.interceptorHolder = interceptorHolder;
-        this.dataSourceName = dataSourceName;
+        this.connectionInfo = connectionInfo;
         this.jdbcProxyFactory = jdbcProxyFactory;
     }
 
@@ -53,7 +54,7 @@ public class ConnectionProxyLogic {
             sb.append("]");
             return sb.toString(); // differentiate toString message.
         } else if ("getDataSourceName".equals(methodName)) {
-            return dataSourceName;
+            return this.connectionInfo.getDataSourceName();
         } else if ("getTarget".equals(methodName)) {
             // ProxyJdbcObject interface has method to return original object.
             return connection;
@@ -74,7 +75,7 @@ public class ConnectionProxyLogic {
                 final String query = (String) args[0];
                 final Class<? extends Statement> clazz =
                         "prepareStatement".equals(methodName) ? PreparedStatement.class : CallableStatement.class;
-                final TransformInfo transformInfo = new TransformInfo(clazz, dataSourceName, query, false, 0);
+                final TransformInfo transformInfo = new TransformInfo(clazz, this.connectionInfo.getDataSourceName(), query, false, 0);
                 final String transformedQuery = interceptorHolder.getQueryTransformer().transformQuery(transformInfo);
                 args[0] = transformedQuery;
             }
@@ -92,18 +93,18 @@ public class ConnectionProxyLogic {
         // most of the time, spring and hibernate use prepareStatement to execute query as batch
         if ("createStatement".equals(methodName)) {
             // for normal statement, transforming query is handled inside of handler.
-            return jdbcProxyFactory.createStatement((Statement) retVal, interceptorHolder, dataSourceName, proxyConnection);
+            return jdbcProxyFactory.createStatement((Statement) retVal, interceptorHolder, this.connectionInfo, proxyConnection);
         } else if ("prepareStatement".equals(methodName)) {
             if (ObjectArrayUtils.isFirstArgString(args)) {
                 final String query = (String) args[0];
                 return jdbcProxyFactory.createPreparedStatement((PreparedStatement) retVal, query,
-                        interceptorHolder, dataSourceName, proxyConnection);
+                        interceptorHolder, this.connectionInfo, proxyConnection);
             }
         } else if ("prepareCall".equals(methodName)) {  // for stored procedure call
             if (ObjectArrayUtils.isFirstArgString(args)) {
                 final String query = (String) args[0];
                 return jdbcProxyFactory.createCallableStatement((CallableStatement) retVal, query,
-                        interceptorHolder, dataSourceName, proxyConnection);
+                        interceptorHolder, this.connectionInfo, proxyConnection);
             }
         }
 

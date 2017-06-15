@@ -21,14 +21,17 @@ public class ExecutionInfoTest {
         PreparedStatement prepared = mock(PreparedStatement.class);
         CallableStatement callable = mock(CallableStatement.class);
 
+        ConnectionInfo connectionInfo = new ConnectionInfo();
+        connectionInfo.setDataSourceName("");
+
         ExecutionInfo executionInfo;
-        executionInfo = new ExecutionInfo("", statement, true, 0, null, null);
+        executionInfo = new ExecutionInfo(connectionInfo, statement, true, 0, null, null);
         assertThat(executionInfo.getStatementType()).isEqualTo(StatementType.STATEMENT);
 
-        executionInfo = new ExecutionInfo("", prepared, true, 0, null, null);
+        executionInfo = new ExecutionInfo(connectionInfo, prepared, true, 0, null, null);
         assertThat(executionInfo.getStatementType()).isEqualTo(StatementType.PREPARED);
 
-        executionInfo = new ExecutionInfo("", callable, true, 0, null, null);
+        executionInfo = new ExecutionInfo(connectionInfo, callable, true, 0, null, null);
         assertThat(executionInfo.getStatementType()).isEqualTo(StatementType.CALLABLE);
 
     }

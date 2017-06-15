@@ -20,6 +20,10 @@ Provide proxy classes for JDBC API to intercept executing queries.
   You can add callbacks for slow queries that take longer than threshold time you specified.  
   Slow query loggers are available out of the box.
 
+- Connection ID
+  Each connection is assigned unique ID that is a sequentially increasing number in default implementation.  
+  The connection ID is included in logging entry.
+
 - Query Metrics  
   You can collect statistics of executed query such as total time, number of select, insert, update, delete queries, etc.
   Output can be formatted as JSON.
@@ -43,14 +47,14 @@ Provide proxy classes for JDBC API to intercept executing queries.
 Query execution(single line):
 
 ```sql
-Name:MyProxy, Time:1, Success:True, Type:Statement, Batch:False, QuerySize:1, BatchSize:0, Query:["CREATE TABLE users(id INT, name VARCHAR(255))"], Params:[]
-Name:MyProxy, Time:5, Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:["INSERT INTO users (id, name) VALUES (?, ?)"], Params:[(1,foo),(2,bar)]
+Name:MyProxy, Connection:1, Time:1, Success:True, Type:Statement, Batch:False, QuerySize:1, BatchSize:0, Query:["CREATE TABLE users(id INT, name VARCHAR(255))"], Params:[]
+Name:MyProxy, Connection:2, Time:5, Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:["INSERT INTO users (id, name) VALUES (?, ?)"], Params:[(1,foo),(2,bar)]
 ```
 
 Query execution(multiple lines):
 
 ```sql
-Name:MyProxy, Time:3, Success:True
+Name:MyProxy, Connection:1, Time:3, Success:True
 Type:Callable, Batch:True, QuerySize:1, BatchSize:2
 Query:["{call getEmployer (?, ?)}"]
 Params:[(id=100,name=foo),(id=200,name=bar)]
@@ -59,8 +63,8 @@ Params:[(id=100,name=foo),(id=200,name=bar)]
 JSON output:
 
 ```json
-{"name":"MyProxy", "time":1, "success":true, "type":"Statement", "batch":false, "querySize":1, "batchSize":0, "query":["CREATE TABLE users(id INT, name VARCHAR(255))"], "params":[]}
-{"name":"MyProxy", "time":0, "success":true, "type":"Prepared", "batch":true, "querySize":1, "batchSize":3, "query":["INSERT INTO users (id, name) VALUES (?, ?)"], "params":[["1","foo"],["2","bar"],[3","baz"]]}
+{"name":"MyProxy", "connection":1, "time":1, "success":true, "type":"Statement", "batch":false, "querySize":1, "batchSize":0, "query":["CREATE TABLE users(id INT, name VARCHAR(255))"], "params":[]}
+{"name":"MyProxy", "connection":2, "time":0, "success":true, "type":"Prepared", "batch":true, "querySize":1, "batchSize":3, "query":["INSERT INTO users (id, name) VALUES (?, ?)"], "params":[["1","foo"],["2","bar"],[3","baz"]]}
 ```
 
 Query metrics:

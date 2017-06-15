@@ -83,7 +83,7 @@ public class OutputParameterJsonLogEntryCreatorTest {
 
         OutputParameterJsonLogEntryCreator creator = new OutputParameterJsonLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), false);
+        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), false, true);
         assertThat(jsonEntry).containsOnlyOnce("\"outParams\":[{\"1\":\"100\",\"foo\":\"101\"},{\"2\":\"200\",\"bar\":\"201\"}]");
 
 
