@@ -1,31 +1,32 @@
 package net.ttddyy.dsproxy;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
- * Considered to be used under same thread.
- * If used by multiple threads, need to change int to AtomicInteger.
+ * Hold query metrics.
  *
  * @author Tadaya Tsuyukubo
  */
 public class QueryCount {
 
     // num of queries
-    private int select;
-    private int insert;
-    private int update;
-    private int delete;
-    private int other;
+    private AtomicLong select = new AtomicLong();
+    private AtomicLong insert = new AtomicLong();
+    private AtomicLong update = new AtomicLong();
+    private AtomicLong delete = new AtomicLong();
+    private AtomicLong other = new AtomicLong();
 
     // num of statement type
-    private int statement;
-    private int prepared;
-    private int callable;
+    private AtomicLong statement = new AtomicLong();
+    private AtomicLong prepared = new AtomicLong();
+    private AtomicLong callable = new AtomicLong();
 
     // num of database call
-    private int total;
-    private int failure;
-    private int success;
+    private AtomicLong total = new AtomicLong();
+    private AtomicLong failure = new AtomicLong();
+    private AtomicLong success = new AtomicLong();
 
-    private long time;
+    private AtomicLong time = new AtomicLong();
 
     public void increment(QueryType queryType) {
         switch (queryType) {
@@ -61,146 +62,146 @@ public class QueryCount {
     }
 
     public void incrementSelect() {
-        select++;
+        select.incrementAndGet();
     }
 
     public void incrementInsert() {
-        insert++;
+        insert.incrementAndGet();
     }
 
     public void incrementUpdate() {
-        update++;
+        update.incrementAndGet();
     }
 
     public void incrementDelete() {
-        delete++;
+        delete.incrementAndGet();
     }
 
     public void incrementOther() {
-        other++;
+        other.incrementAndGet();
     }
 
     public void incrementStatement() {
-        statement++;
+        statement.incrementAndGet();
     }
 
     public void incrementPrepared() {
-        prepared++;
+        prepared.incrementAndGet();
     }
 
     public void incrementCallable() {
-        callable++;
+        callable.incrementAndGet();
     }
 
     public void incrementTotal() {
-        total++;
+        total.incrementAndGet();
     }
 
     public void incrementSuccess() {
-        success++;
+        success.incrementAndGet();
     }
 
     public void incrementFailure() {
-        failure++;
+        failure.incrementAndGet();
     }
 
     public void incrementTime(long delta) {
-        time += delta;
+        time.addAndGet(delta);
     }
 
-    public int getSelect() {
-        return select;
+    public long getSelect() {
+        return select.longValue();
     }
 
-    public void setSelect(int select) {
-        this.select = select;
+    public void setSelect(long select) {
+        this.select.set(select);
     }
 
-    public int getInsert() {
-        return insert;
+    public long getInsert() {
+        return insert.longValue();
     }
 
-    public void setInsert(int insert) {
-        this.insert = insert;
+    public void setInsert(long insert) {
+        this.insert.set(insert);
     }
 
-    public int getUpdate() {
-        return update;
+    public long getUpdate() {
+        return update.longValue();
     }
 
-    public void setUpdate(int update) {
-        this.update = update;
+    public void setUpdate(long update) {
+        this.update.set(update);
     }
 
-    public int getDelete() {
-        return delete;
+    public long getDelete() {
+        return delete.longValue();
     }
 
-    public void setDelete(int delete) {
-        this.delete = delete;
+    public void setDelete(long delete) {
+        this.delete.set(delete);
     }
 
-    public int getOther() {
-        return other;
+    public long getOther() {
+        return other.longValue();
     }
 
-    public void setOther(int other) {
-        this.other = other;
+    public void setOther(long other) {
+        this.other.set(other);
     }
 
-    public int getStatement() {
-        return statement;
+    public long getStatement() {
+        return statement.longValue();
     }
 
-    public void setStatement(int statement) {
-        this.statement = statement;
+    public void setStatement(long statement) {
+        this.statement.set(statement);
     }
 
-    public int getPrepared() {
-        return prepared;
+    public long getPrepared() {
+        return prepared.longValue();
     }
 
-    public void setPrepared(int prepared) {
-        this.prepared = prepared;
+    public void setPrepared(long prepared) {
+        this.prepared.set(prepared);
     }
 
-    public int getCallable() {
-        return callable;
+    public long getCallable() {
+        return callable.longValue();
     }
 
-    public void setCallable(int callable) {
-        this.callable = callable;
+    public void setCallable(long callable) {
+        this.callable.set(callable);
     }
 
-    public int getTotal() {
-        return total;
+    public long getTotal() {
+        return total.longValue();
     }
 
-    public void setTotal(int total) {
-        this.total = total;
+    public void setTotal(long total) {
+        this.total.set(total);
     }
 
-    public int getSuccess() {
-        return success;
+    public long getSuccess() {
+        return success.longValue();
     }
 
-    public void setSuccess(int success) {
-        this.success = success;
+    public void setSuccess(long success) {
+        this.success.set(success);
     }
 
-    public int getFailure() {
-        return failure;
+    public long getFailure() {
+        return failure.longValue();
     }
 
-    public void setFailure(int failure) {
-        this.failure = failure;
+    public void setFailure(long failure) {
+        this.failure.set(failure);
     }
 
     public long getTime() {
-        return time;
+        return time.longValue();
     }
 
     public void setTime(long time) {
-        this.time = time;
+        this.time.set(time);
     }
 }
