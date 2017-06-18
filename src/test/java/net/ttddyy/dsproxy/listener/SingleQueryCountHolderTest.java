@@ -23,33 +23,7 @@ public class SingleQueryCountHolderTest {
     @Test
     public void getQueryCount() throws Exception {
         final SingleQueryCountHolder holder = new SingleQueryCountHolder();
-        QueryCount queryCount = holder.getOrCreateQueryCount("testDS");
-        queryCount.incrementSuccess();
-
-        final AtomicReference<QueryCount> queryCountReference = new AtomicReference<QueryCount>();
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                QueryCount queryCount = holder.getOrCreateQueryCount("testDS");
-                queryCount.incrementFailure();
-                queryCountReference.set(queryCount);
-            }
-        };
-        Thread thread = new Thread(runnable);
-        thread.start();
-        thread.join();
-
-        assertThat(queryCountReference.get()).isNotNull().isSameAs(queryCount);
-        assertThat(queryCount.getSuccess()).isEqualTo(1);
-        assertThat(queryCount.getFailure()).isEqualTo(1);
-
-        assertThat(QueryCountHolder.get("testDS")).isNull();
-    }
-
-    @Test
-    public void populateQueryCountHolder() throws Exception {
-        final SingleQueryCountHolder holder = new SingleQueryCountHolder();
-        holder.setPopulateQueryCountHolder(true);
+        assertThat(holder.isPopulateQueryCountHolder()).isTrue();
 
         QueryCount mainQueryCount = holder.getOrCreateQueryCount("testDS");
         QueryCount mainQueryCountHolderCount = QueryCountHolder.get("testDS");
@@ -71,6 +45,33 @@ public class SingleQueryCountHolderTest {
         assertThat(mainQueryCountHolderCount).isNotNull().isSameAs(mainQueryCount);
         assertThat(createdQueryCountReference.get()).isNotNull().isSameAs(mainQueryCount);
         assertThat(holderQueryCountReference.get()).isNotNull().isSameAs(mainQueryCount);
+
+    }
+
+    @Test
+    public void populateQueryCountHolder() throws Exception {
+        final SingleQueryCountHolder holder = new SingleQueryCountHolder();
+        holder.setPopulateQueryCountHolder(false);
+
+        QueryCount mainQueryCount = holder.getOrCreateQueryCount("testDS");
+        assertThat(QueryCountHolder.get("testDS")).isNull();
+
+        final AtomicReference<QueryCount> createdQueryCountReference = new AtomicReference<QueryCount>();
+        final AtomicReference<QueryCount> holderQueryCountReference = new AtomicReference<QueryCount>();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                QueryCount queryCount = holder.getOrCreateQueryCount("testDS");
+                createdQueryCountReference.set(queryCount);
+                holderQueryCountReference.set(QueryCountHolder.get("testDS"));
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
+        thread.join();
+
+        assertThat(createdQueryCountReference.get()).isNotNull().isSameAs(mainQueryCount);
+        assertThat(holderQueryCountReference.get()).isNull();
 
     }
 }

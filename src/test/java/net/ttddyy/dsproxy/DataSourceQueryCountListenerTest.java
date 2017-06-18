@@ -190,6 +190,7 @@ public class DataSourceQueryCountListenerTest {
         // perform on separate thread
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicReference<Throwable> failureInThread = new AtomicReference<Throwable>();
+        final AtomicReference<QueryCount> queryCountFromHolderInDifferentThread = new AtomicReference<QueryCount>();
 
         Runnable threadA = new Runnable() {
             @Override
@@ -200,7 +201,8 @@ public class DataSourceQueryCountListenerTest {
 
                 // verify count within thread
                 try {
-                    assertThat(QueryCountHolder.get("testDS")).as("QueryCountHolder should not be populated").isNull();
+                    QueryCount queryCountFromThreadLocal = QueryCountHolder.get("testDS");
+                    queryCountFromHolderInDifferentThread.set(queryCountFromThreadLocal);
 
                     QueryCount queryCount = listener.getQueryCountStrategy().getOrCreateQueryCount("testDS");
                     assertThat(queryCount).isNotNull().isInstanceOf(QueryCount.class);
@@ -228,8 +230,12 @@ public class DataSourceQueryCountListenerTest {
         assertThat(queryCount.getInsert()).as("num of insert").isEqualTo(1);
         assertThat(queryCount.getTotal()).as("num of queries").isEqualTo(2);
 
-        assertThat(QueryCountHolder.get("testDS")).as("QueryCountHolder should not be populated").isNull();
-
+        // verify QueryCountHolder.get() performed in separate thread
+        QueryCount queryCountFromThreadLocal = queryCountFromHolderInDifferentThread.get();
+        assertThat(queryCountFromThreadLocal)
+                .as("QueryCountHolder should be populated in separate thread")
+                .isNotNull()
+                .isSameAs(queryCount);
     }
 
 }

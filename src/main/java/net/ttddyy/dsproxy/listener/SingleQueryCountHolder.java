@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * The {@link QueryCount} holds total accumulated values from all threads where database access has performed.
  *
- * When {@link #populateQueryCountHolder} is set to {@code true}, it populates {@link QueryCountHolder}.
+ * When {@link #populateQueryCountHolder} is set to {@code true}(default), it populates {@link QueryCountHolder}.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.4.2
@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentMap;
 public class SingleQueryCountHolder implements QueryCountStrategy {
 
     private ConcurrentMap<String, QueryCount> queryCountMap = new ConcurrentHashMap<String, QueryCount>();
-    private boolean populateQueryCountHolder = false;
+    private boolean populateQueryCountHolder = true;
 
     @Override
     public QueryCount getOrCreateQueryCount(String dataSourceName) {
