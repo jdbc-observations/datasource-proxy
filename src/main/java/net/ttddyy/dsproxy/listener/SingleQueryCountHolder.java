@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.QueryCount;
+import net.ttddyy.dsproxy.QueryCountHolder;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -10,7 +11,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * The {@link QueryCount} holds total accumulated values from all threads where database access has performed.
  *
- * In this implementation, {@link net.ttddyy.dsproxy.QueryCountHolder} will NOT be used.
+ * When {@link #populateQueryCountHolder} is set to {@code true}, it populates {@link QueryCountHolder}.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.4.2
@@ -18,15 +19,19 @@ import java.util.concurrent.ConcurrentMap;
 public class SingleQueryCountHolder implements QueryCountStrategy {
 
     private ConcurrentMap<String, QueryCount> queryCountMap = new ConcurrentHashMap<String, QueryCount>();
+    private boolean populateQueryCountHolder = false;
 
     @Override
     public QueryCount getOrCreateQueryCount(String dataSourceName) {
         QueryCount queryCount = queryCountMap.get(dataSourceName);
-        if (queryCount != null) {
-            return queryCount;
+        if (queryCount == null) {
+            queryCountMap.putIfAbsent(dataSourceName, new QueryCount());
+            queryCount = queryCountMap.get(dataSourceName);
         }
-        queryCountMap.putIfAbsent(dataSourceName, new QueryCount());
-        return queryCountMap.get(dataSourceName);
+        if (this.populateQueryCountHolder) {
+            QueryCountHolder.put(dataSourceName, queryCount);
+        }
+        return queryCount;
     }
 
     public ConcurrentMap<String, QueryCount> getQueryCountMap() {
@@ -37,6 +42,13 @@ public class SingleQueryCountHolder implements QueryCountStrategy {
         this.queryCountMap = queryCountMap;
     }
 
+    public boolean isPopulateQueryCountHolder() {
+        return populateQueryCountHolder;
+    }
+
+    public void setPopulateQueryCountHolder(boolean populateQueryCountHolder) {
+        this.populateQueryCountHolder = populateQueryCountHolder;
+    }
 
     public void clear() {
         this.queryCountMap.clear();

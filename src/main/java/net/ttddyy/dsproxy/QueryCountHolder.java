@@ -1,22 +1,24 @@
 package net.ttddyy.dsproxy;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Hold QueryCount object by datasource name.
  *
  * @author Tadaya Tsuyukubo
+ * @see net.ttddyy.dsproxy.listener.QueryCountStrategy
  */
 public class QueryCountHolder {
 
-    private static ThreadLocal<Map<String, QueryCount>> queryCountMapHolder = new ThreadLocal<Map<String, QueryCount>>() {
+    private static ThreadLocal<ConcurrentMap<String, QueryCount>> queryCountMapHolder = new ThreadLocal<ConcurrentMap<String, QueryCount>>() {
         @Override
-        protected Map<String, QueryCount> initialValue() {
-            return new HashMap<String, QueryCount>();
+        protected ConcurrentMap<String, QueryCount> initialValue() {
+            return new ConcurrentHashMap<String, QueryCount>();
         }
     };
 
