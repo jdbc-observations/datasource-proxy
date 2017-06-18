@@ -1,12 +1,16 @@
 package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
+import net.ttddyy.dsproxy.listener.SingleQueryCountHolder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -121,6 +125,111 @@ public class DataSourceQueryCountListenerTest {
         assertThat(queryCount.getStatement()).as("num of statement").isEqualTo(statement);
         assertThat(queryCount.getPrepared()).as("num of prepared").isEqualTo(prepared);
         assertThat(queryCount.getCallable()).as("num of callable").isEqualTo(callable);
+    }
+
+
+    @Test
+    public void threadLocalHolderStrategy() throws Exception {
+        // perform on main thread
+        QueryInfo queryInfo = mock(QueryInfo.class);
+        given(queryInfo.getQuery()).willReturn("insert into emp (id) values (1)");
+        // use default strategy
+        listener.afterQuery(executionInfo, Collections.singletonList(queryInfo));
+
+        // perform on separate thread
+        final CountDownLatch latch = new CountDownLatch(1);
+        final AtomicReference<Throwable> failureInThread = new AtomicReference<Throwable>();
+
+        Runnable threadA = new Runnable() {
+            @Override
+            public void run() {
+                QueryInfo queryInfo = mock(QueryInfo.class);
+                given(queryInfo.getQuery()).willReturn("select * from emp");
+                listener.afterQuery(executionInfo, Collections.singletonList(queryInfo));
+
+                // verify count within thread
+                try {
+                    QueryCount queryCount = QueryCountHolder.get("testDS");
+                    assertThat(queryCount).isNotNull().isInstanceOf(QueryCount.class);
+                    assertThat(queryCount.getSelect()).as("num of select").isEqualTo(1);
+                    assertThat(queryCount.getInsert()).as("num of insert").isEqualTo(0);
+                    assertThat(queryCount.getTotal()).as("num of queries").isEqualTo(1);
+                } catch (Throwable e) {
+                    failureInThread.set(e);
+                }
+
+                latch.countDown();
+            }
+        };
+        new Thread(threadA).start();
+        latch.await();
+
+        if (failureInThread.get() != null) {
+            throw new RuntimeException("Verification failure in separate thread", failureInThread.get());
+        }
+
+        // verify count in main thread
+        QueryCount queryCount = QueryCountHolder.get("testDS");
+        assertThat(queryCount).isNotNull().isInstanceOf(QueryCount.class);
+        assertThat(queryCount.getSelect()).as("num of select").isEqualTo(0);
+        assertThat(queryCount.getInsert()).as("num of insert").isEqualTo(1);
+        assertThat(queryCount.getTotal()).as("num of queries").isEqualTo(1);
+
+    }
+
+    @Test
+    public void instanceHolderStrategy() throws Exception {
+        // set query count holder strategy
+        listener.setQueryCountStrategy(new SingleQueryCountHolder());
+
+        // perform on main thread
+        QueryInfo queryInfo = mock(QueryInfo.class);
+        given(queryInfo.getQuery()).willReturn("insert into emp (id) values (1)");
+        listener.afterQuery(executionInfo, Collections.singletonList(queryInfo));
+
+        // perform on separate thread
+        final CountDownLatch latch = new CountDownLatch(1);
+        final AtomicReference<Throwable> failureInThread = new AtomicReference<Throwable>();
+
+        Runnable threadA = new Runnable() {
+            @Override
+            public void run() {
+                QueryInfo queryInfo = mock(QueryInfo.class);
+                given(queryInfo.getQuery()).willReturn("select * from emp");
+                listener.afterQuery(executionInfo, Collections.singletonList(queryInfo));
+
+                // verify count within thread
+                try {
+                    assertThat(QueryCountHolder.get("testDS")).as("QueryCountHolder should not be populated").isNull();
+
+                    QueryCount queryCount = listener.getQueryCountStrategy().getOrCreateQueryCount("testDS");
+                    assertThat(queryCount).isNotNull().isInstanceOf(QueryCount.class);
+                    assertThat(queryCount.getSelect()).as("num of select").isEqualTo(1);
+                    assertThat(queryCount.getInsert()).as("num of insert").isEqualTo(1);
+                    assertThat(queryCount.getTotal()).as("num of queries").isEqualTo(2);
+                } catch (Throwable e) {
+                    failureInThread.set(e);
+                }
+
+                latch.countDown();
+            }
+        };
+        new Thread(threadA).start();
+        latch.await();
+
+        if (failureInThread.get() != null) {
+            throw new RuntimeException("Verification failure in separate thread", failureInThread.get());
+        }
+
+        // verify count in main thread
+        QueryCount queryCount = listener.getQueryCountStrategy().getOrCreateQueryCount("testDS");
+        assertThat(queryCount).isNotNull().isInstanceOf(QueryCount.class);
+        assertThat(queryCount.getSelect()).as("num of select").isEqualTo(1);
+        assertThat(queryCount.getInsert()).as("num of insert").isEqualTo(1);
+        assertThat(queryCount.getTotal()).as("num of queries").isEqualTo(2);
+
+        assertThat(QueryCountHolder.get("testDS")).as("QueryCountHolder should not be populated").isNull();
+
     }
 
 }
