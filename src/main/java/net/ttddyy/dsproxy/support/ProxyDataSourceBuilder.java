@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
+import net.ttddyy.dsproxy.listener.QueryCountStrategy;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
 import net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener;
@@ -81,6 +82,8 @@ public class ProxyDataSourceBuilder {
     private boolean createSysOutSlowQueryListener;
 
     private boolean createDataSourceQueryCountListener;
+    private QueryCountStrategy queryCountStrategy;
+
     private boolean jsonFormat;
     private boolean multiline;
     private List<QueryExecutionListener> queryExecutionListeners = new ArrayList<QueryExecutionListener>();
@@ -465,6 +468,18 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
+     * Create {@link net.ttddyy.dsproxy.listener.DataSourceQueryCountListener}.
+     *
+     * @return builder
+     * @since 1.4.2
+     */
+    public ProxyDataSourceBuilder countQuery(QueryCountStrategy queryCountStrategy) {
+        this.createDataSourceQueryCountListener = true;
+        this.queryCountStrategy = queryCountStrategy;
+        return this;
+    }
+
+    /**
      * Register given listener.
      *
      * @param listener a listener to register
@@ -536,7 +551,7 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 1.4.2
      */
-    public ProxyDataSourceBuilder jdbcProxyFactory(JdbcProxyFactory jdbcProxyFactory){
+    public ProxyDataSourceBuilder jdbcProxyFactory(JdbcProxyFactory jdbcProxyFactory) {
         this.jdbcProxyFactory = jdbcProxyFactory;
         return this;
     }
@@ -548,7 +563,7 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 1.4.2
      */
-    public ProxyDataSourceBuilder connectionIdManager(ConnectionIdManager connectionIdManager){
+    public ProxyDataSourceBuilder connectionIdManager(ConnectionIdManager connectionIdManager) {
         this.connectionIdManager = connectionIdManager;
         return this;
     }
@@ -599,8 +614,15 @@ public class ProxyDataSourceBuilder {
 
         // countQuery listener
         if (this.createDataSourceQueryCountListener) {
-            listeners.add(new DataSourceQueryCountListener());
+            DataSourceQueryCountListener countListener = new DataSourceQueryCountListener();
+
+            if (this.queryCountStrategy != null) {
+                countListener.setQueryCountStrategy(this.queryCountStrategy);
+            }
+
+            listeners.add(countListener);
         }
+
 
         // explicitly added listeners
         listeners.addAll(this.queryExecutionListeners);

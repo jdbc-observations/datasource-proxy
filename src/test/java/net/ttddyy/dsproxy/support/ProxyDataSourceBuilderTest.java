@@ -2,7 +2,10 @@ package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.listener.ChainListener;
+import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
+import net.ttddyy.dsproxy.listener.QueryCountStrategy;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ThreadQueryCountHolder;
 import net.ttddyy.dsproxy.listener.logging.AbstractQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.AbstractSlowQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
@@ -310,6 +313,29 @@ public class ProxyDataSourceBuilderTest {
         ConnectionIdManager connectionIdManager = mock(ConnectionIdManager.class);
         ds = ProxyDataSourceBuilder.create().connectionIdManager(connectionIdManager).build();
         assertThat(ds.getConnectionIdManager()).isSameAs(connectionIdManager);
+    }
+
+    @Test
+    public void countListener() {
+
+        ProxyDataSource ds;
+        DataSourceQueryCountListener listener;
+
+        // default strategy
+        ds = ProxyDataSourceBuilder.create().countQuery().build();
+        listener = getAndVerifyListener(ds, DataSourceQueryCountListener.class);
+        assertThat(listener.getQueryCountStrategy()).as("default count listener")
+                .isNotNull()
+                .isInstanceOf(ThreadQueryCountHolder.class);
+
+        // specify strategy
+        QueryCountStrategy strategy = mock(QueryCountStrategy.class);
+
+        ds = ProxyDataSourceBuilder.create().countQuery(strategy).build();
+        listener = getAndVerifyListener(ds, DataSourceQueryCountListener.class);
+        assertThat(listener.getQueryCountStrategy()).as("count listener with strategy")
+                .isNotNull()
+                .isSameAs(strategy);
     }
 
 }
