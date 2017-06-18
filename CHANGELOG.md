@@ -14,6 +14,11 @@
   - `Statement createStatement(Statement statement, InterceptorHolder interceptorHolder);`
   - `PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query, InterceptorHolder interceptorHolder);`
 
+- `DataSourceQueryCountListener` now takes a strategy to resolve `QueryCount`.  
+  Default uses `ThreadQueryCountHolder` that uses thread local to hold `QueryCount`. This behaves same as before that 
+  the `QueryCount` holds per request counts(servlet request-response lifecycle).  
+  `SingleQueryCountHolder` uses single instance to hold count values. Therefore, this holds total accumulated 
+  values from all threads.
 
 ## 1.4.1
 
