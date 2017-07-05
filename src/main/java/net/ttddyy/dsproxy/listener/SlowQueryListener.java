@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 
@@ -43,14 +44,23 @@ import java.util.concurrent.TimeUnit;
  */
 public class SlowQueryListener implements QueryExecutionListener {
 
-    protected ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    protected boolean useDaemonThread = true;
+
+    protected ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread thread = Executors.defaultThreadFactory().newThread(r);
+            thread.setDaemon(SlowQueryListener.this.useDaemonThread);
+            return thread;
+        }
+    });
+
     protected long threshold;
     protected TimeUnit thresholdTimeUnit;
     protected Map<ExecutionInfo, Long> inExecution = new ConcurrentHashMap<ExecutionInfo, Long>();
 
     @Override
     public void beforeQuery(final ExecutionInfo execInfo, final List<QueryInfo> queryInfoList) {
-
 
         Runnable check = new Runnable() {
             @Override
@@ -111,4 +121,15 @@ public class SlowQueryListener implements QueryExecutionListener {
     public TimeUnit getThresholdTimeUnit() {
         return thresholdTimeUnit;
     }
+
+    /**
+     * When set to {@code true}(default), the executor creates daemon threads to check slow queries.
+     *
+     * @param useDaemonThread use daemon thread or not. (default is true)
+     * @since 1.4.2
+     */
+    public void setUseDaemonThread(boolean useDaemonThread) {
+        this.useDaemonThread = useDaemonThread;
+    }
+
 }
