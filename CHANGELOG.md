@@ -20,6 +20,10 @@
   `SingleQueryCountHolder` uses single instance to hold count values. Therefore, this holds total accumulated 
   values from all threads.
 
+- Update `SlowQueryListener` to use daemon threads as default.
+  It is configurable by `SlowQueryListener#setUseDaemonThread` method.
+
+
 ## 1.4.1
 
 - Add `setLog`/`setLogger` to `{Commons|SLF4J|JUL}QueryLoggingListener` to allow users to set custom logger.  
