@@ -1,6 +1,6 @@
 # ChangeLog
 
-## 1.4.2-SNAPSHOT
+## 1.4.2
 
 - Assign connection ID on each connection  
   When a connection is obtained from DataSource(`DataSource.getConnection()`), sequentially increasing unique number 
