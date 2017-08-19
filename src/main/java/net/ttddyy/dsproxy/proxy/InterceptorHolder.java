@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.listener.ChainListener;
+import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
@@ -19,6 +20,7 @@ public class InterceptorHolder {
     private ChainListener chainListener = new ChainListener();  // empty default
     private QueryTransformer queryTransformer = QueryTransformer.DEFAULT;
     private ParameterTransformer parameterTransformer = ParameterTransformer.DEFAULT;
+    private MethodExecutionListener methodListener = MethodExecutionListener.DEFAULT;
 
     public InterceptorHolder() {
     }
@@ -70,5 +72,9 @@ public class InterceptorHolder {
 
     public void setParameterTransformer(ParameterTransformer parameterTransformer) {
         this.parameterTransformer = parameterTransformer;
+    }
+
+    public MethodExecutionListener getMethodListener() {
+        return methodListener;
     }
 }

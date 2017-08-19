@@ -22,7 +22,7 @@ public class NativeJdbcExtractUtilsTest {
     @Test
     public void testGetConnection() {
         Connection source = mock(Connection.class);
-        Connection proxy = new JdkJdbcProxyFactory().createConnection(source, null, getConnectionInfo());
+        Connection proxy = new JdkJdbcProxyFactory().createConnection(source, new InterceptorHolder(), getConnectionInfo());
 
         // check proxy
         Connection result = NativeJdbcExtractUtils.getConnection(proxy);
@@ -36,7 +36,7 @@ public class NativeJdbcExtractUtilsTest {
     @Test
     public void testGetStatement() {
         Statement source = mock(Statement.class);
-        Statement proxy = new JdkJdbcProxyFactory().createStatement(source, null, getConnectionInfo(), null);
+        Statement proxy = new JdkJdbcProxyFactory().createStatement(source, new InterceptorHolder(), getConnectionInfo(), null);
 
         // check proxy
         Statement result = NativeJdbcExtractUtils.getStatement(proxy);
@@ -50,7 +50,7 @@ public class NativeJdbcExtractUtilsTest {
     @Test
     public void testGetPreparedStatement() {
         PreparedStatement source = mock(PreparedStatement.class);
-        PreparedStatement proxy = new JdkJdbcProxyFactory().createPreparedStatement(source, null, null, getConnectionInfo(), null);
+        PreparedStatement proxy = new JdkJdbcProxyFactory().createPreparedStatement(source, null, new InterceptorHolder(), getConnectionInfo(), null);
 
         // check proxy
         PreparedStatement result = NativeJdbcExtractUtils.getPreparedStatement(proxy);
@@ -64,7 +64,7 @@ public class NativeJdbcExtractUtilsTest {
     @Test
     public void testGetCallableStatement() {
         CallableStatement source = mock(CallableStatement.class);
-        CallableStatement proxy = new JdkJdbcProxyFactory().createCallableStatement(source, null, null, getConnectionInfo(), null);
+        CallableStatement proxy = new JdkJdbcProxyFactory().createCallableStatement(source, null, new InterceptorHolder(), getConnectionInfo(), null);
 
         // check proxy
         CallableStatement result = NativeJdbcExtractUtils.getCallableStatement(proxy);

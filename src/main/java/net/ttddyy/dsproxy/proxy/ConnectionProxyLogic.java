@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 import net.ttddyy.dsproxy.transform.TransformInfo;
 
 import java.lang.reflect.InvocationTargetException;
@@ -36,13 +37,24 @@ public class ConnectionProxyLogic {
 
     public ConnectionProxyLogic(
             Connection connection, InterceptorHolder interceptorHolder, ConnectionInfo connectionInfo, JdbcProxyFactory jdbcProxyFactory) {
-        this.connection = connection;
+        this.connection = connection;  // original connection(not proxied)
         this.interceptorHolder = interceptorHolder;
         this.connectionInfo = connectionInfo;
         this.jdbcProxyFactory = jdbcProxyFactory;
     }
 
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(final Object proxyConnection, Method method, Object[] args) throws Throwable {
+
+        return MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
+            @Override
+            public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
+                return performQueryExecutionListener(proxyConnection, method, args);
+            }
+        }, this.interceptorHolder, this.connection, method, args);
+
+    }
+
+    private Object performQueryExecutionListener(Object proxy, Method method, Object[] args) throws Throwable {
         final Connection proxyConnection = (Connection) proxy;
         final String methodName = method.getName();
 

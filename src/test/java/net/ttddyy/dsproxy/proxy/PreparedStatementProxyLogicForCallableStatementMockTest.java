@@ -754,7 +754,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
     @Test
     public void testGetTarget() throws Throwable {
         CallableStatement orig = mock(CallableStatement.class);
-        PreparedStatementProxyLogic logic = getProxyLogic(orig, null, null, null);
+        PreparedStatementProxyLogic logic = getProxyLogic(orig, null, new InterceptorHolder(), null);
 
         Method method = ProxyJdbcObject.class.getMethod("getTarget");
         Object result = logic.invoke(method, null);
@@ -768,7 +768,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         CallableStatement mock = mock(CallableStatement.class);
         when(mock.unwrap(String.class)).thenReturn("called");
 
-        PreparedStatementProxyLogic logic = getProxyLogic(mock, null, null, null);
+        PreparedStatementProxyLogic logic = getProxyLogic(mock, null, new InterceptorHolder(), null);
         Method method = CallableStatement.class.getMethod("unwrap", Class.class);
         Object result = logic.invoke(method, new Object[]{String.class});
 
@@ -782,7 +782,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         CallableStatement mock = mock(CallableStatement.class);
         when(mock.isWrapperFor(String.class)).thenReturn(true);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(mock, null, null, null);
+        PreparedStatementProxyLogic logic = getProxyLogic(mock, null, new InterceptorHolder(), null);
 
         Method method = CallableStatement.class.getMethod("isWrapperFor", Class.class);
         Object result = logic.invoke(method, new Object[]{String.class});
@@ -798,7 +798,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         CallableStatement stat = mock(CallableStatement.class);
 
         when(stat.getConnection()).thenReturn(conn);
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, null, null, conn);
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, null, new InterceptorHolder(), conn);
 
         Method method = CallableStatement.class.getMethod("getConnection");
         Object result = logic.invoke(method, null);

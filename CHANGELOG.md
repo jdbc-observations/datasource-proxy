@@ -7,6 +7,8 @@
     e.g.: when `SLF4JQueryLoggingListener` writes SQL in DEBUG level, but the logger is set to INFO(more serious
           than DEBUG), then it will NOT perform logging logic including constructing log statement, etc.
 
+- Add `MethodExecutionListener`
+
 
 ## 1.4.2
 

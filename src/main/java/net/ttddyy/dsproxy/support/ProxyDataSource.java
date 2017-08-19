@@ -2,9 +2,11 @@ package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.DataSourceProxyException;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
+import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
@@ -12,6 +14,7 @@ import javax.sql.DataSource;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -23,6 +26,20 @@ import java.util.logging.Logger;
  * @author Tadaya Tsuyukubo
  */
 public class ProxyDataSource implements DataSource, Closeable {
+
+    private static final Method GET_CONNECTION_WITH_NO_ARGS;
+    private static final Method GET_CONNECTION_WITH_USER_PASS;
+
+    static {
+        try {
+            GET_CONNECTION_WITH_NO_ARGS = ProxyDataSource.class.getDeclaredMethod("getConnection");
+            GET_CONNECTION_WITH_USER_PASS = ProxyDataSource.class.getDeclaredMethod("getConnection", String.class, String.class);
+        } catch (NoSuchMethodException e) {
+            throw new DataSourceProxyException("Failed to find getConnection methods", e);
+        }
+    }
+
+
     private DataSource dataSource;
     private InterceptorHolder interceptorHolder = new InterceptorHolder();  // default
     private String dataSourceName = "";
@@ -40,46 +57,68 @@ public class ProxyDataSource implements DataSource, Closeable {
         this.dataSource = dataSource;
     }
 
+    @Override
     public PrintWriter getLogWriter() throws SQLException {
         return dataSource.getLogWriter();
     }
 
+    @Override
     public Connection getConnection() throws SQLException {
         final Connection conn = dataSource.getConnection();
-        return getConnectionProxy(conn);
+        return getConnectionProxy(conn, GET_CONNECTION_WITH_NO_ARGS, null);
     }
 
+    @Override
     public Connection getConnection(String username, String password) throws SQLException {
         final Connection conn = dataSource.getConnection(username, password);
-        return getConnectionProxy(conn);
+        return getConnectionProxy(conn, GET_CONNECTION_WITH_USER_PASS, new Object[]{username, password});
     }
 
-    private Connection getConnectionProxy(Connection conn) {
+    private Connection getConnectionProxy(final Connection conn, Method method, Object[] args) throws SQLException {
         long connectionId = this.connectionIdManager.getId(conn);
 
-        ConnectionInfo connectionInfo = new ConnectionInfo();
+        final ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setConnectionId(connectionId);
         connectionInfo.setDataSourceName(this.dataSourceName);
 
-        return jdbcProxyFactory.createConnection(conn, interceptorHolder, connectionInfo);
+        try {
+            return (Connection) MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
+                @Override
+                public Object execute(Object proxy, Method method, Object[] args) throws Throwable {
+                    return jdbcProxyFactory.createConnection(conn, interceptorHolder, connectionInfo);
+                }
+            }, this.interceptorHolder, conn, method, args);
+        } catch (Throwable throwable) {
+            if (throwable instanceof SQLException) {
+                throw (SQLException) throwable;
+            } else {
+                throw new DataSourceProxyException("Failed to perform getConnection", throwable);
+            }
+        }
+
     }
 
+    @Override
     public void setLogWriter(PrintWriter printWriter) throws SQLException {
         dataSource.setLogWriter(printWriter);
     }
 
+    @Override
     public void setLoginTimeout(int i) throws SQLException {
         dataSource.setLoginTimeout(i);
     }
 
+    @Override
     public int getLoginTimeout() throws SQLException {
         return dataSource.getLoginTimeout();
     }
 
+    @Override
     public <T> T unwrap(Class<T> tClass) throws SQLException {
         return dataSource.unwrap(tClass);
     }
 
+    @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         return dataSource.isWrapperFor(iface);
     }
@@ -106,6 +145,7 @@ public class ProxyDataSource implements DataSource, Closeable {
         return dataSourceName;
     }
 
+    //    @Override
     @IgnoreJRERequirement
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         return dataSource.getParentLogger();  // JDBC4.1 (jdk7+)
