@@ -6,9 +6,12 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static java.lang.Boolean.TRUE;
 import static java.lang.String.format;
@@ -23,6 +26,19 @@ import static java.lang.String.format;
  * @since 1.4
  */
 public class ResultSetProxyLogic {
+
+    private static final Set<String> METHODS_TO_INTERCEPT = Collections.unmodifiableSet(
+            new HashSet<String>() {
+                {
+                    // getDeclaredMethods does NOT include parent class methods(e.g: Wrapper#unwrap()"
+                    for (Method method : ResultSet.class.getDeclaredMethods()) {
+                        add(method.getName());
+                    }
+                    add("toString");
+                    add("getTarget"); // from ProxyJdbcObject
+                }
+            }
+    );
 
     private final Map<String, Integer> columnNameToIndex;
     private final ResultSet target;
@@ -55,10 +71,27 @@ public class ResultSetProxyLogic {
     }
 
     public Object invoke(Method method, Object[] args) throws Throwable {
-        if (isGetTargetMethod(method)) {
-            // ProxyJdbcObject interface has a method to return original object.
-            return target;
+
+        final String methodName = method.getName();
+
+        if (!METHODS_TO_INTERCEPT.contains(methodName)) {
+            return MethodUtils.proceedExecution(method, this.target, args);
         }
+
+        // special treat for toString method
+        if ("toString".equals(methodName)) {
+            final StringBuilder sb = new StringBuilder();
+            sb.append(this.target.getClass().getSimpleName());
+            sb.append(" [");
+            sb.append(this.target.toString());
+            sb.append("]");
+            return sb.toString(); // differentiate toString message.
+        } else if ("getTarget".equals(methodName)) {
+            // ProxyJdbcObject interface has a method to return original object.
+            return this.target;
+        }
+
+
         if (isGetMetaDataMethod(method)) {
             return method.invoke(target, args);
         }
@@ -133,10 +166,6 @@ public class ResultSetProxyLogic {
 
     private boolean isCloseMethod(Method method) {
         return method.getName().equals("close");
-    }
-
-    private boolean isGetTargetMethod(Method method) {
-        return method.getName().equals("getTarget");
     }
 
     private boolean isGetMetaDataMethod(Method method) {

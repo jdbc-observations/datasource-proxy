@@ -302,4 +302,46 @@ public class ResultSetProxyLogicTest {
         when(metaData.getColumnLabel(3)).thenReturn(COLUMN_3_LABEL);
         return metaData;
     }
+
+    @Test
+    public void testToString() throws Throwable {
+
+        ResultSet rs = exampleResultSet();
+        ResultSetProxyLogic logic = ResultSetProxyLogic.resultSetProxyLogic(rs);
+
+        when(rs.toString()).thenReturn("my rs");
+
+        Method method = Object.class.getMethod("toString");
+        Object result = logic.invoke(method, null);
+
+        assertThat(result).isInstanceOf(String.class).isEqualTo(rs.getClass().getSimpleName() + " [my rs]");
+    }
+
+    @Test
+    public void testHashCode() throws Throwable {
+        ResultSet rs = exampleResultSet();
+        ResultSetProxyLogic logic = ResultSetProxyLogic.resultSetProxyLogic(rs);
+
+        Method method = Object.class.getMethod("hashCode");
+        Object result = logic.invoke(method, null);
+
+        assertThat(result).isInstanceOf(Integer.class).isEqualTo(rs.hashCode());
+    }
+
+    @Test
+    public void testEquals() throws Throwable {
+        ResultSet rs = exampleResultSet();
+        ResultSetProxyLogic logic = ResultSetProxyLogic.resultSetProxyLogic(rs);
+
+        Method method = Object.class.getMethod("equals", Object.class);
+
+        // equals(null)
+        Object result = logic.invoke(method, new Object[]{null});
+        assertThat(result).isEqualTo(false);
+
+        // equals(true)
+        result = logic.invoke(method, new Object[]{rs});
+        assertThat(result).isEqualTo(true);
+    }
+
 }
