@@ -17,8 +17,13 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -258,4 +263,49 @@ public class ConnectionProxyLogicMockTest {
         assertThat(result, is(instanceOf(boolean.class)));
         assertThat((Boolean) result, is(true));
     }
+
+    @Test
+    public void testToString() throws Throwable {
+        Connection conn = mock(Connection.class);
+
+        when(conn.toString()).thenReturn("my conn");
+        ConnectionProxyLogic logic = getProxyLogic(conn);
+
+        Method method = Object.class.getMethod("toString");
+        Object result = logic.invoke(conn, method, null);
+
+        assertThat(result, is(instanceOf(String.class)));
+        assertThat((String) result, is(conn.getClass().getSimpleName() + " [my conn]"));
+    }
+
+    @Test
+    public void testHashCode() throws Throwable {
+        Connection conn = mock(Connection.class);
+        ConnectionProxyLogic logic = getProxyLogic(conn);
+
+        Method method = Object.class.getMethod("hashCode");
+        Object result = logic.invoke(conn, method, null);
+
+        assertThat(result, is(instanceOf(Integer.class)));
+        assertThat((Integer) result, is(conn.hashCode()));
+    }
+
+    @Test
+    public void testEquals() throws Throwable {
+        Connection conn = mock(Connection.class);
+        ConnectionProxyLogic logic = getProxyLogic(conn);
+
+        Method method = Object.class.getMethod("equals", Object.class);
+
+        // equals(null)
+        Object result = logic.invoke(conn, method, new Object[]{null});
+        assertThat(result, is(instanceOf(Boolean.class)));
+        assertThat((Boolean) result, is(false));
+
+        // equals(true)
+        result = logic.invoke(conn, method, new Object[]{conn});
+        assertThat(result, is(instanceOf(Boolean.class)));
+        assertThat((Boolean) result, is(true));
+    }
+
 }

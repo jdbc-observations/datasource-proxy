@@ -481,7 +481,51 @@ public class PreparedStatementProxyLogicMockTest {
         Object result = logic.invoke(method, null);
 
         assertThat(result, is(instanceOf(Connection.class)));
-        assertThat((Connection)result, sameInstance(conn));
+        assertThat((Connection) result, sameInstance(conn));
+    }
+
+    @Test
+    public void testToString() throws Throwable {
+        PreparedStatement stat = mock(PreparedStatement.class);
+
+        when(stat.toString()).thenReturn("my ps");
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, null, null, null);
+
+        Method method = Object.class.getMethod("toString");
+        Object result = logic.invoke(method, null);
+
+        assertThat(result, is(instanceOf(String.class)));
+        assertThat((String) result, is(stat.getClass().getSimpleName() + " [my ps]"));
+    }
+
+    @Test
+    public void testHashCode() throws Throwable {
+        PreparedStatement stat = mock(PreparedStatement.class);
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, null, null, null);
+
+        Method method = Object.class.getMethod("hashCode");
+        Object result = logic.invoke(method, null);
+
+        assertThat(result, is(instanceOf(Integer.class)));
+        assertThat((Integer)result, is(stat.hashCode()));
+    }
+
+    @Test
+    public void testEquals() throws Throwable {
+        PreparedStatement stat = mock(PreparedStatement.class);
+        PreparedStatementProxyLogic logic = getProxyLogic(stat, null, null, null);
+
+        Method method = Object.class.getMethod("equals", Object.class);
+
+        // equals(null)
+        Object result = logic.invoke(method, new Object[]{null});
+        assertThat(result, is(instanceOf(Boolean.class)));
+        assertThat((Boolean) result, is(false));
+
+        // equals(true)
+        result = logic.invoke(method, new Object[]{stat});
+        assertThat(result, is(instanceOf(Boolean.class)));
+        assertThat((Boolean) result, is(true));
     }
 
 }

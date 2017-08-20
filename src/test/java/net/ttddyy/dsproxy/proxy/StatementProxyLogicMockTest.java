@@ -756,4 +756,48 @@ public class StatementProxyLogicMockTest {
 
     }
 
+    @Test
+    public void testToString() throws Throwable {
+        Statement stmt = mock(Statement.class);
+
+        when(stmt.toString()).thenReturn("my ds");
+        StatementProxyLogic logic = getProxyLogic(stmt, null, null);
+
+        Method method = Object.class.getMethod("toString");
+        Object result = logic.invoke(method, null);
+
+        assertThat(result, is(instanceOf(String.class)));
+        assertThat((String) result, is(stmt.getClass().getSimpleName() + " [my ds]"));
+    }
+
+    @Test
+    public void testHashCode() throws Throwable {
+        Statement stmt = mock(Statement.class);
+        StatementProxyLogic logic = getProxyLogic(stmt, null, null);
+
+        Method method = Object.class.getMethod("hashCode");
+        Object result = logic.invoke(method, null);
+
+        assertThat(result, is(instanceOf(Integer.class)));
+        assertThat((Integer) result, is(stmt.hashCode()));
+    }
+
+    @Test
+    public void testEquals() throws Throwable {
+        Statement stmt = mock(Statement.class);
+        StatementProxyLogic logic = getProxyLogic(stmt, null, null);
+
+        Method method = Object.class.getMethod("equals", Object.class);
+
+        // equals(null)
+        Object result = logic.invoke(method, new Object[]{null});
+        assertThat(result, is(instanceOf(Boolean.class)));
+        assertThat((Boolean) result, is(false));
+
+        // equals(true)
+        result = logic.invoke(method, new Object[]{stmt});
+        assertThat(result, is(instanceOf(Boolean.class)));
+        assertThat((Boolean) result, is(true));
+    }
+
 }
