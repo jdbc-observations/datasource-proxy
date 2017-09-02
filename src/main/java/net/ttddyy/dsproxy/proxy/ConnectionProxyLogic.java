@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.listener.ConnectionAcquiringListener;
 import net.ttddyy.dsproxy.transform.TransformInfo;
 
 import java.lang.reflect.InvocationTargetException;
@@ -82,11 +83,26 @@ public class ConnectionProxyLogic {
         }
 
         // Invoke method on original Connection.
+        final ConnectionAcquiringListener listener = interceptorHolder.getConnectionAcquiringListener();
         final Object retVal;
+        Throwable throwable = null;
+        final long beforeTime = System.currentTimeMillis();
         try {
             retVal = method.invoke(connection, args);
         } catch (InvocationTargetException ex) {
+            throwable = ex.getCause();
             throw ex.getTargetException();
+        } finally {
+            final long elapsedTime = System.currentTimeMillis() - beforeTime;
+            if ("commit".equals(methodName)) {
+                listener.afterCommitConnection(connectionInfo, elapsedTime, throwable);
+            }
+            if ("rollback".equals(methodName)) {
+                listener.afterRollbackConnection(connectionInfo, elapsedTime, throwable);
+            }
+            if ("close".equals(methodName)) {
+                listener.afterCloseConnection(connectionInfo, elapsedTime, throwable);
+            }
         }
 
         // when it is a call to createStatement, prepareStatement or prepareCall, returns a proxy.

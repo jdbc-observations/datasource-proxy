@@ -1,16 +1,22 @@
 package net.ttddyy.dsproxy;
 
+import net.ttddyy.dsproxy.listener.ConnectionAcquiringListener;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import javax.sql.DataSource;
 import java.sql.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertSame;
-
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 /**
  * TODO: clean up & rewrite
@@ -21,16 +27,19 @@ public class ProxyDataSourceTest {
 
     private ProxyDataSource proxyDataSource;
     private TestListener listener;
+    private ConnectionAcquiringListener connectionAcquiringListener;
 
     @Before
     public void setup() throws Exception {
         DataSource dataSource = TestUtils.getDataSourceWithData();
 
         listener = new TestListener();
+        connectionAcquiringListener = Mockito.mock(ConnectionAcquiringListener.class);
 
         proxyDataSource = new ProxyDataSource();
         proxyDataSource.setDataSource(dataSource);
         proxyDataSource.setListener(listener);
+        proxyDataSource.addConnectionAcquiringListener(connectionAcquiringListener);
     }
 
     @After
@@ -121,6 +130,15 @@ public class ProxyDataSourceTest {
         Connection conn = cs.getConnection();
 
         assertThat(conn).isSameAs(proxyConn);
+    }
+
+    @Test
+    public void testGetConnection() throws Exception {
+        proxyDataSource.getConnection();
+
+        verify(connectionAcquiringListener).beforeAcquireConnection(any(ConnectionInfo.class));
+        verify(connectionAcquiringListener).afterAcquireConnection(any(ConnectionInfo.class), anyInt(), isNull(Throwable.class));
+        verifyNoMoreInteractions(connectionAcquiringListener);
     }
 
 }
