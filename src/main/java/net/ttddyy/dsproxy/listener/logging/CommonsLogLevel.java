@@ -1,12 +1,13 @@
 package net.ttddyy.dsproxy.listener.logging;
 
 /**
- * Apache Commons-Logging log level representation. 
+ * Apache Commons-Logging log level representation.
  *
  * @author Tadaya Tsuyukubo
  */
 public enum CommonsLogLevel {
-    DEBUG, ERROR, FATAL, INFO, TRACE, WARN;
+    // least serious to most serious
+    TRACE, DEBUG, INFO, WARN, ERROR, FATAL;
 
     public static CommonsLogLevel nullSafeValueOf(String name) {
         if (name == null) {

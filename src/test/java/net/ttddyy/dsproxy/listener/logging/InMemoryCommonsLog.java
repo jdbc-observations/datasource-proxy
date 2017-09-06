@@ -15,39 +15,50 @@ import java.util.Map;
 public class InMemoryCommonsLog implements Log {
 
     private Map<CommonsLogLevel, List<String>> messages = new HashMap<CommonsLogLevel, List<String>>();
+    private CommonsLogLevel enabledLogLevel = CommonsLogLevel.DEBUG;
 
     {
+        initialize();
+    }
+
+    private void initialize() {
         for (CommonsLogLevel level : CommonsLogLevel.values()) {
             this.messages.put(level, new ArrayList<String>());
         }
     }
 
-    public void clear() {
+    public void reset() {
         this.messages.clear();
+        initialize();
+    }
+
+
+    public void setEnabledLogLevel(CommonsLogLevel enabledLogLevel) {
+        this.enabledLogLevel = enabledLogLevel;
     }
 
     public boolean isDebugEnabled() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return CommonsLogLevel.DEBUG.compareTo(this.enabledLogLevel) >= 0;
     }
 
     public boolean isErrorEnabled() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return CommonsLogLevel.ERROR.compareTo(this.enabledLogLevel) >= 0;
     }
 
     public boolean isFatalEnabled() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return CommonsLogLevel.FATAL.compareTo(this.enabledLogLevel) >= 0;
     }
 
     public boolean isInfoEnabled() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return CommonsLogLevel.INFO.compareTo(this.enabledLogLevel) >= 0;
     }
 
     public boolean isTraceEnabled() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return CommonsLogLevel.TRACE.compareTo(this.enabledLogLevel) >= 0;
     }
 
     public boolean isWarnEnabled() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return CommonsLogLevel.WARN.compareTo(this.enabledLogLevel) >= 0;
     }
 
     public void trace(Object message) {
@@ -102,7 +113,7 @@ public class InMemoryCommonsLog implements Log {
         if (!(message instanceof String)) {
             throw new UnsupportedOperationException("Currently only support String message");
         }
-        this.messages.get(level).add((String)message);
+        this.messages.get(level).add((String) message);
     }
 
     public List<String> getDebugMessages() {
@@ -128,4 +139,9 @@ public class InMemoryCommonsLog implements Log {
     public List<String> getWarnMessages() {
         return this.messages.get(CommonsLogLevel.WARN);
     }
+
+    public List<String> getMessages(CommonsLogLevel level) {
+        return this.messages.get(level);
+    }
+
 }

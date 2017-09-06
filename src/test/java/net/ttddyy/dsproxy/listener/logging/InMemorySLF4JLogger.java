@@ -19,9 +19,11 @@ public class InMemorySLF4JLogger extends MarkerIgnoringBase {
     private List<String> warnMessages = new ArrayList<String>();
     private List<String> errorMessages = new ArrayList<String>();
 
+    private SLF4JLogLevel enabledLogLevel = SLF4JLogLevel.DEBUG;
+
     @Override
     public boolean isTraceEnabled() {
-        return false;
+        return SLF4JLogLevel.TRACE.compareTo(this.enabledLogLevel) >= 0;
     }
 
     @Override
@@ -51,7 +53,7 @@ public class InMemorySLF4JLogger extends MarkerIgnoringBase {
 
     @Override
     public boolean isDebugEnabled() {
-        return false;
+        return SLF4JLogLevel.DEBUG.compareTo(this.enabledLogLevel) >= 0;
     }
 
     @Override
@@ -81,7 +83,7 @@ public class InMemorySLF4JLogger extends MarkerIgnoringBase {
 
     @Override
     public boolean isInfoEnabled() {
-        return false;
+        return SLF4JLogLevel.INFO.compareTo(this.enabledLogLevel) >= 0;
     }
 
     @Override
@@ -111,7 +113,7 @@ public class InMemorySLF4JLogger extends MarkerIgnoringBase {
 
     @Override
     public boolean isWarnEnabled() {
-        return false;
+        return SLF4JLogLevel.WARN.compareTo(this.enabledLogLevel) >= 0;
     }
 
     @Override
@@ -141,7 +143,7 @@ public class InMemorySLF4JLogger extends MarkerIgnoringBase {
 
     @Override
     public boolean isErrorEnabled() {
-        return false;
+        return SLF4JLogLevel.ERROR.compareTo(this.enabledLogLevel) >= 0;
     }
 
     @Override
@@ -209,4 +211,18 @@ public class InMemorySLF4JLogger extends MarkerIgnoringBase {
     public void setErrorMessages(List<String> errorMessages) {
         this.errorMessages = errorMessages;
     }
+
+    public void setEnabledLogLevel(SLF4JLogLevel enabledLogLevel) {
+        this.enabledLogLevel = enabledLogLevel;
+    }
+
+    public void reset() {
+        this.traceMessages.clear();
+        this.debugMessages.clear();
+        this.infoMessages.clear();
+        this.warnMessages.clear();
+        this.errorMessages.clear();
+    }
+
+
 }

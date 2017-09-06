@@ -15,6 +15,7 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
     protected QueryLogEntryCreator queryLogEntryCreator = new DefaultQueryLogEntryCreator();
     protected boolean writeDataSourceName = true;
     protected boolean writeConnectionId = true;
+    protected LoggingCondition loggingCondition;
 
     @Override
     public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
@@ -22,8 +23,11 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
 
     @Override
     public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        final String entry = getEntry(execInfo, queryInfoList);
-        writeLog(entry);
+        // only perform logging logic when the condition returns true
+        if (this.loggingCondition.getAsBoolean()) {
+            final String entry = getEntry(execInfo, queryInfoList);
+            writeLog(entry);
+        }
     }
 
     protected String getEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
@@ -76,5 +80,15 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
      */
     public void setWriteConnectionId(boolean writeConnectionId) {
         this.writeConnectionId = writeConnectionId;
+    }
+
+    /**
+     * A boolean supplier that determines whether to perform logging logic.
+     *
+     * @param loggingCondition boolean supplier
+     * @since 1.4.3
+     */
+    public void setLoggingCondition(LoggingCondition loggingCondition) {
+        this.loggingCondition = loggingCondition;
     }
 }

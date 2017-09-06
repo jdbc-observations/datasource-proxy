@@ -14,6 +14,16 @@ public class JULQueryLoggingListener extends AbstractQueryLoggingListener {
     protected Logger logger = Logger.getLogger(JULQueryLoggingListener.class.getName());
     protected Level logLevel = Level.FINE; // default FINE
 
+    public JULQueryLoggingListener() {
+        // initialize condition that checks the current logger level
+        this.loggingCondition = new LoggingCondition() {
+            @Override
+            public boolean getAsBoolean() {
+                return logger.isLoggable(logLevel);
+            }
+        };
+    }
+
     @Override
     protected void writeLog(String message) {
         this.logger.log(this.logLevel, message);

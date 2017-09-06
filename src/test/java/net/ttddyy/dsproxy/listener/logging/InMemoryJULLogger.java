@@ -16,6 +16,7 @@ import java.util.logging.Logger;
  */
 public class InMemoryJULLogger extends Logger {
 
+    private Level loggerLevel = Level.FINE;
     private Map<Level, List<String>> messages = new HashMap<Level, List<String>>();
 
     {
@@ -46,7 +47,10 @@ public class InMemoryJULLogger extends Logger {
 
     @Override
     public boolean isLoggable(Level level) {
-        return true;  // always record log regardless of level
+        if (level.intValue() < loggerLevel.intValue() || loggerLevel.intValue() == Level.OFF.intValue()) {
+            return false;
+        }
+        return true;
     }
 
     public List<String> getSevereMessages() {
@@ -75,5 +79,15 @@ public class InMemoryJULLogger extends Logger {
 
     public List<String> getFinestMessages() {
         return this.messages.get(Level.FINEST);
+    }
+
+    public void setLoggerLevel(Level loggerLevel) {
+        this.loggerLevel = loggerLevel;
+    }
+
+    public void reset() {
+        for (List<String> messages : this.messages.values()) {
+            messages.clear();
+        }
     }
 }

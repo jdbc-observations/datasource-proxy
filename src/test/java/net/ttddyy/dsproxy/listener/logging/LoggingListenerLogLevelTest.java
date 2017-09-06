@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy.listener.logging;
 import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,12 +13,11 @@ import org.junit.runners.Parameterized;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasSize;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -59,6 +59,7 @@ public class LoggingListenerLogLevelTest {
     public void testLogLevel() throws Exception {
 
         InMemoryCommonsLog log = new InMemoryCommonsLog();
+        log.setEnabledLogLevel(this.logLevel);
 
         CommonsQueryLoggingListener loggingListener = new CommonsQueryLoggingListener();
         loggingListener.setLog(log);
@@ -72,34 +73,25 @@ public class LoggingListenerLogLevelTest {
         statement.executeQuery("select * from emp where id=1");
         statement.executeQuery("select * from emp where id=2");
 
-        verifyMessage(logLevel, log, "select * from emp where id=1", "select * from emp where id=2");
+        verifyMessage(log, "select * from emp where id=1", "select * from emp where id=2");
 
     }
 
-    // TODO: cleanup
-    private void verifyMessage(CommonsLogLevel logLevel, InMemoryCommonsLog log, String... queries) {
-        Map<CommonsLogLevel, List<String>> messages = new HashMap<CommonsLogLevel, List<String>>();
-        messages.put(CommonsLogLevel.DEBUG, log.getDebugMessages());
-        messages.put(CommonsLogLevel.ERROR, log.getErrorMessages());
-        messages.put(CommonsLogLevel.FATAL, log.getFatalMessages());
-        messages.put(CommonsLogLevel.INFO, log.getInfoMessages());
-        messages.put(CommonsLogLevel.TRACE, log.getTraceMessages());
-        messages.put(CommonsLogLevel.WARN, log.getWarnMessages());
+    private void verifyMessage(InMemoryCommonsLog log, String... queries) {
 
-        for (Map.Entry<CommonsLogLevel, List<String>> entry : messages.entrySet()) {
-            CommonsLogLevel msgLevel = entry.getKey();
-            List<String> messageList = entry.getValue();
-
-            int expectedMsgSize = (msgLevel == logLevel) ? queries.length : 0;
-            assertThat(messageList, hasSize(expectedMsgSize));
-
-            if (expectedMsgSize > 0) {
+        for (CommonsLogLevel commonsLogLevel : CommonsLogLevel.values()) {
+            List<String> messageList = log.getMessages(commonsLogLevel);
+            if (commonsLogLevel == this.logLevel) {
+                assertThat(messageList, hasSize(queries.length));
                 for (int i = 0; i < queries.length; i++) {
                     final String query = queries[i];
                     assertThat(messageList.get(i), containsString(query));
                 }
+            } else {
+                assertThat(messageList, Matchers.<String>empty());
             }
         }
+
     }
 
 }

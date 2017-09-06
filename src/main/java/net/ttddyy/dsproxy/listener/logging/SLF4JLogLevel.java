@@ -6,7 +6,8 @@ package net.ttddyy.dsproxy.listener.logging;
  * @author Tadaya Tsuyukubo
  */
 public enum SLF4JLogLevel {
-    DEBUG, ERROR, INFO, TRACE, WARN;
+    // least serious to most serious
+    TRACE, DEBUG, INFO, WARN, ERROR;
 
     public static SLF4JLogLevel nullSafeValueOf(String name) {
         if (name == null) {

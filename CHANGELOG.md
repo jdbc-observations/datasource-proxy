@@ -1,5 +1,13 @@
 # ChangeLog
 
+## 1.4.3
+
+- QueryLoggingListeners(Commons, SLF4J, JUL) added `loggingCondition` that simply decides whether to skip entire
+  logging logic based on the current log level set on its logger.  
+    e.g.: when `SLF4JQueryLoggingListener` writes SQL in DEBUG level, but the logger is set to INFO(more serious
+          than DEBUG), then it will NOT perform logging logic including constructing log statement, etc.
+
+
 ## 1.4.2
 
 - Assign connection ID on each connection  
