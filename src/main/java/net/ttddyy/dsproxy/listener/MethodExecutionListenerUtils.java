@@ -19,6 +19,10 @@ public class MethodExecutionListenerUtils {
 
         MethodExecutionListener methodExecutionListener = interceptorHolder.getMethodListener();
 
+        MethodExecutionContext methodContext = new MethodExecutionContext();
+
+
+
         methodExecutionListener.beforeMethod(proxyTarget, method, args);
 
         final long beforeTime = System.currentTimeMillis();
