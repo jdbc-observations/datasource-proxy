@@ -10,12 +10,15 @@ import net.ttddyy.dsproxy.transform.TransformInfo;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static net.ttddyy.dsproxy.proxy.StatementMethodNames.METHODS_TO_RETURN_RESULTSET;
 
 /**
  * Proxy Logic implementation for {@link Statement} methods.
@@ -30,6 +33,7 @@ public class StatementProxyLogic {
         private InterceptorHolder interceptorHolder;
         private ConnectionInfo connectionInfo;
         private Connection proxyConnection;
+        private JdbcProxyFactory proxyFactory;
 
         public static Builder create() {
             return new Builder();
@@ -41,6 +45,7 @@ public class StatementProxyLogic {
             logic.interceptorHolder = this.interceptorHolder;
             logic.connectionInfo = this.connectionInfo;
             logic.proxyConnection = this.proxyConnection;
+            logic.proxyFactory = this.proxyFactory;
             return logic;
         }
 
@@ -63,6 +68,11 @@ public class StatementProxyLogic {
             this.proxyConnection = proxyConnection;
             return this;
         }
+
+        public Builder proxyFactory(JdbcProxyFactory proxyFactory) {
+            this.proxyFactory = proxyFactory;
+            return this;
+        }
     }
 
     private static final Set<String> METHODS_TO_INTERCEPT = Collections.unmodifiableSet(
@@ -72,6 +82,7 @@ public class StatementProxyLogic {
                     addAll(StatementMethodNames.EXEC_METHODS);
                     addAll(StatementMethodNames.JDBC4_METHODS);
                     addAll(StatementMethodNames.GET_CONNECTION_METHOD);
+                    addAll(METHODS_TO_RETURN_RESULTSET);
                     add("getDataSourceName");
                     add("toString");
                     add("getTarget"); // from ProxyJdbcObject
@@ -84,6 +95,7 @@ public class StatementProxyLogic {
     private ConnectionInfo connectionInfo;
     private List<String> batchQueries = new ArrayList<String>();
     private Connection proxyConnection;
+    private JdbcProxyFactory proxyFactory;  // TODO: populate
 
 
     public Object invoke(Method method, Object[] args) throws Throwable {
@@ -182,6 +194,12 @@ public class StatementProxyLogic {
             Object retVal = method.invoke(stmt, args);
 
             final long afterTime = System.currentTimeMillis();
+
+            // execInfo.setResult will have proxied ResultSet if enabled
+            if (METHODS_TO_RETURN_RESULTSET.contains(methodName)) {
+                retVal = this.proxyFactory.createResultSet((ResultSet) retVal);
+            }
+
             execInfo.setResult(retVal);
             execInfo.setElapsedTime(afterTime - beforeTime);
             execInfo.setSuccess(true);

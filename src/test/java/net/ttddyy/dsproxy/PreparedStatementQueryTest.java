@@ -1,16 +1,19 @@
 package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
+import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
-import org.assertj.core.api.Assertions;
+import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -346,7 +349,23 @@ public class PreparedStatementQueryTest {
         ExecutionInfo before = lastQueryListener.getBeforeExecInfo();
         ExecutionInfo after = lastQueryListener.getAfterExecInfo();
 
-        Assertions.assertThat(before).as("before and after uses same ExecutionInfo instance").isSameAs(after);
+        assertThat(before).as("before and after uses same ExecutionInfo instance").isSameAs(after);
+    }
+
+    @Test
+    public void resultSetProxy() throws Throwable {
+        String sql = "select * from emp;";
+        Connection conn = this.jdbcDataSource.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql);
+
+        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory().createResultSetProxy(true);
+        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new InterceptorHolder(), new ConnectionInfo(), conn);
+
+        ResultSet result = proxyPs.executeQuery();
+
+        assertThat(result).isInstanceOf(ResultSet.class);
+        assertThat(Proxy.isProxyClass(result.getClass())).isTrue();
+        assertThat(Proxy.getInvocationHandler(result)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
     }
 
 }

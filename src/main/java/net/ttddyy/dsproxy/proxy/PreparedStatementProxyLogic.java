@@ -13,11 +13,14 @@ import java.lang.reflect.Method;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static net.ttddyy.dsproxy.proxy.StatementMethodNames.METHODS_TO_RETURN_RESULTSET;
 
 /**
  * Shared logic for {@link PreparedStatement} and {@link CallableStatement} invocation.
@@ -38,6 +41,7 @@ public class PreparedStatementProxyLogic {
         private InterceptorHolder interceptorHolder;
         private ConnectionInfo connectionInfo;
         private Connection proxyConnection;
+        private JdbcProxyFactory proxyFactory;
 
         public static Builder create() {
             return new Builder();
@@ -50,6 +54,7 @@ public class PreparedStatementProxyLogic {
             logic.interceptorHolder = this.interceptorHolder;
             logic.connectionInfo = this.connectionInfo;
             logic.proxyConnection = this.proxyConnection;
+            logic.proxyFactory = this.proxyFactory;
             return logic;
         }
 
@@ -77,6 +82,11 @@ public class PreparedStatementProxyLogic {
             this.proxyConnection = proxyConnection;
             return this;
         }
+
+        public Builder proxyFactory(JdbcProxyFactory proxyFactory) {
+            this.proxyFactory = proxyFactory;
+            return this;
+        }
     }
 
     private PreparedStatement ps;
@@ -91,6 +101,7 @@ public class PreparedStatementProxyLogic {
     private List<Map<ParameterKey, ParameterSetOperation>> batchParameters = new ArrayList<Map<ParameterKey, ParameterSetOperation>>();
 
     private Connection proxyConnection;
+    private JdbcProxyFactory proxyFactory;
 
     public Object invoke(Method method, Object[] args) throws Throwable {
 
@@ -213,6 +224,11 @@ public class PreparedStatementProxyLogic {
             Object retVal = method.invoke(ps, args);
 
             final long afterTime = System.currentTimeMillis();
+
+            // execInfo.setResult will have proxied ResultSet if enabled
+            if (METHODS_TO_RETURN_RESULTSET.contains(methodName)) {
+                retVal = this.proxyFactory.createResultSet((ResultSet) retVal);
+            }
 
             execInfo.setResult(retVal);
             execInfo.setElapsedTime(afterTime - beforeTime);

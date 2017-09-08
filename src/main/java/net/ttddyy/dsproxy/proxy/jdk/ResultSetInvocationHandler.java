@@ -1,36 +1,32 @@
 package net.ttddyy.dsproxy.proxy.jdk;
 
-import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogic;
+import net.ttddyy.dsproxy.proxy.ResultSetUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.*;
-
-import static java.lang.String.format;
-import static java.util.Arrays.stream;
+import java.util.Map;
 
 /**
  * Proxy InvocationHandler for {@link java.sql.ResultSet}.
  *
  * @author Liam Williams
+ * @author Tadaya Tsuyukubo
  * @since 1.4
  */
 public class ResultSetInvocationHandler implements InvocationHandler {
 
-    private final ResultSetProxyLogic delegate;
+    private ResultSetProxyLogic delegate;
 
-    public ResultSetInvocationHandler(ResultSetProxyLogic delegate) {
-        this.delegate = delegate;
-    }
-
-    public static ResultSet proxy(ResultSet target) throws SQLException {
-        ResultSetInvocationHandler resultSetProxy = new ResultSetInvocationHandler(ResultSetProxyLogic.resultSetProxyLogic(target));
-        return (ResultSet) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(), new Class<?>[]{ProxyJdbcObject.class, ResultSet.class}, resultSetProxy);
+    public ResultSetInvocationHandler(ResultSet resultSet) {
+        Map<String, Integer> columnNameToIndex = ResultSetUtils.columnNameToIndex(resultSet);
+        int columnCount = ResultSetUtils.columnCount(resultSet);
+        this.delegate = ResultSetProxyLogic.Builder.create()
+                .resultSet(resultSet)
+                .columnNameToIndex(columnNameToIndex)
+                .columnCount(columnCount)
+                .build();
     }
 
     @Override

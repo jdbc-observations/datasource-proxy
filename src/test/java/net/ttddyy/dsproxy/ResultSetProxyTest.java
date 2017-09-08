@@ -1,13 +1,16 @@
 package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.proxy.jdk.ResultSetProxyJdbcProxyFactory;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.Test;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Liam Williams
  */
-public class ResultSetProxyJdbcProxyFactoryTest {
+public class ResultSetProxyTest {
 
     @Test
     public void checkThatResultSetCanBeConsumedMoreThanOnce() throws Exception {
@@ -25,8 +28,8 @@ public class ResultSetProxyJdbcProxyFactoryTest {
         LoggingExecutionListener listener = new LoggingExecutionListener();
         ProxyDataSource proxyDataSource = ProxyDataSourceBuilder.create(dataSourceWithData)
                 .listener(listener)
+                .proxyResultSet()
                 .build();
-        proxyDataSource.setJdbcProxyFactory(new ResultSetProxyJdbcProxyFactory());
 
         checkThatResultSetCanBeConsumedViaTheProxyDataSource(proxyDataSource);
         checkThatTheResultSetWasAlsoConsumedInTheListener(listener);

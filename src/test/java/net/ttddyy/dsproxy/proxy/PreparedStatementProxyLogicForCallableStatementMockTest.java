@@ -747,6 +747,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
                 .interceptorHolder(interceptorHolder)
                 .connectionInfo(connectionInfo)
                 .proxyConnection(proxyConnection)
+                .proxyFactory(JdbcProxyFactory.DEFAULT)
                 .build();
     }
 

@@ -66,6 +66,13 @@ public interface StatementMethodNames {
             new HashSet<String>(Arrays.asList("getConnection"))
     );
 
+    static final Set<String> METHODS_TO_RETURN_RESULTSET = Collections.unmodifiableSet(
+            new HashSet<String>(Arrays.asList(
+                    "executeQuery", "getGeneratedKeys", "getResultSet",  // from Statement
+                    "executeQuery"  // from PreparedStatement
+            ))
+    );
+
     static final Set<String> METHODS_TO_INTERCEPT = Collections.unmodifiableSet(
             new HashSet<String>() {
                 {
@@ -74,6 +81,7 @@ public interface StatementMethodNames {
                     addAll(EXEC_METHODS);
                     addAll(JDBC4_METHODS);
                     addAll(GET_CONNECTION_METHOD);
+                    addAll(METHODS_TO_RETURN_RESULTSET);
                     add("getDataSourceName");
                     add("toString");
                     add("getTarget"); // from ProxyJdbcObject

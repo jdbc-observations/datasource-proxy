@@ -62,7 +62,7 @@ public class TransformInfoForQueryTest {
         QueryTransformer queryTransformer = getMockQueryTransformer(1);
         InterceptorHolder interceptors = new InterceptorHolder(QueryExecutionListener.DEFAULT, queryTransformer);
 
-        StatementInvocationHandler handler = new StatementInvocationHandler(stmt, interceptors, getConnectionInfo(), null);
+        StatementInvocationHandler handler = new StatementInvocationHandler(stmt, interceptors, getConnectionInfo(), null, JdbcProxyFactory.DEFAULT);
 
         Method method = Statement.class.getMethod("execute", String.class);
         Object[] args = new Object[]{"my-query"};
@@ -87,7 +87,7 @@ public class TransformInfoForQueryTest {
         QueryTransformer queryTransformer = getMockQueryTransformer(2);
         InterceptorHolder interceptors = new InterceptorHolder(QueryExecutionListener.DEFAULT, queryTransformer);
 
-        StatementInvocationHandler handler = new StatementInvocationHandler(stmt, interceptors, getConnectionInfo(), null);
+        StatementInvocationHandler handler = new StatementInvocationHandler(stmt, interceptors, getConnectionInfo(), null, JdbcProxyFactory.DEFAULT);
 
         Method method = Statement.class.getMethod("addBatch", String.class);
 

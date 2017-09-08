@@ -3,11 +3,9 @@ package net.ttddyy.dsproxy.proxy;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +19,6 @@ import static java.lang.String.format;
  *
  * @author Liam Williams
  * @see net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler
- * @see net.ttddyy.dsproxy.proxy.jdk.ResultSetProxyJdbcProxyFactory
- * @see net.ttddyy.dsproxy.proxy.jdk.StatementResultSetResultInvocationHandler
  * @since 1.4
  */
 public class ResultSetProxyLogic {
@@ -40,9 +36,42 @@ public class ResultSetProxyLogic {
             }
     );
 
-    private final Map<String, Integer> columnNameToIndex;
-    private final ResultSet target;
-    private final int columnCount;
+    public static class Builder {
+        private ResultSet resultSet;
+        private Map<String, Integer> columnNameToIndex;
+        private int columnCount;
+
+        public static Builder create() {
+            return new Builder();
+        }
+
+        public ResultSetProxyLogic build() {
+            ResultSetProxyLogic logic = new ResultSetProxyLogic();
+            logic.resultSet = this.resultSet;
+            logic.columnNameToIndex = this.columnNameToIndex;
+            logic.columnCount = this.columnCount;
+            return logic;
+        }
+
+        public Builder resultSet(ResultSet resultSet) {
+            this.resultSet = resultSet;
+            return this;
+        }
+
+        public Builder columnNameToIndex(Map<String, Integer> columnNameToIndex) {
+            this.columnNameToIndex = columnNameToIndex;
+            return this;
+        }
+
+        public Builder columnCount(int columnCount) {
+            this.columnCount = columnCount;
+            return this;
+        }
+    }
+
+    private Map<String, Integer> columnNameToIndex;
+    private ResultSet resultSet;
+    private int columnCount;
 
     private int resultPointer;
     private boolean resultSetConsumed;
@@ -50,54 +79,35 @@ public class ResultSetProxyLogic {
     private Object[] currentResult;
     private final List<Object[]> cachedResults = new ArrayList<Object[]>();
 
-    private ResultSetProxyLogic(Map<String, Integer> columnNameToIndex, ResultSet target, int columnCount) throws SQLException {
-        this.columnNameToIndex = columnNameToIndex;
-        this.target = target;
-        this.columnCount = columnCount;
-    }
-
-    public static ResultSetProxyLogic resultSetProxyLogic(ResultSet target) throws SQLException {
-        ResultSetMetaData metaData = target.getMetaData();
-        int columnCount = metaData.getColumnCount();
-        return new ResultSetProxyLogic(columnNameToIndex(metaData), target, columnCount);
-    }
-
-    private static Map<String, Integer> columnNameToIndex(ResultSetMetaData metaData) throws SQLException {
-        Map<String, Integer> columnNameToIndex = new HashMap<String, Integer>();
-        for (int i = 1; i <= metaData.getColumnCount(); i++) {
-            columnNameToIndex.put(metaData.getColumnLabel(i).toUpperCase(), i);
-        }
-        return columnNameToIndex;
-    }
 
     public Object invoke(Method method, Object[] args) throws Throwable {
 
         final String methodName = method.getName();
 
         if (!METHODS_TO_INTERCEPT.contains(methodName)) {
-            return MethodUtils.proceedExecution(method, this.target, args);
+            return MethodUtils.proceedExecution(method, this.resultSet, args);
         }
 
         // special treat for toString method
         if ("toString".equals(methodName)) {
             final StringBuilder sb = new StringBuilder();
-            sb.append(this.target.getClass().getSimpleName());
+            sb.append(this.resultSet.getClass().getSimpleName());
             sb.append(" [");
-            sb.append(this.target.toString());
+            sb.append(this.resultSet.toString());
             sb.append("]");
             return sb.toString(); // differentiate toString message.
         } else if ("getTarget".equals(methodName)) {
             // ProxyJdbcObject interface has a method to return original object.
-            return this.target;
+            return this.resultSet;
         }
 
 
         if (isGetMetaDataMethod(method)) {
-            return method.invoke(target, args);
+            return method.invoke(resultSet, args);
         }
         if (isCloseMethod(method)) {
             closed = true;
-            return method.invoke(target, args);
+            return method.invoke(resultSet, args);
         }
         if (closed) {
             throw new SQLException("Already closed");
@@ -126,7 +136,7 @@ public class ResultSetProxyLogic {
     }
 
     private Object handleNextMethodByDelegating(Method method, Object[] args) throws IllegalAccessException, InvocationTargetException {
-        Object result = method.invoke(target, args);
+        Object result = method.invoke(resultSet, args);
         if (TRUE.equals(result)) {
             currentResult = new Object[columnCount + 1];
             cachedResults.add(currentResult);
@@ -136,7 +146,7 @@ public class ResultSetProxyLogic {
 
     private Object handleGetMethodByDelegating(Method method, Object[] args) throws SQLException, IllegalAccessException, InvocationTargetException {
         int columnIndex = determineColumnIndex(args);
-        Object result = method.invoke(target, args);
+        Object result = method.invoke(resultSet, args);
         currentResult[columnIndex] = result;
         return result;
     }

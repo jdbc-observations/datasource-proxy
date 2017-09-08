@@ -94,6 +94,8 @@ public class ProxyDataSourceBuilder {
     private JdbcProxyFactory jdbcProxyFactory;
     private ConnectionIdManager connectionIdManager;
 
+    private boolean createProxyResultSet;
+
     public static ProxyDataSourceBuilder create() {
         return new ProxyDataSourceBuilder();
     }
@@ -568,6 +570,17 @@ public class ProxyDataSourceBuilder {
         return this;
     }
 
+    /**
+     * TODO: document
+     *
+     * @return builder
+     * @since 1.4.3
+     */
+    public ProxyDataSourceBuilder proxyResultSet() {
+        this.createProxyResultSet = true;
+        return this;
+    }
+
     public ProxyDataSource build() {
         ProxyDataSource proxyDataSource = new ProxyDataSource();
 
@@ -645,6 +658,9 @@ public class ProxyDataSourceBuilder {
         if (this.connectionIdManager != null) {
             proxyDataSource.setConnectionIdManager(this.connectionIdManager);
         }
+
+        // whether to create proxy for ResultSet
+        proxyDataSource.getJdbcProxyFactory().createResultSetProxy(this.createProxyResultSet);
 
         return proxyDataSource;
     }

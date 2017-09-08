@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy.transform;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
+import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.PreparedStatementProxyLogic;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -174,6 +175,7 @@ public class TransformInfoForParametersTest {
                 .interceptorHolder(interceptorHolder)
                 .connectionInfo(connectionInfo)
                 .proxyConnection(null)
+                .proxyFactory(JdbcProxyFactory.DEFAULT)
                 .build();
     }
 }

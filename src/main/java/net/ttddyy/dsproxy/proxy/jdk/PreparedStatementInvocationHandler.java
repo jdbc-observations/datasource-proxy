@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.proxy.jdk;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
+import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.PreparedStatementProxyLogic;
 
 import java.lang.reflect.InvocationHandler;
@@ -20,7 +21,7 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
 
     public PreparedStatementInvocationHandler(
             PreparedStatement ps, String query, InterceptorHolder interceptorHolder, ConnectionInfo connectionInfo,
-            Connection proxyConnection) {
+            Connection proxyConnection, JdbcProxyFactory proxyFactory) {
 
         this.delegate = PreparedStatementProxyLogic.Builder.create()
                 .preparedStatement(ps)
@@ -28,6 +29,7 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
                 .interceptorHolder(interceptorHolder)
                 .connectionInfo(connectionInfo)
                 .proxyConnection(proxyConnection)
+                .proxyFactory(proxyFactory)
                 .build();
     }
 
