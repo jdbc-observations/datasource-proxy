@@ -1,7 +1,9 @@
 package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
+import net.ttddyy.dsproxy.listener.ChainConnectionAcquiringListener;
 import net.ttddyy.dsproxy.listener.ChainListener;
+import net.ttddyy.dsproxy.listener.ConnectionAcquiringListener;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.QueryCountStrategy;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
@@ -22,6 +24,7 @@ import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -336,6 +339,25 @@ public class ProxyDataSourceBuilderTest {
         assertThat(listener.getQueryCountStrategy()).as("count listener with strategy")
                 .isNotNull()
                 .isSameAs(strategy);
+    }
+
+    @Test
+    public void customQueryExecutionListener() {
+        QueryExecutionListener queryExecutionListener = Mockito.mock(QueryExecutionListener.class);
+        ProxyDataSource ds = ProxyDataSourceBuilder.create().listener(queryExecutionListener).build();
+
+        ChainListener chainListener = (ChainListener) ds.getInterceptorHolder().getListener();
+        assertThat(chainListener.getListeners().get(0)).isSameAs(queryExecutionListener);
+    }
+
+    @Test
+    public void customConnectionAcquiringListener() {
+        ConnectionAcquiringListener connectionAcquiringListener = Mockito.mock(ConnectionAcquiringListener.class);
+        ProxyDataSource ds = ProxyDataSourceBuilder.create().connectionAcquiringListener(connectionAcquiringListener).build();
+
+        ChainConnectionAcquiringListener chainListener =
+                (ChainConnectionAcquiringListener) ds.getInterceptorHolder().getConnectionAcquiringListener();
+        assertThat(chainListener.getListeners().get(0)).isSameAs(connectionAcquiringListener);
     }
 
 }

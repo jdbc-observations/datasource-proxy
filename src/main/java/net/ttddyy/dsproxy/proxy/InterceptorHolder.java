@@ -1,6 +1,8 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.listener.ChainConnectionAcquiringListener;
 import net.ttddyy.dsproxy.listener.ChainListener;
+import net.ttddyy.dsproxy.listener.ConnectionAcquiringListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
@@ -17,6 +19,7 @@ import net.ttddyy.dsproxy.transform.QueryTransformer;
 public class InterceptorHolder {
 
     private ChainListener chainListener = new ChainListener();  // empty default
+    private ChainConnectionAcquiringListener chainConnectionAcquiringListener = new ChainConnectionAcquiringListener();  // empty default
     private QueryTransformer queryTransformer = QueryTransformer.DEFAULT;
     private ParameterTransformer parameterTransformer = ParameterTransformer.DEFAULT;
 
@@ -38,6 +41,10 @@ public class InterceptorHolder {
         return this.chainListener;
     }
 
+    public ConnectionAcquiringListener getConnectionAcquiringListener() {
+        return this.chainConnectionAcquiringListener;
+    }
+
     public void setListener(QueryExecutionListener listener) {
         if (listener instanceof ChainListener) {
             this.chainListener = (ChainListener) listener;
@@ -54,6 +61,15 @@ public class InterceptorHolder {
      */
     public void addListener(QueryExecutionListener listener) {
         this.chainListener.addListener(listener);
+    }
+
+    /**
+     * Add {@link ConnectionAcquiringListener}
+     *
+     * @param listener a query execution listener
+     */
+    public void addConnectionAcquiringListener(ConnectionAcquiringListener listener) {
+        this.chainConnectionAcquiringListener.addListener(listener);
     }
 
     public QueryTransformer getQueryTransformer() {

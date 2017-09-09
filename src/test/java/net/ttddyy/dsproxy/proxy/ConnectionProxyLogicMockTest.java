@@ -1,12 +1,14 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.listener.ConnectionAcquiringListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.jdk.PreparedStatementInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -21,14 +23,19 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 /**
  * @author Tadaya Tsuyukubo
  */
 public class ConnectionProxyLogicMockTest {
+
+    private ConnectionAcquiringListener connectionAcquiringListener;
 
     @Test
     public void testCreateStatementWithNoParam() throws Throwable {
@@ -78,7 +85,9 @@ public class ConnectionProxyLogicMockTest {
 
     private ConnectionProxyLogic getProxyLogic(Connection mockConnection) {
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        connectionAcquiringListener = mock(ConnectionAcquiringListener.class);
         InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
+        interceptorHolder.addConnectionAcquiringListener(connectionAcquiringListener);
 
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
@@ -306,6 +315,48 @@ public class ConnectionProxyLogicMockTest {
         result = logic.invoke(conn, method, new Object[]{conn});
         assertThat(result, is(instanceOf(Boolean.class)));
         assertThat((Boolean) result, is(true));
+    }
+
+    @Test
+    public void testCommit() throws Throwable {
+        Connection conn = mock(Connection.class);
+        ConnectionProxyLogic logic = getProxyLogic(conn);
+
+        Method method = Connection.class.getMethod("commit");
+
+        // equals(null)
+        logic.invoke(conn, method, new Object[0]);
+
+        verify(connectionAcquiringListener).afterCommitConnection(Mockito.any(ConnectionInfo.class), anyInt(), isNull(Throwable.class));
+        verifyNoMoreInteractions(connectionAcquiringListener);
+    }
+
+    @Test
+    public void testRollback() throws Throwable {
+        Connection conn = mock(Connection.class);
+        ConnectionProxyLogic logic = getProxyLogic(conn);
+
+        Method method = Connection.class.getMethod("rollback");
+
+        // equals(null)
+        logic.invoke(conn, method, new Object[0]);
+
+        verify(connectionAcquiringListener).afterRollbackConnection(Mockito.any(ConnectionInfo.class), anyInt(), isNull(Throwable.class));
+        verifyNoMoreInteractions(connectionAcquiringListener);
+    }
+
+    @Test
+    public void testClose() throws Throwable {
+        Connection conn = mock(Connection.class);
+        ConnectionProxyLogic logic = getProxyLogic(conn);
+
+        Method method = Connection.class.getMethod("close");
+
+        // equals(null)
+        logic.invoke(conn, method, new Object[0]);
+
+        verify(connectionAcquiringListener).afterCloseConnection(Mockito.any(ConnectionInfo.class), anyInt(), isNull(Throwable.class));
+        verifyNoMoreInteractions(connectionAcquiringListener);
     }
 
 }

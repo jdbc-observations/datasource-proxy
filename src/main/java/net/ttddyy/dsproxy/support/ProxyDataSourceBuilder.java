@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
+import net.ttddyy.dsproxy.listener.ConnectionAcquiringListener;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.QueryCountStrategy;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
@@ -87,6 +88,7 @@ public class ProxyDataSourceBuilder {
     private boolean jsonFormat;
     private boolean multiline;
     private List<QueryExecutionListener> queryExecutionListeners = new ArrayList<QueryExecutionListener>();
+    private List<ConnectionAcquiringListener> connectionAcquiringListeners = new ArrayList<ConnectionAcquiringListener>();
 
     private ParameterTransformer parameterTransformer;
     private QueryTransformer queryTransformer;
@@ -491,6 +493,17 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
+     * Register given listener.
+     *
+     * @param listener a listener to register
+     * @return builder
+     */
+    public ProxyDataSourceBuilder connectionAcquiringListener(ConnectionAcquiringListener listener) {
+        this.connectionAcquiringListeners.add(listener);
+        return this;
+    }
+
+    /**
      * Format logging output as JSON.
      *
      * @return builder
@@ -629,6 +642,10 @@ public class ProxyDataSourceBuilder {
 
         for (QueryExecutionListener listener : listeners) {
             proxyDataSource.addListener(listener);
+        }
+
+        for (ConnectionAcquiringListener listener : connectionAcquiringListeners) {
+            proxyDataSource.addConnectionAcquiringListener(listener);
         }
 
         if (this.queryTransformer != null) {

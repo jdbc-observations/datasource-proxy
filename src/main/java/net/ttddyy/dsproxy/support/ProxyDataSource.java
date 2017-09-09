@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.listener.ConnectionAcquiringListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
@@ -45,23 +46,69 @@ public class ProxyDataSource implements DataSource, Closeable {
     }
 
     public Connection getConnection() throws SQLException {
-        final Connection conn = dataSource.getConnection();
-        return getConnectionProxy(conn);
+        final ConnectionAcquiringListener listener = interceptorHolder.getConnectionAcquiringListener();
+
+        ConnectionInfo connectionInfo = new ConnectionInfo();
+        connectionInfo.setDataSourceName(this.dataSourceName);
+
+        listener.beforeAcquireConnection(connectionInfo);
+
+        final long beforeTime = System.currentTimeMillis();
+        try {
+            final Connection conn = dataSource.getConnection();
+
+            final long elapsedTime = System.currentTimeMillis() - beforeTime;
+
+            long connectionId = this.connectionIdManager.getId(conn);
+            connectionInfo.setConnectionId(connectionId);
+
+            listener.afterAcquireConnection(connectionInfo, elapsedTime, null);
+
+            return jdbcProxyFactory.createConnection(conn, interceptorHolder, connectionInfo);
+        }
+        catch (RuntimeException e) {
+            final long elapsedTime = System.currentTimeMillis() - beforeTime;
+            listener.afterAcquireConnection(connectionInfo, elapsedTime, e);
+            throw e;
+        }
+        catch (SQLException e) {
+            final long elapsedTime = System.currentTimeMillis() - beforeTime;
+            listener.afterAcquireConnection(connectionInfo, elapsedTime, e);
+            throw e;
+        }
     }
 
     public Connection getConnection(String username, String password) throws SQLException {
-        final Connection conn = dataSource.getConnection(username, password);
-        return getConnectionProxy(conn);
-    }
-
-    private Connection getConnectionProxy(Connection conn) {
-        long connectionId = this.connectionIdManager.getId(conn);
+        final ConnectionAcquiringListener listener = interceptorHolder.getConnectionAcquiringListener();
 
         ConnectionInfo connectionInfo = new ConnectionInfo();
-        connectionInfo.setConnectionId(connectionId);
         connectionInfo.setDataSourceName(this.dataSourceName);
 
-        return jdbcProxyFactory.createConnection(conn, interceptorHolder, connectionInfo);
+        listener.beforeAcquireConnection(connectionInfo);
+
+        final long beforeTime = System.currentTimeMillis();
+        try {
+            final Connection conn = dataSource.getConnection(username, password);
+
+            final long elapsedTime = System.currentTimeMillis() - beforeTime;
+
+            long connectionId = this.connectionIdManager.getId(conn);
+            connectionInfo.setConnectionId(connectionId);
+
+            listener.afterAcquireConnection(connectionInfo, elapsedTime, null);
+
+            return jdbcProxyFactory.createConnection(conn, interceptorHolder, connectionInfo);
+        }
+        catch (RuntimeException e) {
+            final long elapsedTime = System.currentTimeMillis() - beforeTime;
+            listener.afterAcquireConnection(connectionInfo, elapsedTime, e);
+            throw e;
+        }
+        catch (SQLException e) {
+            final long elapsedTime = System.currentTimeMillis() - beforeTime;
+            listener.afterAcquireConnection(connectionInfo, elapsedTime, e);
+            throw e;
+        }
     }
 
     public void setLogWriter(PrintWriter printWriter) throws SQLException {
@@ -96,6 +143,10 @@ public class ProxyDataSource implements DataSource, Closeable {
 
     public void addListener(QueryExecutionListener listener) {
         this.interceptorHolder.addListener(listener);
+    }
+
+    public void addConnectionAcquiringListener(ConnectionAcquiringListener listener) {
+        this.interceptorHolder.addConnectionAcquiringListener(listener);
     }
 
     public void setDataSourceName(String dataSourceName) {

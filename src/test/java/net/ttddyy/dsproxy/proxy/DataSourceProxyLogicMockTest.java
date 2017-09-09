@@ -1,11 +1,14 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
+import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.listener.ConnectionAcquiringListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
@@ -23,6 +26,7 @@ import static org.mockito.Mockito.*;
 public class DataSourceProxyLogicMockTest {
 
     private static final String DS_NAME = "myDS";
+    private ConnectionAcquiringListener connectionAcquiringListener;
 
     @Test
     public void testGetConnection() throws Throwable {
@@ -35,11 +39,17 @@ public class DataSourceProxyLogicMockTest {
         assertThat(result, is(instanceOf(Connection.class)));
         verifyConnection((Connection) result);
         verify(ds).getConnection();
+
+        verify(connectionAcquiringListener).beforeAcquireConnection(Mockito.any(ConnectionInfo.class));
+        verify(connectionAcquiringListener).afterAcquireConnection(Mockito.any(ConnectionInfo.class), anyInt(), isNull(Throwable.class));
+        verifyNoMoreInteractions(connectionAcquiringListener);
     }
 
     private DataSourceProxyLogic getProxyLogic(DataSource ds) {
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        connectionAcquiringListener = mock(ConnectionAcquiringListener.class);
         InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
+        interceptorHolder.addConnectionAcquiringListener(connectionAcquiringListener);
         return new DataSourceProxyLogic(ds, interceptorHolder, DS_NAME, new JdkJdbcProxyFactory(), ConnectionIdManager.DEFAULT);
     }
 

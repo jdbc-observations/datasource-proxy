@@ -2,8 +2,10 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.listener.ConnectionAcquiringListener;
 
 import javax.sql.DataSource;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -67,19 +69,35 @@ public class DataSourceProxyLogic {
         }
 
         // Invoke method on original datasource.
-        try {
-            final Object retVal = method.invoke(dataSource, args);
+        if ("getConnection".equals(methodName)) {
+            final ConnectionAcquiringListener listener = interceptorHolder.getConnectionAcquiringListener();
 
-            if ("getConnection".equals(methodName)) {
+            ConnectionInfo connectionInfo = new ConnectionInfo();
+            connectionInfo.setDataSourceName(this.dataSourceName);
+
+            listener.beforeAcquireConnection(connectionInfo);
+
+            final long beforeTime = System.currentTimeMillis();
+            try {
+                final Object retVal = method.invoke(dataSource, args);
+
+                final long elapsedTime = System.currentTimeMillis() - beforeTime;
+
                 Connection conn = (Connection) retVal;
                 long connId = this.connectionIdManager.getId(conn);
-                ConnectionInfo connectionInfo = new ConnectionInfo();
                 connectionInfo.setConnectionId(connId);
-                connectionInfo.setDataSourceName(this.dataSourceName);
+                listener.afterAcquireConnection(connectionInfo, elapsedTime, null);
 
                 return jdbcProxyFactory.createConnection((Connection) retVal, interceptorHolder, connectionInfo);
+            } catch (InvocationTargetException ex) {
+                final long elapsedTime = System.currentTimeMillis() - beforeTime;
+                listener.afterAcquireConnection(connectionInfo, elapsedTime, ex.getCause());
+
+                throw ex.getTargetException();
             }
-            return retVal;
+        }
+        try {
+            return method.invoke(dataSource, args);
         } catch (InvocationTargetException ex) {
             throw ex.getTargetException();
         }
