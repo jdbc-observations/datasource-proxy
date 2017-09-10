@@ -16,7 +16,6 @@ import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener;
-import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.RepeatableReadResultSetProxyFactory;
@@ -661,27 +660,27 @@ public class ProxyDataSourceBuilder {
         // explicitly added listeners
         listeners.addAll(this.queryExecutionListeners);
 
-        InterceptorHolder interceptorHolder = new InterceptorHolder();
-        for (QueryExecutionListener listener : listeners) {
-            interceptorHolder.addListener(listener);
-        }
-
-        if (this.queryTransformer != null) {
-            interceptorHolder.setQueryTransformer(this.queryTransformer);
-        }
-        if (this.parameterTransformer != null) {
-            interceptorHolder.setParameterTransformer(this.parameterTransformer);
-        }
 
         // build proxy config
         ProxyConfig.Builder proxyConfigBuilder = ProxyConfig.Builder.create();
+
+        for (QueryExecutionListener listener : listeners) {
+            proxyConfigBuilder.queryListener(listener);
+        }
+
+        if (this.queryTransformer != null) {
+            proxyConfigBuilder.queryTransformer(this.queryTransformer);
+        }
+        if (this.parameterTransformer != null) {
+            proxyConfigBuilder.parameterTransformer(this.parameterTransformer);
+        }
+
 
         // DataSource Name
         if (this.dataSourceName != null) {
             proxyConfigBuilder.dataSourceName(dataSourceName);
         }
 
-        proxyConfigBuilder.interceptorHolder(interceptorHolder);
 
 
         if (this.jdbcProxyFactory != null) {

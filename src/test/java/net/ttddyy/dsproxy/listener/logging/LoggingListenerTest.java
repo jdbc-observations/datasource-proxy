@@ -1,7 +1,6 @@
 package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.TestUtils;
-import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import org.junit.After;
@@ -37,10 +36,7 @@ public class LoggingListenerTest {
         this.loggingListener = new CommonsQueryLoggingListener();
         this.loggingListener.setLog(this.inMemoryLog);
 
-        InterceptorHolder interceptorHolder = new InterceptorHolder();
-        interceptorHolder.addListener(this.loggingListener);
-
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().interceptorHolder(interceptorHolder).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().queryListener(this.loggingListener).build();
 
         // real datasource
         this.jdbcDataSource = TestUtils.getDataSourceWithData();

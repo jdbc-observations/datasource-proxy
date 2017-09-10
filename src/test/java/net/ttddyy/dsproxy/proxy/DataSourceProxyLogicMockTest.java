@@ -2,7 +2,6 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
-import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.junit.Test;
 
 import javax.sql.DataSource;
@@ -42,11 +41,10 @@ public class DataSourceProxyLogicMockTest {
 
     private DataSourceProxyLogic getProxyLogic(DataSource ds) {
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
-        InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
                 .dataSourceName(DS_NAME)
-                .interceptorHolder(interceptorHolder)
+                .queryListener(listener)
                 .build();
         return new DataSourceProxyLogic(ds, proxyConfig);
     }

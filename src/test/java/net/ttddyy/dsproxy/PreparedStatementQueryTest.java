@@ -1,6 +1,5 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -37,17 +36,16 @@ public class PreparedStatementQueryTest {
         testListener = new TestListener();
         lastQueryListener = new LastQueryListener();
 
-        InterceptorHolder interceptorHolder = new InterceptorHolder();
-        interceptorHolder.addListener(testListener);
-        interceptorHolder.addListener(lastQueryListener);
-
         // real datasource
         jdbcDataSource = TestUtils.getDataSourceWithData();
 
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().interceptorHolder(interceptorHolder).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(this.testListener)
+                .queryListener(this.lastQueryListener)
+                .build();
 
         final Connection conn = jdbcDataSource.getConnection();
         connection = new JdkJdbcProxyFactory().createConnection(conn, connectionInfo, proxyConfig);

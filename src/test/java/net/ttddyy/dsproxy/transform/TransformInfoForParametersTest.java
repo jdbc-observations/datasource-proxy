@@ -1,8 +1,6 @@
 package net.ttddyy.dsproxy.transform;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.PreparedStatementProxyLogic;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import org.junit.Before;
@@ -54,10 +52,9 @@ public class TransformInfoForParametersTest {
     public void testParamTransformerInPreparedStatement() throws Throwable {
 
         ParameterTransformer parameterTransformer = getMockParameterTransformer();
-        InterceptorHolder interceptorHolder = new InterceptorHolder(QueryExecutionListener.DEFAULT, QueryTransformer.DEFAULT, parameterTransformer);
 
         PreparedStatement ps = mock(PreparedStatement.class);
-        PreparedStatementProxyLogic proxyLogic = getProxyLogic(ps, interceptorHolder);
+        PreparedStatementProxyLogic proxyLogic = getProxyLogic(ps, parameterTransformer);
 
         Method method = PreparedStatement.class.getMethod("execute");
         Object[] args = new Object[]{};
@@ -78,10 +75,9 @@ public class TransformInfoForParametersTest {
     public void testParamTransformerBatchInPreparedStatement() throws Throwable {
 
         ParameterTransformer parameterTransformer = getMockParameterTransformer();
-        InterceptorHolder interceptorHolder = new InterceptorHolder(QueryExecutionListener.DEFAULT, QueryTransformer.DEFAULT, parameterTransformer);
 
         PreparedStatement ps = mock(PreparedStatement.class);
-        PreparedStatementProxyLogic proxyLogic = getProxyLogic(ps, interceptorHolder);
+        PreparedStatementProxyLogic proxyLogic = getProxyLogic(ps, parameterTransformer);
 
         Method method = PreparedStatement.class.getMethod("addBatch");
         Object[] args = new Object[]{};
@@ -114,10 +110,9 @@ public class TransformInfoForParametersTest {
     public void testParamTransformerInCallableStatement() throws Throwable {
 
         ParameterTransformer parameterTransformer = getMockParameterTransformer();
-        InterceptorHolder interceptorHolder = new InterceptorHolder(QueryExecutionListener.DEFAULT, QueryTransformer.DEFAULT, parameterTransformer);
 
         CallableStatement cs = mock(CallableStatement.class);
-        PreparedStatementProxyLogic proxyLogic = getProxyLogic(cs, interceptorHolder);
+        PreparedStatementProxyLogic proxyLogic = getProxyLogic(cs, parameterTransformer);
 
         Method method = PreparedStatement.class.getMethod("execute");
         Object[] args = new Object[]{};
@@ -138,10 +133,9 @@ public class TransformInfoForParametersTest {
     public void testParamTransformerBatchInCallableStatement() throws Throwable {
 
         ParameterTransformer parameterTransformer = getMockParameterTransformer();
-        InterceptorHolder interceptorHolder = new InterceptorHolder(QueryExecutionListener.DEFAULT, QueryTransformer.DEFAULT, parameterTransformer);
 
         CallableStatement cs = mock(CallableStatement.class);
-        PreparedStatementProxyLogic proxyLogic = getProxyLogic(cs, interceptorHolder);
+        PreparedStatementProxyLogic proxyLogic = getProxyLogic(cs, parameterTransformer);
 
         Method method = PreparedStatement.class.getMethod("addBatch");
         Object[] args = new Object[]{};
@@ -171,11 +165,11 @@ public class TransformInfoForParametersTest {
     }
 
 
-    private PreparedStatementProxyLogic getProxyLogic(PreparedStatement ps, InterceptorHolder interceptorHolder) {
+    private PreparedStatementProxyLogic getProxyLogic(PreparedStatement ps, ParameterTransformer parameterTransformer) {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("my-ds");
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().interceptorHolder(interceptorHolder).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().parameterTransformer(parameterTransformer).build();
 
         return PreparedStatementProxyLogic.Builder.create()
                 .preparedStatement(ps)

@@ -6,7 +6,6 @@ import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
-import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -196,10 +195,8 @@ public class PreparedStatementProxyLogicMockTest {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName(DS_NAME);
 
-        InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
-
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .interceptorHolder(interceptorHolder)
+                .queryListener(listener)
                 .resultSetProxyLogicFactory(createResultSetProxy ? new SimpleResultSetProxyLogicFactory() : null)
                 .build();
 

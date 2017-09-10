@@ -280,7 +280,7 @@ public class ProxyDataSourceBuilderTest {
 
     @SuppressWarnings("unchecked")
     private <T extends QueryExecutionListener> T getAndVerifyListener(ProxyDataSource ds, Class<T> listenerClass) {
-        QueryExecutionListener listener = ds.getProxyConfig().getInterceptorHolder().getListener();
+        QueryExecutionListener listener = ds.getProxyConfig().getQueryListener();
         assertThat(listener).isInstanceOf(ChainListener.class);
         List<QueryExecutionListener> listeners = ((ChainListener) listener).getListeners();
         assertThat(listeners).hasSize(1);

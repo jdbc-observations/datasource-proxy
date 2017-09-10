@@ -20,7 +20,8 @@
   ```  
 
 - `ProxyConfig` is added to represent all proxy related configurations _(datasource name, listeners, proxy factory, 
-  connection id manager)_.
+  connection id manager)_. All values on `InterceptorHolder` are moved to `ProxyConfig` and `InterceptorHolder` is
+  removed.
   
 
 ## 1.4.2

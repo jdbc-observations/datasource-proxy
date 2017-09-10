@@ -102,7 +102,8 @@ public class PreparedStatementProxyLogic {
             return MethodUtils.proceedExecution(method, ps, args);
         }
 
-        InterceptorHolder interceptorHolder = this.proxyConfig.getInterceptorHolder();
+        ParameterTransformer parameterTransformer = this.proxyConfig.getParameterTransformer();
+        QueryExecutionListener queryListener = this.proxyConfig.getQueryListener();
         JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
 
@@ -164,7 +165,7 @@ public class PreparedStatementProxyLogic {
                 if ("addBatch".equals(methodName)) {
 
                     // TODO: check
-                    transformParameters(interceptorHolder, true, batchParameters.size());
+                    transformParameters(parameterTransformer, true, batchParameters.size());
 
                     // copy values
                     Map<ParameterKey, ParameterSetOperation> newParams = new LinkedHashMap<ParameterKey, ParameterSetOperation>(parameters);
@@ -201,7 +202,7 @@ public class PreparedStatementProxyLogic {
             isBatchExecution = true;
 
         } else if (StatementMethodNames.QUERY_EXEC_METHODS.contains(methodName)) {
-            transformParameters(interceptorHolder, false, 0);
+            transformParameters(parameterTransformer, false, 0);
             QueryInfo queryInfo = new QueryInfo(this.query);
             queryInfo.getParametersList().add(new ArrayList<ParameterSetOperation>(parameters.values()));
             queries.add(queryInfo);
@@ -209,8 +210,7 @@ public class PreparedStatementProxyLogic {
 
         final ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo, this.ps, isBatchExecution, batchSize, method, args);
 
-        final QueryExecutionListener listener = interceptorHolder.getListener();
-        listener.beforeQuery(execInfo, queries);
+        queryListener.beforeQuery(execInfo, queries);
 
         // Invoke method on original Statement.
         try {
@@ -235,17 +235,16 @@ public class PreparedStatementProxyLogic {
             execInfo.setSuccess(false);
             throw ex.getTargetException();
         } finally {
-            listener.afterQuery(execInfo, queries);
+            queryListener.afterQuery(execInfo, queries);
         }
     }
 
 
-    private void transformParameters(InterceptorHolder interceptorHolder, boolean isBatch, int count) throws SQLException, IllegalAccessException, InvocationTargetException {
+    private void transformParameters(ParameterTransformer parameterTransformer, boolean isBatch, int count) throws SQLException, IllegalAccessException, InvocationTargetException {
 
         // transform parameters
         final ParameterReplacer parameterReplacer = new ParameterReplacer(this.parameters);
         final TransformInfo transformInfo = new TransformInfo(ps.getClass(), this.connectionInfo.getDataSourceName(), query, isBatch, count);
-        final ParameterTransformer parameterTransformer = interceptorHolder.getParameterTransformer();
         parameterTransformer.transformParameters(parameterReplacer, transformInfo);
 
         if (parameterReplacer.isModified()) {

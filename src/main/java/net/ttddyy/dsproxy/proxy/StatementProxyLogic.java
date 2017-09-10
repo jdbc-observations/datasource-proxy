@@ -113,7 +113,9 @@ public class StatementProxyLogic {
             return stmt;
         }
 
-        InterceptorHolder interceptorHolder = this.proxyConfig.getInterceptorHolder();
+//        InterceptorHolder interceptorHolder = this.proxyConfig.getInterceptorHolder();
+        QueryExecutionListener queryListener = this.proxyConfig.getQueryListener();
+        QueryTransformer queryTransformer = this.proxyConfig.getQueryTransformer();
         JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
         if (StatementMethodNames.JDBC4_METHODS.contains(methodName)) {
@@ -131,7 +133,6 @@ public class StatementProxyLogic {
 
         if ("addBatch".equals(methodName) || "clearBatch".equals(methodName)) {
             if ("addBatch".equals(methodName) && ObjectArrayUtils.isFirstArgString(args)) {
-                final QueryTransformer queryTransformer = interceptorHolder.getQueryTransformer();
                 final String query = (String) args[0];
                 final Class<? extends Statement> clazz = Statement.class;
                 final int batchCount = batchQueries.size();
@@ -168,7 +169,6 @@ public class StatementProxyLogic {
         } else if (StatementMethodNames.QUERY_EXEC_METHODS.contains(methodName)) {
 
             if (ObjectArrayUtils.isFirstArgString(args)) {
-                final QueryTransformer queryTransformer = interceptorHolder.getQueryTransformer();
                 final String query = (String) args[0];
                 final TransformInfo transformInfo = new TransformInfo(Statement.class, this.connectionInfo.getDataSourceName(), query, false, 0);
                 final String transformedQuery = queryTransformer.transformQuery(transformInfo);
@@ -179,8 +179,7 @@ public class StatementProxyLogic {
 
         final ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo, this.stmt, isBatchExecute, batchSize, method, args);
 
-        final QueryExecutionListener listener = interceptorHolder.getListener();
-        listener.beforeQuery(execInfo, queries);
+        queryListener.beforeQuery(execInfo, queries);
 
         // Invoke method on original Statement.
         try {
@@ -205,7 +204,7 @@ public class StatementProxyLogic {
             execInfo.setSuccess(false);
             throw ex.getTargetException();
         } finally {
-            listener.afterQuery(execInfo, queries);
+            queryListener.afterQuery(execInfo, queries);
         }
 
     }

@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.transform.QueryTransformer;
 import net.ttddyy.dsproxy.transform.TransformInfo;
 
 import java.lang.reflect.InvocationTargetException;
@@ -40,7 +41,7 @@ public class ConnectionProxyLogic {
         final Connection proxyConnection = (Connection) proxy;
         final String methodName = method.getName();
 
-        InterceptorHolder interceptorHolder = this.proxyConfig.getInterceptorHolder();
+        QueryTransformer queryTransformer = this.proxyConfig.getQueryTransformer();
         JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
 
@@ -74,7 +75,7 @@ public class ConnectionProxyLogic {
                 final Class<? extends Statement> clazz =
                         "prepareStatement".equals(methodName) ? PreparedStatement.class : CallableStatement.class;
                 final TransformInfo transformInfo = new TransformInfo(clazz, this.connectionInfo.getDataSourceName(), query, false, 0);
-                final String transformedQuery = interceptorHolder.getQueryTransformer().transformQuery(transformInfo);
+                final String transformedQuery = queryTransformer.transformQuery(transformInfo);
                 args[0] = transformedQuery;
             }
         }

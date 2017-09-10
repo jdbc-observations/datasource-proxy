@@ -1,6 +1,5 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.assertj.core.api.Assertions;
@@ -36,11 +35,6 @@ public class StatementInvocationHandlerTest {
         testListener = new TestListener();
         lastQueryListener = new LastQueryListener();
 
-        InterceptorHolder interceptorHolder = new InterceptorHolder();
-        interceptorHolder.addListener(testListener);
-        interceptorHolder.addListener(lastQueryListener);
-
-
         // real datasource
         jdbcDataSource = TestUtils.getDataSourceWithData();
 
@@ -50,7 +44,10 @@ public class StatementInvocationHandlerTest {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().interceptorHolder(interceptorHolder).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(this.testListener)
+                .queryListener(this.lastQueryListener)
+                .build();
 
         statement = new JdkJdbcProxyFactory().createStatement(stmt, connectionInfo, null, proxyConfig);
     }

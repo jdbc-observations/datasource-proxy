@@ -1,6 +1,10 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
+import net.ttddyy.dsproxy.listener.ChainListener;
+import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.transform.ParameterTransformer;
+import net.ttddyy.dsproxy.transform.QueryTransformer;
 
 /**
  * Hold configuration objects for creating a proxy.
@@ -12,7 +16,9 @@ public class ProxyConfig {
 
     public static class Builder {
         private String dataSourceName = "";
-        private InterceptorHolder interceptorHolder = new InterceptorHolder();
+        private ChainListener queryListener = new ChainListener();  // empty default
+        private QueryTransformer queryTransformer = QueryTransformer.DEFAULT;
+        private ParameterTransformer parameterTransformer = ParameterTransformer.DEFAULT;
         private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
         private ResultSetProxyLogicFactory resultSetProxyLogicFactory;  // can be null if resultset proxy is disabled
         private ConnectionIdManager connectionIdManager = ConnectionIdManager.DEFAULT;
@@ -24,7 +30,9 @@ public class ProxyConfig {
         public static Builder from(ProxyConfig proxyConfig) {
             return new Builder()
                     .dataSourceName(proxyConfig.dataSourceName)
-                    .interceptorHolder(proxyConfig.interceptorHolder)
+                    .queryListener(proxyConfig.queryListener)
+                    .queryTransformer(proxyConfig.queryTransformer)
+                    .parameterTransformer(proxyConfig.parameterTransformer)
                     .jdbcProxyFactory(proxyConfig.jdbcProxyFactory)
                     .resultSetProxyLogicFactory(proxyConfig.resultSetProxyLogicFactory)
                     .connectionIdManager(proxyConfig.connectionIdManager);
@@ -33,7 +41,9 @@ public class ProxyConfig {
         public ProxyConfig build() {
             ProxyConfig proxyConfig = new ProxyConfig();
             proxyConfig.dataSourceName = this.dataSourceName;
-            proxyConfig.interceptorHolder = this.interceptorHolder;
+            proxyConfig.queryListener = this.queryListener;
+            proxyConfig.queryTransformer = this.queryTransformer;
+            proxyConfig.parameterTransformer = this.parameterTransformer;
             proxyConfig.jdbcProxyFactory = this.jdbcProxyFactory;
             proxyConfig.resultSetProxyLogicFactory = this.resultSetProxyLogicFactory;
             proxyConfig.connectionIdManager = this.connectionIdManager;
@@ -45,8 +55,23 @@ public class ProxyConfig {
             return this;
         }
 
-        public Builder interceptorHolder(InterceptorHolder interceptorHolder) {
-            this.interceptorHolder = interceptorHolder;
+        public Builder queryListener(QueryExecutionListener queryListener) {
+            if (queryListener instanceof ChainListener) {
+                for (QueryExecutionListener listener : ((ChainListener) queryListener).getListeners()) {
+                    this.queryListener.addListener(listener);
+                }
+            }
+            this.queryListener.addListener(queryListener);
+            return this;
+        }
+
+        public Builder queryTransformer(QueryTransformer queryTransformer) {
+            this.queryTransformer = queryTransformer;
+            return this;
+        }
+
+        public Builder parameterTransformer(ParameterTransformer parameterTransformer) {
+            this.parameterTransformer = parameterTransformer;
             return this;
         }
 
@@ -67,7 +92,9 @@ public class ProxyConfig {
     }
 
     private String dataSourceName;
-    private InterceptorHolder interceptorHolder;
+    private ChainListener queryListener;
+    private QueryTransformer queryTransformer;
+    private ParameterTransformer parameterTransformer;
     private JdbcProxyFactory jdbcProxyFactory;
     private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
     private ConnectionIdManager connectionIdManager;
@@ -76,8 +103,16 @@ public class ProxyConfig {
         return dataSourceName;
     }
 
-    public InterceptorHolder getInterceptorHolder() {
-        return interceptorHolder;
+    public ChainListener getQueryListener() {
+        return queryListener;
+    }
+
+    public QueryTransformer getQueryTransformer() {
+        return queryTransformer;
+    }
+
+    public ParameterTransformer getParameterTransformer() {
+        return parameterTransformer;
     }
 
     public JdbcProxyFactory getJdbcProxyFactory() {

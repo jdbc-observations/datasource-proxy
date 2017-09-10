@@ -28,8 +28,7 @@ public class JdkJdbcProxyFactoryTest {
     @Test
     public void testCreateConnection() {
         Connection conn = mock(Connection.class);
-        InterceptorHolder interceptors = mock(InterceptorHolder.class);
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().interceptorHolder(interceptors).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
 
         Connection result = factory.createConnection(conn, getConnectionInfo(), proxyConfig);
 
@@ -41,8 +40,7 @@ public class JdkJdbcProxyFactoryTest {
     @Test
     public void testCreateStatement() {
         Statement stmt = mock(Statement.class);
-        InterceptorHolder interceptors = mock(InterceptorHolder.class);
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().interceptorHolder(interceptors).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
 
         Statement result = factory.createStatement(stmt, getConnectionInfo(), null, proxyConfig);
 
@@ -54,9 +52,8 @@ public class JdkJdbcProxyFactoryTest {
     @Test
     public void testCreatePreparedStatement() {
         PreparedStatement ps = mock(PreparedStatement.class);
-        InterceptorHolder interceptors = mock(InterceptorHolder.class);
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().interceptorHolder(interceptors).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
 
         PreparedStatement result = factory.createPreparedStatement(ps, "my-query", getConnectionInfo(), null, proxyConfig);
 
@@ -68,9 +65,8 @@ public class JdkJdbcProxyFactoryTest {
     @Test
     public void testCreateCallableStatement() {
         CallableStatement cs = mock(CallableStatement.class);
-        InterceptorHolder interceptors = mock(InterceptorHolder.class);
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().interceptorHolder(interceptors).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
 
         CallableStatement result = factory.createCallableStatement(cs, "my-query", getConnectionInfo(), null, proxyConfig);
 
@@ -82,9 +78,7 @@ public class JdkJdbcProxyFactoryTest {
     @Test
     public void testCreateDataSource() {
         DataSource ds = mock(DataSource.class);
-        InterceptorHolder interceptors = mock(InterceptorHolder.class);
-
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().dataSourceName("my-ds").interceptorHolder(interceptors).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().dataSourceName("my-ds").build();
 
         DataSource result = factory.createDataSource(ds, proxyConfig);
 

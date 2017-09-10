@@ -4,7 +4,6 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.PreparedStatementInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler;
-import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationHandler;
@@ -77,12 +76,11 @@ public class ConnectionProxyLogicMockTest {
 
     private ConnectionProxyLogic getProxyLogic(Connection mockConnection) {
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
-        InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
 
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().interceptorHolder(interceptorHolder).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().queryListener(listener).build();
         return new ConnectionProxyLogic(mockConnection, connectionInfo, proxyConfig);
     }
 

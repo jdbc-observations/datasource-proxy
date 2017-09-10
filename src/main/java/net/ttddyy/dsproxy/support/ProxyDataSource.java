@@ -3,10 +3,8 @@ package net.ttddyy.dsproxy.support;
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
-import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
 import javax.sql.DataSource;
@@ -109,19 +107,16 @@ public class ProxyDataSource implements DataSource, Closeable {
     }
 
     /**
-     * Set {@link QueryExecutionListener} with default(NoOp) {@link QueryTransformer}.
-     *
-     * @param listener a lister
      * @deprecated
      */
     public void setListener(QueryExecutionListener listener) {
         this.proxyConfig = ProxyConfig.Builder.from(this.proxyConfig)
-                .interceptorHolder(new InterceptorHolder(listener, QueryTransformer.DEFAULT))
+                .queryListener(listener)
                 .build();
     }
 
     public void addListener(QueryExecutionListener listener) {
-        this.proxyConfig.getInterceptorHolder().addListener(listener);
+        this.proxyConfig.getQueryListener().addListener(listener);
     }
 
     public void setDataSourceName(String dataSourceName) {

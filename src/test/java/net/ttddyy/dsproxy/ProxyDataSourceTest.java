@@ -1,6 +1,5 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import org.junit.After;
@@ -32,10 +31,8 @@ public class ProxyDataSourceTest {
         DataSource dataSource = TestUtils.getDataSourceWithData();
 
         listener = new TestListener();
-        InterceptorHolder interceptorHolder = new InterceptorHolder();
-        interceptorHolder.addListener(this.listener);
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().interceptorHolder(interceptorHolder).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().queryListener(this.listener).build();
         proxyDataSource = new ProxyDataSource();
         proxyDataSource.setDataSource(dataSource);
         proxyDataSource.setProxyConfig(proxyConfig);

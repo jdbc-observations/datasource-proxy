@@ -444,10 +444,9 @@ public class StatementProxyLogicMockTest {
                                               boolean createResultSetProxy) {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName(DS_NAME);
-        InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .interceptorHolder(interceptorHolder)
+                .queryListener(listener)
                 .resultSetProxyLogicFactory(createResultSetProxy ? new SimpleResultSetProxyLogicFactory() : null)
                 .build();
 
