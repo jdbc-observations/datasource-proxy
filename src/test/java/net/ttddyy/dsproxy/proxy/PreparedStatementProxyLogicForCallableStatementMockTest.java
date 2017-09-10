@@ -741,13 +741,15 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName(DS_NAME);
 
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().interceptorHolder(interceptorHolder).build();
+
+
         return PreparedStatementProxyLogic.Builder.create()
                 .preparedStatement(cs)
                 .query(query)
-                .interceptorHolder(interceptorHolder)
                 .connectionInfo(connectionInfo)
                 .proxyConnection(proxyConnection)
-                .proxyFactory(JdbcProxyFactory.DEFAULT)
+                .proxyConfig(proxyConfig)
                 .build();
     }
 

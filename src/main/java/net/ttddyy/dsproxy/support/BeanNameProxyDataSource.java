@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.support;
 
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import org.springframework.beans.factory.BeanNameAware;
 
 /**
@@ -11,9 +12,10 @@ import org.springframework.beans.factory.BeanNameAware;
 public class BeanNameProxyDataSource extends ProxyDataSource implements BeanNameAware {
 
     public void setBeanName(String name) {
-        final String dataSourceName = getDataSourceName();
+        final String dataSourceName = getProxyConfig().getDataSourceName();
         if (dataSourceName == null || "".equals(dataSourceName)) {
-            setDataSourceName(name);
+            ProxyConfig proxyConfig = ProxyConfig.Builder.from(getProxyConfig()).dataSourceName(name).build();
+            setProxyConfig(proxyConfig);
         }
     }
 }

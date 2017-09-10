@@ -1,15 +1,20 @@
 package net.ttddyy.dsproxy;
 
+import net.ttddyy.dsproxy.proxy.InterceptorHolder;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertSame;
 
 
 /**
@@ -27,10 +32,13 @@ public class ProxyDataSourceTest {
         DataSource dataSource = TestUtils.getDataSourceWithData();
 
         listener = new TestListener();
+        InterceptorHolder interceptorHolder = new InterceptorHolder();
+        interceptorHolder.addListener(this.listener);
 
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().interceptorHolder(interceptorHolder).build();
         proxyDataSource = new ProxyDataSource();
         proxyDataSource.setDataSource(dataSource);
-        proxyDataSource.setListener(listener);
+        proxyDataSource.setProxyConfig(proxyConfig);
     }
 
     @After

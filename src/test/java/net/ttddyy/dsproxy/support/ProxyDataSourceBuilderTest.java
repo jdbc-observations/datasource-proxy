@@ -280,7 +280,7 @@ public class ProxyDataSourceBuilderTest {
 
     @SuppressWarnings("unchecked")
     private <T extends QueryExecutionListener> T getAndVerifyListener(ProxyDataSource ds, Class<T> listenerClass) {
-        QueryExecutionListener listener = ds.getInterceptorHolder().getListener();
+        QueryExecutionListener listener = ds.getProxyConfig().getInterceptorHolder().getListener();
         assertThat(listener).isInstanceOf(ChainListener.class);
         List<QueryExecutionListener> listeners = ((ChainListener) listener).getListeners();
         assertThat(listeners).hasSize(1);
@@ -296,11 +296,11 @@ public class ProxyDataSourceBuilderTest {
         ProxyDataSource ds;
 
         ds = ProxyDataSourceBuilder.create().build();
-        assertThat(ds.getJdbcProxyFactory()).as("Default one should be used").isSameAs(JdbcProxyFactory.DEFAULT);
+        assertThat(ds.getProxyConfig().getJdbcProxyFactory()).as("Default one should be used").isSameAs(JdbcProxyFactory.DEFAULT);
 
         JdbcProxyFactory proxyFactory = mock(JdbcProxyFactory.class);
         ds = ProxyDataSourceBuilder.create().jdbcProxyFactory(proxyFactory).build();
-        assertThat(ds.getJdbcProxyFactory()).isSameAs(proxyFactory);
+        assertThat(ds.getProxyConfig().getJdbcProxyFactory()).isSameAs(proxyFactory);
     }
 
     @Test
@@ -308,11 +308,11 @@ public class ProxyDataSourceBuilderTest {
         ProxyDataSource ds;
 
         ds = ProxyDataSourceBuilder.create().build();
-        assertThat(ds.getConnectionIdManager()).as("Default one should be used").isSameAs(ConnectionIdManager.DEFAULT);
+        assertThat(ds.getProxyConfig().getConnectionIdManager()).as("Default one should be used").isSameAs(ConnectionIdManager.DEFAULT);
 
         ConnectionIdManager connectionIdManager = mock(ConnectionIdManager.class);
         ds = ProxyDataSourceBuilder.create().connectionIdManager(connectionIdManager).build();
-        assertThat(ds.getConnectionIdManager()).isSameAs(connectionIdManager);
+        assertThat(ds.getProxyConfig().getConnectionIdManager()).isSameAs(connectionIdManager);
     }
 
     @Test

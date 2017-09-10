@@ -16,7 +16,11 @@ import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener;
+import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.proxy.RepeatableReadResultSetProxyFactory;
+import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 
@@ -94,7 +98,7 @@ public class ProxyDataSourceBuilder {
     private JdbcProxyFactory jdbcProxyFactory;
     private ConnectionIdManager connectionIdManager;
 
-    private boolean createProxyResultSet;
+    private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
 
     public static ProxyDataSourceBuilder create() {
         return new ProxyDataSourceBuilder();
@@ -571,27 +575,44 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * TODO: document
+     * Enable resultset proxy.
+     *
+     * When it is enabled, returned ResultSet will be proxied(e.g.: Statement#executeQuery()).
      *
      * @return builder
      * @since 1.4.3
      */
     public ProxyDataSourceBuilder proxyResultSet() {
-        this.createProxyResultSet = true;
+        this.resultSetProxyLogicFactory = ResultSetProxyLogicFactory.DEFAULT;
         return this;
     }
 
+    /**
+     * Enable resultset proxy with given proxy logic factory.
+     *
+     * @return builder
+     * @since 1.4.3
+     */
+    public ProxyDataSourceBuilder proxyResultSet(ResultSetProxyLogicFactory factory) {
+        this.resultSetProxyLogicFactory = factory;
+        return this;
+    }
+
+    /**
+     * Enable resultset proxy that allows repeatable read.
+     *
+     * Equivalent to {@code proxyResultSet(new RepeatableReadResultSetProxyFactory())}
+     *
+     * @return builder
+     * @since 1.4.3
+     */
+    public ProxyDataSourceBuilder repeatableReadResultSet() {
+        this.resultSetProxyLogicFactory = new RepeatableReadResultSetProxyFactory();
+        return this;
+    }
+
+
     public ProxyDataSource build() {
-        ProxyDataSource proxyDataSource = new ProxyDataSource();
-
-        if (this.dataSource != null) {
-            proxyDataSource.setDataSource(dataSource);
-        }
-
-        // DataSource Name
-        if (this.dataSourceName != null) {
-            proxyDataSource.setDataSourceName(dataSourceName);
-        }
 
         // Query Logging Listeners
         List<QueryExecutionListener> listeners = new ArrayList<QueryExecutionListener>();
@@ -640,27 +661,52 @@ public class ProxyDataSourceBuilder {
         // explicitly added listeners
         listeners.addAll(this.queryExecutionListeners);
 
+        InterceptorHolder interceptorHolder = new InterceptorHolder();
         for (QueryExecutionListener listener : listeners) {
-            proxyDataSource.addListener(listener);
+            interceptorHolder.addListener(listener);
         }
 
         if (this.queryTransformer != null) {
-            proxyDataSource.getInterceptorHolder().setQueryTransformer(this.queryTransformer);
+            interceptorHolder.setQueryTransformer(this.queryTransformer);
         }
         if (this.parameterTransformer != null) {
-            proxyDataSource.getInterceptorHolder().setParameterTransformer(this.parameterTransformer);
+            interceptorHolder.setParameterTransformer(this.parameterTransformer);
         }
 
+        // build proxy config
+        ProxyConfig.Builder proxyConfigBuilder = ProxyConfig.Builder.create();
+
+        // DataSource Name
+        if (this.dataSourceName != null) {
+            proxyConfigBuilder.dataSourceName(dataSourceName);
+        }
+
+        proxyConfigBuilder.interceptorHolder(interceptorHolder);
+
+
         if (this.jdbcProxyFactory != null) {
-            proxyDataSource.setJdbcProxyFactory(this.jdbcProxyFactory);
+            proxyConfigBuilder.jdbcProxyFactory(this.jdbcProxyFactory);
+        } else {
+            proxyConfigBuilder.jdbcProxyFactory(JdbcProxyFactory.DEFAULT);
+
         }
 
         if (this.connectionIdManager != null) {
-            proxyDataSource.setConnectionIdManager(this.connectionIdManager);
+            proxyConfigBuilder.connectionIdManager(this.connectionIdManager);
+        } else {
+            proxyConfigBuilder.connectionIdManager(ConnectionIdManager.DEFAULT);
         }
 
-        // whether to create proxy for ResultSet
-        proxyDataSource.getJdbcProxyFactory().createResultSetProxy(this.createProxyResultSet);
+        // this can be null if creation of resultset proxy is disabled
+        proxyConfigBuilder.resultSetProxyLogicFactory(this.resultSetProxyLogicFactory);
+
+        // build ProxyDataSource
+        ProxyDataSource proxyDataSource = new ProxyDataSource();
+        if (this.dataSource != null) {
+            proxyDataSource.setDataSource(dataSource);
+        }
+        ProxyConfig proxyConfig = proxyConfigBuilder.build();
+        proxyDataSource.setProxyConfig(proxyConfig);
 
         return proxyDataSource;
     }

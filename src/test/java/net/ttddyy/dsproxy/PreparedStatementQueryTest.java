@@ -3,6 +3,8 @@ package net.ttddyy.dsproxy;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.proxy.SimpleResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
 import org.junit.After;
@@ -45,8 +47,10 @@ public class PreparedStatementQueryTest {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
 
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().interceptorHolder(interceptorHolder).build();
+
         final Connection conn = jdbcDataSource.getConnection();
-        connection = new JdkJdbcProxyFactory().createConnection(conn, interceptorHolder, connectionInfo);
+        connection = new JdkJdbcProxyFactory().createConnection(conn, connectionInfo, proxyConfig);
     }
 
     @After
@@ -358,8 +362,10 @@ public class PreparedStatementQueryTest {
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql);
 
-        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory().createResultSetProxy(true);
-        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new InterceptorHolder(), new ConnectionInfo(), conn);
+        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().resultSetProxyLogicFactory(new SimpleResultSetProxyLogicFactory()).build();
+
+        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
 
         ResultSet result = proxyPs.executeQuery();
 

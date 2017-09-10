@@ -1,6 +1,8 @@
 package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.TestUtils;
+import net.ttddyy.dsproxy.proxy.InterceptorHolder;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import org.junit.After;
 import org.junit.Before;
@@ -17,8 +19,6 @@ import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -37,12 +37,17 @@ public class LoggingListenerTest {
         this.loggingListener = new CommonsQueryLoggingListener();
         this.loggingListener.setLog(this.inMemoryLog);
 
+        InterceptorHolder interceptorHolder = new InterceptorHolder();
+        interceptorHolder.addListener(this.loggingListener);
+
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().interceptorHolder(interceptorHolder).build();
+
         // real datasource
         this.jdbcDataSource = TestUtils.getDataSourceWithData();
 
         this.proxyDataSource = new ProxyDataSource();
         this.proxyDataSource.setDataSource(this.jdbcDataSource);
-        this.proxyDataSource.addListener(this.loggingListener);
+        this.proxyDataSource.setProxyConfig(proxyConfig);
     }
 
     @After

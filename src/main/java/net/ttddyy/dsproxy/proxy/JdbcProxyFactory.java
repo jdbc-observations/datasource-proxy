@@ -1,6 +1,5 @@
 package net.ttddyy.dsproxy.proxy;
 
-import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 
@@ -24,41 +23,26 @@ public interface JdbcProxyFactory {
     JdbcProxyFactory DEFAULT = new JdkJdbcProxyFactory();
 
 
-    DataSource createDataSource(DataSource dataSource, InterceptorHolder interceptorHolder, String dataSourceName,
-                                ConnectionIdManager connectionIdManager);
+    DataSource createDataSource(DataSource dataSource, ProxyConfig proxyConfig);
 
-    Connection createConnection(Connection connection, InterceptorHolder interceptorHolder, ConnectionInfo connectionInfo);
+    Connection createConnection(Connection connection, ConnectionInfo connectionInfo, ProxyConfig proxyConfig);
 
-    Statement createStatement(Statement statement, InterceptorHolder interceptorHolder, ConnectionInfo connectionInfo,
-                              Connection proxyConnection);
+    Statement createStatement(Statement statement, ConnectionInfo connectionInfo, Connection proxyConnection,
+                              ProxyConfig proxyConfig);
 
     PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query,
-                                              InterceptorHolder interceptorHolder, ConnectionInfo connectionInfo,
-                                              Connection proxyConnection);
+                                              ConnectionInfo connectionInfo, Connection proxyConnection,
+                                              ProxyConfig proxyConfig);
 
     CallableStatement createCallableStatement(CallableStatement callableStatement, String query,
-                                              InterceptorHolder interceptorHolder, ConnectionInfo connectionInfo,
-                                              Connection proxyConnection);
+                                              ConnectionInfo connectionInfo,
+                                              Connection proxyConnection, ProxyConfig proxyConfig);
 
     /**
-     * Flag this factory instance to create a proxy for {@link ResultSet}.
+     * Create a proxy for {@link ResultSet}.
      *
-     * @param createResultSetProxy true to proxy ResultSet
-     * @return this instance
      * @since 1.4.3
      */
-    JdkJdbcProxyFactory createResultSetProxy(boolean createResultSetProxy);
-
-    /**
-     * Create a proxy for {@link ResultSet} if enabled.
-     *
-     * When {@link #createResultSetProxy(boolean)} is set to {@code true}, this method returns a proxied
-     * {@link ResultSet}. If {@code false} is set, passed original {@link ResultSet} is returned.
-     *
-     * @param resultSet a result set
-     * @return proxied ResultSet if enabled
-     * @since 1.4.3
-     */
-    ResultSet createResultSet(ResultSet resultSet);
+    ResultSet createResultSet(ResultSet resultSet, ProxyConfig proxyConfig);
 
 }

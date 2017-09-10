@@ -30,10 +30,9 @@ public class StatementProxyLogic {
 
     public static class Builder {
         private Statement stmt;
-        private InterceptorHolder interceptorHolder;
         private ConnectionInfo connectionInfo;
         private Connection proxyConnection;
-        private JdbcProxyFactory proxyFactory;
+        private ProxyConfig proxyConfig;
 
         public static Builder create() {
             return new Builder();
@@ -42,20 +41,14 @@ public class StatementProxyLogic {
         public StatementProxyLogic build() {
             StatementProxyLogic logic = new StatementProxyLogic();
             logic.stmt = this.stmt;
-            logic.interceptorHolder = this.interceptorHolder;
             logic.connectionInfo = this.connectionInfo;
             logic.proxyConnection = this.proxyConnection;
-            logic.proxyFactory = this.proxyFactory;
+            logic.proxyConfig = this.proxyConfig;
             return logic;
         }
 
         public Builder statement(Statement statement) {
             this.stmt = statement;
-            return this;
-        }
-
-        public Builder interceptorHolder(InterceptorHolder interceptorHolder) {
-            this.interceptorHolder = interceptorHolder;
             return this;
         }
 
@@ -69,8 +62,8 @@ public class StatementProxyLogic {
             return this;
         }
 
-        public Builder proxyFactory(JdbcProxyFactory proxyFactory) {
-            this.proxyFactory = proxyFactory;
+        public Builder proxyConfig(ProxyConfig proxyConfig) {
+            this.proxyConfig = proxyConfig;
             return this;
         }
     }
@@ -91,11 +84,10 @@ public class StatementProxyLogic {
     );
 
     private Statement stmt;
-    private InterceptorHolder interceptorHolder;
     private ConnectionInfo connectionInfo;
     private List<String> batchQueries = new ArrayList<String>();
     private Connection proxyConnection;
-    private JdbcProxyFactory proxyFactory;  // TODO: populate
+    private ProxyConfig proxyConfig;
 
 
     public Object invoke(Method method, Object[] args) throws Throwable {
@@ -120,6 +112,9 @@ public class StatementProxyLogic {
             // ProxyJdbcObject interface has method to return original object.
             return stmt;
         }
+
+        InterceptorHolder interceptorHolder = this.proxyConfig.getInterceptorHolder();
+        JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
         if (StatementMethodNames.JDBC4_METHODS.contains(methodName)) {
             final Class<?> clazz = (Class<?>) args[0];
@@ -197,7 +192,7 @@ public class StatementProxyLogic {
 
             // execInfo.setResult will have proxied ResultSet if enabled
             if (METHODS_TO_RETURN_RESULTSET.contains(methodName)) {
-                retVal = this.proxyFactory.createResultSet((ResultSet) retVal);
+                retVal = proxyFactory.createResultSet((ResultSet) retVal, this.proxyConfig);
             }
 
             execInfo.setResult(retVal);

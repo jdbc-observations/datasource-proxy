@@ -4,6 +4,7 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.InterceptorHolder;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.After;
@@ -103,11 +104,12 @@ public class CallableStatementQueryTransformerTest {
 
         QueryExecutionListener queryListener = mock(QueryExecutionListener.class);
         InterceptorHolder interceptorHolder = new InterceptorHolder(queryListener, transformer);
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().interceptorHolder(interceptorHolder).build();
 
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
 
-        return new JdkJdbcProxyFactory().createConnection(rawDatasource.getConnection(), interceptorHolder, connectionInfo);
+        return new JdkJdbcProxyFactory().createConnection(rawDatasource.getConnection(), connectionInfo, proxyConfig);
     }
 
     @Test

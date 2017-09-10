@@ -5,7 +5,6 @@ import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.junit.Test;
@@ -188,23 +187,28 @@ public class PreparedStatementProxyLogicMockTest {
     }
 
     private PreparedStatementProxyLogic getProxyLogic(PreparedStatement ps, String query, QueryExecutionListener listener, Connection proxyConnection) {
-        return getProxyLogic(ps, query, listener, proxyConnection, JdbcProxyFactory.DEFAULT);
+        return getProxyLogic(ps, query, listener, proxyConnection, false);
     }
 
     private PreparedStatementProxyLogic getProxyLogic(PreparedStatement ps, String query,
                                                       QueryExecutionListener listener, Connection proxyConnection,
-                                                      JdbcProxyFactory proxyFactory) {
+                                                      boolean createResultSetProxy) {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName(DS_NAME);
 
         InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
+
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .interceptorHolder(interceptorHolder)
+                .resultSetProxyLogicFactory(createResultSetProxy ? new SimpleResultSetProxyLogicFactory() : null)
+                .build();
+
         return PreparedStatementProxyLogic.Builder.create()
                 .preparedStatement(ps)
                 .query(query)
-                .interceptorHolder(interceptorHolder)
                 .connectionInfo(connectionInfo)
                 .proxyConnection(proxyConnection)
-                .proxyFactory(proxyFactory)
+                .proxyConfig(proxyConfig)
                 .build();
     }
 
@@ -555,9 +559,6 @@ public class PreparedStatementProxyLogicMockTest {
         };
 
 
-        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
-        proxyFactory.createResultSetProxy(true);
-
         ResultSetMetaData metaData = mock(ResultSetMetaData.class);
 
         ResultSet resultSet = mock(ResultSet.class);
@@ -566,7 +567,7 @@ public class PreparedStatementProxyLogicMockTest {
 
         PreparedStatement ps = mock(PreparedStatement.class);
         when(ps.executeQuery()).thenReturn(resultSet);
-        PreparedStatementProxyLogic logic = getProxyLogic(ps, "", listener, null, proxyFactory);
+        PreparedStatementProxyLogic logic = getProxyLogic(ps, "", listener, null, true);
 
 
         // "executeQuery" with no args

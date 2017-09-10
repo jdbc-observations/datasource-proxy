@@ -1,8 +1,8 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.proxy.InterceptorHolder;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
-import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.proxy.SimpleResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
 import org.junit.After;
@@ -12,13 +12,10 @@ import org.junit.Test;
 import javax.sql.DataSource;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -44,8 +41,9 @@ public class StatementQueryTest {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
 
-        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory().createResultSetProxy(true);
-        Statement proxySt = proxyFactory.createStatement(st, new InterceptorHolder(), new ConnectionInfo(), conn);
+        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().resultSetProxyLogicFactory(new SimpleResultSetProxyLogicFactory()).build();
+        Statement proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
 
         // verify executeQuery
         ResultSet result = proxySt.executeQuery("select * from emp;");

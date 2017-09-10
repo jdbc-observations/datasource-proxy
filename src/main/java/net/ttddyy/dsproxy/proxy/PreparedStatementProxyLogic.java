@@ -38,10 +38,9 @@ public class PreparedStatementProxyLogic {
     public static class Builder {
         private PreparedStatement ps;
         private String query;
-        private InterceptorHolder interceptorHolder;
         private ConnectionInfo connectionInfo;
         private Connection proxyConnection;
-        private JdbcProxyFactory proxyFactory;
+        private ProxyConfig proxyConfig;
 
         public static Builder create() {
             return new Builder();
@@ -51,10 +50,9 @@ public class PreparedStatementProxyLogic {
             PreparedStatementProxyLogic logic = new PreparedStatementProxyLogic();
             logic.ps = this.ps;
             logic.query = this.query;
-            logic.interceptorHolder = this.interceptorHolder;
             logic.connectionInfo = this.connectionInfo;
             logic.proxyConnection = this.proxyConnection;
-            logic.proxyFactory = this.proxyFactory;
+            logic.proxyConfig = this.proxyConfig;
             return logic;
         }
 
@@ -68,11 +66,6 @@ public class PreparedStatementProxyLogic {
             return this;
         }
 
-        public Builder interceptorHolder(InterceptorHolder interceptorHolder) {
-            this.interceptorHolder = interceptorHolder;
-            return this;
-        }
-
         public Builder connectionInfo(ConnectionInfo connectionInfo) {
             this.connectionInfo = connectionInfo;
             return this;
@@ -83,8 +76,8 @@ public class PreparedStatementProxyLogic {
             return this;
         }
 
-        public Builder proxyFactory(JdbcProxyFactory proxyFactory) {
-            this.proxyFactory = proxyFactory;
+        public Builder proxyConfig(ProxyConfig proxyConfig) {
+            this.proxyConfig = proxyConfig;
             return this;
         }
     }
@@ -96,20 +89,22 @@ public class PreparedStatementProxyLogic {
     // when same key(index/name) is used for parameter set operation, old value will be replaced. To implement that logic
     // using a map, so that putting same key will override the entry.
     private Map<ParameterKey, ParameterSetOperation> parameters = new LinkedHashMap<ParameterKey, ParameterSetOperation>();
-    private InterceptorHolder interceptorHolder;
 
     private List<Map<ParameterKey, ParameterSetOperation>> batchParameters = new ArrayList<Map<ParameterKey, ParameterSetOperation>>();
 
     private Connection proxyConnection;
-    private JdbcProxyFactory proxyFactory;
+    private ProxyConfig proxyConfig;
 
     public Object invoke(Method method, Object[] args) throws Throwable {
-
         final String methodName = method.getName();
 
         if (!StatementMethodNames.METHODS_TO_INTERCEPT.contains(methodName)) {
             return MethodUtils.proceedExecution(method, ps, args);
         }
+
+        InterceptorHolder interceptorHolder = this.proxyConfig.getInterceptorHolder();
+        JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
+
 
         // special treat for toString method
         if ("toString".equals(methodName)) {
@@ -169,7 +164,7 @@ public class PreparedStatementProxyLogic {
                 if ("addBatch".equals(methodName)) {
 
                     // TODO: check
-                    transformParameters(true, batchParameters.size());
+                    transformParameters(interceptorHolder, true, batchParameters.size());
 
                     // copy values
                     Map<ParameterKey, ParameterSetOperation> newParams = new LinkedHashMap<ParameterKey, ParameterSetOperation>(parameters);
@@ -206,7 +201,7 @@ public class PreparedStatementProxyLogic {
             isBatchExecution = true;
 
         } else if (StatementMethodNames.QUERY_EXEC_METHODS.contains(methodName)) {
-            transformParameters(false, 0);
+            transformParameters(interceptorHolder, false, 0);
             QueryInfo queryInfo = new QueryInfo(this.query);
             queryInfo.getParametersList().add(new ArrayList<ParameterSetOperation>(parameters.values()));
             queries.add(queryInfo);
@@ -227,7 +222,7 @@ public class PreparedStatementProxyLogic {
 
             // execInfo.setResult will have proxied ResultSet if enabled
             if (METHODS_TO_RETURN_RESULTSET.contains(methodName)) {
-                retVal = this.proxyFactory.createResultSet((ResultSet) retVal);
+                retVal = proxyFactory.createResultSet((ResultSet) retVal, this.proxyConfig);
             }
 
             execInfo.setResult(retVal);
@@ -245,7 +240,7 @@ public class PreparedStatementProxyLogic {
     }
 
 
-    private void transformParameters(boolean isBatch, int count) throws SQLException, IllegalAccessException, InvocationTargetException {
+    private void transformParameters(InterceptorHolder interceptorHolder, boolean isBatch, int count) throws SQLException, IllegalAccessException, InvocationTargetException {
 
         // transform parameters
         final ParameterReplacer parameterReplacer = new ParameterReplacer(this.parameters);
