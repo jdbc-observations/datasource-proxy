@@ -9,7 +9,7 @@ import java.util.Map;
  * @author Tadaya Tsuyukubo
  * @since 1.4.3
  */
-public class RepeatableReadResultSetProxyFactory implements ResultSetProxyLogicFactory {
+public class RepeatableReadResultSetProxyLogicFactory implements ResultSetProxyLogicFactory {
 
     @Override
     public ResultSetProxyLogic create(ResultSet resultSet, ProxyConfig proxyConfig) {

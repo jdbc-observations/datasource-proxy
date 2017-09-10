@@ -18,7 +18,7 @@ import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
-import net.ttddyy.dsproxy.proxy.RepeatableReadResultSetProxyFactory;
+import net.ttddyy.dsproxy.proxy.RepeatableReadResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
@@ -600,13 +600,13 @@ public class ProxyDataSourceBuilder {
     /**
      * Enable resultset proxy that allows repeatable read.
      *
-     * Equivalent to {@code proxyResultSet(new RepeatableReadResultSetProxyFactory())}
+     * Equivalent to {@code proxyResultSet(new RepeatableReadResultSetProxyLogicFactory())}
      *
      * @return builder
      * @since 1.4.3
      */
     public ProxyDataSourceBuilder repeatableReadResultSet() {
-        this.resultSetProxyLogicFactory = new RepeatableReadResultSetProxyFactory();
+        this.resultSetProxyLogicFactory = new RepeatableReadResultSetProxyLogicFactory();
         return this;
     }
 
