@@ -8,11 +8,12 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class RepeatableReadResultSetProxyLogicTest {
 
@@ -215,13 +216,8 @@ public class RepeatableReadResultSetProxyLogicTest {
     }
 
     private RepeatableReadResultSetProxyLogic createProxyLogic(ResultSet resultSet) {
-        Map<String, Integer> columnNameToIndex = ResultSetUtils.columnNameToIndex(resultSet);
-        int columnCount = ResultSetUtils.columnCount(resultSet);
-        return RepeatableReadResultSetProxyLogic.Builder.create()
-                .resultSet(resultSet)
-                .columnNameToIndex(columnNameToIndex)
-                .columnCount(columnCount)
-                .build();
+        RepeatableReadResultSetProxyLogicFactory factory = new RepeatableReadResultSetProxyLogicFactory();
+        return (RepeatableReadResultSetProxyLogic) factory.create(resultSet, null);
     }
 
     private void consumeResultSetAndCallBeforeFirst(ResultSet resultSet, RepeatableReadResultSetProxyLogic resultSetProxyLogic) throws Throwable {
