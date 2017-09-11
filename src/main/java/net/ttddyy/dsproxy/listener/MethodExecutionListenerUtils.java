@@ -17,13 +17,15 @@ public class MethodExecutionListenerUtils {
     public static Object invoke(MethodExecutionCallback callback, ProxyConfig proxyConfig,
                                 Object proxyTarget, Method method, Object[] args) throws Throwable {
 
+        MethodExecutionContext methodContext = MethodExecutionContext.Builder.create()
+                .target(proxyTarget)
+                .method(method)
+                .methodArgs(args)
+                .proxyConfig(proxyConfig)
+                .build();
+
         MethodExecutionListener methodExecutionListener = proxyConfig.getMethodListener();
-
-        // TODO: make executioncontext and pass it to listener
-        MethodExecutionContext methodContext = new MethodExecutionContext();
-
-
-        methodExecutionListener.beforeMethod(proxyTarget, method, args);
+        methodExecutionListener.beforeMethod(methodContext);
 
         final long beforeTime = System.currentTimeMillis();
         Object result = null;
@@ -35,7 +37,13 @@ public class MethodExecutionListenerUtils {
             throw throwable;
         } finally {
             final long afterTime = System.currentTimeMillis();
-            methodExecutionListener.afterMethod(proxyTarget, method, args, result, thrown, afterTime - beforeTime);
+            long elapsedTime = afterTime - beforeTime;
+
+            methodContext.setElapsedTime(elapsedTime);
+            methodContext.setResult(result);
+            methodContext.setThrown(thrown);
+
+            methodExecutionListener.afterMethod(methodContext);
         }
         return result;
     }

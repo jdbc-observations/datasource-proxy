@@ -1,7 +1,5 @@
 package net.ttddyy.dsproxy.listener;
 
-import java.lang.reflect.Method;
-
 /**
  * Callback listener for JDBC API method invocations.
  *
@@ -12,8 +10,8 @@ public interface MethodExecutionListener {
 
     MethodExecutionListener DEFAULT = new NoOpMethodExecutionListener();
 
-    void beforeMethod(Object target, Method method, Object[] args);
+    void beforeMethod(MethodExecutionContext executionContext);
 
-    void afterMethod(Object target, Method method, Object[] args, Object result, Throwable thrown, long elapsedTime);
+    void afterMethod(MethodExecutionContext executionContext);
 
 }

@@ -1,6 +1,5 @@
 package net.ttddyy.dsproxy.listener;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,16 +13,16 @@ public class CompositeMethodListener implements MethodExecutionListener {
     private List<MethodExecutionListener> listeners = new ArrayList<MethodExecutionListener>();
 
     @Override
-    public void beforeMethod(Object target, Method method, Object[] args) {
+    public void beforeMethod(MethodExecutionContext executionContext) {
         for (MethodExecutionListener listener : this.listeners) {
-            listener.beforeMethod(target, method, args);
+            listener.beforeMethod(executionContext);
         }
     }
 
     @Override
-    public void afterMethod(Object target, Method method, Object[] args, Object result, Throwable thrown, long elapsedTime) {
+    public void afterMethod(MethodExecutionContext executionContext) {
         for (MethodExecutionListener listener : this.listeners) {
-            listener.afterMethod(target, method, args, result, thrown, elapsedTime);
+            listener.afterMethod(executionContext);
         }
     }
 
