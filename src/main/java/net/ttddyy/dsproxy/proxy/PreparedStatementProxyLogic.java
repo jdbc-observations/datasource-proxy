@@ -14,11 +14,14 @@ import java.lang.reflect.Method;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static net.ttddyy.dsproxy.proxy.StatementMethodNames.METHODS_TO_RETURN_RESULTSET;
 
 /**
  * Shared logic for {@link PreparedStatement} and {@link CallableStatement} invocation.
@@ -36,9 +39,9 @@ public class PreparedStatementProxyLogic {
     public static class Builder {
         private PreparedStatement ps;
         private String query;
-        private InterceptorHolder interceptorHolder;
         private ConnectionInfo connectionInfo;
         private Connection proxyConnection;
+        private ProxyConfig proxyConfig;
 
         public static Builder create() {
             return new Builder();
@@ -48,9 +51,9 @@ public class PreparedStatementProxyLogic {
             PreparedStatementProxyLogic logic = new PreparedStatementProxyLogic();
             logic.ps = this.ps;
             logic.query = this.query;
-            logic.interceptorHolder = this.interceptorHolder;
             logic.connectionInfo = this.connectionInfo;
             logic.proxyConnection = this.proxyConnection;
+            logic.proxyConfig = this.proxyConfig;
             return logic;
         }
 
@@ -64,11 +67,6 @@ public class PreparedStatementProxyLogic {
             return this;
         }
 
-        public Builder interceptorHolder(InterceptorHolder interceptorHolder) {
-            this.interceptorHolder = interceptorHolder;
-            return this;
-        }
-
         public Builder connectionInfo(ConnectionInfo connectionInfo) {
             this.connectionInfo = connectionInfo;
             return this;
@@ -76,6 +74,11 @@ public class PreparedStatementProxyLogic {
 
         public Builder proxyConnection(Connection proxyConnection) {
             this.proxyConnection = proxyConnection;
+            return this;
+        }
+
+        public Builder proxyConfig(ProxyConfig proxyConfig) {
+            this.proxyConfig = proxyConfig;
             return this;
         }
     }
@@ -87,11 +90,11 @@ public class PreparedStatementProxyLogic {
     // when same key(index/name) is used for parameter set operation, old value will be replaced. To implement that logic
     // using a map, so that putting same key will override the entry.
     private Map<ParameterKey, ParameterSetOperation> parameters = new LinkedHashMap<ParameterKey, ParameterSetOperation>();
-    private InterceptorHolder interceptorHolder;
 
     private List<Map<ParameterKey, ParameterSetOperation>> batchParameters = new ArrayList<Map<ParameterKey, ParameterSetOperation>>();
 
     private Connection proxyConnection;
+    private ProxyConfig proxyConfig;
 
     public Object invoke(Method method, Object[] args) throws Throwable {
 
@@ -100,18 +103,22 @@ public class PreparedStatementProxyLogic {
             public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
                 return performQueryExecutionListener(method, args);
             }
-        }, this.interceptorHolder, this.ps, method, args);
+        }, this.proxyConfig, this.ps, method, args);
 
     }
 
     private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {
-
 
         final String methodName = method.getName();
 
         if (!StatementMethodNames.METHODS_TO_INTERCEPT.contains(methodName)) {
             return MethodUtils.proceedExecution(method, ps, args);
         }
+
+        ParameterTransformer parameterTransformer = this.proxyConfig.getParameterTransformer();
+        QueryExecutionListener queryListener = this.proxyConfig.getQueryListener();
+        JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
+
 
         // special treat for toString method
         if ("toString".equals(methodName)) {
@@ -171,7 +178,7 @@ public class PreparedStatementProxyLogic {
                 if ("addBatch".equals(methodName)) {
 
                     // TODO: check
-                    transformParameters(true, batchParameters.size());
+                    transformParameters(parameterTransformer, true, batchParameters.size());
 
                     // copy values
                     Map<ParameterKey, ParameterSetOperation> newParams = new LinkedHashMap<ParameterKey, ParameterSetOperation>(parameters);
@@ -208,7 +215,7 @@ public class PreparedStatementProxyLogic {
             isBatchExecution = true;
 
         } else if (StatementMethodNames.QUERY_EXEC_METHODS.contains(methodName)) {
-            transformParameters(false, 0);
+            transformParameters(parameterTransformer, false, 0);
             QueryInfo queryInfo = new QueryInfo(this.query);
             queryInfo.getParametersList().add(new ArrayList<ParameterSetOperation>(parameters.values()));
             queries.add(queryInfo);
@@ -216,8 +223,7 @@ public class PreparedStatementProxyLogic {
 
         final ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo, this.ps, isBatchExecution, batchSize, method, args);
 
-        final QueryExecutionListener listener = interceptorHolder.getListener();
-        listener.beforeQuery(execInfo, queries);
+        queryListener.beforeQuery(execInfo, queries);
 
         // Invoke method on original Statement.
         try {
@@ -226,6 +232,11 @@ public class PreparedStatementProxyLogic {
             Object retVal = method.invoke(ps, args);
 
             final long afterTime = System.currentTimeMillis();
+
+            // execInfo.setResult will have proxied ResultSet if enabled
+            if (METHODS_TO_RETURN_RESULTSET.contains(methodName)) {
+                retVal = proxyFactory.createResultSet((ResultSet) retVal, this.proxyConfig);
+            }
 
             execInfo.setResult(retVal);
             execInfo.setElapsedTime(afterTime - beforeTime);
@@ -237,17 +248,16 @@ public class PreparedStatementProxyLogic {
             execInfo.setSuccess(false);
             throw ex.getTargetException();
         } finally {
-            listener.afterQuery(execInfo, queries);
+            queryListener.afterQuery(execInfo, queries);
         }
     }
 
 
-    private void transformParameters(boolean isBatch, int count) throws SQLException, IllegalAccessException, InvocationTargetException {
+    private void transformParameters(ParameterTransformer parameterTransformer, boolean isBatch, int count) throws SQLException, IllegalAccessException, InvocationTargetException {
 
         // transform parameters
         final ParameterReplacer parameterReplacer = new ParameterReplacer(this.parameters);
         final TransformInfo transformInfo = new TransformInfo(ps.getClass(), this.connectionInfo.getDataSourceName(), query, isBatch, count);
-        final ParameterTransformer parameterTransformer = interceptorHolder.getParameterTransformer();
         parameterTransformer.transformParameters(parameterReplacer, transformInfo);
 
         if (parameterReplacer.isModified()) {

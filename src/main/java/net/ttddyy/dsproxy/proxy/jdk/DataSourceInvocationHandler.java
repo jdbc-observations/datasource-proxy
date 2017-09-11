@@ -1,9 +1,7 @@
 package net.ttddyy.dsproxy.proxy.jdk;
 
-import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.proxy.DataSourceProxyLogic;
-import net.ttddyy.dsproxy.proxy.InterceptorHolder;
-import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
 
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
@@ -18,9 +16,8 @@ public class DataSourceInvocationHandler implements InvocationHandler {
 
     private DataSourceProxyLogic delegate;
 
-    public DataSourceInvocationHandler(DataSource dataSource, InterceptorHolder interceptorHolder, String dataSourceName,
-                                       JdbcProxyFactory jdbcProxyFactory, ConnectionIdManager connectionIdManager) {
-        delegate = new DataSourceProxyLogic(dataSource, interceptorHolder, dataSourceName, jdbcProxyFactory, connectionIdManager);
+    public DataSourceInvocationHandler(DataSource dataSource, ProxyConfig proxyConfig) {
+        delegate = new DataSourceProxyLogic(dataSource, proxyConfig);
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

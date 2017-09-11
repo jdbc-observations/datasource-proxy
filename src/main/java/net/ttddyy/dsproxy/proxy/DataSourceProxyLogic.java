@@ -26,18 +26,11 @@ public class DataSourceProxyLogic {
     );
 
     private DataSource dataSource;
-    private InterceptorHolder interceptorHolder;
-    private String dataSourceName;
-    private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
-    private ConnectionIdManager connectionIdManager;
+    private ProxyConfig proxyConfig;
 
-    public DataSourceProxyLogic(DataSource dataSource, InterceptorHolder interceptorHolder, String dataSourceName,
-                                JdbcProxyFactory jdbcProxyFactory, ConnectionIdManager connectionIdManager) {
+    public DataSourceProxyLogic(DataSource dataSource, ProxyConfig proxyConfig) {
         this.dataSource = dataSource;
-        this.interceptorHolder = interceptorHolder;
-        this.dataSourceName = dataSourceName;
-        this.jdbcProxyFactory = jdbcProxyFactory;
-        this.connectionIdManager = connectionIdManager;
+        this.proxyConfig = proxyConfig;
     }
 
     public Object invoke(Method method, Object[] args) throws Throwable {
@@ -47,11 +40,15 @@ public class DataSourceProxyLogic {
             public Object execute(Object proxy, Method method, Object[] args) throws Throwable {
                 return performQueryExecutionListener(method, args);
             }
-        }, this.interceptorHolder, this.dataSource, method, args);
+        }, this.proxyConfig, this.dataSource, method, args);
 
     }
 
     private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {
+
+        String dataSourceName = this.proxyConfig.getDataSourceName();
+        JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
+        ConnectionIdManager connectionIdManager = this.proxyConfig.getConnectionIdManager();
 
         final String methodName = method.getName();
 
@@ -84,33 +81,17 @@ public class DataSourceProxyLogic {
 
             if ("getConnection".equals(methodName)) {
                 Connection conn = (Connection) retVal;
-                long connId = this.connectionIdManager.getId(conn);
+                long connId = connectionIdManager.getId(conn);
                 ConnectionInfo connectionInfo = new ConnectionInfo();
                 connectionInfo.setConnectionId(connId);
-                connectionInfo.setDataSourceName(this.dataSourceName);
+                connectionInfo.setDataSourceName(dataSourceName);
 
-                return jdbcProxyFactory.createConnection((Connection) retVal, interceptorHolder, connectionInfo);
+                return jdbcProxyFactory.createConnection((Connection) retVal, connectionInfo, this.proxyConfig);
             }
             return retVal;
         } catch (InvocationTargetException ex) {
             throw ex.getTargetException();
         }
-    }
-
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    public void setInterceptorHolder(InterceptorHolder interceptorHolder) {
-        this.interceptorHolder = interceptorHolder;
-    }
-
-    public void setJdbcProxyFactory(JdbcProxyFactory jdbcProxyFactory) {
-        this.jdbcProxyFactory = jdbcProxyFactory;
-    }
-
-    public void setDataSourceName(String dataSourceName) {
-        this.dataSourceName = dataSourceName;
     }
 
 }

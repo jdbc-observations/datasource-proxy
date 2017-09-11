@@ -3,11 +3,10 @@ package net.ttddyy.dsproxy.support;
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.DataSourceProxyException;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.proxy.InterceptorHolder;
-import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
-import net.ttddyy.dsproxy.transform.QueryTransformer;
+import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
 import javax.sql.DataSource;
@@ -41,10 +40,7 @@ public class ProxyDataSource implements DataSource, Closeable {
 
 
     private DataSource dataSource;
-    private InterceptorHolder interceptorHolder = new InterceptorHolder();  // default
-    private String dataSourceName = "";
-    private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
-    private ConnectionIdManager connectionIdManager = ConnectionIdManager.DEFAULT;
+    private ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();  // default
 
     public ProxyDataSource() {
     }
@@ -75,19 +71,23 @@ public class ProxyDataSource implements DataSource, Closeable {
     }
 
     private Connection getConnectionProxy(final Connection conn, Method method, Object[] args) throws SQLException {
-        long connectionId = this.connectionIdManager.getId(conn);
+        String dataSourceName = this.proxyConfig.getDataSourceName();
+        ConnectionIdManager connectionIdManager = this.proxyConfig.getConnectionIdManager();
+        final JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
+
+        long connectionId = connectionIdManager.getId(conn);
 
         final ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setConnectionId(connectionId);
-        connectionInfo.setDataSourceName(this.dataSourceName);
+        connectionInfo.setDataSourceName(dataSourceName);
 
         try {
             return (Connection) MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
                 @Override
                 public Object execute(Object proxy, Method method, Object[] args) throws Throwable {
-                    return jdbcProxyFactory.createConnection(conn, interceptorHolder, connectionInfo);
+                    return jdbcProxyFactory.createConnection(conn, connectionInfo, ProxyDataSource.this.proxyConfig);
                 }
-            }, this.interceptorHolder, conn, method, args);
+            }, this.proxyConfig, conn, method, args);
         } catch (Throwable throwable) {
             if (throwable instanceof SQLException) {
                 throw (SQLException) throwable;
@@ -123,63 +123,10 @@ public class ProxyDataSource implements DataSource, Closeable {
         return dataSource.isWrapperFor(iface);
     }
 
-    /**
-     * Set {@link QueryExecutionListener} with default(NoOp) {@link QueryTransformer}.
-     *
-     * @param listener a lister
-     * @deprecated
-     */
-    public void setListener(QueryExecutionListener listener) {
-        this.interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
-    }
-
-    public void addListener(QueryExecutionListener listener) {
-        this.interceptorHolder.addListener(listener);
-    }
-
-    public void setDataSourceName(String dataSourceName) {
-        this.dataSourceName = dataSourceName;
-    }
-
-    public String getDataSourceName() {
-        return dataSourceName;
-    }
-
-    //    @Override
     @IgnoreJRERequirement
+    @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         return dataSource.getParentLogger();  // JDBC4.1 (jdk7+)
-    }
-
-    public JdbcProxyFactory getJdbcProxyFactory() {
-        return jdbcProxyFactory;
-    }
-
-    public void setJdbcProxyFactory(JdbcProxyFactory jdbcProxyFactory) {
-        this.jdbcProxyFactory = jdbcProxyFactory;
-    }
-
-    public InterceptorHolder getInterceptorHolder() {
-        return interceptorHolder;
-    }
-
-    public void setInterceptorHolder(InterceptorHolder interceptorHolder) {
-        this.interceptorHolder = interceptorHolder;
-    }
-
-    /**
-     * @since 1.4.2
-     */
-    public ConnectionIdManager getConnectionIdManager() {
-        return connectionIdManager;
-    }
-
-
-    /**
-     * @since 1.4.2
-     */
-    public void setConnectionIdManager(ConnectionIdManager connectionIdManager) {
-        this.connectionIdManager = connectionIdManager;
     }
 
     @Override
@@ -188,4 +135,59 @@ public class ProxyDataSource implements DataSource, Closeable {
             ((Closeable) dataSource).close();
         }
     }
+
+    /**
+     * @deprecated
+     */
+    public void setListener(QueryExecutionListener listener) {
+        this.proxyConfig = ProxyConfig.Builder.from(this.proxyConfig)
+                .queryListener(listener)
+                .build();
+    }
+
+    public void addListener(QueryExecutionListener listener) {
+        this.proxyConfig.getQueryListener().addListener(listener);
+    }
+
+    public void setDataSourceName(String dataSourceName) {
+        this.proxyConfig = ProxyConfig.Builder.from(this.proxyConfig)
+                .dataSourceName(dataSourceName)
+                .build();
+    }
+
+    public String getDataSourceName() {
+        return this.proxyConfig.getDataSourceName();
+    }
+
+    /**
+     * @since 1.4.2
+     */
+    public ConnectionIdManager getConnectionIdManager() {
+        return this.proxyConfig.getConnectionIdManager();
+    }
+
+
+    /**
+     * @since 1.4.2
+     */
+    public void setConnectionIdManager(ConnectionIdManager connectionIdManager) {
+        this.proxyConfig = ProxyConfig.Builder.from(this.proxyConfig)
+                .connectionIdManager(connectionIdManager)
+                .build();
+    }
+
+    /**
+     * @since 1.4.3
+     */
+    public ProxyConfig getProxyConfig() {
+        return proxyConfig;
+    }
+
+    /**
+     * @since 1.4.3
+     */
+    public void setProxyConfig(ProxyConfig proxyConfig) {
+        this.proxyConfig = proxyConfig;
+    }
+
 }

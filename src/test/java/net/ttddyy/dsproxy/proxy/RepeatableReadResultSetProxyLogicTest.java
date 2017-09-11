@@ -11,9 +11,11 @@ import java.sql.Timestamp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public class ResultSetProxyLogicTest {
+public class RepeatableReadResultSetProxyLogicTest {
 
     private static final int NUMBER_OF_COLUMNS = 3;
     private static final String COLUMN_1_LABEL = "FIRST";
@@ -26,7 +28,7 @@ public class ResultSetProxyLogicTest {
     @Test
     public void unsupportedMethodsThrowUnsupportedOperationException() throws Throwable {
         ResultSet resultSet = exampleResultSet();
-        final ResultSetProxyLogic resultSetProxyLogic = ResultSetProxyLogic.resultSetProxyLogic(resultSet);
+        final RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
 
         final Method getCursorName = ResultSet.class.getMethod("getCursorName");
 
@@ -41,7 +43,7 @@ public class ResultSetProxyLogicTest {
     @Test
     public void getTargetReturnsTheResultSetFromTheTarget() throws Throwable {
         ResultSet resultSet = exampleResultSet();
-        ResultSetProxyLogic resultSetProxyLogic = ResultSetProxyLogic.resultSetProxyLogic(resultSet);
+        RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
 
         Method getTarget = ProxyJdbcObject.class.getMethod("getTarget");
 
@@ -53,7 +55,7 @@ public class ResultSetProxyLogicTest {
     @Test
     public void getResultSetMetaDataReturnsTheResultSetMetaDataFromTheTarget() throws Throwable {
         ResultSet resultSet = exampleResultSet();
-        ResultSetProxyLogic resultSetProxyLogic = ResultSetProxyLogic.resultSetProxyLogic(resultSet);
+        RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
 
         Method getMetaData = ResultSet.class.getMethod("getMetaData");
 
@@ -65,7 +67,7 @@ public class ResultSetProxyLogicTest {
     @Test
     public void closeCallsCloseOnTheTarget() throws Throwable {
         ResultSet resultSet = exampleResultSet();
-        ResultSetProxyLogic resultSetProxyLogic = ResultSetProxyLogic.resultSetProxyLogic(resultSet);
+        RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
 
         invokeClose(resultSetProxyLogic);
 
@@ -75,7 +77,7 @@ public class ResultSetProxyLogicTest {
     @Test
     public void getColumnOnResultSetThatHasBeenConsumedTwiceThrowsException() throws Throwable {
         ResultSet resultSet = exampleResultSet();
-        final ResultSetProxyLogic resultSetProxyLogic = ResultSetProxyLogic.resultSetProxyLogic(resultSet);
+        final RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
 
         consumeResultSetAndCallBeforeFirst(resultSet, resultSetProxyLogic);
         consumeResultSet(resultSet, resultSetProxyLogic);
@@ -83,7 +85,7 @@ public class ResultSetProxyLogicTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                ResultSetProxyLogicTest.this.invokeGetString(resultSetProxyLogic, 1);
+                RepeatableReadResultSetProxyLogicTest.this.invokeGetString(resultSetProxyLogic, 1);
             }
         }).isInstanceOf(SQLException.class).hasMessage("Result set exhausted. There were 2 result(s) only");
     }
@@ -91,7 +93,7 @@ public class ResultSetProxyLogicTest {
     @Test
     public void getColumnOnClosedResultSetThatHasBeenConsumedOnceThrowsException() throws Throwable {
         ResultSet resultSet = exampleResultSet();
-        final ResultSetProxyLogic resultSetProxyLogic = ResultSetProxyLogic.resultSetProxyLogic(resultSet);
+        final RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
 
         consumeResultSetAndCallBeforeFirst(resultSet, resultSetProxyLogic);
         invokeClose(resultSetProxyLogic);
@@ -99,7 +101,7 @@ public class ResultSetProxyLogicTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                ResultSetProxyLogicTest.this.invokeGetString(resultSetProxyLogic, 1);
+                RepeatableReadResultSetProxyLogicTest.this.invokeGetString(resultSetProxyLogic, 1);
             }
         }).isInstanceOf(SQLException.class).hasMessage("Already closed");
     }
@@ -107,7 +109,7 @@ public class ResultSetProxyLogicTest {
     @Test
     public void nextOnUnconsumedResultSetThatHasMoreResultsDelegatesToTheTarget() throws Throwable {
         ResultSet resultSet = exampleResultSet();
-        ResultSetProxyLogic resultSetProxyLogic = ResultSetProxyLogic.resultSetProxyLogic(resultSet);
+        RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
         when(resultSet.next()).thenReturn(true);
 
         boolean result = invokeNext(resultSetProxyLogic);
@@ -118,7 +120,7 @@ public class ResultSetProxyLogicTest {
     @Test
     public void nextOnUnconsumedResultThatHasNoMoreResultsSetDelegatesToTheTarget() throws Throwable {
         ResultSet resultSet = exampleResultSet();
-        ResultSetProxyLogic resultSetProxyLogic = ResultSetProxyLogic.resultSetProxyLogic(resultSet);
+        RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
         when(resultSet.next()).thenReturn(false);
 
         boolean result = invokeNext(resultSetProxyLogic);
@@ -129,7 +131,7 @@ public class ResultSetProxyLogicTest {
     @Test
     public void getColumnByIndexOnUnconsumedResultSetThatHasMoreResultsDelegatesToTheTarget() throws Throwable {
         ResultSet resultSet = exampleResultSet();
-        ResultSetProxyLogic resultSetProxyLogic = ResultSetProxyLogic.resultSetProxyLogic(resultSet);
+        RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
         when(resultSet.next()).thenReturn(true);
         invokeNext(resultSetProxyLogic);
 
@@ -145,7 +147,7 @@ public class ResultSetProxyLogicTest {
     @Test
     public void getColumnByLabelOnUnconsumedResultSetThatHasMoreResultsDelegatesToTheTarget() throws Throwable {
         ResultSet resultSet = exampleResultSet();
-        ResultSetProxyLogic resultSetProxyLogic = ResultSetProxyLogic.resultSetProxyLogic(resultSet);
+        RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
         when(resultSet.next()).thenReturn(true);
         invokeNext(resultSetProxyLogic);
 
@@ -159,14 +161,14 @@ public class ResultSetProxyLogicTest {
     @Test
     public void getColumnByIndexOnConsumedResultSetBeforeCallingNextThrowsSQLException() throws Throwable {
         ResultSet resultSet = exampleResultSet();
-        final ResultSetProxyLogic resultSetProxyLogic = ResultSetProxyLogic.resultSetProxyLogic(resultSet);
+        final RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
 
         consumeResultSetAndCallBeforeFirst(resultSet, resultSetProxyLogic);
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                ResultSetProxyLogicTest.this.invokeGetString(resultSetProxyLogic, 1);
+                RepeatableReadResultSetProxyLogicTest.this.invokeGetString(resultSetProxyLogic, 1);
             }
         }).isInstanceOf(SQLException.class).hasMessage("Result set not advanced. Call next before any get method!");
     }
@@ -174,7 +176,7 @@ public class ResultSetProxyLogicTest {
     @Test
     public void getColumnByIndexOnConsumedResultSetThatHasMoreResultsReturnsTheResultThatTheTargetDidTheFirstTime() throws Throwable {
         ResultSet resultSet = exampleResultSet();
-        ResultSetProxyLogic resultSetProxyLogic = ResultSetProxyLogic.resultSetProxyLogic(resultSet);
+        RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
 
         consumeResultSetAndCallBeforeFirst(resultSet, resultSetProxyLogic);
         invokeNext(resultSetProxyLogic);
@@ -187,7 +189,7 @@ public class ResultSetProxyLogicTest {
     @Test
     public void getColumnByLabelOnConsumedResultSetThatHasMoreResultsReturnsTheResultThatTheTargetDidTheFirstTime() throws Throwable {
         ResultSet resultSet = exampleResultSet();
-        ResultSetProxyLogic resultSetProxyLogic = ResultSetProxyLogic.resultSetProxyLogic(resultSet);
+        RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
 
         consumeResultSetAndCallBeforeFirst(resultSet, resultSetProxyLogic);
         invokeNext(resultSetProxyLogic);
@@ -200,7 +202,7 @@ public class ResultSetProxyLogicTest {
     @Test
     public void getColumnByLabelOnConsumedResultSetWithUnknownLabelThrowsIllegalArgumentException() throws Throwable {
         ResultSet resultSet = exampleResultSet();
-        final ResultSetProxyLogic resultSetProxyLogic = ResultSetProxyLogic.resultSetProxyLogic(resultSet);
+        final RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
 
         consumeResultSetAndCallBeforeFirst(resultSet, resultSetProxyLogic);
         invokeNext(resultSetProxyLogic);
@@ -213,12 +215,17 @@ public class ResultSetProxyLogicTest {
         }).isInstanceOf(SQLException.class).hasMessage("Unknown column name 'bad'");
     }
 
-    private void consumeResultSetAndCallBeforeFirst(ResultSet resultSet, ResultSetProxyLogic resultSetProxyLogic) throws Throwable {
+    private RepeatableReadResultSetProxyLogic createProxyLogic(ResultSet resultSet) {
+        RepeatableReadResultSetProxyLogicFactory factory = new RepeatableReadResultSetProxyLogicFactory();
+        return (RepeatableReadResultSetProxyLogic) factory.create(resultSet, null);
+    }
+
+    private void consumeResultSetAndCallBeforeFirst(ResultSet resultSet, RepeatableReadResultSetProxyLogic resultSetProxyLogic) throws Throwable {
         consumeResultSet(resultSet, resultSetProxyLogic);
         invokeBeforeFirst(resultSetProxyLogic);
     }
 
-    private void consumeResultSet(ResultSet resultSet, ResultSetProxyLogic resultSetProxyLogic) throws Throwable {
+    private void consumeResultSet(ResultSet resultSet, RepeatableReadResultSetProxyLogic resultSetProxyLogic) throws Throwable {
         when(resultSet.next()).thenReturn(true, true, false);
 
         when(resultSet.getString(1)).thenReturn(COLUMN_1_VALUE);
@@ -242,47 +249,47 @@ public class ResultSetProxyLogicTest {
         assertThat(invokeNext(resultSetProxyLogic)).isFalse();
     }
 
-    private void invokeClose(ResultSetProxyLogic resultSetProxyLogic) throws Throwable {
+    private void invokeClose(RepeatableReadResultSetProxyLogic resultSetProxyLogic) throws Throwable {
         Method next = ResultSet.class.getMethod("close");
         resultSetProxyLogic.invoke(next, null);
     }
 
-    private void invokeBeforeFirst(ResultSetProxyLogic resultSetProxyLogic) throws Throwable {
+    private void invokeBeforeFirst(RepeatableReadResultSetProxyLogic resultSetProxyLogic) throws Throwable {
         Method beforeFirst = ResultSet.class.getMethod("beforeFirst");
         resultSetProxyLogic.invoke(beforeFirst, null);
     }
 
-    private boolean invokeNext(ResultSetProxyLogic resultSetProxyLogic) throws Throwable {
+    private boolean invokeNext(RepeatableReadResultSetProxyLogic resultSetProxyLogic) throws Throwable {
         Method next = ResultSet.class.getMethod("next");
         return (Boolean) resultSetProxyLogic.invoke(next, null);
     }
 
-    private String invokeGetString(ResultSetProxyLogic resultSetProxyLogic, int columnIndex) throws Throwable {
+    private String invokeGetString(RepeatableReadResultSetProxyLogic resultSetProxyLogic, int columnIndex) throws Throwable {
         Method getString = ResultSet.class.getMethod("getString", int.class);
         return (String) resultSetProxyLogic.invoke(getString, new Object[]{columnIndex});
     }
 
-    private int invokeGetInt(ResultSetProxyLogic resultSetProxyLogic, int columnIndex) throws Throwable {
+    private int invokeGetInt(RepeatableReadResultSetProxyLogic resultSetProxyLogic, int columnIndex) throws Throwable {
         Method getInt = ResultSet.class.getMethod("getInt", int.class);
         return (Integer) resultSetProxyLogic.invoke(getInt, new Object[]{columnIndex});
     }
 
-    private Timestamp invokeGetTimestamp(ResultSetProxyLogic resultSetProxyLogic, int columnIndex) throws Throwable {
+    private Timestamp invokeGetTimestamp(RepeatableReadResultSetProxyLogic resultSetProxyLogic, int columnIndex) throws Throwable {
         Method getTimestamp = ResultSet.class.getMethod("getTimestamp", int.class);
         return (Timestamp) resultSetProxyLogic.invoke(getTimestamp, new Object[]{columnIndex});
     }
 
-    private String invokeGetString(ResultSetProxyLogic resultSetProxyLogic, String columnLabel) throws Throwable {
+    private String invokeGetString(RepeatableReadResultSetProxyLogic resultSetProxyLogic, String columnLabel) throws Throwable {
         Method getString = ResultSet.class.getMethod("getString", String.class);
         return (String) resultSetProxyLogic.invoke(getString, new Object[]{columnLabel});
     }
 
-    private int invokeGetInt(ResultSetProxyLogic resultSetProxyLogic, String columnLabel) throws Throwable {
+    private int invokeGetInt(RepeatableReadResultSetProxyLogic resultSetProxyLogic, String columnLabel) throws Throwable {
         Method getInt = ResultSet.class.getMethod("getInt", String.class);
         return (Integer) resultSetProxyLogic.invoke(getInt, new Object[]{columnLabel});
     }
 
-    private Timestamp invokeGetTimestamp(ResultSetProxyLogic resultSetProxyLogic, String columnLabel) throws Throwable {
+    private Timestamp invokeGetTimestamp(RepeatableReadResultSetProxyLogic resultSetProxyLogic, String columnLabel) throws Throwable {
         Method getTimestamp = ResultSet.class.getMethod("getTimestamp", String.class);
         return (Timestamp) resultSetProxyLogic.invoke(getTimestamp, new Object[]{columnLabel});
     }
@@ -307,7 +314,7 @@ public class ResultSetProxyLogicTest {
     public void testToString() throws Throwable {
 
         ResultSet rs = exampleResultSet();
-        ResultSetProxyLogic logic = ResultSetProxyLogic.resultSetProxyLogic(rs);
+        RepeatableReadResultSetProxyLogic logic = createProxyLogic(rs);
 
         when(rs.toString()).thenReturn("my rs");
 
@@ -320,7 +327,7 @@ public class ResultSetProxyLogicTest {
     @Test
     public void testHashCode() throws Throwable {
         ResultSet rs = exampleResultSet();
-        ResultSetProxyLogic logic = ResultSetProxyLogic.resultSetProxyLogic(rs);
+        RepeatableReadResultSetProxyLogic logic = createProxyLogic(rs);
 
         Method method = Object.class.getMethod("hashCode");
         Object result = logic.invoke(method, null);
@@ -331,7 +338,7 @@ public class ResultSetProxyLogicTest {
     @Test
     public void testEquals() throws Throwable {
         ResultSet rs = exampleResultSet();
-        ResultSetProxyLogic logic = ResultSetProxyLogic.resultSetProxyLogic(rs);
+        RepeatableReadResultSetProxyLogic logic = createProxyLogic(rs);
 
         Method method = Object.class.getMethod("equals", Object.class);
 

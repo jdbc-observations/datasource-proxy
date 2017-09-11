@@ -1,9 +1,7 @@
 package net.ttddyy.dsproxy.transform;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.proxy.InterceptorHolder;
-import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler;
 import org.junit.Before;
@@ -60,9 +58,9 @@ public class TransformInfoForQueryTest {
 
         Statement stmt = mock(Statement.class);
         QueryTransformer queryTransformer = getMockQueryTransformer(1);
-        InterceptorHolder interceptors = new InterceptorHolder(QueryExecutionListener.DEFAULT, queryTransformer);
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().queryTransformer(queryTransformer).build();
 
-        StatementInvocationHandler handler = new StatementInvocationHandler(stmt, interceptors, getConnectionInfo(), null);
+        StatementInvocationHandler handler = new StatementInvocationHandler(stmt, getConnectionInfo(), null, proxyConfig);
 
         Method method = Statement.class.getMethod("execute", String.class);
         Object[] args = new Object[]{"my-query"};
@@ -85,9 +83,9 @@ public class TransformInfoForQueryTest {
 
         Statement stmt = mock(Statement.class);
         QueryTransformer queryTransformer = getMockQueryTransformer(2);
-        InterceptorHolder interceptors = new InterceptorHolder(QueryExecutionListener.DEFAULT, queryTransformer);
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().queryTransformer(queryTransformer).build();
 
-        StatementInvocationHandler handler = new StatementInvocationHandler(stmt, interceptors, getConnectionInfo(), null);
+        StatementInvocationHandler handler = new StatementInvocationHandler(stmt, getConnectionInfo(), null, proxyConfig);
 
         Method method = Statement.class.getMethod("addBatch", String.class);
 
@@ -120,9 +118,9 @@ public class TransformInfoForQueryTest {
 
         Connection conn = mock(Connection.class);
         QueryTransformer queryTransformer = getMockQueryTransformer(1);
-        InterceptorHolder interceptors = new InterceptorHolder(QueryExecutionListener.DEFAULT, queryTransformer);
-        JdbcProxyFactory proxyFactory = mock(JdbcProxyFactory.class);
-        ConnectionInvocationHandler handler = new ConnectionInvocationHandler(conn, interceptors, getConnectionInfo(), proxyFactory);
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().queryTransformer(queryTransformer).build();
+
+        ConnectionInvocationHandler handler = new ConnectionInvocationHandler(conn, getConnectionInfo(), proxyConfig);
 
         Method method = Connection.class.getMethod("prepareStatement", String.class);
 
@@ -143,9 +141,9 @@ public class TransformInfoForQueryTest {
 
         Connection conn = mock(Connection.class);
         QueryTransformer queryTransformer = getMockQueryTransformer(1);
-        InterceptorHolder interceptors = new InterceptorHolder(QueryExecutionListener.DEFAULT, queryTransformer);
-        JdbcProxyFactory proxyFactory = mock(JdbcProxyFactory.class);
-        ConnectionInvocationHandler handler = new ConnectionInvocationHandler(conn, interceptors, getConnectionInfo(), proxyFactory);
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().queryTransformer(queryTransformer).build();
+
+        ConnectionInvocationHandler handler = new ConnectionInvocationHandler(conn, getConnectionInfo(), proxyConfig);
 
         Method method = Connection.class.getMethod("prepareCall", String.class);
 

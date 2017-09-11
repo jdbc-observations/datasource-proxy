@@ -3,14 +3,16 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.transform.QueryTransformer;
+import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.Array;
@@ -20,6 +22,8 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Ref;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -27,6 +31,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.aMapWithSize;
@@ -38,6 +43,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -180,16 +186,26 @@ public class PreparedStatementProxyLogicMockTest {
     }
 
     private PreparedStatementProxyLogic getProxyLogic(PreparedStatement ps, String query, QueryExecutionListener listener, Connection proxyConnection) {
+        return getProxyLogic(ps, query, listener, proxyConnection, false);
+    }
+
+    private PreparedStatementProxyLogic getProxyLogic(PreparedStatement ps, String query,
+                                                      QueryExecutionListener listener, Connection proxyConnection,
+                                                      boolean createResultSetProxy) {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName(DS_NAME);
 
-        InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(listener)
+                .resultSetProxyLogicFactory(createResultSetProxy ? new SimpleResultSetProxyLogicFactory() : null)
+                .build();
+
         return PreparedStatementProxyLogic.Builder.create()
                 .preparedStatement(ps)
                 .query(query)
-                .interceptorHolder(interceptorHolder)
                 .connectionInfo(connectionInfo)
                 .proxyConnection(proxyConnection)
+                .proxyConfig(proxyConfig)
                 .build();
     }
 
@@ -507,7 +523,7 @@ public class PreparedStatementProxyLogicMockTest {
         Object result = logic.invoke(method, null);
 
         assertThat(result, is(instanceOf(Integer.class)));
-        assertThat((Integer)result, is(stat.hashCode()));
+        assertThat((Integer) result, is(stat.hashCode()));
     }
 
     @Test
@@ -526,6 +542,43 @@ public class PreparedStatementProxyLogicMockTest {
         result = logic.invoke(method, new Object[]{stat});
         assertThat(result, is(instanceOf(Boolean.class)));
         assertThat((Boolean) result, is(true));
+    }
+
+    @Test
+    public void proxyResultSet() throws Throwable {
+
+        final AtomicReference<Object> listenerReceivedResult = new AtomicReference<Object>();
+        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+            @Override
+            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                listenerReceivedResult.set(execInfo.getResult());
+            }
+        };
+
+
+        ResultSetMetaData metaData = mock(ResultSetMetaData.class);
+
+        ResultSet resultSet = mock(ResultSet.class);
+        when(resultSet.getMetaData()).thenReturn(metaData);
+
+
+        PreparedStatement ps = mock(PreparedStatement.class);
+        when(ps.executeQuery()).thenReturn(resultSet);
+        PreparedStatementProxyLogic logic = getProxyLogic(ps, "", listener, null, true);
+
+
+        // "executeQuery" with no args
+        Method executeQueryMethod = PreparedStatement.class.getMethod("executeQuery");
+        Object result;
+
+        // check "executeQuery"
+        result = logic.invoke(executeQueryMethod, new Object[]{});
+        assertThat(result, is(instanceOf(ResultSet.class)));
+        assertTrue(Proxy.isProxyClass(result.getClass()));
+        assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
+        assertThat("listener should receive proxied resultset", listenerReceivedResult.get(), sameInstance(result));
+
+        listenerReceivedResult.set(null);
     }
 
 }

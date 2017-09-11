@@ -3,7 +3,7 @@ package net.ttddyy.dsproxy.transform;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.proxy.InterceptorHolder;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.After;
@@ -24,7 +24,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -77,12 +82,16 @@ public class CallableStatementParameterTransformTest {
                 return ((TransformInfo) invocation.getArguments()[0]).getQuery();  // return input query as is
             }
         });
-        InterceptorHolder interceptorHolder = new InterceptorHolder(queryListener, queryTransformer, paramTransformer);
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(queryListener)
+                .queryTransformer(queryTransformer)
+                .parameterTransformer(paramTransformer)
+                .build();
 
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
 
-        return new JdkJdbcProxyFactory().createConnection(rawDatasource.getConnection(), interceptorHolder, connectionInfo);
+        return new JdkJdbcProxyFactory().createConnection(rawDatasource.getConnection(), connectionInfo, proxyConfig);
     }
 
     @Test

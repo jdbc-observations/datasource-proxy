@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy.support;
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
@@ -15,8 +16,7 @@ import java.sql.Connection;
  */
 public class ProxyConnectionAdvice implements MethodInterceptor {
 
-    private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
-    private ConnectionIdManager connectionIdManager = ConnectionIdManager.DEFAULT;
+    private ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();  // default
 
     public Object invoke(MethodInvocation invocation) throws Throwable {
 
@@ -28,34 +28,52 @@ public class ProxyConnectionAdvice implements MethodInterceptor {
         }
 
         Connection conn = (Connection) retVal;
-        long connId = this.connectionIdManager.getId(conn);
+        long connId = this.proxyConfig.getConnectionIdManager().getId(conn);
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setConnectionId(connId);
         connectionInfo.setDataSourceName("");
 
-        return jdbcProxyFactory.createConnection((Connection) retVal, null, connectionInfo);
+        return this.proxyConfig.getJdbcProxyFactory().createConnection((Connection) retVal, connectionInfo, this.proxyConfig);
     }
 
+
     public JdbcProxyFactory getJdbcProxyFactory() {
-        return jdbcProxyFactory;
+        return this.proxyConfig.getJdbcProxyFactory();
     }
 
     public void setJdbcProxyFactory(JdbcProxyFactory jdbcProxyFactory) {
-        this.jdbcProxyFactory = jdbcProxyFactory;
+        this.proxyConfig = ProxyConfig.Builder.from(this.proxyConfig)
+                .jdbcProxyFactory(jdbcProxyFactory)
+                .build();
     }
 
     /**
      * @since 1.4.2
      */
     public ConnectionIdManager getConnectionIdManager() {
-        return connectionIdManager;
+        return this.proxyConfig.getConnectionIdManager();
     }
 
     /**
      * @since 1.4.2
      */
     public void setConnectionIdManager(ConnectionIdManager connectionIdManager) {
-        this.connectionIdManager = connectionIdManager;
+        this.proxyConfig = ProxyConfig.Builder.from(this.proxyConfig)
+                .connectionIdManager(connectionIdManager)
+                .build();
     }
 
+    /**
+     * @since 1.4.3
+     */
+    public ProxyConfig getProxyConfig() {
+        return this.proxyConfig;
+    }
+
+    /**
+     * @since 1.4.3
+     */
+    public void setProxyConfig(ProxyConfig proxyConfig) {
+        this.proxyConfig = proxyConfig;
+    }
 }

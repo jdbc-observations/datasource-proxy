@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.proxy.InterceptorHolder;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.After;
@@ -16,9 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 
@@ -37,11 +35,6 @@ public class StatementInvocationHandlerTest {
         testListener = new TestListener();
         lastQueryListener = new LastQueryListener();
 
-        InterceptorHolder interceptorHolder = new InterceptorHolder();
-        interceptorHolder.addListener(testListener);
-        interceptorHolder.addListener(lastQueryListener);
-
-
         // real datasource
         jdbcDataSource = TestUtils.getDataSourceWithData();
 
@@ -51,7 +44,12 @@ public class StatementInvocationHandlerTest {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
 
-        statement = new JdkJdbcProxyFactory().createStatement(stmt, interceptorHolder, connectionInfo, null);
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(this.testListener)
+                .queryListener(this.lastQueryListener)
+                .build();
+
+        statement = new JdkJdbcProxyFactory().createStatement(stmt, connectionInfo, null, proxyConfig);
     }
 
     @After

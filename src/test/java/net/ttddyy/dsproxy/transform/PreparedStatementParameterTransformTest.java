@@ -3,7 +3,7 @@ package net.ttddyy.dsproxy.transform;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.proxy.InterceptorHolder;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.After;
@@ -13,11 +13,21 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -57,12 +67,16 @@ public class PreparedStatementParameterTransformTest {
                 return ((TransformInfo) invocation.getArguments()[0]).getQuery();  // return input query as is
             }
         });
-        InterceptorHolder interceptorHolder = new InterceptorHolder(queryListener, queryTransformer, paramTransformer);
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(queryListener)
+                .queryTransformer(queryTransformer)
+                .parameterTransformer(paramTransformer)
+                .build();
 
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
 
-        return new JdkJdbcProxyFactory().createConnection(rawDatasource.getConnection(), interceptorHolder, connectionInfo);
+        return new JdkJdbcProxyFactory().createConnection(rawDatasource.getConnection(), connectionInfo, proxyConfig);
     }
 
     @Test
@@ -183,15 +197,15 @@ public class PreparedStatementParameterTransformTest {
                 return null;
             }
         }).doAnswer(new Answer() {
-            // for second batch
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                // second batch. don't call clearParameters().
-                ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
-                String name = replacer.getValue(1);
-                replacer.setString(1, name + "-INTERCEPTED");
-                return null;
-            }
-        }
+                        // for second batch
+                        public Object answer(InvocationOnMock invocation) throws Throwable {
+                            // second batch. don't call clearParameters().
+                            ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
+                            String name = replacer.getValue(1);
+                            replacer.setString(1, name + "-INTERCEPTED");
+                            return null;
+                        }
+                    }
 
         ).when(paramTransformer).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 

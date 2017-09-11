@@ -7,6 +7,22 @@
     e.g.: when `SLF4JQueryLoggingListener` writes SQL in DEBUG level, but the logger is set to INFO(more serious
           than DEBUG), then it will NOT perform logging logic including constructing log statement, etc.
 
+- Proxying ResultSet is refactored to align how other proxies are managed.  
+  Also, existing result set proxy is renamed to `RepeatableReadResultSetProxyLogic`.  
+  As part of refactoring, `ResultSetProxyJdbcProxyFactory` is removed.  
+  To enable proxying `ResultSet`, use `ProxyDataSourceBuilder` now has `#proxyResultSet()` and `#repeatableReadResultSet()`.
+  ```java
+    // before
+    builder.jdbcProxyFactory(new ResultSetProxyJdbcProxyFactory()).build();
+    // new
+    builder.repeatableReadResultSet().build();  // or
+    builder.proxyResultSet(new RepeatableReadResultSetProxyFactory()).build();
+  ```  
+
+- `ProxyConfig` is added to represent all proxy related configurations _(datasource name, listeners, proxy factory, 
+  connection id manager)_. All values on `InterceptorHolder` are moved to `ProxyConfig` and `InterceptorHolder` is
+  removed.
+  
 - Add `MethodExecutionListener`
 
 

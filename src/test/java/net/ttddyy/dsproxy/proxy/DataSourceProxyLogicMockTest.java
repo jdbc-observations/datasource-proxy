@@ -1,10 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
-import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
-import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
-import net.ttddyy.dsproxy.transform.QueryTransformer;
 import org.junit.Test;
 
 import javax.sql.DataSource;
@@ -14,8 +11,13 @@ import java.lang.reflect.Proxy;
 import java.sql.Connection;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -39,8 +41,12 @@ public class DataSourceProxyLogicMockTest {
 
     private DataSourceProxyLogic getProxyLogic(DataSource ds) {
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
-        InterceptorHolder interceptorHolder = new InterceptorHolder(listener, QueryTransformer.DEFAULT);
-        return new DataSourceProxyLogic(ds, interceptorHolder, DS_NAME, new JdkJdbcProxyFactory(), ConnectionIdManager.DEFAULT);
+
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .dataSourceName(DS_NAME)
+                .queryListener(listener)
+                .build();
+        return new DataSourceProxyLogic(ds, proxyConfig);
     }
 
     private void verifyConnection(Connection conn) {

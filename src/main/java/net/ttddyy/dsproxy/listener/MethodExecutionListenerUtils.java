@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy.listener;
 
-import net.ttddyy.dsproxy.proxy.InterceptorHolder;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
 
 import java.lang.reflect.Method;
 
@@ -14,13 +14,13 @@ public class MethodExecutionListenerUtils {
         Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable;
     }
 
-    public static Object invoke(MethodExecutionCallback callback, InterceptorHolder interceptorHolder,
+    public static Object invoke(MethodExecutionCallback callback, ProxyConfig proxyConfig,
                                 Object proxyTarget, Method method, Object[] args) throws Throwable {
 
-        MethodExecutionListener methodExecutionListener = interceptorHolder.getMethodListener();
+        MethodExecutionListener methodExecutionListener = proxyConfig.getMethodListener();
 
+        // TODO: make executioncontext and pass it to listener
         MethodExecutionContext methodContext = new MethodExecutionContext();
-
 
 
         methodExecutionListener.beforeMethod(proxyTarget, method, args);

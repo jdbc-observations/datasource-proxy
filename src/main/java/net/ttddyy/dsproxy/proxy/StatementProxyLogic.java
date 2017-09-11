@@ -11,12 +11,15 @@ import net.ttddyy.dsproxy.transform.TransformInfo;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static net.ttddyy.dsproxy.proxy.StatementMethodNames.METHODS_TO_RETURN_RESULTSET;
 
 /**
  * Proxy Logic implementation for {@link Statement} methods.
@@ -28,9 +31,9 @@ public class StatementProxyLogic {
 
     public static class Builder {
         private Statement stmt;
-        private InterceptorHolder interceptorHolder;
         private ConnectionInfo connectionInfo;
         private Connection proxyConnection;
+        private ProxyConfig proxyConfig;
 
         public static Builder create() {
             return new Builder();
@@ -39,19 +42,14 @@ public class StatementProxyLogic {
         public StatementProxyLogic build() {
             StatementProxyLogic logic = new StatementProxyLogic();
             logic.stmt = this.stmt;
-            logic.interceptorHolder = this.interceptorHolder;
             logic.connectionInfo = this.connectionInfo;
             logic.proxyConnection = this.proxyConnection;
+            logic.proxyConfig = this.proxyConfig;
             return logic;
         }
 
         public Builder statement(Statement statement) {
             this.stmt = statement;
-            return this;
-        }
-
-        public Builder interceptorHolder(InterceptorHolder interceptorHolder) {
-            this.interceptorHolder = interceptorHolder;
             return this;
         }
 
@@ -64,6 +62,11 @@ public class StatementProxyLogic {
             this.proxyConnection = proxyConnection;
             return this;
         }
+
+        public Builder proxyConfig(ProxyConfig proxyConfig) {
+            this.proxyConfig = proxyConfig;
+            return this;
+        }
     }
 
     private static final Set<String> METHODS_TO_INTERCEPT = Collections.unmodifiableSet(
@@ -73,6 +76,7 @@ public class StatementProxyLogic {
                     addAll(StatementMethodNames.EXEC_METHODS);
                     addAll(StatementMethodNames.JDBC4_METHODS);
                     addAll(StatementMethodNames.GET_CONNECTION_METHOD);
+                    addAll(METHODS_TO_RETURN_RESULTSET);
                     add("getDataSourceName");
                     add("toString");
                     add("getTarget"); // from ProxyJdbcObject
@@ -81,10 +85,10 @@ public class StatementProxyLogic {
     );
 
     private Statement stmt;
-    private InterceptorHolder interceptorHolder;
     private ConnectionInfo connectionInfo;
     private List<String> batchQueries = new ArrayList<String>();
     private Connection proxyConnection;
+    private ProxyConfig proxyConfig;
 
 
     public Object invoke(Method method, Object[] args) throws Throwable {
@@ -94,7 +98,7 @@ public class StatementProxyLogic {
             public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
                 return performQueryExecutionListener(method, args);
             }
-        }, this.interceptorHolder, this.stmt, method, args);
+        }, this.proxyConfig, this.stmt, method, args);
 
     }
 
@@ -121,6 +125,11 @@ public class StatementProxyLogic {
             return stmt;
         }
 
+//        InterceptorHolder interceptorHolder = this.proxyConfig.getInterceptorHolder();
+        QueryExecutionListener queryListener = this.proxyConfig.getQueryListener();
+        QueryTransformer queryTransformer = this.proxyConfig.getQueryTransformer();
+        JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
+
         if (StatementMethodNames.JDBC4_METHODS.contains(methodName)) {
             final Class<?> clazz = (Class<?>) args[0];
             if ("unwrap".equals(methodName)) {
@@ -136,7 +145,6 @@ public class StatementProxyLogic {
 
         if ("addBatch".equals(methodName) || "clearBatch".equals(methodName)) {
             if ("addBatch".equals(methodName) && ObjectArrayUtils.isFirstArgString(args)) {
-                final QueryTransformer queryTransformer = interceptorHolder.getQueryTransformer();
                 final String query = (String) args[0];
                 final Class<? extends Statement> clazz = Statement.class;
                 final int batchCount = batchQueries.size();
@@ -173,7 +181,6 @@ public class StatementProxyLogic {
         } else if (StatementMethodNames.QUERY_EXEC_METHODS.contains(methodName)) {
 
             if (ObjectArrayUtils.isFirstArgString(args)) {
-                final QueryTransformer queryTransformer = interceptorHolder.getQueryTransformer();
                 final String query = (String) args[0];
                 final TransformInfo transformInfo = new TransformInfo(Statement.class, this.connectionInfo.getDataSourceName(), query, false, 0);
                 final String transformedQuery = queryTransformer.transformQuery(transformInfo);
@@ -184,8 +191,7 @@ public class StatementProxyLogic {
 
         final ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo, this.stmt, isBatchExecute, batchSize, method, args);
 
-        final QueryExecutionListener listener = interceptorHolder.getListener();
-        listener.beforeQuery(execInfo, queries);
+        queryListener.beforeQuery(execInfo, queries);
 
         // Invoke method on original Statement.
         try {
@@ -194,6 +200,12 @@ public class StatementProxyLogic {
             Object retVal = method.invoke(stmt, args);
 
             final long afterTime = System.currentTimeMillis();
+
+            // execInfo.setResult will have proxied ResultSet if enabled
+            if (METHODS_TO_RETURN_RESULTSET.contains(methodName)) {
+                retVal = proxyFactory.createResultSet((ResultSet) retVal, this.proxyConfig);
+            }
+
             execInfo.setResult(retVal);
             execInfo.setElapsedTime(afterTime - beforeTime);
             execInfo.setSuccess(true);
@@ -204,7 +216,7 @@ public class StatementProxyLogic {
             execInfo.setSuccess(false);
             throw ex.getTargetException();
         } finally {
-            listener.afterQuery(execInfo, queries);
+            queryListener.afterQuery(execInfo, queries);
         }
 
     }
