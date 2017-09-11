@@ -217,7 +217,7 @@ public class RepeatableReadResultSetProxyLogicTest {
 
     private RepeatableReadResultSetProxyLogic createProxyLogic(ResultSet resultSet) {
         RepeatableReadResultSetProxyLogicFactory factory = new RepeatableReadResultSetProxyLogicFactory();
-        return (RepeatableReadResultSetProxyLogic) factory.create(resultSet, null);
+        return (RepeatableReadResultSetProxyLogic) factory.create(resultSet, ProxyConfig.Builder.create().build());
     }
 
     private void consumeResultSetAndCallBeforeFirst(ResultSet resultSet, RepeatableReadResultSetProxyLogic resultSetProxyLogic) throws Throwable {

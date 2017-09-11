@@ -12,7 +12,7 @@ public class SimpleResultSetProxyLogicFactory implements ResultSetProxyLogicFact
 
     @Override
     public ResultSetProxyLogic create(ResultSet resultSet, ProxyConfig proxyConfig) {
-        return new SimpleResultSetProxyLogic(resultSet);
+        return new SimpleResultSetProxyLogic(resultSet, proxyConfig);
     }
 
 }

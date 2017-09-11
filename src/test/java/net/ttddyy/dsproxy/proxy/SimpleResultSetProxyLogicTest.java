@@ -18,7 +18,7 @@ public class SimpleResultSetProxyLogicTest {
     public void testToString() throws Throwable {
 
         ResultSet rs = mock(ResultSet.class);
-        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs);
+        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, ProxyConfig.Builder.create().build());
 
         when(rs.toString()).thenReturn("my rs");
 
@@ -31,7 +31,7 @@ public class SimpleResultSetProxyLogicTest {
     @Test
     public void testHashCode() throws Throwable {
         ResultSet rs = mock(ResultSet.class);
-        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs);
+        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, ProxyConfig.Builder.create().build());
 
         Method method = Object.class.getMethod("hashCode");
         Object result = logic.invoke(method, null);
@@ -42,7 +42,7 @@ public class SimpleResultSetProxyLogicTest {
     @Test
     public void testEquals() throws Throwable {
         ResultSet rs = mock(ResultSet.class);
-        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs);
+        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, ProxyConfig.Builder.create().build());
 
         Method method = Object.class.getMethod("equals", Object.class);
 

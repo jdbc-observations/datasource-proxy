@@ -22,6 +22,7 @@ public class RepeatableReadResultSetProxyLogicFactory implements ResultSetProxyL
         Map<String, Integer> columnNameToIndex = columnNameToIndex(resultSet);
         return RepeatableReadResultSetProxyLogic.Builder.create()
                 .resultSet(resultSet)
+                .proxyConfig(proxyConfig)
                 .columnNameToIndex(columnNameToIndex)
                 .columnCount(columnNameToIndex.size())
                 .build();

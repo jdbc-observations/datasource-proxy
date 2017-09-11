@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
@@ -38,6 +40,7 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
 
     public static class Builder {
         private ResultSet resultSet;
+        private ProxyConfig proxyConfig;
         private Map<String, Integer> columnNameToIndex;
         private int columnCount;
 
@@ -48,6 +51,7 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
         public RepeatableReadResultSetProxyLogic build() {
             RepeatableReadResultSetProxyLogic logic = new RepeatableReadResultSetProxyLogic();
             logic.resultSet = this.resultSet;
+            logic.proxyConfig = this.proxyConfig;
             logic.columnNameToIndex = this.columnNameToIndex;
             logic.columnCount = this.columnCount;
             return logic;
@@ -55,6 +59,11 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
 
         public Builder resultSet(ResultSet resultSet) {
             this.resultSet = resultSet;
+            return this;
+        }
+
+        public Builder proxyConfig(ProxyConfig proxyConfig) {
+            this.proxyConfig = proxyConfig;
             return this;
         }
 
@@ -72,6 +81,7 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
     private Map<String, Integer> columnNameToIndex;
     private ResultSet resultSet;
     private int columnCount;
+    private ProxyConfig proxyConfig;
 
     private int resultPointer;
     private boolean resultSetConsumed;
@@ -82,6 +92,16 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
 
     @Override
     public Object invoke(Method method, Object[] args) throws Throwable {
+        return MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
+            @Override
+            public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
+                return performQueryExecutionListener(method, args);
+            }
+        }, this.proxyConfig, this.resultSet, method, args);
+    }
+
+    private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {
+
 
         final String methodName = method.getName();
 

@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
+
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 
@@ -12,13 +14,25 @@ import java.sql.ResultSet;
 public class SimpleResultSetProxyLogic implements ResultSetProxyLogic {
 
     private ResultSet resultSet;
+    private ProxyConfig proxyConfig;
 
-    public SimpleResultSetProxyLogic(ResultSet resultSet) {
+    public SimpleResultSetProxyLogic(ResultSet resultSet, ProxyConfig proxyConfig) {
         this.resultSet = resultSet;
+        this.proxyConfig = proxyConfig;
     }
 
     @Override
     public Object invoke(Method method, Object[] args) throws Throwable {
+        return MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
+            @Override
+            public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
+                return performQueryExecutionListener(method, args);
+            }
+        }, this.proxyConfig, this.resultSet, method, args);
+    }
+
+    private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {
+
         final String methodName = method.getName();
 
         // special treat for toString method
