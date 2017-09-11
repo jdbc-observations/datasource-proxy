@@ -64,8 +64,9 @@ public class ProxyConfig {
                 for (QueryExecutionListener listener : ((ChainListener) queryListener).getListeners()) {
                     this.queryListener.addListener(listener);
                 }
+            } else {
+                this.queryListener.addListener(queryListener);
             }
-            this.queryListener.addListener(queryListener);
             return this;
         }
 
