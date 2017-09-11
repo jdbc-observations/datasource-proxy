@@ -2,7 +2,9 @@ package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.listener.ChainListener;
+import net.ttddyy.dsproxy.listener.CompositeMethodListener;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
+import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryCountStrategy;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.listener.ThreadQueryCountHolder;
@@ -338,4 +340,22 @@ public class ProxyDataSourceBuilderTest {
                 .isSameAs(strategy);
     }
 
+    @Test
+    public void buildMethodListener() {
+        ProxyDataSource ds;
+        CompositeMethodListener methodListener;
+
+        MethodExecutionListener listener1 = mock(MethodExecutionListener.class);
+        MethodExecutionListener listener2 = mock(MethodExecutionListener.class);
+
+        // single listener
+        ds = ProxyDataSourceBuilder.create().methodListener(listener1).build();
+        methodListener = ds.getProxyConfig().getMethodListener();
+        assertThat(methodListener.getListeners()).hasSize(1).contains(listener1);
+
+        // multiple listeners
+        ds = ProxyDataSourceBuilder.create().methodListener(listener1).methodListener(listener2).build();
+        methodListener = ds.getProxyConfig().getMethodListener();
+        assertThat(methodListener.getListeners()).hasSize(2).contains(listener1, listener2);
+    }
 }

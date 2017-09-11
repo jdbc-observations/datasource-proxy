@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
+import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryCountStrategy;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
@@ -98,6 +99,8 @@ public class ProxyDataSourceBuilder {
     private ConnectionIdManager connectionIdManager;
 
     private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
+
+    private List<MethodExecutionListener> methodExecutionListeners = new ArrayList<MethodExecutionListener>();
 
     public static ProxyDataSourceBuilder create() {
         return new ProxyDataSourceBuilder();
@@ -610,6 +613,17 @@ public class ProxyDataSourceBuilder {
         return this;
     }
 
+    /**
+     * Add {@link MethodExecutionListener}.
+     *
+     * @param listener a method execution listener
+     * @return builder
+     * @since 1.4.3
+     */
+    public ProxyDataSourceBuilder methodListener(MethodExecutionListener listener) {
+        this.methodExecutionListeners.add(listener);
+        return this;
+    }
 
     public ProxyDataSource build() {
 
@@ -668,6 +682,10 @@ public class ProxyDataSourceBuilder {
             proxyConfigBuilder.queryListener(listener);
         }
 
+        for (MethodExecutionListener methodListener : this.methodExecutionListeners) {
+            proxyConfigBuilder.methodListener(methodListener);
+        }
+
         if (this.queryTransformer != null) {
             proxyConfigBuilder.queryTransformer(this.queryTransformer);
         }
@@ -680,7 +698,6 @@ public class ProxyDataSourceBuilder {
         if (this.dataSourceName != null) {
             proxyConfigBuilder.dataSourceName(dataSourceName);
         }
-
 
 
         if (this.jdbcProxyFactory != null) {
