@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.PreparedStatementInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler;
@@ -19,6 +20,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -304,6 +306,21 @@ public class ConnectionProxyLogicMockTest {
         result = logic.invoke(conn, method, new Object[]{conn});
         assertThat(result, is(instanceOf(Boolean.class)));
         assertThat((Boolean) result, is(true));
+    }
+
+    @Test
+    public void methodExecutionListener() throws Throwable {
+        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+
+        Connection conn = mock(Connection.class);
+        ConnectionProxyLogic logic = new ConnectionProxyLogic(conn, null, proxyConfig);
+
+        Method method = Connection.class.getMethod("createStatement");
+        logic.invoke(conn, method, new Object[]{});
+
+        assertTrue(listener.isBeforeMethodCalled());
+        assertTrue(listener.isAfterMethodCalled());
     }
 
 }

@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.Test;
 
@@ -11,6 +12,7 @@ import java.sql.Timestamp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -349,6 +351,24 @@ public class RepeatableReadResultSetProxyLogicTest {
         // equals(true)
         result = logic.invoke(method, new Object[]{rs});
         assertThat(result).isEqualTo(true);
+    }
+
+    @Test
+    public void methodExecutionListener() throws Throwable {
+        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ResultSet rs = mock(ResultSet.class);
+        ResultSetMetaData metaData = mock(ResultSetMetaData.class);
+        when(rs.getMetaData()).thenReturn(metaData);
+
+        RepeatableReadResultSetProxyLogicFactory factory = new RepeatableReadResultSetProxyLogicFactory();
+        RepeatableReadResultSetProxyLogic logic = (RepeatableReadResultSetProxyLogic) factory.create(rs, proxyConfig);
+
+        Method method = ResultSet.class.getMethod("close");
+        logic.invoke(method, new Object[]{});
+
+        assertTrue(listener.isBeforeMethodCalled());
+        assertTrue(listener.isAfterMethodCalled());
     }
 
 }

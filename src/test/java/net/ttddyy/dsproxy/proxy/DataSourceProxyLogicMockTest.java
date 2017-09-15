@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -144,6 +146,26 @@ public class DataSourceProxyLogicMockTest {
         result = logic.invoke(method, new Object[]{ds});
         assertThat(result, is(instanceOf(Boolean.class)));
         assertThat((Boolean) result, is(true));
+    }
+
+    @Test
+    public void methodExecutionListener() throws Throwable {
+        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
+
+        DataSource ds = mock(DataSource.class);
+
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .dataSourceName(DS_NAME)
+                .methodListener(listener)
+                .build();
+        DataSourceProxyLogic logic = new DataSourceProxyLogic(ds, proxyConfig);
+
+
+        Method method = DataSource.class.getMethod("getConnection");
+        logic.invoke(method, new Object[]{});
+
+        assertTrue(listener.isBeforeMethodCalled());
+        assertTrue(listener.isAfterMethodCalled());
     }
 
 }

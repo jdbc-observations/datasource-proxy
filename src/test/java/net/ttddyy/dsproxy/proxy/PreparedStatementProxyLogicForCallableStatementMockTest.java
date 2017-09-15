@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -39,6 +40,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -790,6 +792,29 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
 
         assertThat(result, is(instanceOf(Connection.class)));
         assertThat((Connection) result, sameInstance(conn));
+    }
+
+    @Test
+    public void methodExecutionListener() throws Throwable {
+        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+
+        CallableStatement cs = mock(CallableStatement.class);
+
+        ConnectionInfo connectionInfo = new ConnectionInfo();
+        connectionInfo.setDataSourceName(DS_NAME);
+
+        PreparedStatementProxyLogic logic = new PreparedStatementProxyLogic.Builder()
+                .preparedStatement(cs)
+                .connectionInfo(connectionInfo)
+                .proxyConfig(proxyConfig)
+                .build();
+
+        Method method = CallableStatement.class.getMethod("executeQuery");
+        logic.invoke(method, new Object[]{});
+
+        assertTrue(listener.isBeforeMethodCalled());
+        assertTrue(listener.isAfterMethodCalled());
     }
 
 }
