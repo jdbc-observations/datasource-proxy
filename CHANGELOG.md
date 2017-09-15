@@ -23,7 +23,16 @@
   connection id manager)_. All values on `InterceptorHolder` are moved to `ProxyConfig` and `InterceptorHolder` is
   removed.
   
-- Add `MethodExecutionListener`
+- `MethodExecutionListener` is added.  
+  `MethodExecutionListener` is a new type of listener that intercepts JDBC API calls: 
+  - `Connection`, `Statement`, `PreparedStatement`, `CallableStatement`: All methods
+  - `ResultSet`: All methods when result set proxy is enabled. (`ProxyDataSourceBuilder#[proxyResultSet|repeatableReadResultSet]`)
+  - `ProxyDataSource`: `getConnection` method
+  
+  listeners can be registered via `ProxyDataSourceBuilder#methodListener()`.
+  ```java
+    builder.methodListener(myMethodListener).build();
+  ```
 
 
 ## 1.4.2
