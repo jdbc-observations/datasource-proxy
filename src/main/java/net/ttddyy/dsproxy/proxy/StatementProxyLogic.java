@@ -125,7 +125,6 @@ public class StatementProxyLogic {
             return stmt;
         }
 
-//        InterceptorHolder interceptorHolder = this.proxyConfig.getInterceptorHolder();
         QueryExecutionListener queryListener = this.proxyConfig.getQueryListener();
         QueryTransformer queryTransformer = this.proxyConfig.getQueryTransformer();
         JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
