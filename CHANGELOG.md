@@ -44,7 +44,8 @@
       // register MethodExecutionListener
       .afterMethod(executionContext -> {
           Method method = executionContext.getMethod();
-          System.out.println(method.getDeclaringClass().getSimpleName() + "#" + method.getName());
+          Class<?> targetClass = executionContext.getTarget().getClass();
+          System.out.println(targetClass.getSimpleName() + "#" + method.getName());
       })
       // register QueryExecutionListener
       .afterQuery((execInfo, queryInfoList) -> {
