@@ -249,6 +249,7 @@ public class PreparedStatementProxyLogicMockTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testBatch() throws Throwable {
         final String query = "update emp set name = ? where id = ?";
 
@@ -309,6 +310,7 @@ public class PreparedStatementProxyLogicMockTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testBatchWithClearBatch() throws Throwable {
         final String query = "update emp set name = ? where id = ?";
 
@@ -358,6 +360,7 @@ public class PreparedStatementProxyLogicMockTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testBatchWithClearParameters() throws Throwable {
         final String query = "update emp set name = ? where id = ?";
 

@@ -246,6 +246,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testExecuteBatch() throws Throwable {
         final String query = "{call procedure_a}";
 
@@ -291,6 +292,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testBatchWithClearBatch() throws Throwable {
         final String query = "{call procedure_a}";
 
@@ -333,6 +335,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testBatchWithClearParameters() throws Throwable {
         final String query = "{call procedure_a}";
 
