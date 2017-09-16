@@ -2,6 +2,8 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.listener.ChainListener;
+import net.ttddyy.dsproxy.listener.CompositeMethodListener;
+import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
@@ -22,6 +24,7 @@ public class ProxyConfig {
         private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
         private ResultSetProxyLogicFactory resultSetProxyLogicFactory;  // can be null if resultset proxy is disabled
         private ConnectionIdManager connectionIdManager = ConnectionIdManager.DEFAULT;
+        private CompositeMethodListener methodListener = new CompositeMethodListener();  // empty default
 
         public static Builder create() {
             return new Builder();
@@ -35,7 +38,8 @@ public class ProxyConfig {
                     .parameterTransformer(proxyConfig.parameterTransformer)
                     .jdbcProxyFactory(proxyConfig.jdbcProxyFactory)
                     .resultSetProxyLogicFactory(proxyConfig.resultSetProxyLogicFactory)
-                    .connectionIdManager(proxyConfig.connectionIdManager);
+                    .connectionIdManager(proxyConfig.connectionIdManager)
+                    .methodListener(proxyConfig.methodListener);
         }
 
         public ProxyConfig build() {
@@ -47,6 +51,7 @@ public class ProxyConfig {
             proxyConfig.jdbcProxyFactory = this.jdbcProxyFactory;
             proxyConfig.resultSetProxyLogicFactory = this.resultSetProxyLogicFactory;
             proxyConfig.connectionIdManager = this.connectionIdManager;
+            proxyConfig.methodListener = this.methodListener;
             return proxyConfig;
         }
 
@@ -60,8 +65,9 @@ public class ProxyConfig {
                 for (QueryExecutionListener listener : ((ChainListener) queryListener).getListeners()) {
                     this.queryListener.addListener(listener);
                 }
+            } else {
+                this.queryListener.addListener(queryListener);
             }
-            this.queryListener.addListener(queryListener);
             return this;
         }
 
@@ -89,6 +95,17 @@ public class ProxyConfig {
             this.connectionIdManager = connectionIdManager;
             return this;
         }
+
+        public Builder methodListener(MethodExecutionListener methodListener) {
+            if (methodListener instanceof CompositeMethodListener) {
+                for (MethodExecutionListener listener : ((CompositeMethodListener) methodListener).getListeners()) {
+                    this.methodListener.addListener(listener);
+                }
+            } else {
+                this.methodListener.addListener(methodListener);
+            }
+            return this;
+        }
     }
 
     private String dataSourceName;
@@ -98,6 +115,7 @@ public class ProxyConfig {
     private JdbcProxyFactory jdbcProxyFactory;
     private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
     private ConnectionIdManager connectionIdManager;
+    private CompositeMethodListener methodListener;
 
     public String getDataSourceName() {
         return dataSourceName;
@@ -126,4 +144,9 @@ public class ProxyConfig {
     public ConnectionIdManager getConnectionIdManager() {
         return connectionIdManager;
     }
+
+    public CompositeMethodListener getMethodListener() {
+        return methodListener;
+    }
+
 }

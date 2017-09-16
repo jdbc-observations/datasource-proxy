@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationTargetException;
@@ -33,6 +34,17 @@ public class DataSourceProxyLogic {
     }
 
     public Object invoke(Method method, Object[] args) throws Throwable {
+
+        return MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
+            @Override
+            public Object execute(Object proxy, Method method, Object[] args) throws Throwable {
+                return performQueryExecutionListener(method, args);
+            }
+        }, this.proxyConfig, this.dataSource, method, args);
+
+    }
+
+    private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {
 
         String dataSourceName = this.proxyConfig.getDataSourceName();
         JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();

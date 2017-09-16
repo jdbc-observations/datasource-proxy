@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
@@ -873,4 +874,31 @@ public class StatementProxyLogicMockTest {
         assertThat("listener should receive proxied resultset", listenerReceivedResult.get(), sameInstance(result));
 
     }
+
+    @Test
+    public void methodExecutionListener() throws Throwable {
+        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+
+        final String query = "insert into emp (id, name) values (1, 'foo')";
+
+        Statement statement = mock(Statement.class);
+        when(statement.executeUpdate(query)).thenReturn(100);
+
+        ConnectionInfo connectionInfo = new ConnectionInfo();
+        connectionInfo.setDataSourceName(DS_NAME);
+
+        StatementProxyLogic logic = new StatementProxyLogic.Builder()
+                .statement(statement)
+                .connectionInfo(connectionInfo)
+                .proxyConfig(proxyConfig)
+                .build();
+
+        Method method = Statement.class.getMethod("executeUpdate", String.class);
+        logic.invoke(method, new Object[]{query});
+
+        assertTrue(listener.isBeforeMethodCalled());
+        assertTrue(listener.isAfterMethodCalled());
+    }
+
 }

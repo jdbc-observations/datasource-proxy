@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import net.ttddyy.dsproxy.transform.TransformInfo;
@@ -92,6 +93,17 @@ public class StatementProxyLogic {
 
     public Object invoke(Method method, Object[] args) throws Throwable {
 
+        return MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
+            @Override
+            public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
+                return performQueryExecutionListener(method, args);
+            }
+        }, this.proxyConfig, this.stmt, method, args);
+
+    }
+
+    private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {
+
         final String methodName = method.getName();
 
         if (!METHODS_TO_INTERCEPT.contains(methodName)) {
@@ -113,7 +125,6 @@ public class StatementProxyLogic {
             return stmt;
         }
 
-//        InterceptorHolder interceptorHolder = this.proxyConfig.getInterceptorHolder();
         QueryExecutionListener queryListener = this.proxyConfig.getQueryListener();
         QueryTransformer queryTransformer = this.proxyConfig.getQueryTransformer();
         JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();

@@ -2,6 +2,8 @@ package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.DataSourceProxyException;
+import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -11,6 +13,7 @@ import javax.sql.DataSource;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -22,6 +25,19 @@ import java.util.logging.Logger;
  * @author Tadaya Tsuyukubo
  */
 public class ProxyDataSource implements DataSource, Closeable {
+
+    private static final Method GET_CONNECTION_WITH_NO_ARGS;
+    private static final Method GET_CONNECTION_WITH_USER_PASS;
+
+    static {
+        try {
+            GET_CONNECTION_WITH_NO_ARGS = ProxyDataSource.class.getDeclaredMethod("getConnection");
+            GET_CONNECTION_WITH_USER_PASS = ProxyDataSource.class.getDeclaredMethod("getConnection", String.class, String.class);
+        } catch (NoSuchMethodException e) {
+            throw new DataSourceProxyException("Failed to find getConnection methods", e);
+        }
+    }
+
 
     private DataSource dataSource;
     private ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();  // default
@@ -45,27 +61,41 @@ public class ProxyDataSource implements DataSource, Closeable {
     @Override
     public Connection getConnection() throws SQLException {
         final Connection conn = dataSource.getConnection();
-        return getConnectionProxy(conn);
+        return getConnectionProxy(conn, GET_CONNECTION_WITH_NO_ARGS, null);
     }
 
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
         final Connection conn = dataSource.getConnection(username, password);
-        return getConnectionProxy(conn);
+        return getConnectionProxy(conn, GET_CONNECTION_WITH_USER_PASS, new Object[]{username, password});
     }
 
-    private Connection getConnectionProxy(Connection conn) {
+    private Connection getConnectionProxy(final Connection conn, Method method, Object[] args) throws SQLException {
         String dataSourceName = this.proxyConfig.getDataSourceName();
         ConnectionIdManager connectionIdManager = this.proxyConfig.getConnectionIdManager();
-        JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
+        final JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
         long connectionId = connectionIdManager.getId(conn);
 
-        ConnectionInfo connectionInfo = new ConnectionInfo();
+        final ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setConnectionId(connectionId);
-        connectionInfo.setDataSourceName(this.proxyConfig.getDataSourceName());
+        connectionInfo.setDataSourceName(dataSourceName);
 
-        return jdbcProxyFactory.createConnection(conn, connectionInfo, this.proxyConfig);
+        try {
+            return (Connection) MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
+                @Override
+                public Object execute(Object proxy, Method method, Object[] args) throws Throwable {
+                    return jdbcProxyFactory.createConnection(conn, connectionInfo, ProxyDataSource.this.proxyConfig);
+                }
+            }, this.proxyConfig, conn, method, args);
+        } catch (Throwable throwable) {
+            if (throwable instanceof SQLException) {
+                throw (SQLException) throwable;
+            } else {
+                throw new DataSourceProxyException("Failed to perform getConnection", throwable);
+            }
+        }
+
     }
 
     @Override

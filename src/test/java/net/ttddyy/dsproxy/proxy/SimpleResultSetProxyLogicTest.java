@@ -1,11 +1,13 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -18,7 +20,7 @@ public class SimpleResultSetProxyLogicTest {
     public void testToString() throws Throwable {
 
         ResultSet rs = mock(ResultSet.class);
-        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs);
+        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, ProxyConfig.Builder.create().build());
 
         when(rs.toString()).thenReturn("my rs");
 
@@ -31,7 +33,7 @@ public class SimpleResultSetProxyLogicTest {
     @Test
     public void testHashCode() throws Throwable {
         ResultSet rs = mock(ResultSet.class);
-        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs);
+        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, ProxyConfig.Builder.create().build());
 
         Method method = Object.class.getMethod("hashCode");
         Object result = logic.invoke(method, null);
@@ -42,7 +44,7 @@ public class SimpleResultSetProxyLogicTest {
     @Test
     public void testEquals() throws Throwable {
         ResultSet rs = mock(ResultSet.class);
-        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs);
+        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, ProxyConfig.Builder.create().build());
 
         Method method = Object.class.getMethod("equals", Object.class);
 
@@ -53,6 +55,21 @@ public class SimpleResultSetProxyLogicTest {
         // equals(true)
         result = logic.invoke(method, new Object[]{rs});
         assertThat(result).isEqualTo(true);
+    }
+
+    @Test
+    public void methodExecutionListener() throws Throwable {
+        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ResultSet rs = mock(ResultSet.class);
+
+        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, proxyConfig);
+
+        Method method = ResultSet.class.getMethod("close");
+        logic.invoke(method, new Object[]{});
+
+        assertTrue(listener.isBeforeMethodCalled());
+        assertTrue(listener.isAfterMethodCalled());
     }
 
 }
