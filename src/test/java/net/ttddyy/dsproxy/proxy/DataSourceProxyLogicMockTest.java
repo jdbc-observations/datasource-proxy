@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
 import org.junit.Test;
@@ -16,6 +17,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -166,6 +168,12 @@ public class DataSourceProxyLogicMockTest {
 
         assertTrue(listener.isBeforeMethodCalled());
         assertTrue(listener.isAfterMethodCalled());
+
+        MethodExecutionContext executionContext = listener.getAfterMethodContext();
+        assertSame("method should come from interface",
+                DataSource.class, executionContext.getMethod().getDeclaringClass());
+        assertSame("getConnection", executionContext.getMethod().getName());
+        assertSame(ds, executionContext.getTarget());
     }
 
 }

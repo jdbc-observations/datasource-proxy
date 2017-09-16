@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.Test;
 
@@ -12,6 +13,7 @@ import java.sql.Timestamp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -369,6 +371,12 @@ public class RepeatableReadResultSetProxyLogicTest {
 
         assertTrue(listener.isBeforeMethodCalled());
         assertTrue(listener.isAfterMethodCalled());
+
+        MethodExecutionContext executionContext = listener.getAfterMethodContext();
+        assertSame("method should come from interface",
+                ResultSet.class, executionContext.getMethod().getDeclaringClass());
+        assertSame("close", executionContext.getMethod().getName());
+        assertSame(rs, executionContext.getTarget());
     }
 
 }

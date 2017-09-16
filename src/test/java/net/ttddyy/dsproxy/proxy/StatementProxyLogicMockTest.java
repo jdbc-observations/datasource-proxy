@@ -4,6 +4,7 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
@@ -29,6 +30,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
@@ -899,6 +901,13 @@ public class StatementProxyLogicMockTest {
 
         assertTrue(listener.isBeforeMethodCalled());
         assertTrue(listener.isAfterMethodCalled());
+
+
+        MethodExecutionContext executionContext = listener.getAfterMethodContext();
+        assertSame("method should come from interface",
+                Statement.class, executionContext.getMethod().getDeclaringClass());
+        assertSame("executeUpdate", executionContext.getMethod().getName());
+        assertSame(statement, executionContext.getTarget());
     }
 
 }

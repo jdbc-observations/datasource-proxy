@@ -4,6 +4,7 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -40,6 +41,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -813,11 +815,18 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
                 .proxyConfig(proxyConfig)
                 .build();
 
-        Method method = CallableStatement.class.getMethod("executeQuery");
+        Method method = CallableStatement.class.getMethod("wasNull");
         logic.invoke(method, new Object[]{});
 
         assertTrue(listener.isBeforeMethodCalled());
         assertTrue(listener.isAfterMethodCalled());
+
+        MethodExecutionContext executionContext = listener.getAfterMethodContext();
+        assertSame("method should come from interface",
+                CallableStatement.class, executionContext.getMethod().getDeclaringClass());
+        assertSame("wasNull", executionContext.getMethod().getName());
+        assertSame(cs, executionContext.getTarget());
+
     }
 
 }
