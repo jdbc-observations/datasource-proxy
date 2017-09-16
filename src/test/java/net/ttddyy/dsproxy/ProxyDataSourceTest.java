@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import org.junit.After;
@@ -17,6 +18,7 @@ import java.sql.Statement;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 
@@ -147,6 +149,10 @@ public class ProxyDataSourceTest {
 
         assertTrue("methodListener should be called for getConnection", this.methodListener.isBeforeMethodCalled());
         assertTrue("methodListener should be called for getConnection", this.methodListener.isAfterMethodCalled());
+
+        MethodExecutionContext context = this.methodListener.getBeforeMethodContext();
+        assertThat(context.getMethod().getDeclaringClass()).isSameAs(DataSource.class);
+        assertThat(context.getMethod().getName()).isEqualTo("getConnection");
 
         this.methodListener.reset();
 

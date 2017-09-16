@@ -31,8 +31,8 @@ public class ProxyDataSource implements DataSource, Closeable {
 
     static {
         try {
-            GET_CONNECTION_WITH_NO_ARGS = ProxyDataSource.class.getDeclaredMethod("getConnection");
-            GET_CONNECTION_WITH_USER_PASS = ProxyDataSource.class.getDeclaredMethod("getConnection", String.class, String.class);
+            GET_CONNECTION_WITH_NO_ARGS = DataSource.class.getDeclaredMethod("getConnection");
+            GET_CONNECTION_WITH_USER_PASS = DataSource.class.getDeclaredMethod("getConnection", String.class, String.class);
         } catch (NoSuchMethodException e) {
             throw new DataSourceProxyException("Failed to find getConnection methods", e);
         }
