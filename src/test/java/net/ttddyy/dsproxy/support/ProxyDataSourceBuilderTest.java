@@ -1,9 +1,12 @@
 package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
+import net.ttddyy.dsproxy.ExecutionInfo;
+import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.ChainListener;
 import net.ttddyy.dsproxy.listener.CompositeMethodListener;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryCountStrategy;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
@@ -27,6 +30,7 @@ import org.junit.Test;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -357,5 +361,93 @@ public class ProxyDataSourceBuilderTest {
         ds = ProxyDataSourceBuilder.create().methodListener(listener1).methodListener(listener2).build();
         methodListener = ds.getProxyConfig().getMethodListener();
         assertThat(methodListener.getListeners()).hasSize(2).contains(listener1, listener2);
+    }
+
+    @Test
+    public void singleMethodExecutionWithBeforeMethodAndAfterMethod() {
+        ProxyDataSource ds;
+        CompositeMethodListener compositeListener;
+        MethodExecutionListener listener;
+
+        // check beforeMethod()
+        final AtomicBoolean isBeforeInvoked = new AtomicBoolean();
+        ds = ProxyDataSourceBuilder.create()
+                .beforeMethod(new ProxyDataSourceBuilder.SingleMethodExecution() {
+                    @Override
+                    public void execute(MethodExecutionContext executionContext) {
+                        isBeforeInvoked.set(true);
+                    }
+                })
+                .build();
+        compositeListener = ds.getProxyConfig().getMethodListener();
+        assertThat(compositeListener.getListeners()).hasSize(1);
+
+        // invoke found listener and verify invocation
+        listener = compositeListener.getListeners().get(0);
+        listener.beforeMethod(null);  // invoke
+        assertThat(isBeforeInvoked.get()).isTrue();
+
+        // check afterMethod()
+        final AtomicBoolean isAfterInvoked = new AtomicBoolean();
+        ds = ProxyDataSourceBuilder.create()
+                .afterMethod(new ProxyDataSourceBuilder.SingleMethodExecution() {
+                    @Override
+                    public void execute(MethodExecutionContext executionContext) {
+                        isAfterInvoked.set(true);
+                    }
+                })
+                .build();
+        compositeListener = ds.getProxyConfig().getMethodListener();
+        assertThat(compositeListener.getListeners()).hasSize(1);
+
+        // invoke found listener and verify invocation
+        listener = compositeListener.getListeners().get(0);
+        listener.afterMethod(null);  // invoke
+        assertThat(isAfterInvoked.get()).isTrue();
+
+    }
+
+    @Test
+    public void singleQueryExecutionWithBeforeQueryAndAfterQuery() {
+        ProxyDataSource ds;
+        ChainListener chainListener;
+        QueryExecutionListener listener;
+
+        // check beforeMethod()
+        final AtomicBoolean isBeforeInvoked = new AtomicBoolean();
+        ds = ProxyDataSourceBuilder.create()
+                .beforeQuery(new ProxyDataSourceBuilder.SingleQueryExecution() {
+                    @Override
+                    public void execute(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                        isBeforeInvoked.set(true);
+                    }
+                })
+                .build();
+        chainListener = ds.getProxyConfig().getQueryListener();
+        assertThat(chainListener.getListeners()).hasSize(1);
+
+        // invoke found listener and verify invocation
+        listener = chainListener.getListeners().get(0);
+        listener.beforeQuery(null, null);  // invoke
+        assertThat(isBeforeInvoked.get()).isTrue();
+
+        // check afterMethod()
+        final AtomicBoolean isAfterInvoked = new AtomicBoolean();
+        ds = ProxyDataSourceBuilder.create()
+                .afterQuery(new ProxyDataSourceBuilder.SingleQueryExecution() {
+                    @Override
+                    public void execute(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                        isAfterInvoked.set(true);
+                    }
+                })
+                .build();
+        chainListener = ds.getProxyConfig().getQueryListener();
+        assertThat(chainListener.getListeners()).hasSize(1);
+
+        // invoke found listener and verify invocation
+        listener = chainListener.getListeners().get(0);
+        listener.afterQuery(null, null);  // invoke
+        assertThat(isAfterInvoked.get()).isTrue();
+
     }
 }

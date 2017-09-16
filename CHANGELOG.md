@@ -34,6 +34,25 @@
     builder.methodListener(myMethodListener).build();
   ```
 
+- `ProxyDataSourceBuilder` has added `beforeMethod`, `afterMethod`, `beforeQuery`, and `afterQuery` methods.  
+  These methods help inlining listener definitions especially with Java8 Lambda expression.
+  
+  ```java
+    ProxyDataSourceBuilder
+      .create(actualDataSource)
+      .name("MyDS")
+      // register MethodExecutionListener
+      .afterMethod(executionContext -> {
+          Method method = executionContext.getMethod();
+          System.out.println(method.getDeclaringClass().getSimpleName() + "#" + method.getName());
+      })
+      // register QueryExecutionListener
+      .afterQuery((execInfo, queryInfoList) -> {
+         System.out.println("Query took " + execInfo.getElapsedTime() + "msec");
+      })
+      .build();
+  ```
+
 
 ## 1.4.2
 

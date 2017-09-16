@@ -1,8 +1,13 @@
 package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
+import net.ttddyy.dsproxy.ExecutionInfo;
+import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.MethodExecutionListener;
+import net.ttddyy.dsproxy.listener.NoOpMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryCountStrategy;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
@@ -37,6 +42,30 @@ import java.util.logging.Level;
  * @since 1.3
  */
 public class ProxyDataSourceBuilder {
+
+    /**
+     * Functional interface to simplify adding {@link MethodExecutionListener}.
+     *
+     * @see #beforeMethod(SingleMethodExecution)
+     * @see #afterMethod(SingleMethodExecution)
+     * @since 1.4.3
+     */
+    // TODO: add @FunctionalInterface once codebase is java8
+    public interface SingleMethodExecution {
+        void execute(MethodExecutionContext executionContext);
+    }
+
+    /**
+     * Functional interface to simplify adding {@link QueryExecutionListener}.
+     *
+     * @see #beforeQuery(SingleQueryExecution)
+     * @see #afterQuery(SingleQueryExecution)
+     * @since 1.4.3
+     */
+    // TODO: add @FunctionalInterface once codebase is java8
+    public interface SingleQueryExecution {
+        void execute(ExecutionInfo execInfo, List<QueryInfo> queryInfoList);
+    }
 
     private DataSource dataSource;
     private String dataSourceName;
@@ -499,6 +528,42 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
+     * Add {@link QueryExecutionListener} that performs given lambda on {@link QueryExecutionListener#beforeQuery(ExecutionInfo, List)}.
+     *
+     * @param callback a lambda function executed on {@link QueryExecutionListener#beforeQuery(ExecutionInfo, List)}
+     * @return builder
+     * @since 1.4.3
+     */
+    public ProxyDataSourceBuilder beforeQuery(final SingleQueryExecution callback) {
+        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+            @Override
+            public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                callback.execute(execInfo, queryInfoList);
+            }
+        };
+        this.queryExecutionListeners.add(listener);
+        return this;
+    }
+
+    /**
+     * Add {@link QueryExecutionListener} that performs given lambda on {@link QueryExecutionListener#afterQuery(ExecutionInfo, List)}.
+     *
+     * @param callback a lambda function executed on {@link QueryExecutionListener#afterQuery(ExecutionInfo, List)}
+     * @return builder
+     * @since 1.4.3
+     */
+    public ProxyDataSourceBuilder afterQuery(final SingleQueryExecution callback) {
+        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+            @Override
+            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                callback.execute(execInfo, queryInfoList);
+            }
+        };
+        this.queryExecutionListeners.add(listener);
+        return this;
+    }
+
+    /**
      * Format logging output as JSON.
      *
      * @return builder
@@ -621,6 +686,42 @@ public class ProxyDataSourceBuilder {
      * @since 1.4.3
      */
     public ProxyDataSourceBuilder methodListener(MethodExecutionListener listener) {
+        this.methodExecutionListeners.add(listener);
+        return this;
+    }
+
+    /**
+     * Add {@link MethodExecutionListener} that performs given lambda on {@link MethodExecutionListener#beforeMethod(MethodExecutionContext)}.
+     *
+     * @param callback a lambda function executed on {@link MethodExecutionListener#beforeMethod(MethodExecutionContext)}
+     * @return builder
+     * @since 1.4.3
+     */
+    public ProxyDataSourceBuilder beforeMethod(final SingleMethodExecution callback) {
+        MethodExecutionListener listener = new NoOpMethodExecutionListener() {
+            @Override
+            public void beforeMethod(MethodExecutionContext executionContext) {
+                callback.execute(executionContext);
+            }
+        };
+        this.methodExecutionListeners.add(listener);
+        return this;
+    }
+
+    /**
+     * Add {@link MethodExecutionListener} that performs given lambda on {@link MethodExecutionListener#afterMethod(MethodExecutionContext)}.
+     *
+     * @param callback a lambda function executed on {@link MethodExecutionListener#afterMethod(MethodExecutionContext)}
+     * @return builder
+     * @since 1.4.3
+     */
+    public ProxyDataSourceBuilder afterMethod(final SingleMethodExecution callback) {
+        MethodExecutionListener listener = new NoOpMethodExecutionListener() {
+            @Override
+            public void afterMethod(MethodExecutionContext executionContext) {
+                callback.execute(executionContext);
+            }
+        };
         this.methodExecutionListeners.add(listener);
         return this;
     }
