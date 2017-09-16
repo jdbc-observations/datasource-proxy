@@ -41,6 +41,7 @@
     ProxyDataSourceBuilder
       .create(actualDataSource)
       .name("MyDS")
+      .proxyResultSet()  // apply listener on resultset
       // register MethodExecutionListener
       .afterMethod(executionContext -> {
           Method method = executionContext.getMethod();
