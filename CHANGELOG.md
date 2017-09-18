@@ -7,7 +7,7 @@
     e.g.: when `SLF4JQueryLoggingListener` writes SQL in DEBUG level, but the logger is set to INFO(more serious
           than DEBUG), then it will NOT perform logging logic including constructing log statement, etc.
 
-- Proxying ResultSet is refactored to align how other proxies are managed.  
+- Proxying `ResultSet` is refactored to align how other proxies are managed.  
   Also, existing result set proxy is renamed to `RepeatableReadResultSetProxyLogic`.  
   As part of refactoring, `ResultSetProxyJdbcProxyFactory` is removed.  
   To enable proxying `ResultSet`, use `ProxyDataSourceBuilder` now has `#proxyResultSet()` and `#repeatableReadResultSet()`.
@@ -50,10 +50,40 @@
       })
       // register QueryExecutionListener
       .afterQuery((execInfo, queryInfoList) -> {
-         System.out.println("Query took " + execInfo.getElapsedTime() + "msec");
+          System.out.println("Query took " + execInfo.getElapsedTime() + "msec");
       })
       .build();
   ```
+  _sample output:_
+  ```sql
+    # code:
+    Connection conn = ds.getConnection();
+    PreparedStatement ps = conn.prepareStatement("INSERT INTO users (id, name) VALUES (?, ?)");
+    ps.setString(2, "FOO");
+    ps.setInt(1, 3);
+    ps.addBatch();
+    ps.setInt(1, 4);
+    ps.setString(2, "BAR");
+    ps.addBatch();
+    ps.executeBatch();
+    ps.close();
+    conn.close();
+  
+    # output:
+    ProxyDataSource#getConnection
+    JDBCConnection#prepareStatement
+    JDBCPreparedStatement#setString
+    JDBCPreparedStatement#setInt
+    JDBCPreparedStatement#addBatch
+    JDBCPreparedStatement#setInt
+    JDBCPreparedStatement#setString
+    JDBCPreparedStatement#addBatch
+    JDBCPreparedStatement#executeBatch
+    Query took 1msec
+    JDBCPreparedStatement#close
+    JDBCConnection#close
+  ```
+  
 
 
 ## 1.4.2

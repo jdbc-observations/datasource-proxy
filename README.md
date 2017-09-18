@@ -20,7 +20,7 @@ Provide proxy classes for JDBC API to intercept executing queries.
   You can add callbacks for slow queries that take longer than threshold time you specified.  
   Slow query loggers are available out of the box.
 
-- Connection ID
+- Connection ID  
   Each connection is assigned unique ID that is a sequentially increasing number in default implementation.  
   The connection ID is included in logging entry.
 
@@ -137,27 +137,6 @@ DataSource dataSource =
         .countQuery()
         .logSlowQueryByCommons(10, TimeUnit.MINUTES)  // also by sl4j, jul, system out
         .build();
-```
-
-**Spring (XML)**  
-
-```xml
-<bean id="dataSource" class="net.ttddyy.dsproxy.support.ProxyDataSource">
-  <property name="dataSource" ref="[ACTUAL DATASOURCE BEAN]"/>
-  <property name="listener" ref="listeners"/>
-</bean>
-
-<bean id="listeners" class="net.ttddyy.dsproxy.listener.ChainListener">
-  <property name="listeners">
-    <list>
-      <bean class="net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener">
-      <!-- <bean class="net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener"> -->
-        <property name="logLevel" value="INFO"/> <!-- Default is DEBUG -->
-      </bean>
-      <bean class="net.ttddyy.dsproxy.listener.DataSourceQueryCountListener"/>
-    </list>
-  </property>
-</bean>
 ```
 
 **JNDI**  
