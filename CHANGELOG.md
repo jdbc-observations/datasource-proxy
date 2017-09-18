@@ -2,15 +2,16 @@
 
 ## 1.4.3
 
-- QueryLoggingListeners(Commons, SLF4J, JUL) added `loggingCondition` that simply decides whether to skip entire
-  logging logic based on the current log level set on its logger.  
+- QueryLoggingListeners(Commons, SLF4J, JUL) added overridable `loggingCondition` callback(boolean supplier) that
+  simply decides whether to skip entire logging logic based on the current log level set on its logger.    
     e.g.: when `SLF4JQueryLoggingListener` writes SQL in DEBUG level, but the logger is set to INFO(more serious
           than DEBUG), then it will NOT perform logging logic including constructing log statement, etc.
 
 - Proxying `ResultSet` is refactored to align how other proxies are managed.  
-  Also, existing result set proxy is renamed to `RepeatableReadResultSetProxyLogic`.  
+  Also, existing resultset-proxy is renamed to `RepeatableReadResultSetProxyLogic`.  
   As part of refactoring, `ResultSetProxyJdbcProxyFactory` is removed.  
-  To enable proxying `ResultSet`, use `ProxyDataSourceBuilder` now has `#proxyResultSet()` and `#repeatableReadResultSet()`.
+  To enable proxying `ResultSet`, `ProxyDataSourceBuilder` now has `#proxyResultSet()` and `#repeatableReadResultSet()`
+  methods.
   ```java
     // before
     builder.jdbcProxyFactory(new ResultSetProxyJdbcProxyFactory()).build();
@@ -20,21 +21,21 @@
   ```  
 
 - `ProxyConfig` is added to represent all proxy related configurations _(datasource name, listeners, proxy factory, 
-  connection id manager)_. All values on `InterceptorHolder` are moved to `ProxyConfig` and `InterceptorHolder` is
-  removed.
+  connection id manager)_. All values on `InterceptorHolder` are moved to `ProxyConfig` and `InterceptorHolder` class
+  is removed.
   
 - `MethodExecutionListener` is added.  
   `MethodExecutionListener` is a new type of listener that intercepts JDBC API calls: 
   - `Connection`, `Statement`, `PreparedStatement`, `CallableStatement`: All methods
-  - `ResultSet`: All methods when result set proxy is enabled. (`ProxyDataSourceBuilder#[proxyResultSet|repeatableReadResultSet]`)
-  - `ProxyDataSource`: `getConnection` method
+  - `ResultSet`: All methods when result set proxy is enabled. (`ProxyDataSourceBuilder#[proxyResultSet()|repeatableReadResultSet()]`)
+  - `ProxyDataSource`: `getConnection()` method
   
   listeners can be registered via `ProxyDataSourceBuilder#methodListener()`.
   ```java
     builder.methodListener(myMethodListener).build();
   ```
 
-- `ProxyDataSourceBuilder` has added `beforeMethod`, `afterMethod`, `beforeQuery`, and `afterQuery` methods.  
+- `ProxyDataSourceBuilder` has added `beforeMethod()`, `afterMethod()`, `beforeQuery()`, and `afterQuery()` methods.  
   These methods help inlining listener definitions especially with Java8 Lambda expression.
   
   ```java
