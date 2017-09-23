@@ -1,0 +1,40 @@
+[[installation]]
+== Installation
+
+=== Dependency
+
+```xml
+<dependency>
+  <groupId>net.ttddyy</groupId>
+  <artifactId>datasource-proxy</artifactId>
+  <version>[LATEST_VERSION]</version>
+</dependency>
+```
+
+There is no dependent library for using `datasource-proxy`. +
+If you choose to use logging support for specific logging library, such as commons or slf4j, you need to specify
+the dependency explicitly.
+
+`datasource-proxy` does not bring any libraries via transitive dependency.
+
+
+==== Snapshot
+
+Snapshot is available via {oss-snapshot-repository}[oss sonatype snapshot repository].
+
+To download snapshot jars, enable sonatype snapshot repository:
+
+```xml
+<repositories>
+  <repository>
+    <id>sonatype-snapshots-repo</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    <releases>
+      <enabled>false</enabled>
+    </releases>
+    <snapshots>
+      <enabled>true</enabled>
+    </snapshots>
+  </repository>
+</repositories>
+```

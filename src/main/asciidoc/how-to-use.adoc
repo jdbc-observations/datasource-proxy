@@ -1,0 +1,464 @@
+[[how-to-use]]
+== How to use
+
+`ProxyDataSource` implements `javax.sql.DataSource`, and works as an entry point for all interceptor logic.
+You can directly instantiate `ProxyDataSource`, or use builder class `ProxyDataSourceBuilder` to build it. +
+Once `ProxyDataSource` is setup, you can pass it as a datasource to your application.
+
+
+[[creating-proxydatasource]]
+=== Creating ProxyDataSource
+
+`ProxyDataSourceBuilder` provides fluent API to construct `ProxyDataSource` instance.
+Also, it provides builder methods to register built-in or custom listeners.
+
+```java
+DataSource dataSource =
+    ProxyDataSourceBuilder.create(actualDataSource)  // pass original datasource
+        .logQueryByCommons(INFO)    // logQueryBySlf4j(), logQueryByJUL(), logQueryToSysOut()
+        .countQuery()               // enable query count metrics
+        .logSlowQueryByCommons(10, TimeUnit.MINUTES)  // also by sl4j, jul, system out
+        .proxyResultSet()           // enable proxying ResultSet
+        .listener(myListener)       // register my custom listener
+        .afterMethod(executionContext -> {    // register a custom listener with lambda
+            ...
+        })
+        .build();
+```
+
+==== DriverManager and Connection support
+
+From instance of `java.sql.Connection`, you can create a proxy that is same as what `ProxyDataSource` returns.
+
+```java
+// obtain connection
+Class.forName("org.hsqldb.jdbcDriver");
+Connection realConnection = DriverManager.getConnection("jdbc:hsqldb:mem:aname");
+
+ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                             // configure more
+                            .build();
+
+JdbcProxyFactory jdbcProxyFactory = new JdkJdbcProxyFactory();
+Connection proxyConnection = jdbcProxyFactory.createConnection(realConnection, proxyConfig);
+...
+```
+
+
+==== JNDI Support
+
+```xml
+<Resource name="jdbc/global/myProxy"
+          auth="Container"
+          type="net.ttddyy.dsproxy.support.ProxyDataSource"
+          factory="net.ttddyy.dsproxy.support.jndi.ProxyDataSourceObjectFactory"
+          description="ds"
+          listeners="commons,count"
+          proxyName="MyProxy"
+          dataSource="[REFERENCE_TO_ACTUAL_DATASOURCE_RESOURCE]"  <!-- ex: java:jdbc/global/myDS -->
+/>
+```
+
+datasource-proxy.jar and your choice of logging library(commons, slf4j, etc) needs to be accessible from container.
+
+
+.JNDI Resource parameters
+[cols="20,80"]
+|===
+| Parameter     | Description
+
+| dataSource *(required)*   | Reference to actual datasource resource. ex: java:jdbc/global/myDS
+| proxyName               | ProxyDataSource name
+| logLevel                | Loglevel for commons-logging or slf4j. ex: DEBUG, INFO, etc.
+| loggerName              | Name for logger. (since v1.3.1)
+| listeners               | Fully qualified class name of QueryExecutionListener implementation class,or predefined values below. Can be comma delimited.
+| queryTransformer        | Fully qualified class name of QueryTransformer implementation class.
+| parameterTransformer    | Fully qualified class name of ParameterTransformer implementation class.
+|===
+
+
+.JNDI Resource "listeners" parameter
+[cols="20,80"]
+|===
+| Parameter     | Description
+
+| sysout        | Alias to net.ttddyy.dsproxy.listener.SystemOutQueryLoggingListener
+| commons       | Alias to net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener
+| slf4j         | Alias to net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener
+| count         | Alias to net.ttddyy.dsproxy.listener.DataSourceQueryCountListener
+| x.y.z.MyQueryExecutionListener  | Fully qualified class name of QueryExecutionListener implementation
+|===
+
+
+.JNDI Resource "format" parameter
+[cols="20,80"]
+|===
+| Parameter     | Description
+
+| json          | Set logging output format as JSON
+|===
+
+
+See Tomcat configuration examples in {datasource-proxy-examples}[datasource-proxy-example] project:
+
+- {jndi-embedded-example}[with embedded tomcat]
+- {jndi-external-example}[with external tomcat]
+
+Also see `ProxyDataSourceObjectFactory` javadoc
+
+
+=== Proxying ResultSet
+
+By default, datasource-proxy does *NOT* proxy `ResultSet`. However, in some case, you want to return a proxied
+`ResultSet` - for example, apply `MethodExecutionListener` on `ResultSet`.
+
+To enable `ResultSet` proxy, `ProxyDataSourceBuilder` has `proxyResultSet()` method.
+
+```java
+builder
+  // configure listeners
+  .proxyResultSet()
+  .build();
+```
+
+In addition, the `proxyResultSet()` method takes `ResultSetProxyLogicFactory` to add some logic on
+interacting with `ResultSet`. Default logic is no-op.
+
+
+==== Repeatable Read ResultSet
+
+`RepeatableReadResultSetProxyLogic` allows `ResultSet` to be consumed more than once.
+
+
+```java
+builder
+  // configure listeners
+  .repeatableReadResultSet()
+//  .proxyResultSet(new RepeatableReadResultSetProxyLogicFactory())  // same as above
+  .build();
+```
+
+
+[[listeners]]
+=== Listeners
+
+Currently, datasource-proxy provides two types of listener, `QueryExecutionListener` and `MethodExecutionListener`.
+
+
+==== QueryExecutionListener
+
+`QueryExecutionListener` is called when query execution methods are invoked.
+(e.g.: `execute`, `executeBatch`, `executeQuery`, etc.)
+
+
+.`QueryExecutionListener`:
+```java
+void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList);
+
+void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList);
+```
+
+`ExecutionInfo` contains contextual information about query execution(statement type, batch, connection id, etc),
+and `QueryInfo` contains actual query string and parameters.
+
+For `afterQuery` callback, `ExecutionInfo` contains additional information - result of query, time took to perform
+query, and thrown exception.
+
+Based on the type of query execution, number of queries and parameters changes.
+
+|===
+| Execution Type            | # of Query | # of Query Parameters
+
+| Statement                 |          1 |  empty
+| Statement (batch)         |          N |  empty
+| Prepared Statement        |          1 |      1
+| Prepared Statement (batch)|          1 |      N
+| Callable Statement        |          1 |      1
+| Callable Statement (batch)|          1 |      N
+|===
+
+
+
+==== MethodExecutionListener
+
+`MethodExecutionListener` intercepts JDBC API calls on followings:
+
+- `Connection`, `Statement`, `PreparedStatement`, `CallableStatement`: All methods
+- `ResultSet`: All methods when result set proxy is enabled.
+- `ProxyDataSource`: `getConnection()` method
+
+
+
+[[built-in-listeners]]
+== Built-in Listeners
+
+=== Query Logging Listener
+
+Query logging listener is the most used listener that logs executing query with actual parameters
+to commons/slf4j/JUL logger or System.out.
+
+*Sample output*
+
+```
+Name:MyProxy, Connection:1, Time:1, Success:True, Type:Statement, Batch:False, QuerySize:1, BatchSize:0, Query:["CREATE TABLE users(id INT, name VARCHAR(255))"], Params:[]
+Name:MyProxy, Connection:2, Time:5, Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:["INSERT INTO users (id, name) VALUES (?, ?)"], Params:[(1,foo),(2,bar)]
+```
+
+[cols="20,80"]
+|===
+| Key           | Value
+
+| Name          | Name of `ProxyDataSource`
+| Connection    | Connection ID
+| Time          | How long query took to execute in ms.
+| Success       | Query execution was successful or not.
+| Type          | Type of statement (_Statement/Prepared/Callable_).
+| Batch         | Batch execution.
+| QuerySize     | Number of queries.
+| BatchSize     | Number of batch.
+| Query         | Query
+| Params        | Query parameters
+|===
+
+
+`ProxyDataSourceBuilder` provides methods to easily configure and register these listeners.
+
+```java
+builder
+  .logQueryByCommons()   // log using Commons
+  .logQueryBySlf4j()     // log using SLF4J
+  .logQueryByJUL()       // log using Java Util Logging
+  .logQueryToSysOut()    // log using System.out
+
+  .multiline()           // enable multiline output
+  .build();
+```
+
+NOTE: If you choose to use commons or slf4j loggers, you need to add dependency to your project accordingly.
+
+By default, each log entry is printed to single line. If `multiline()` option is set, it prints out
+a log over multiple lines. Also, `json()` option prints out log in json format.
+
+
+Here is another example printing multiline log with formatting query with formatter from Hibernate.
+
+
+```java
+    QueryLogEntryCreator logEntryCreator = new DefaultQueryLogEntryCreator() {
+        @Override
+        protected String formatQuery(String query) {
+            return FormatStyle.BASIC.getFormatter().format(query);  // use Hibernte formatter
+        }
+    };
+    creator.setMultiline(true);  // enable multiline output
+
+    // print out to system.out
+    SystemOutQueryLoggingListener listener = new SystemOutQueryLoggingListener();
+    listener.setQueryLogEntryCreator(creator);
+
+    return ProxyDataSourceBuilder
+                .create(actualDataSource)
+                .listener(listener)
+                .build()
+```
+
+=== Slow Query Logging Listener
+
+When query takes more than specified threshold, `SlowQueryListener` executes a callback method.
+The callback is invoked only once for the target query if it exceeds the threshold time.
+
+Combining logging and slow query detection, following built-in classes writes out slow query
+to its corresponding logger.
+
+- `CommonsSlowQueryListener`
+- `SLF4JSlowQueryListener`
+- `JULSlowQueryListener`
+- `SystemOutSlowQueryListener`
+
+
+`ProxyDataSourceBuilder` provides methods to configure those listeners.
+
+```java
+builder
+  .logSlowQueryByCommons(1, TimeUnit.SECONDS)   // log slow query using Commons
+  .logSlowQueryBySlf4j(1, TimeUnit.SECONDS)     // log slow query using Slf4J
+  .logSlowQueryByJUL(1, TimeUnit.SECONDS)       // log slow query using Java Util Logging
+  .logSlowQueryToSysOut(1, TimeUnit.SECONDS)    // log slow query using System.out
+
+  .multiline()           // enable multiline output
+  .build();
+```
+
+
+=== Query Count Listener
+
+
+`DataSourceQueryCountListener` collects statistics of executed queries, such as number of query types(select, insert,
+update, delete), statement types(statement, prepared, callable), etc.
+This class also takes strategy to store such metrics. Default strategy stores metrics in thread-local expecting
+metrics get reset at the end of the request-response lifecycle.
+Another strategy is `SingleQueryCountHolder`. This accumulates query metrics from all threads until explicitly
+clear the metrics.
+
+
+```java
+builder.
+  .countQuery()    // enable collecting query metrics
+//  .countQuery(new SingleQueryCountHolder())  // enable and specify query count holder
+  .build();
+```
+
+Stored metrics can be retrieved by following static method.
+
+```java
+QueryCountHolder.get()
+```
+
+NOTE: Semantics changes based on how metrics are stored - thread local vs global map.
+When thread local is chosen, you need to clean up the stored metrics at the end of request-response lifecycle.
+You can call `QueryCountHolder.clear()` explicitly. Or, if built-in query-count-logging-listeners(will be
+addressed below) are registered, they automatically call `clear()` after it logs the count stats.
+
+
+Combination of count listener and logging, datasource-proxy has built-in support for logging current query count
+metrics to loggers(commons, slf4j, jul, or system.out).
+They are available in servlet `Filter` and `ServletRequestListener` implementation.
+Furthermore, there is a custom tag for jsp.
+
+
+==== Query count logging with servlet Filter
+
+- CommonsQueryCountLoggingServletFilter
+- JULQueryCountLoggingServletFilter
+- SLF4JQueryCountLoggingServletFilter
+- SystemOutQueryCountLoggingServletFilter
+
+`QueryCountLoggerBuilder` class helps constructing filter instance.
+
+.with `web.xml`:
+```xml
+<filter>
+  <filter-name>queryCountFilter</filter-name>
+  <filter-class>net.ttddyy.dsproxy.support.CommonsQueryCountLoggingServletFilter</filter-class>
+  <init-param>  <!-- OPTIONAL -->
+    <param-name>clearQueryCounter</param-name>
+    <param-value>true</param-value>
+  </init-param>
+  <init-param>  <!-- OPTIONAL -->
+    <param-name>logLevel</param-name>
+    <param-value>INFO</param-value>
+  </init-param>
+</filter>
+```
+
+==== Query count logging with ServletRequestListener
+
+- CommonsQueryCountLoggingRequestListener
+- JULQueryCountLoggingRequestListener
+- SLF4JQueryCountLoggingRequestListener
+- SystemOutQueryCountLoggingRequestListener
+- QueryCounterClearServletRequestListener
+
+.with `web.xml`:
+```xml
+<context-param>  <!-- OPTIONAL -->
+  <param-name>queryCountCommonsLogLevel</param-name>
+  <param-value>INFO</param-value>
+</context-param>
+
+<listener>
+  <listener-class>net.ttddyy.dsproxy.support.CommonsQueryCountLoggingRequestListener</listener-class>
+</listener>
+```
+
+==== Taglib Support
+
+For jsp, a custom tag is supported to display query count metrics.
+
+Declare custom tag:
+
+```jsp
+<%@ taglib prefix="dsp" uri="http://www.ttddyy.net/dsproxy/tags" %>
+```
+
+When datasource is not specfied, total number of each datasource will be displayed.
+
+```jsp
+<dsp:metrics metric="select"/>
+<dsp:metrics metric="update"/>
+<dsp:metrics metric="insert"/>
+<dsp:metrics metric="delete"/>
+<dsp:metrics metric="other"/>
+<dsp:metrics metric="total"/>
+<dsp:metrics metric="call"/>
+<dsp:metrics metric="failure"/>
+<dsp:metrics metric="time"/>
+```
+
+
+Specific datasource
+
+```jsp
+<dsp:metrics metric="select" dataSource="FOO"/>
+<dsp:metrics metric="update" dataSource="FOO"/>
+<dsp:metrics metric="insert" dataSource="FOO"/>
+<dsp:metrics metric="delete" dataSource="FOO"/>
+<dsp:metrics metric="other" dataSource="FOO"/>
+<dsp:metrics metric="total" dataSource="FOO"/>
+<dsp:metrics metric="call" dataSource="FOO"/>
+<dsp:metrics metric="failure" dataSource="FOO"/>
+<dsp:metrics metric="time" dataSource="FOO"/>
+```
+
+.metric attribute
+[cols="20,80"]
+|===
+| Name           | Description
+
+| select         | Num of select queries
+| insert         | Num of insert queries
+| update         | Num of update queries
+| delete         | Num of delete queries
+| other          | Num of other queries
+| statement      | Total num of statements
+| prepared       | Total num of prepared statements
+| callable       | Total num of callable statements
+| total          | Total num of queries
+| success        | Num of success queries
+| failure        | Num of failure queries
+| time           | Query execution time
+|===
+
+
+[[custom-listeners]]
+=== Custom Listeners
+
+When you create a custom listener, you can register it via `listener()` or `methodListener` methods.
+
+```java
+  builder
+      .listener(myQueryListener)          // register QueryExecutionListener
+      .methodListener(myMethodListener)   // register MethodExecutionListener
+      .build();
+```
+
+
+Also, with Java8 lambda, builder provides simple methods to inline listener definitions.
+
+- `beforeQuery()` and `afterQuery()` to register `QueryExecutionListener`
+- `beforeMethod()` and `afterMethod()` to register `MethodExecutionListener`
+
+
+```java
+  builder
+      // register MethodExecutionListener
+      .afterMethod(executionContext -> {
+        ....
+      })
+      // register QueryExecutionListener
+      .afterQuery((execInfo, queryInfoList) -> {
+          ...
+      })
+
+```
+
