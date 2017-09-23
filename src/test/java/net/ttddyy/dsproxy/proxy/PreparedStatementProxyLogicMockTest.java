@@ -614,6 +614,7 @@ public class PreparedStatementProxyLogicMockTest {
                 PreparedStatement.class, executionContext.getMethod().getDeclaringClass());
         assertSame("executeQuery", executionContext.getMethod().getName());
         assertSame(ps, executionContext.getTarget());
+        assertSame(connectionInfo, executionContext.getConnectionInfo());
     }
 
 }

@@ -98,7 +98,7 @@ public class StatementProxyLogic {
             public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
                 return performQueryExecutionListener(method, args);
             }
-        }, this.proxyConfig, this.stmt, method, args);
+        }, this.proxyConfig, this.stmt, this.connectionInfo, method, args);
 
     }
 

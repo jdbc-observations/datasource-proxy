@@ -314,9 +314,10 @@ public class ConnectionProxyLogicMockTest {
     public void methodExecutionListener() throws Throwable {
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ConnectionInfo connectionInfo = new ConnectionInfo();
 
         Connection conn = mock(Connection.class);
-        ConnectionProxyLogic logic = new ConnectionProxyLogic(conn, null, proxyConfig);
+        ConnectionProxyLogic logic = new ConnectionProxyLogic(conn, connectionInfo, proxyConfig);
 
         Method method = Connection.class.getMethod("createStatement");
         logic.invoke(conn, method, new Object[]{});
@@ -329,6 +330,7 @@ public class ConnectionProxyLogicMockTest {
                 Connection.class, executionContext.getMethod().getDeclaringClass());
         assertSame("createStatement", executionContext.getMethod().getName());
         assertSame(conn, executionContext.getTarget());
+        assertSame(connectionInfo, executionContext.getConnectionInfo());
     }
 
 }

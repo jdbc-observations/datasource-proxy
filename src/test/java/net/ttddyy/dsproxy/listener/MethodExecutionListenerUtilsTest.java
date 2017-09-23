@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.listener;
 
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import org.junit.Test;
 
@@ -22,6 +23,7 @@ public class MethodExecutionListenerUtilsTest {
         final Method method = Statement.class.getMethod("getConnection");
         final Object[] methodArgs = new Object[]{};
         final Object returnObj = new Object();
+        final ConnectionInfo connectionInfo = new ConnectionInfo();
 
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener() {
             @Override
@@ -36,6 +38,7 @@ public class MethodExecutionListenerUtilsTest {
                 assertThat(executionContext.getThrown()).isNull();
                 assertThat(executionContext.getResult()).isNull();
 
+                assertThat(executionContext.getConnectionInfo()).isSameAs(connectionInfo);
                 assertThat(executionContext.getProxyConfig()).isNotNull();
             }
 
@@ -51,6 +54,7 @@ public class MethodExecutionListenerUtilsTest {
                 assertThat(executionContext.getThrown()).isNull();
                 assertThat(executionContext.getResult()).isSameAs(returnObj);
 
+                assertThat(executionContext.getConnectionInfo()).isSameAs(connectionInfo);
                 assertThat(executionContext.getProxyConfig()).isNotNull();
             }
         };
@@ -63,7 +67,7 @@ public class MethodExecutionListenerUtilsTest {
             public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
                 return returnObj;
             }
-        }, proxyConfig, target, method, methodArgs);
+        }, proxyConfig, target, connectionInfo, method, methodArgs);
 
         assertSame(returnObj, result);
         assertTrue(listener.isBeforeMethodCalled());
@@ -83,6 +87,7 @@ public class MethodExecutionListenerUtilsTest {
         final Method method = Statement.class.getMethod("getConnection");
         final Object[] methodArgs = new Object[]{};
         final Exception exception = new Exception();
+        final ConnectionInfo connectionInfo = new ConnectionInfo();
 
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener() {
             @Override
@@ -112,7 +117,7 @@ public class MethodExecutionListenerUtilsTest {
                 public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
                     throw exception;
                 }
-            }, proxyConfig, target, method, methodArgs);
+            }, proxyConfig, target, connectionInfo, method, methodArgs);
         } catch (Throwable throwable) {
             thrownException = throwable;
         }

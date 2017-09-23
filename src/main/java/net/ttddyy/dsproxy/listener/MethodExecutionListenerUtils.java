@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.listener;
 
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 
 import java.lang.reflect.Method;
@@ -15,12 +16,14 @@ public class MethodExecutionListenerUtils {
     }
 
     public static Object invoke(MethodExecutionCallback callback, ProxyConfig proxyConfig,
-                                Object proxyTarget, Method method, Object[] args) throws Throwable {
+                                Object proxyTarget, ConnectionInfo connectionInfo, Method method,
+                                Object[] args) throws Throwable {
 
         MethodExecutionContext methodContext = MethodExecutionContext.Builder.create()
                 .target(proxyTarget)
                 .method(method)
                 .methodArgs(args)
+                .connectionInfo(connectionInfo)
                 .proxyConfig(proxyConfig)
                 .build();
 

@@ -103,7 +103,7 @@ public class PreparedStatementProxyLogic {
             public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
                 return performQueryExecutionListener(method, args);
             }
-        }, this.proxyConfig, this.ps, method, args);
+        }, this.proxyConfig, this.ps, this.connectionInfo, method, args);
 
     }
 

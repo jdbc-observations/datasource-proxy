@@ -826,6 +826,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
                 CallableStatement.class, executionContext.getMethod().getDeclaringClass());
         assertSame("wasNull", executionContext.getMethod().getName());
         assertSame(cs, executionContext.getTarget());
+        assertSame(connectionInfo, executionContext.getConnectionInfo());
 
     }
 

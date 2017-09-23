@@ -17,6 +17,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -174,6 +175,7 @@ public class DataSourceProxyLogicMockTest {
                 DataSource.class, executionContext.getMethod().getDeclaringClass());
         assertSame("getConnection", executionContext.getMethod().getName());
         assertSame(ds, executionContext.getTarget());
+        assertNull(executionContext.getConnectionInfo());
     }
 
 }

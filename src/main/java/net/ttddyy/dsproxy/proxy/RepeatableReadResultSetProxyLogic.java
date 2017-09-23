@@ -106,7 +106,7 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
             public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
                 return performQueryExecutionListener(method, args);
             }
-        }, this.proxyConfig, this.resultSet, method, args);
+        }, this.proxyConfig, this.resultSet, this.connectionInfo, method, args);
     }
 
     private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {

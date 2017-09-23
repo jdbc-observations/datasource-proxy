@@ -908,6 +908,7 @@ public class StatementProxyLogicMockTest {
                 Statement.class, executionContext.getMethod().getDeclaringClass());
         assertSame("executeUpdate", executionContext.getMethod().getName());
         assertSame(statement, executionContext.getTarget());
+        assertSame(connectionInfo, executionContext.getConnectionInfo());
     }
 
 }

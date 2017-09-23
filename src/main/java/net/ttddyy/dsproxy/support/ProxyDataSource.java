@@ -87,7 +87,7 @@ public class ProxyDataSource implements DataSource, Closeable {
                 public Object execute(Object proxy, Method method, Object[] args) throws Throwable {
                     return jdbcProxyFactory.createConnection(conn, connectionInfo, ProxyDataSource.this.proxyConfig);
                 }
-            }, this.proxyConfig, this, method, args);
+            }, this.proxyConfig, this, connectionInfo, method, args);
         } catch (Throwable throwable) {
             if (throwable instanceof SQLException) {
                 throw (SQLException) throwable;

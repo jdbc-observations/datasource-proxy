@@ -363,9 +363,10 @@ public class RepeatableReadResultSetProxyLogicTest {
         ResultSet rs = mock(ResultSet.class);
         ResultSetMetaData metaData = mock(ResultSetMetaData.class);
         when(rs.getMetaData()).thenReturn(metaData);
+        ConnectionInfo connectionInfo = new ConnectionInfo();
 
         RepeatableReadResultSetProxyLogicFactory factory = new RepeatableReadResultSetProxyLogicFactory();
-        RepeatableReadResultSetProxyLogic logic = (RepeatableReadResultSetProxyLogic) factory.create(rs, new ConnectionInfo(), proxyConfig);
+        RepeatableReadResultSetProxyLogic logic = (RepeatableReadResultSetProxyLogic) factory.create(rs, connectionInfo, proxyConfig);
 
         Method method = ResultSet.class.getMethod("close");
         logic.invoke(method, new Object[]{});
@@ -378,6 +379,7 @@ public class RepeatableReadResultSetProxyLogicTest {
                 ResultSet.class, executionContext.getMethod().getDeclaringClass());
         assertSame("close", executionContext.getMethod().getName());
         assertSame(rs, executionContext.getTarget());
+        assertSame(connectionInfo, executionContext.getConnectionInfo());
     }
 
 }

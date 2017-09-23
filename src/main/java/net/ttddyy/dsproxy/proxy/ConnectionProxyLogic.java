@@ -45,7 +45,7 @@ public class ConnectionProxyLogic {
             public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
                 return performQueryExecutionListener(proxyConnection, method, args);
             }
-        }, this.proxyConfig, this.connection, method, args);
+        }, this.proxyConfig, this.connection, this.connectionInfo, method, args);
 
     }
 

@@ -65,8 +65,9 @@ public class SimpleResultSetProxyLogicTest {
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
         ResultSet rs = mock(ResultSet.class);
+        ConnectionInfo connectionInfo = new ConnectionInfo();
 
-        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, new ConnectionInfo(), proxyConfig);
+        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, connectionInfo, proxyConfig);
 
         Method method = ResultSet.class.getMethod("close");
         logic.invoke(method, new Object[]{});
@@ -79,6 +80,7 @@ public class SimpleResultSetProxyLogicTest {
                 ResultSet.class, executionContext.getMethod().getDeclaringClass());
         assertSame("close", executionContext.getMethod().getName());
         assertSame(rs, executionContext.getTarget());
+        assertSame(connectionInfo, executionContext.getConnectionInfo());
     }
 
 }

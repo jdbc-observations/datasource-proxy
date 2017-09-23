@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.listener;
 
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 
 import java.lang.reflect.Method;
@@ -20,6 +21,7 @@ public class MethodExecutionContext {
         private Object result;
         private Throwable thrown;
         private long elapsedTime;
+        private ConnectionInfo connectionInfo;
         private ProxyConfig proxyConfig;
 
         public static Builder create() {
@@ -34,6 +36,7 @@ public class MethodExecutionContext {
             context.result = this.result;
             context.thrown = this.thrown;
             context.elapsedTime = this.elapsedTime;
+            context.connectionInfo = this.connectionInfo;
             context.proxyConfig = this.proxyConfig;
             return context;
         }
@@ -68,6 +71,11 @@ public class MethodExecutionContext {
             return this;
         }
 
+        public Builder connectionInfo(ConnectionInfo connectionInfo) {
+            this.connectionInfo = connectionInfo;
+            return this;
+        }
+
         public Builder proxyConfig(ProxyConfig proxyConfig) {
             this.proxyConfig = proxyConfig;
             return this;
@@ -81,6 +89,7 @@ public class MethodExecutionContext {
     private Object result;
     private Throwable thrown;
     private long elapsedTime;
+    private ConnectionInfo connectionInfo;
     private ProxyConfig proxyConfig;
 
     public Object getTarget() {
@@ -129,6 +138,20 @@ public class MethodExecutionContext {
 
     public void setElapsedTime(long elapsedTime) {
         this.elapsedTime = elapsedTime;
+    }
+
+    /**
+     * @since 1.4.4
+     */
+    public ConnectionInfo getConnectionInfo() {
+        return connectionInfo;
+    }
+
+    /**
+     * @since 1.4.4
+     */
+    public void setConnectionInfo(ConnectionInfo connectionInfo) {
+        this.connectionInfo = connectionInfo;
     }
 
     public ProxyConfig getProxyConfig() {

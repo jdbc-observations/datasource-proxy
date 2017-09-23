@@ -40,7 +40,7 @@ public class DataSourceProxyLogic {
             public Object execute(Object proxy, Method method, Object[] args) throws Throwable {
                 return performQueryExecutionListener(method, args);
             }
-        }, this.proxyConfig, this.dataSource, method, args);
+        }, this.proxyConfig, this.dataSource, null, method, args);
 
     }
 

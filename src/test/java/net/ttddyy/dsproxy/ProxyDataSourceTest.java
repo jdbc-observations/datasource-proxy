@@ -155,6 +155,7 @@ public class ProxyDataSourceTest {
         assertThat(context.getResult()).isSameAs(connection);
         assertThat(context.getMethod().getDeclaringClass()).isSameAs(DataSource.class);
         assertThat(context.getMethod().getName()).isEqualTo("getConnection");
+        assertThat(context.getConnectionInfo()).isNotNull();
 
         this.methodListener.reset();
 
