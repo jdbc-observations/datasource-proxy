@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.DataSourceProxyException;
 
 import java.sql.ResultSet;
@@ -18,10 +19,11 @@ import java.util.Map;
 public class RepeatableReadResultSetProxyLogicFactory implements ResultSetProxyLogicFactory {
 
     @Override
-    public ResultSetProxyLogic create(ResultSet resultSet, ProxyConfig proxyConfig) {
+    public ResultSetProxyLogic create(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
         Map<String, Integer> columnNameToIndex = columnNameToIndex(resultSet);
         return RepeatableReadResultSetProxyLogic.Builder.create()
                 .resultSet(resultSet)
+                .connectionInfo(connectionInfo)
                 .proxyConfig(proxyConfig)
                 .columnNameToIndex(columnNameToIndex)
                 .columnCount(columnNameToIndex.size())

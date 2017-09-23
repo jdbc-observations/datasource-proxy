@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.ConnectionInfo;
+
 import java.sql.ResultSet;
 
 /**
@@ -11,8 +13,8 @@ import java.sql.ResultSet;
 public class SimpleResultSetProxyLogicFactory implements ResultSetProxyLogicFactory {
 
     @Override
-    public ResultSetProxyLogic create(ResultSet resultSet, ProxyConfig proxyConfig) {
-        return new SimpleResultSetProxyLogic(resultSet, proxyConfig);
+    public ResultSetProxyLogic create(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
+        return new SimpleResultSetProxyLogic(resultSet, connectionInfo, proxyConfig);
     }
 
 }

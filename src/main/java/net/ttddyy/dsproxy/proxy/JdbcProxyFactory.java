@@ -43,6 +43,6 @@ public interface JdbcProxyFactory {
      *
      * @since 1.4.3
      */
-    ResultSet createResultSet(ResultSet resultSet, ProxyConfig proxyConfig);
+    ResultSet createResultSet(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig);
 
 }

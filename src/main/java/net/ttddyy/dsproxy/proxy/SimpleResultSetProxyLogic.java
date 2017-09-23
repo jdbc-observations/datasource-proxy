@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 
 import java.lang.reflect.Method;
@@ -14,10 +15,12 @@ import java.sql.ResultSet;
 public class SimpleResultSetProxyLogic implements ResultSetProxyLogic {
 
     private ResultSet resultSet;
+    private ConnectionInfo connectionInfo;
     private ProxyConfig proxyConfig;
 
-    public SimpleResultSetProxyLogic(ResultSet resultSet, ProxyConfig proxyConfig) {
+    public SimpleResultSetProxyLogic(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
         this.resultSet = resultSet;
+        this.connectionInfo = connectionInfo;
         this.proxyConfig = proxyConfig;
     }
 

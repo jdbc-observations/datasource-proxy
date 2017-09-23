@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -40,6 +41,7 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
 
     public static class Builder {
         private ResultSet resultSet;
+        private ConnectionInfo connectionInfo;
         private ProxyConfig proxyConfig;
         private Map<String, Integer> columnNameToIndex;
         private int columnCount;
@@ -51,6 +53,7 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
         public RepeatableReadResultSetProxyLogic build() {
             RepeatableReadResultSetProxyLogic logic = new RepeatableReadResultSetProxyLogic();
             logic.resultSet = this.resultSet;
+            logic.connectionInfo = this.connectionInfo;
             logic.proxyConfig = this.proxyConfig;
             logic.columnNameToIndex = this.columnNameToIndex;
             logic.columnCount = this.columnCount;
@@ -59,6 +62,11 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
 
         public Builder resultSet(ResultSet resultSet) {
             this.resultSet = resultSet;
+            return this;
+        }
+
+        public Builder connectionInfo(ConnectionInfo connectionInfo) {
+            this.connectionInfo = connectionInfo;
             return this;
         }
 
@@ -80,6 +88,7 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
 
     private Map<String, Integer> columnNameToIndex;
     private ResultSet resultSet;
+    private ConnectionInfo connectionInfo;
     private int columnCount;
     private ProxyConfig proxyConfig;
 

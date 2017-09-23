@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import org.assertj.core.api.ThrowableAssert;
@@ -221,7 +222,7 @@ public class RepeatableReadResultSetProxyLogicTest {
 
     private RepeatableReadResultSetProxyLogic createProxyLogic(ResultSet resultSet) {
         RepeatableReadResultSetProxyLogicFactory factory = new RepeatableReadResultSetProxyLogicFactory();
-        return (RepeatableReadResultSetProxyLogic) factory.create(resultSet, ProxyConfig.Builder.create().build());
+        return (RepeatableReadResultSetProxyLogic) factory.create(resultSet, new ConnectionInfo(), ProxyConfig.Builder.create().build());
     }
 
     private void consumeResultSetAndCallBeforeFirst(ResultSet resultSet, RepeatableReadResultSetProxyLogic resultSetProxyLogic) throws Throwable {
@@ -364,7 +365,7 @@ public class RepeatableReadResultSetProxyLogicTest {
         when(rs.getMetaData()).thenReturn(metaData);
 
         RepeatableReadResultSetProxyLogicFactory factory = new RepeatableReadResultSetProxyLogicFactory();
-        RepeatableReadResultSetProxyLogic logic = (RepeatableReadResultSetProxyLogic) factory.create(rs, proxyConfig);
+        RepeatableReadResultSetProxyLogic logic = (RepeatableReadResultSetProxyLogic) factory.create(rs, new ConnectionInfo(), proxyConfig);
 
         Method method = ResultSet.class.getMethod("close");
         logic.invoke(method, new Object[]{});

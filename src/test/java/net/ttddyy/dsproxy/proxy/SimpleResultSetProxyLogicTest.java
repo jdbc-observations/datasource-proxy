@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import org.junit.Test;
@@ -22,7 +23,7 @@ public class SimpleResultSetProxyLogicTest {
     public void testToString() throws Throwable {
 
         ResultSet rs = mock(ResultSet.class);
-        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, ProxyConfig.Builder.create().build());
+        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, new ConnectionInfo(), ProxyConfig.Builder.create().build());
 
         when(rs.toString()).thenReturn("my rs");
 
@@ -35,7 +36,7 @@ public class SimpleResultSetProxyLogicTest {
     @Test
     public void testHashCode() throws Throwable {
         ResultSet rs = mock(ResultSet.class);
-        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, ProxyConfig.Builder.create().build());
+        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, new ConnectionInfo(), ProxyConfig.Builder.create().build());
 
         Method method = Object.class.getMethod("hashCode");
         Object result = logic.invoke(method, null);
@@ -46,7 +47,7 @@ public class SimpleResultSetProxyLogicTest {
     @Test
     public void testEquals() throws Throwable {
         ResultSet rs = mock(ResultSet.class);
-        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, ProxyConfig.Builder.create().build());
+        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, new ConnectionInfo(), ProxyConfig.Builder.create().build());
 
         Method method = Object.class.getMethod("equals", Object.class);
 
@@ -65,7 +66,7 @@ public class SimpleResultSetProxyLogicTest {
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
         ResultSet rs = mock(ResultSet.class);
 
-        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, proxyConfig);
+        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, new ConnectionInfo(), proxyConfig);
 
         Method method = ResultSet.class.getMethod("close");
         logic.invoke(method, new Object[]{});

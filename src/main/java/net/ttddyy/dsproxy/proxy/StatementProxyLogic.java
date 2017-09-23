@@ -202,7 +202,7 @@ public class StatementProxyLogic {
 
             // execInfo.setResult will have proxied ResultSet if enabled
             if (METHODS_TO_RETURN_RESULTSET.contains(methodName)) {
-                retVal = proxyFactory.createResultSet((ResultSet) retVal, this.proxyConfig);
+                retVal = proxyFactory.createResultSet((ResultSet) retVal, this.connectionInfo, this.proxyConfig);
             }
 
             execInfo.setResult(retVal);
