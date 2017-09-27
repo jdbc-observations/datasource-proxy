@@ -4,6 +4,7 @@ import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.ExecutionInfoBuilder;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.QueryInfoBuilder;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.NoOpLog;
 import org.junit.After;
 import org.junit.Before;
@@ -30,12 +31,14 @@ public class CommonsQueryLoggingListenerTest {
 
     @Before
     public void setup() throws Exception {
-        System.setProperty("org.apache.commons.logging.Log", NameAwareLog.class.getName());
+        // see configuration for logger resolution order
+        // https://commons.apache.org/proper/commons-logging/guide.html
+        LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", NameAwareLog.class.getName());
     }
 
     @After
     public void teardown() throws Exception {
-        System.setProperty("org.apache.commons.logging.Log", "");
+        LogFactory.getFactory().removeAttribute("org.apache.commons.logging.Log");
     }
 
     @Test
