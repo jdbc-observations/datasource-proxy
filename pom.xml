@@ -177,6 +177,7 @@
                 <setanchors />
                 <icons>font</icons>
                 <sectnums />
+                <revnumber>${project.version}</revnumber>
               </attributes>
             </configuration>
           </execution>
