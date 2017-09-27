@@ -5,6 +5,7 @@ Tadaya Tsuyukubo
 :sectnums:
 //
 :oss-snapshot-repository:           https://oss.sonatype.org/content/repositories/snapshots/net/ttddyy/datasource-proxy/
+:datasource-proxy:                  https://github.com/ttddyy/datasource-proxy
 :datasource-proxy-examples:         https://github.com/ttddyy/datasource-proxy-examples
 :jndi-embedded-example:             {datasource-proxy-examples}/tree/master/jndi-embedded-example
 :jndi-external-example:             {datasource-proxy-examples}/tree/master/jndi-external-example
@@ -13,3 +14,4 @@ Tadaya Tsuyukubo
 include::about.adoc[]
 include::installation.adoc[]
 include::how-to-use.adoc[]
+include::development.adoc[]

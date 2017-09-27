@@ -117,7 +117,7 @@ To enable `ResultSet` proxy, `ProxyDataSourceBuilder` has `proxyResultSet()` met
 ```java
 builder
   // configure listeners
-  .proxyResultSet()
+  .proxyResultSet()  // enable proxying result set
   .build();
 ```
 
