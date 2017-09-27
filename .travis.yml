@@ -3,9 +3,6 @@ language: java
 jdk:
   - oraclejdk8
 
-script:
-  - bash ./publish-doc.sh
-
 cache:
   directories:
     - ~/.m2/repository
@@ -25,3 +22,4 @@ env:
 
 after_success:
   - bash ./src/build/publish.sh
+  - bash ./src/build/publish-doc.sh
