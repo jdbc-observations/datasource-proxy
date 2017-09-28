@@ -2,3 +2,9 @@
 == Development
 
 Github repository: {datasource-proxy}
+
+=== Build Documentation
+
+```sh
+> ./mvnw asciidoctor:process-asciidoc@output-html
+```
