@@ -9,8 +9,8 @@ cache:
 
 env:
   global:
-  # github token
-  - secure: "Q8rLWOmsGH01i5NIZKYxEYL5/uWDqDbbM5qghBcK0MerRSaqgEOsKhb3sLToOoP3VTe94x0qHYW14fDatMjnenPNMEea2zOUrKRCzk1I20swjjtPjucxRmjTQU1PZ3GsmHctEzooq2Sf18bCmpZdGtAi3GqX4mRD3PqgwR3dyzw="
+  # GH_TOKEN
+  - secure: "PRxZj10Zi8Fo8yTs61nZL5XyEv2kVjaNOHawz3RiPqaXcLLcJgkD+6r8BJujNJfSRcNpI+6v6xjR284jBtyWyaz2Givwv5xxZ2ezB0J7kb1x4+ZpTizkCCsvn+cdcCXhwec6jU879gjqF+rVzk7OmMIcCf7tt0V7s3Wsj09Ft9s="
   # SONATYPE_USER
   - secure: "axonSXozZztwlwbpJdBGrx/vI3c3v9JG4Gz0KlKSn9iOpBqgX/gNWCyr18k1SG+4TEgXzD72/6ZDDnCPSYXZv5h+SKSmCkMmboxUE0KFR1hO1SOIzJtfMpv1qfIcE0ernuZIs0BuZRh35xTYjH+N7XC9HEs0LNRPjfkduiJittA="
   # SONATYPE_PASS
