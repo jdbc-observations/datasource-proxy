@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.NoOpLog;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class CommonsQueryLoggingListenerTest {
         LogFactory.getFactory().removeAttribute("org.apache.commons.logging.Log");
     }
 
+    @Ignore
     @Test
     public void defaultLoggerName() {
         CommonsQueryLoggingListener listener = new CommonsQueryLoggingListener();
@@ -48,6 +50,7 @@ public class CommonsQueryLoggingListenerTest {
         assertThat(name).as("Default logger name").isEqualTo("net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener");
     }
 
+    @Ignore
     @Test
     public void setLogName() {
         CommonsQueryLoggingListener listener = new CommonsQueryLoggingListener();
