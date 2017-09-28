@@ -163,10 +163,11 @@
         <executions>
           <execution>
             <id>output-html</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>process-asciidoc</goal>
-            </goals>
+            <!--
+              Not binding to maven goal.
+              This plugin can performed by:
+                 ./mvnw asciidoctor:process-asciidoc@output-html
+            -->
             <configuration>
               <sourceDocumentName>index.adoc</sourceDocumentName>
               <backend>html5</backend>
