@@ -1,8 +1,7 @@
 #!/bin/bash
 set -e # exit with nonzero exit code if anything fails
 
-# if [ "$TRAVIS_BRANCH" != 'master' ] || [ "$TRAVIS_PULL_REQUEST" == 'true' ]; then
-if [ "$TRAVIS_PULL_REQUEST" == 'true' ]; then
+if [ "$TRAVIS_BRANCH" != 'master' ] || [ "$TRAVIS_PULL_REQUEST" == 'true' ]; then
     exit 0
 fi
 
