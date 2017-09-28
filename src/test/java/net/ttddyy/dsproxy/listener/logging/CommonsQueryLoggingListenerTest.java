@@ -42,7 +42,7 @@ public class CommonsQueryLoggingListenerTest {
         LogFactory.getFactory().removeAttribute("org.apache.commons.logging.Log");
     }
 
-    @Ignore
+    @Ignore("Failed in travis build #229: https://travis-ci.org/ttddyy/datasource-proxy/builds/280656607")
     @Test
     public void defaultLoggerName() {
         CommonsQueryLoggingListener listener = new CommonsQueryLoggingListener();
@@ -50,7 +50,7 @@ public class CommonsQueryLoggingListenerTest {
         assertThat(name).as("Default logger name").isEqualTo("net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener");
     }
 
-    @Ignore
+    @Ignore("Failed in travis build #229: https://travis-ci.org/ttddyy/datasource-proxy/builds/280656607")
     @Test
     public void setLogName() {
         CommonsQueryLoggingListener listener = new CommonsQueryLoggingListener();
