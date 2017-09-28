@@ -22,5 +22,5 @@ env:
 
 after_success:
   - ./mvnw asciidoctor:process-asciidoc@output-html
-  - bash ./src/build/publish.sh
+  - bash ./src/build/publish-jar.sh
   - bash ./src/build/publish-doc.sh
