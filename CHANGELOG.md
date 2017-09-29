@@ -1,5 +1,22 @@
 # ChangeLog
 
+## 1.4.4
+
+- `ProxyConfigSpringXmlSupport` is added to support creating `ProxyConfig` bean in XML based spring config.
+  Sample XML config:
+  ```xml
+  <bean id="proxyConfig"
+        factory-bean="proxyConfigSupport"
+        factory-method="create"/>
+  
+  <bean id="proxyConfigSupport" class="net.ttddyy.dsproxy.support.ProxyConfigSpringXmlSupport">
+    <property name="dataSourceName" value="my-ds"/>
+    <property name="queryListener" ref="..."/>
+    <property name="methodListener" ref="..."/>
+  </bean>
+  ```
+
+
 ## 1.4.3
 
 - QueryLoggingListeners(Commons, SLF4J, JUL) added overridable `loggingCondition` callback(boolean supplier) that
