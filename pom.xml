@@ -175,7 +175,7 @@
               <attributes>
                 <toc>left</toc>
                 <highlightjs-theme>github</highlightjs-theme>
-                <setanchors />
+                <sectanchors />
                 <icons>font</icons>
                 <sectnums />
                 <revnumber>${project.version}</revnumber>
