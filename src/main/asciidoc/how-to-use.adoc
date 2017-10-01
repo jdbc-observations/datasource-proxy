@@ -476,6 +476,44 @@ Specific datasource
 |===
 
 
+=== Tracing Method Listener
+
+`TracingMethodListener` is a method execution listener that prints out all JDBC API interaction.
+
+
+Sample JDBC interaction using HSQL:
+
+.Code:
+```java
+Connection conn = dataSource.getConnection()
+PreparedStatement ps = conn.prepareStatement("INSERT INTO users (id, name) VALUES (?, ?)");
+ps.setString(2, "FOO");
+ps.setInt(1, 100);
+ps.addBatch();
+ps.setInt(1, 200);
+ps.setString(2, "BAR");
+ps.addBatch();
+ps.executeBatch();
+ps.close();
+conn.close();
+```
+
+.Output:
+```
+[1][success][0ms][conn=1] ProxyDataSource#getConnection()
+[2][success][1ms][conn=1] JDBCConnection#prepareStatement("INSERT INTO users (id, name) VALUES (?, ?)")
+[3][success][0ms][conn=1] JDBCPreparedStatement#setString(2,"FOO")
+[4][success][0ms][conn=1] JDBCPreparedStatement#setInt(1,100)
+[5][success][0ms][conn=1] JDBCPreparedStatement#addBatch()
+[6][success][0ms][conn=1] JDBCPreparedStatement#setInt(1,200)
+[7][success][0ms][conn=1] JDBCPreparedStatement#setString(2,"BAR")
+[8][success][0ms][conn=1] JDBCPreparedStatement#addBatch()
+[9][success][1ms][conn=1] JDBCPreparedStatement#executeBatch()
+[10][success][0ms][conn=1] JDBCPreparedStatement#close()
+[11][success][0ms][conn=1] JDBCConnection#close()
+```
+
+
 [[custom-listeners]]
 === Custom Listeners
 
