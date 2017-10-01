@@ -15,10 +15,10 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class TracingMethodListener implements MethodExecutionListener {
 
-    private static final int DEFAULT_SINGLE_PARAM_LENGTH = 15;
+    private static final int DEFAULT_DISPLAY_PARAM_LENGTH = 50;
 
     private AtomicLong sequenceNumber = new AtomicLong(1);
-    protected int parameterDisplayLength = DEFAULT_SINGLE_PARAM_LENGTH;
+    protected int parameterDisplayLength = DEFAULT_DISPLAY_PARAM_LENGTH;
 
     @Override
     public void beforeMethod(MethodExecutionContext executionContext) {
@@ -56,38 +56,83 @@ public class TracingMethodListener implements MethodExecutionListener {
      */
     protected String getArguments(Object[] args) {
 
-        if (args == null) {
+        if (args == null || args.length == 0) {
             return "";
         }
 
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < args.length; i++) {
-            Object arg = args[i];
-            boolean lastArg = i == args.length - 1;
-            String argAsString = getArgumentAsString(arg);
-            argAsString = getDisplayArg(argAsString);
+
+        if (args.length == 1) {
+            Object arg = args[0];
+            String param = getSingleArgParameterAsString(arg);
+            String displayParam = getSingleArgDisplayParameter(param);
             if (arg instanceof String) {
                 sb.append("\"");
-                sb.append(argAsString);
+                sb.append(displayParam);
                 sb.append("\"");
             } else {
-                sb.append(argAsString);
+                sb.append(displayParam);
             }
+        } else {
+            for (int i = 0; i < args.length; i++) {
+                Object arg = args[i];
+                boolean lastArg = i == args.length - 1;
+                String param = getParameterAsString(arg);
+                String displayParam = getDisplayParameter(param);
+                if (arg instanceof String) {
+                    sb.append("\"");
+                    sb.append(displayParam);
+                    sb.append("\"");
+                } else {
+                    sb.append(displayParam);
+                }
 
-            if (!lastArg) {
-                sb.append(",");
+                if (!lastArg) {
+                    sb.append(",");
+                }
             }
         }
+
         return sb.toString();
     }
 
     /**
      * Convert single parameter to String.
      *
-     * @param arg string
+     * This method is called when invoked method takes single argument.
+     *
+     * @param arg method parameter
      * @return string representation
      */
-    protected String getArgumentAsString(Object arg) {
+    protected String getSingleArgParameterAsString(Object arg) {
+        if (arg instanceof String) {
+            return (String) arg;
+        }
+        return arg == null ? "null" : arg.toString();
+    }
+
+    /**
+     * Construct display string for parameter.
+     *
+     * This method is called when invoked method takes single argument.
+     *
+     * @param parameter parameter value as string
+     * @return parameter value to display
+     */
+    protected String getSingleArgDisplayParameter(String parameter) {
+        // when method takes only one argument, do not truncate the string representation.
+        return parameter;
+    }
+
+    /**
+     * Convert single parameter to String.
+     *
+     * This method is called when invoked method takes multiple arguments.
+     *
+     * @param arg method parameter
+     * @return string representation
+     */
+    protected String getParameterAsString(Object arg) {
         if (arg instanceof String) {
             return (String) arg;
         }
@@ -97,19 +142,18 @@ public class TracingMethodListener implements MethodExecutionListener {
     /**
      * Construct parameter value to display.
      *
+     * This method is called when invoked method takes multiple arguments.
+     *
      * Default implementation truncate the parameter string if it is too long.
      *
-     * @param argAsString parameter value as string
+     * @param parameter parameter value as string
      * @return parameter value to display
      */
-    protected String getDisplayArg(String argAsString) {
-        if (argAsString.length() <= this.parameterDisplayLength) {
-            return argAsString;
+    protected String getDisplayParameter(String parameter) {
+        if (parameter.length() <= this.parameterDisplayLength) {
+            return parameter;
         }
-        StringBuilder sb = new StringBuilder(argAsString);
-        sb.substring(0, this.parameterDisplayLength - 3);
-        sb.append("...");
-        return sb.toString();
+        return parameter.substring(0, this.parameterDisplayLength - 3) + "...";
     }
 
     /**
