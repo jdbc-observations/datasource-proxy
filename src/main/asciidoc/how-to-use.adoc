@@ -26,7 +26,7 @@ DataSource dataSource =
         .build();
 ```
 
-==== DriverManager and Connection support
+==== DriverManager and Connection Support
 
 From instance of `java.sql.Connection`, you can create a proxy that is same as what `ProxyDataSource` returns.
 
@@ -42,6 +42,52 @@ ProxyConfig proxyConfig = ProxyConfig.Builder.create()
 JdbcProxyFactory jdbcProxyFactory = new JdkJdbcProxyFactory();
 Connection proxyConnection = jdbcProxyFactory.createConnection(realConnection, proxyConfig);
 ...
+```
+
+
+==== Spring XML Configuration Support
+
+Since `ProxyConfig` uses builder style instance creation, it is difficult to directly create
+its bean in XML based spring config. `ProxyConfigSpringXmlSupport` class provides setters to
+build `ProxyConfig` aiming to support bean creation in XML based spring config file.
+
+.Sample XML config
+```xml
+<bean id="dataSource" primary="true" class="net.ttddyy.dsproxy.support.ProxyDataSource">
+  <property name="dataSource" ref="actualDataSource"/>
+  <property name="proxyConfig" ref="proxyConfig"/>
+  <!--
+    Alternatively, you can use SpEL to invoke create() method to get ProxyConfig bean.
+
+    <property name="proxyConfig" value="#{proxyConfigSupport.create()}"/>
+    -->
+</bean>
+
+<bean id="proxyConfig"
+      factory-bean="proxyConfigSupport"
+      factory-method="create"/>
+
+<bean id="proxyConfigSupport" class="net.ttddyy.dsproxy.support.ProxyConfigSpringXmlSupport">
+  <property name="dataSourceName" value="my-ds"/>
+  <property name="queryListener" ref="queryListener"/>
+  <property name="methodListener" ref="methodListener"/>
+</bean>
+
+<bean id="queryListener" class="net.ttddyy.dsproxy.listener.ChainListener">
+  <property name="listeners">
+    <list>
+      <bean class="net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener"/>
+    </list>
+  </property>
+</bean>
+
+<bean id="methodListener" class="net.ttddyy.dsproxy.listener.CompositeMethodListener">
+  <property name="listeners">
+    <list>
+      <bean class="net.ttddyy.dsproxy.listener.TracingMethodListener"/>
+    </list>
+  </property>
+</bean>
 ```
 
 
