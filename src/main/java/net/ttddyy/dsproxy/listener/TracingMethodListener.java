@@ -17,8 +17,23 @@ public class TracingMethodListener implements MethodExecutionListener {
 
     private static final int DEFAULT_DISPLAY_PARAM_LENGTH = 50;
 
+    /**
+     * Functional interface to decide whether to perform tracing.
+     *
+     * This will be updated to BooleanSupplier once it is updated to java8.
+     */
+    public interface TracingCondition {
+        boolean getAsBoolean();
+    }
+
     private AtomicLong sequenceNumber = new AtomicLong(1);
     protected int parameterDisplayLength = DEFAULT_DISPLAY_PARAM_LENGTH;
+    protected TracingCondition tracingCondition = new TracingCondition() {
+        @Override
+        public boolean getAsBoolean() {
+            return true;  // enable tracing by default
+        }
+    };
 
     @Override
     public void beforeMethod(MethodExecutionContext executionContext) {
@@ -27,6 +42,10 @@ public class TracingMethodListener implements MethodExecutionListener {
 
     @Override
     public void afterMethod(MethodExecutionContext executionContext) {
+
+        if (!this.tracingCondition.getAsBoolean()) {
+            return;  // condition was false, skip tracing
+        }
 
         Method method = executionContext.getMethod();
         Class<?> targetClass = executionContext.getTarget().getClass();
@@ -220,4 +239,7 @@ public class TracingMethodListener implements MethodExecutionListener {
         this.parameterDisplayLength = parameterDisplayLength;
     }
 
+    public void setTracingCondition(TracingCondition tracingCondition) {
+        this.tracingCondition = tracingCondition;
+    }
 }
