@@ -5,11 +5,11 @@
 [![Download](https://api.bintray.com/packages/ttddyy/maven/datasource-proxy/images/download.svg) ](https://bintray.com/ttddyy/maven/datasource-proxy/_latestVersion)
 
 
-## about
+## About
 
 Provide proxy classes for JDBC API to intercept executing queries.
 
-## feature
+## Feature
 
 - Query and Parameter Logging  
   You can log executing database queries and parameters with choice of your logging framework(commons, slf4j, 
@@ -41,7 +41,7 @@ Provide proxy classes for JDBC API to intercept executing queries.
   calling the database.
 
 
-## log example
+## Log example
 
 
 Query execution(single line):
@@ -79,7 +79,7 @@ Name:"MyProxy", Time:6, Total:1, Success:1, Failure:0, Select:1, Insert:0, Updat
 ```
 
 
-## maven
+## Maven
 
 ```xml
 <dependency>
@@ -97,7 +97,7 @@ Name:"MyProxy", Time:6, Total:1, Success:1, Failure:0, Select:1, Insert:0, Updat
 - requires jdk1.6+
 
 
-### download
+### Download
 
 Available in [maven central repo](http://search.maven.org/#search|ga|1|datasource-proxy).
 
@@ -123,7 +123,7 @@ To download snapshot jars, enable sonatype snapshot repository:
 </repositories>
 ```
 
-## how to use
+## How to use
 
 Create `ProxyDataSource` class and pass it as a `DataSource` to your application.
  
@@ -176,7 +176,7 @@ DataSource dataSource =
 
 
 
-## taglib (optional)
+## Taglib (optional)
 
 ```jsp
 <%@ taglib prefix="dsp" uri="http://www.ttddyy.net/dsproxy/tags" %>
@@ -189,25 +189,29 @@ DataSource dataSource =
 ```
 
 
-## examples
+## Examples
 
 Example projects: https://github.com/ttddyy/datasource-proxy-examples
 
 
-## unit test support
+## Unit Test Support
 
 - [datasource-assert](https://github.com/ttddyy/datasource-assert)
 
 ---
 
-# docs
+# Documents
 
+- [User Guide (Current)](http://ttddyy.github.io/datasource-proxy/docs/current/user-guide/)
+- [User Guide (Snapshot)](http://ttddyy.github.io/datasource-proxy/docs/snapshot/user-guide/)
+
+### Old Documents
 - [Getting Started](https://github.com/ttddyy/datasource-proxy/wiki/Getting-Started)
 - [Detail](https://github.com/ttddyy/datasource-proxy/wiki/Detail)
 - [Configuration](https://github.com/ttddyy/datasource-proxy/wiki/Configuration)
 - [How To Guide](https://github.com/ttddyy/datasource-proxy/wiki/How-To-Guide)
 
-- [Documentation] (https://github.com/ttddyy/datasource-proxy/wiki/_pages)
+- [Wiki Pages](https://github.com/ttddyy/datasource-proxy/wiki/_pages)
 - **[Javadoc (API)](https://github.com/ttddyy/datasource-proxy/wiki/Javadoc)**
 - [Change Log](./CHANGELOG.md)
 
