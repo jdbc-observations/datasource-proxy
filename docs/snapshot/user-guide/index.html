@@ -453,7 +453,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_query_logging_listener">4.1. Query Logging Listener</a></li>
 <li><a href="#_slow_query_logging_listener">4.2. Slow Query Logging Listener</a></li>
 <li><a href="#_query_count_listener">4.3. Query Count Listener</a></li>
-<li><a href="#custom-listeners">4.4. Custom Listeners</a></li>
+<li><a href="#_tracing_method_listener">4.4. Tracing Method Listener</a></li>
+<li><a href="#custom-listeners">4.5. Custom Listeners</a></li>
 </ul>
 </li>
 <li><a href="#development">5. Development</a>
@@ -1397,7 +1398,48 @@ Furthermore, there is a custom tag for jsp.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="custom-listeners"><a class="anchor" href="#custom-listeners"></a>4.4. Custom Listeners</h3>
+<h3 id="_tracing_method_listener"><a class="anchor" href="#_tracing_method_listener"></a>4.4. Tracing Method Listener</h3>
+<div class="paragraph">
+<p><code>TracingMethodListener</code> is a method execution listener that prints out all JDBC API interaction.</p>
+</div>
+<div class="paragraph">
+<p>Sample JDBC interaction using HSQL:</p>
+</div>
+<div class="listingblock">
+<div class="title">Code:</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">Connection conn = dataSource.getConnection()
+PreparedStatement ps = conn.prepareStatement("INSERT INTO users (id, name) VALUES (?, ?)");
+ps.setString(2, "FOO");
+ps.setInt(1, 100);
+ps.addBatch();
+ps.setInt(1, 200);
+ps.setString(2, "BAR");
+ps.addBatch();
+ps.executeBatch();
+ps.close();
+conn.close();</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Output:</div>
+<div class="content">
+<pre class="highlightjs highlight"><code>[1][success][0ms][conn=1] ProxyDataSource#getConnection()
+[2][success][1ms][conn=1] JDBCConnection#prepareStatement("INSERT INTO users (id, name) VALUES (?, ?)")
+[3][success][0ms][conn=1] JDBCPreparedStatement#setString(2,"FOO")
+[4][success][0ms][conn=1] JDBCPreparedStatement#setInt(1,100)
+[5][success][0ms][conn=1] JDBCPreparedStatement#addBatch()
+[6][success][0ms][conn=1] JDBCPreparedStatement#setInt(1,200)
+[7][success][0ms][conn=1] JDBCPreparedStatement#setString(2,"BAR")
+[8][success][0ms][conn=1] JDBCPreparedStatement#addBatch()
+[9][success][1ms][conn=1] JDBCPreparedStatement#executeBatch()
+[10][success][0ms][conn=1] JDBCPreparedStatement#close()
+[11][success][0ms][conn=1] JDBCConnection#close()</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="custom-listeners"><a class="anchor" href="#custom-listeners"></a>4.5. Custom Listeners</h3>
 <div class="paragraph">
 <p>When you create a custom listener, you can register it via <code>listener()</code> or <code>methodListener</code> methods.</p>
 </div>
@@ -1458,7 +1500,7 @@ Furthermore, there is a custom tag for jsp.</p>
 <div id="footer">
 <div id="footer-text">
 Version 1.4.4-SNAPSHOT<br>
-Last updated 2017-10-01 06:11:31 UTC
+Last updated 2017-10-04 04:33:44 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
