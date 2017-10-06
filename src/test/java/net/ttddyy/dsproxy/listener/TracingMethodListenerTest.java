@@ -71,4 +71,38 @@ public class TracingMethodListenerTest {
 
         assertThat(messageHolder.get()).isEqualTo("[1][success][99ms][conn=100] MyTarget#setString(50,\"foo\")");
     }
+
+    @Test
+    public void tracingMessageConsumer() throws Exception {
+        final AtomicReference<String> messageHolder = new AtomicReference<String>();
+        TracingMethodListener listener = new TracingMethodListener();
+
+        listener.setTracingMessageConsumer(new TracingMethodListener.TracingMessageConsumer() {
+            @Override
+            public void accept(String logMessage) {
+                messageHolder.set(logMessage);
+            }
+        });
+
+        class MyTarget {
+        }
+
+        MyTarget target = new MyTarget();
+
+        Method method = PreparedStatement.class.getMethod("setString", int.class, String.class);
+        ConnectionInfo connectionInfo = new ConnectionInfo();
+        connectionInfo.setConnectionId(100);
+
+        MethodExecutionContext context = MethodExecutionContext.Builder.create()
+                .target(target)
+                .method(method)
+                .elapsedTime(99)
+                .connectionInfo(connectionInfo)
+                .methodArgs(new Object[]{50, "foo"})
+                .build();
+
+        listener.afterMethod(context);
+
+        assertThat(messageHolder.get()).isEqualTo("[1][success][99ms][conn=100] MyTarget#setString(50,\"foo\")");
+    }
 }

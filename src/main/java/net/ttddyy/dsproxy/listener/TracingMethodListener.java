@@ -26,12 +26,30 @@ public class TracingMethodListener implements MethodExecutionListener {
         boolean getAsBoolean();
     }
 
+    /**
+     * Functional interface to consume log message.
+     *
+     * This will be updated to string consumer once it is updated to java8.
+     */
+    public interface TracingMessageConsumer {
+        void accept(String logMessage);
+    }
+
     private AtomicLong sequenceNumber = new AtomicLong(1);
+
     protected int parameterDisplayLength = DEFAULT_DISPLAY_PARAM_LENGTH;
+
     protected TracingCondition tracingCondition = new TracingCondition() {
         @Override
         public boolean getAsBoolean() {
             return true;  // enable tracing by default
+        }
+    };
+
+    protected TracingMessageConsumer tracingMessageConsumer = new TracingMessageConsumer() {
+        @Override
+        public void accept(String logMessage) {
+            System.out.println(logMessage);  // write to console by default
         }
     };
 
@@ -226,13 +244,12 @@ public class TracingMethodListener implements MethodExecutionListener {
     /**
      * log message
      *
-     * Default implementation writes out to console.
+     * Default implementation delegates to consumer that writes out to console.
      *
      * @param message message to log
      */
     protected void logMessage(String message) {
-        // TODO: maybe overridable by lambda
-        System.out.println(message);
+        this.tracingMessageConsumer.accept(message);
     }
 
     public void setParameterDisplayLength(int parameterDisplayLength) {
@@ -242,4 +259,9 @@ public class TracingMethodListener implements MethodExecutionListener {
     public void setTracingCondition(TracingCondition tracingCondition) {
         this.tracingCondition = tracingCondition;
     }
+
+    public void setTracingMessageConsumer(TracingMessageConsumer tracingMessageConsumer) {
+        this.tracingMessageConsumer = tracingMessageConsumer;
+    }
+
 }
