@@ -256,8 +256,16 @@ public class TracingMethodListener implements MethodExecutionListener {
         this.parameterDisplayLength = parameterDisplayLength;
     }
 
+    public TracingCondition getTracingCondition() {
+        return tracingCondition;
+    }
+
     public void setTracingCondition(TracingCondition tracingCondition) {
         this.tracingCondition = tracingCondition;
+    }
+
+    public TracingMessageConsumer getTracingMessageConsumer() {
+        return tracingMessageConsumer;
     }
 
     public void setTracingMessageConsumer(TracingMessageConsumer tracingMessageConsumer) {

@@ -10,6 +10,7 @@ import net.ttddyy.dsproxy.listener.NoOpMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryCountStrategy;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.TracingMethodListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
 import net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsSlowQueryListener;
@@ -70,7 +71,12 @@ public class ProxyDataSourceBuilder {
     private DataSource dataSource;
     private String dataSourceName;
 
-    // for building QueryLoggingListeners
+    // For building TracingMethodListener
+    private boolean createTracingMethodListener;
+    private TracingMethodListener.TracingCondition tracingCondition;
+    private TracingMethodListener.TracingMessageConsumer tracingMessageConsumer;
+
+    // For building QueryLoggingListeners
 
     // CommonsQueryLoggingListener
     private boolean createCommonsQueryListener;
@@ -726,6 +732,66 @@ public class ProxyDataSourceBuilder {
         return this;
     }
 
+    /**
+     * Enable {@link TracingMethodListener}.
+     *
+     * @return builder
+     * @since 1.4.4
+     */
+    public ProxyDataSourceBuilder traceMethods() {
+        this.createTracingMethodListener = true;
+        return this;
+    }
+
+    /**
+     * Enable {@link TracingMethodListener} with consumer that receives trace logging message.
+     *
+     * @param messageConsumer receives trace logging message
+     * @return builder
+     * @since 1.4.4
+     */
+    public ProxyDataSourceBuilder traceMethods(TracingMethodListener.TracingMessageConsumer messageConsumer) {
+        this.createTracingMethodListener = true;
+        this.tracingMessageConsumer = messageConsumer;
+        return this;
+    }
+
+    /**
+     * Enable {@link TracingMethodListener}.
+     *
+     * When given condition returns {@code true}, it prints out trace log.
+     * The condition is used for dynamically turn on/off tracing.
+     *
+     * @param condition decide to turn on/off tracing
+     * @return builder
+     * @since 1.4.4
+     */
+    public ProxyDataSourceBuilder traceMethodsWhen(TracingMethodListener.TracingCondition condition) {
+        this.createTracingMethodListener = true;
+        this.tracingCondition = condition;
+        return this;
+    }
+
+    /**
+     * Enable {@link TracingMethodListener}.
+     *
+     * When given condition returns {@code true}, it prints out trace log.
+     * The condition is used for dynamically turn on/off tracing.
+     * The message consumer receives a tracing message that can be printed to console, logger, etc.
+     *
+     * @param condition       decide to turn on/off tracing
+     * @param messageConsumer receives trace logging message
+     * @return builder
+     * @since 1.4.4
+     */
+    public ProxyDataSourceBuilder traceMethodsWhen(TracingMethodListener.TracingCondition condition, TracingMethodListener.TracingMessageConsumer messageConsumer) {
+        this.createTracingMethodListener = true;
+        this.tracingCondition = condition;
+        this.tracingMessageConsumer = messageConsumer;
+        return this;
+    }
+
+
     public ProxyDataSource build() {
 
         // Query Logging Listeners
@@ -771,6 +837,10 @@ public class ProxyDataSourceBuilder {
             listeners.add(countListener);
         }
 
+        // tracing listener
+        if (this.createTracingMethodListener) {
+            this.methodExecutionListeners.add(buildTracingMethodListenr());
+        }
 
         // explicitly added listeners
         listeners.addAll(this.queryExecutionListeners);
@@ -944,6 +1014,17 @@ public class ProxyDataSourceBuilder {
         DefaultQueryLogEntryCreator entryCreator = new DefaultQueryLogEntryCreator();
         entryCreator.setMultiline(true);
         return entryCreator;
+    }
+
+    private TracingMethodListener buildTracingMethodListenr() {
+        TracingMethodListener listener = new TracingMethodListener();
+        if (this.tracingMessageConsumer != null) {
+            listener.setTracingMessageConsumer(this.tracingMessageConsumer);
+        }
+        if (this.tracingCondition != null) {
+            listener.setTracingCondition(this.tracingCondition);
+        }
+        return listener;
     }
 
 }

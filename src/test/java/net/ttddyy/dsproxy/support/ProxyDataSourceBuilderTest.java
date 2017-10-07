@@ -11,6 +11,7 @@ import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryCountStrategy;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.listener.ThreadQueryCountHolder;
+import net.ttddyy.dsproxy.listener.TracingMethodListener;
 import net.ttddyy.dsproxy.listener.logging.AbstractQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.AbstractSlowQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
@@ -342,6 +343,60 @@ public class ProxyDataSourceBuilderTest {
         assertThat(listener.getQueryCountStrategy()).as("count listener with strategy")
                 .isNotNull()
                 .isSameAs(strategy);
+    }
+
+    @Test
+    public void tracingListener() {
+
+        ProxyDataSource ds;
+        TracingMethodListener listener;
+
+        // default strategy
+        ds = ProxyDataSourceBuilder.create().traceMethods().build();
+        listener = getAndVerifyMethodListener(ds, TracingMethodListener.class);
+
+        assertThat(listener).as("default tracing listener").isNotNull();
+
+        // with message consumer
+        TracingMethodListener.TracingMessageConsumer consumer = mock(TracingMethodListener.TracingMessageConsumer.class);
+
+        ds = ProxyDataSourceBuilder.create().traceMethods(consumer).build();
+        listener = getAndVerifyMethodListener(ds, TracingMethodListener.class);
+        assertThat(listener.getTracingMessageConsumer()).as("tracing listener with message consumer")
+                .isNotNull()
+                .isSameAs(consumer);
+
+        // with tracing condition
+        TracingMethodListener.TracingCondition condition = mock(TracingMethodListener.TracingCondition.class);
+
+        ds = ProxyDataSourceBuilder.create().traceMethodsWhen(condition).build();
+        listener = getAndVerifyMethodListener(ds, TracingMethodListener.class);
+        assertThat(listener.getTracingCondition()).as("tracing listener with tracing condition")
+                .isNotNull()
+                .isSameAs(condition);
+
+        // with message consumer and tracing condition
+        ds = ProxyDataSourceBuilder.create().traceMethodsWhen(condition, consumer).build();
+        listener = getAndVerifyMethodListener(ds, TracingMethodListener.class);
+        assertThat(listener.getTracingMessageConsumer()).as("tracing listener with tracing condition and message consumer")
+                .isNotNull()
+                .isSameAs(consumer);
+        assertThat(listener.getTracingCondition()).as("tracing listener with tracing condition and message consumer")
+                .isNotNull()
+                .isSameAs(condition);
+
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends MethodExecutionListener> T getAndVerifyMethodListener(ProxyDataSource ds, Class<T> listenerClass) {
+        CompositeMethodListener compositeListener = ds.getProxyConfig().getMethodListener();
+        List<MethodExecutionListener> listeners = compositeListener.getListeners();
+        assertThat(listeners).hasSize(1);
+
+        MethodExecutionListener target = listeners.get(0);
+        assertThat(target).isInstanceOf(listenerClass);
+
+        return (T) target;
     }
 
     @Test
