@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.NoOpLog;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -45,7 +44,6 @@ public class CommonsQueryLoggingListenerTest {
         LogFactory.getFactory().removeAttribute("org.apache.commons.logging.Log");
     }
 
-    @Ignore("Failed in travis build #229: https://travis-ci.org/ttddyy/datasource-proxy/builds/280656607")
     @Test
     public void defaultLoggerName() {
         LogFactory.getFactory().release();
