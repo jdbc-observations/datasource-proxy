@@ -4,6 +4,7 @@ import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.ExecutionInfoBuilder;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.QueryInfoBuilder;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.NoOpLog;
 import org.junit.After;
@@ -30,8 +31,10 @@ public class CommonsQueryLoggingListenerTest {
         }
     }
 
+
     @Before
     public void setup() throws Exception {
+        LogFactory.releaseAll();
         // see configuration for logger resolution order
         // https://commons.apache.org/proper/commons-logging/guide.html
         LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", NameAwareLog.class.getName());
@@ -45,18 +48,18 @@ public class CommonsQueryLoggingListenerTest {
     @Ignore("Failed in travis build #229: https://travis-ci.org/ttddyy/datasource-proxy/builds/280656607")
     @Test
     public void defaultLoggerName() {
+        LogFactory.getFactory().release();
         CommonsQueryLoggingListener listener = new CommonsQueryLoggingListener();
         String name = ((NameAwareLog) listener.getLog()).name;
         assertThat(name).as("Default logger name").isEqualTo("net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener");
     }
 
-    @Ignore("Failed in travis build #229: https://travis-ci.org/ttddyy/datasource-proxy/builds/280656607")
     @Test
     public void setLogName() {
+        Log log = LogFactory.getLog("my.logger");
         CommonsQueryLoggingListener listener = new CommonsQueryLoggingListener();
         listener.setLog("my.logger");
-        String name = ((NameAwareLog) listener.getLog()).name;
-        assertThat(name).as("Updated logger name").isEqualTo("my.logger");
+        assertThat(listener.getLog()).isSameAs(log);
     }
 
 
