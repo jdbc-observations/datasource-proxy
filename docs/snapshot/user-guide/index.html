@@ -1437,6 +1437,37 @@ conn.close();</code></pre>
 [11][success][0ms][conn=1] JDBCConnection#close()</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p><code>ProxyDataSourceBuilder</code> provides following methods:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">builder
+  .traceMethods()
+  .build();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To change output, the builder method also takes a string consumer.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">builder
+  // change the output to logger
+  .traceMethods(message -&gt; logger.debug(message))
+  .build();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>traceMethodsWhen</code> method takes a boolean supplier to dynamically turn on/off tracing.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">builder
+  .traceMethodsWhen(() -&gt; ...condition to perform tracing... )
+  .build();</code></pre>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="custom-listeners"><a class="anchor" href="#custom-listeners"></a>4.5. Custom Listeners</h3>
@@ -1500,7 +1531,7 @@ conn.close();</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 1.4.4-SNAPSHOT<br>
-Last updated 2017-10-04 05:21:18 UTC
+Last updated 2017-10-08 19:23:17 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
