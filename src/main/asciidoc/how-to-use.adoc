@@ -513,6 +513,32 @@ conn.close();
 [11][success][0ms][conn=1] JDBCConnection#close()
 ```
 
+`ProxyDataSourceBuilder` provides following methods:
+
+
+```java
+builder
+  .traceMethods()
+  .build();
+```
+
+To change output, the builder method also takes a string consumer.
+
+```java
+builder
+  // change the output to logger
+  .traceMethods(message -> logger.debug(message))
+  .build();
+```
+
+`traceMethodsWhen` method takes a boolean supplier to dynamically turn on/off tracing.
+
+```java
+builder
+  .traceMethodsWhen(() -> ...condition to perform tracing... )
+  .build();
+```
+
 
 [[custom-listeners]]
 === Custom Listeners
