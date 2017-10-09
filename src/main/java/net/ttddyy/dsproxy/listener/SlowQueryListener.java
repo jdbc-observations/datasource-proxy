@@ -23,10 +23,11 @@ import java.util.concurrent.TimeUnit;
  *
  * If you want to log or do something with AFTER execution that has exceeded specified threshold time, use normal
  * logging listener like following:
+ * <pre>
  * {@code}
  * long thresholdInMills = ...
  * SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener(){
- *      @Override
+ *      {@literal @}Override
  *      public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
  *          if (execInfo.getElapsedTime() >= thresholdInMills) {
  *              super.afterQuery(execInfo, queryInfoList);
@@ -34,6 +35,7 @@ import java.util.concurrent.TimeUnit;
  *      }
  * };
  * {@code}
+ * </pre>
  *
  * @author Tadaya Tsuyukubo
  * @see net.ttddyy.dsproxy.listener.logging.CommonsSlowQueryListener

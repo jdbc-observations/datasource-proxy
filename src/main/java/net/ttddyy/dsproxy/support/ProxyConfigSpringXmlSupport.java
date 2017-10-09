@@ -12,7 +12,7 @@ import net.ttddyy.dsproxy.transform.QueryTransformer;
 /**
  * {@link ProxyConfig} bean creation support for XML based spring configuration.
  *
- * In xml based spring configuration file, defining a {@link ProxyConfig} bean with {@link ProxyConfig.Builder} requires
+ * In xml based spring configuration file, defining a {@link ProxyConfig} bean with its builder class requires
  * extra effort since all builder methods are not java bean setters.
  * To simplify it, this class provides setters to create a {@link ProxyConfig} bean.
  *

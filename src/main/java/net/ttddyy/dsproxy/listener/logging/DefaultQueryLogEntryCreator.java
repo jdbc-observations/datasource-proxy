@@ -324,7 +324,7 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
 
 
     /**
-     * Enable multiline output in {@link #getLogEntry(ExecutionInfo, List, boolean)}.
+     * Enable multiline output in {@link #getLogEntry(ExecutionInfo, List, boolean, boolean)}.
      *
      * @param multiline return multi lined log entry when true is set
      * @since 1.4.1
