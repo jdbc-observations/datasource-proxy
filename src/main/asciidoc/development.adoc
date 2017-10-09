@@ -5,6 +5,14 @@ Github repository: {datasource-proxy}
 
 === Build Documentation
 
+Generate `index.html`
+
 ```sh
 > ./mvnw asciidoctor:process-asciidoc@output-html
+```
+
+Http preview
+
+```sh
+> ./mvnw asciidoctor:http@output-html
 ```
