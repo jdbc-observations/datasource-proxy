@@ -1,10 +1,12 @@
 [[changelog-1.4.4]]
 === 1.4.4
 
+* Added `TracingMethodListener` that prints out JDBC API interaction.
+See details on link:#tracing-method-listener[Tracing Method Listener].
+
 * `ProxyConfigSpringXmlSupport` is added to support creating `ProxyConfig` bean in XML based spring config.
 
-Sample XML config:
-
+.Sample XML config:
 ```xml
 <bean id="proxyConfig"
       factory-bean="proxyConfigSupport"

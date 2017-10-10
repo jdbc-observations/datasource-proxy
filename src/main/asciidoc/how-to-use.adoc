@@ -476,6 +476,7 @@ Specific datasource
 |===
 
 
+[[tracing-method-listener]]
 === Tracing Method Listener
 
 `TracingMethodListener` is a method execution listener that prints out all JDBC API interaction.
