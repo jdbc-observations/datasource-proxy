@@ -1,0 +1,55 @@
+[[changelog-1.4]]
+=== 1.4
+
+* Move logging related listeners to sub package
+** from `net.ttddyy.dsproxy.listener` to `net.ttddyy.dsproxy.listener.logging`
+
+* classes for logging entry creation has been updated
+** `QueryLogEntryCreator#getLogEntryAsJson` has removed.
+** JSON style log entry creators is pulled up to `DefaultJsonQueryLogEntryCreator`
+** To use JSON style logging, you can set the `QueryLogEntryCreator` to `[Commons|SLF4J|JUL|SystemOut]QueryLoggingListener#setQueryLogEntryCreator()`
+** `OracleOutputParameterLogEntryCreator` has been split to `OutputParameterLogEntryCreator` and `OutputParameterJsonLogEntryCreator`
+
+* `DefaultQueryLogEntryCreator#writeParamsForSingleEntry()` has split to `writeParamsEntryForSinglePreparedEntry()` and `writeParamsForSingleCallableEntry()`
+
+* Do not include parameter index for logging prepared statement.
++
+--
+Before(v1.3.3):
+
+```
+..., Params:[(1=10,2=foo),(1=20,2=bar)]
+..., Params:[(1=30,2=FOO),(1=40,2=BAR)]
+```
+
+```json
+..., "params":[{"1":"10","2":"foo"},{"1":"20","2":"bar"}]}
+..., "params":[{"1":"30","2":"FOO"},{"1":"40","2":"BAR"}]}
+```
+
+Now:
+
+```
+..., Params:[(10,foo),(20,bar)]
+..., Params:[(30,FOO),(40,BAR)]
+```
+
+```json
+..., "params":[["10","foo"],["20","bar"]]}
+..., "params":[["30","FOO"],["40","BAR"]]}
+```
+--
+
+* Add `JULQueryLoggingListener` which uses JUL(Java Utils Logging) to log executed queries
+
+* Update logging for `setNull` and `registerOutParameter` to include sqltype
++
+e.g.: `NULL(VARCHAR)`, `OUTPUT(VARCHAR[12])`
+
+* `ResultSetProxyJdbcProxyFactory` to create a proxy `ResultSet` that can be consumed more than once.
++
+Thanks _Liam Williams_ for this contribution!!
+
+* `QueryExecutionListener` receives same instance of `ExecutionInfo` in `beforeQuery` and `afterQuery` methods
+
+

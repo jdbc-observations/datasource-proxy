@@ -1,0 +1,32 @@
+[[changelog-1.4.2]]
+=== 1.4.2
+
+* Assign connection ID on each connection
++
+When a connection is obtained from DataSource(`DataSource.getConnection()`), sequentially increasing unique number
+is assigned as its connection ID. (default implementation: `DefaultConnectionIdManager`)
+The connection ID is printed as `Connection` in logging.
+
+* Remove methods that don't take `dataSourceName` on `JdbcProxyFactory`
++
+--
+Instead, you need to specify `null`, empty String, or datasource name to the `dataSourceName` parameter.
+Following methods are removed:
+
+** `Connection createConnection(Connection connection, InterceptorHolder interceptorHolder);`
+** `Statement createStatement(Statement statement, InterceptorHolder interceptorHolder);`
+** `PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query, InterceptorHolder interceptorHolder);`
+--
+
+* `DataSourceQueryCountListener` now takes a strategy to resolve `QueryCount`.
++
+Default uses `ThreadQueryCountHolder` that uses thread local to hold `QueryCount`. This behaves same as before that
+the `QueryCount` holds per request counts(servlet request-response lifecycle).
++
+`SingleQueryCountHolder` uses single instance to hold count values. Therefore, this holds total accumulated
+values from all threads.
+
+* Update `SlowQueryListener` to use daemon threads as default.
++
+It is configurable by `SlowQueryListener#setUseDaemonThread` method.
+

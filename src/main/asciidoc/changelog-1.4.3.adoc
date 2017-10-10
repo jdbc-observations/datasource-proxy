@@ -1,0 +1,105 @@
+[[changelog-1.4.3]]
+=== 1.4.3
+
+* QueryLoggingListeners(Commons, SLF4J, JUL) added overridable `loggingCondition` callback(boolean supplier) that
+  simply decides whether to skip entire logging logic based on the current log level set on its logger.
++
+--
+e.g.: when `SLF4JQueryLoggingListener` writes SQL in DEBUG level, but the logger is set to INFO(more serious
+      than DEBUG), then it will NOT perform logging logic including constructing log statement, etc.
+--
+
+* Proxying `ResultSet` is refactored to align how other proxies are managed.
++
+--
+Also, existing resultset-proxy is renamed to `RepeatableReadResultSetProxyLogic`.
+As part of refactoring, `ResultSetProxyJdbcProxyFactory` is removed.
+To enable proxying `ResultSet`, `ProxyDataSourceBuilder` now has `#proxyResultSet()` and `#repeatableReadResultSet()`
+methods.
+
+```java
+// before
+builder.jdbcProxyFactory(new ResultSetProxyJdbcProxyFactory()).build();
+// new
+builder.repeatableReadResultSet().build();  // or
+builder.proxyResultSet(new RepeatableReadResultSetProxyFactory()).build();
+```
+--
+
+* `ProxyConfig` is added to represent all proxy related configurations _(datasource name, listeners, proxy factory,
+  connection id manager)_. All values on `InterceptorHolder` are moved to `ProxyConfig` and `InterceptorHolder` class
+  is removed.
+
+* `MethodExecutionListener` is added.
++
+--
+`MethodExecutionListener` is a new type of listener that intercepts JDBC API calls:
+- `Connection`, `Statement`, `PreparedStatement`, `CallableStatement`: All methods
+- `ResultSet`: All methods when result set proxy is enabled. (`ProxyDataSourceBuilder#[proxyResultSet()|repeatableReadResultSet()]`)
+- `ProxyDataSource`: `getConnection()` method
+
+listeners can be registered via `ProxyDataSourceBuilder#methodListener()`.
+
+```java
+builder.methodListener(myMethodListener).build();
+```
+--
+
+* `ProxyDataSourceBuilder` has added `beforeMethod()`, `afterMethod()`, `beforeQuery()`, and `afterQuery()` methods.
+  These methods help inlining listener definitions especially with Java8 Lambda expression.
++
+--
+
+```java
+ProxyDataSourceBuilder
+  .create(actualDataSource)
+  .name("MyDS")
+  .proxyResultSet()  // apply listener on resultset
+  // register MethodExecutionListener
+  .afterMethod(executionContext -> {
+      Method method = executionContext.getMethod();
+      Class<?> targetClass = executionContext.getTarget().getClass();
+      System.out.println(targetClass.getSimpleName() + "#" + method.getName());
+  })
+  // register QueryExecutionListener
+  .afterQuery((execInfo, queryInfoList) -> {
+      System.out.println("Query took " + execInfo.getElapsedTime() + "msec");
+  })
+  .build();
+```
+
+_sample output:_
+
+```sql
+# code:
+Connection conn = ds.getConnection();
+PreparedStatement ps = conn.prepareStatement("INSERT INTO users (id, name) VALUES (?, ?)");
+ps.setString(2, "FOO");
+ps.setInt(1, 3);
+ps.addBatch();
+ps.setInt(1, 4);
+ps.setString(2, "BAR");
+ps.addBatch();
+ps.executeBatch();
+ps.close();
+conn.close();
+```
+
+```
+# output:
+ProxyDataSource#getConnection
+JDBCConnection#prepareStatement
+JDBCPreparedStatement#setString
+JDBCPreparedStatement#setInt
+JDBCPreparedStatement#addBatch
+JDBCPreparedStatement#setInt
+JDBCPreparedStatement#setString
+JDBCPreparedStatement#addBatch
+JDBCPreparedStatement#executeBatch
+Query took 1msec
+JDBCPreparedStatement#close
+JDBCConnection#close
+```
+--
+
+

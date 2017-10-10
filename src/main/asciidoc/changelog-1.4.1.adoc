@@ -1,0 +1,83 @@
+[[changelog-1.4.1]]
+=== 1.4.1
+
+* Add `setLog`/`setLogger` to `{Commons|SLF4J|JUL}QueryLoggingListener` to allow users to set custom logger.
+  Also added getters as well.
+
+* Update `~QueryCountLoggingServletFilter` to allow configuring logger by name
+
+* Add query count logging implementation for JUL(Java Util Logging)
+** `JULQueryCountLoggingHandlerInterceptor`
+** `JULQueryCountLoggingRequestListener`
+** `JULQueryCountLoggingServletFilter`
+
+* Fix writing log with `null` in parameter set methods. (e.g: `setString(1, null);` )
+
+* Add `SlowQueryListener` that triggers callback method when query takes longer than specified threshold time.
++
+--
+Also, added slow query logging listeners:
+** `CommonsSlowQueryListener`
+** `JULSlowQueryListener`
+** `SLF4JSlowQueryListener`
+** `SystemOutSlowQueryListener`
+
+In `ProxyDataSourceBuilder`, these methods are added:
+** `logSlowQueryByCommons()`
+** `logSlowQueryByJUL()`
+** `logSlowQueryBySlf4j()`
+** `logSlowQueryToSysOut()`
+--
+
+* Add support to easily apply formatters on each query for logging.
++
+--
+`DefaultQueryLogEntryCreator#formatQuery()` method has added.
+Subclass can override this method to provides formatted query.
+
+Example with `BasicFormatterImpl` in Hibernate.
+```java
+// set this instance to logging listeners
+public class PrettyQueryEntryCreator extends DefaultQueryLogEntryCreator {
+  private Formatter formatter = FormatStyle.BASIC.getFormatter();  // from hibernate
+
+  @Override
+  protected String formatQuery(String query) {
+    return this.formatter.format(query);
+  }
+}
+```
+--
+
+* Add multiline output support for query logging.
++
+--
+`DefaultQueryLogEntryCreator` now has `setMultiline()` method, and `ProxyDataSourceBuilder` also has added
+`multiline()` method.
+When multiline is enabled, logged query entries become multi lined.
+
+sample log output:
+```
+Name:MyDS, Time:0, Success:True
+Type:Prepared, Batch:True, QuerySize:1, BatchSize:2
+Query:["INSERT INTO users (id, name) VALUES (?, ?)"]
+Params:[(1,foo),(2,bar)]
+```
+
+set up with builder:
+```java
+DataSource dataSource =
+    ProxyDataSourceBuilder
+        .create(actualDataSource)
+        .logQueryByCommons(INFO)
+        .logSlowQueryByCommons(10, TimeUnit.MINUTES)
+        .multiline()   // applies to both query logger and slow query logger
+        .build();
+```
+--
+
+* Deprecate `{Commons|SLF4J|JUL}QueryLoggingListener#resetLogger()` methods.
++
+Use newly added `setLog(String)` or `setLogger(String)` method instead.
+
+

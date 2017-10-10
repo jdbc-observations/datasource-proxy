@@ -1,20 +1,10 @@
-# ChangeLog
+# Changelog
 
-## 1.4.4
 
-- `ProxyConfigSpringXmlSupport` is added to support creating `ProxyConfig` bean in XML based spring config.
-  Sample XML config:
-  ```xml
-  <bean id="proxyConfig"
-        factory-bean="proxyConfigSupport"
-        factory-method="create"/>
-  
-  <bean id="proxyConfigSupport" class="net.ttddyy.dsproxy.support.ProxyConfigSpringXmlSupport">
-    <property name="dataSourceName" value="my-ds"/>
-    <property name="queryListener" ref="..."/>
-    <property name="methodListener" ref="..."/>
-  </bean>
-  ```
+**Changelog is moved to [datasource-proxy User Guide(Current)](http://ttddyy.github.io/datasource-proxy/docs/current/user-guide/index.html#changelog).**
+_[(Snapshot documentation is here)](http://ttddyy.github.io/datasource-proxy/docs/snapshot/user-guide/index.html#changelog)_
+
+----
 
 
 ## 1.4.3
