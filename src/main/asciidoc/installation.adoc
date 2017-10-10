@@ -38,3 +38,8 @@ To download snapshot jars, enable sonatype snapshot repository:
   </repository>
 </repositories>
 ```
+
+=== Supported Java Versions
+
+`datasource-proxy` works with java 1.6+. +
+Java8(_JDBC4.2_) works fine, and planning to support java9(_JDBC 4.3_) specific feature.
