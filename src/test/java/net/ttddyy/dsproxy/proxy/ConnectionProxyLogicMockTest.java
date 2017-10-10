@@ -16,11 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -40,7 +36,7 @@ public class ConnectionProxyLogicMockTest {
         Method method = Connection.class.getMethod("createStatement");
         Object result = logic.invoke(conn, method, new Object[]{});
 
-        assertThat(result, is(instanceOf(Statement.class)));
+        assertThat(result).isInstanceOf(Statement.class);
         verifyStatement((Statement) result);
         verify(conn).createStatement();
     }
@@ -54,7 +50,7 @@ public class ConnectionProxyLogicMockTest {
         Method method = Connection.class.getMethod("createStatement", int.class, int.class);
         Object result = logic.invoke(conn, method, new Object[]{ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY});
 
-        assertThat(result, is(instanceOf(Statement.class)));
+        assertThat(result).isInstanceOf(Statement.class);
         verifyStatement((Statement) result);
         verify(conn).createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     }
@@ -71,7 +67,7 @@ public class ConnectionProxyLogicMockTest {
                 ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT});
 
         // verify
-        assertThat(result, is(instanceOf(Statement.class)));
+        assertThat(result).isInstanceOf(Statement.class);
         verifyStatement((Statement) result);
 
         verify(conn).createStatement(ResultSet.TYPE_FORWARD_ONLY,
@@ -89,11 +85,11 @@ public class ConnectionProxyLogicMockTest {
     }
 
     private void verifyStatement(Statement statement) {
-        assertThat(statement, notNullValue());
+        assertThat(statement).isNotNull();
 
-        assertThat(Proxy.isProxyClass(statement.getClass()), is(true));
+        assertThat(Proxy.isProxyClass(statement.getClass())).isTrue();
         InvocationHandler handler = Proxy.getInvocationHandler(statement);
-        assertThat(handler, is(instanceOf(StatementInvocationHandler.class)));
+        assertThat(handler).isInstanceOf(StatementInvocationHandler.class);
     }
 
 
@@ -110,7 +106,7 @@ public class ConnectionProxyLogicMockTest {
         Object result = logic.invoke(conn, method, new Object[]{query});
 
         // verify
-        assertThat(result, is(instanceOf(PreparedStatement.class)));
+        assertThat(result).isInstanceOf(PreparedStatement.class);
         verifyPreparedStatement((PreparedStatement) result);
     }
 
@@ -127,7 +123,7 @@ public class ConnectionProxyLogicMockTest {
         Object result = logic.invoke(conn, method, new Object[]{query, Statement.RETURN_GENERATED_KEYS});
 
         // verify
-        assertThat(result, is(instanceOf(PreparedStatement.class)));
+        assertThat(result).isInstanceOf(PreparedStatement.class);
         verifyPreparedStatement((PreparedStatement) result);
         verify(conn).prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
     }
@@ -146,7 +142,7 @@ public class ConnectionProxyLogicMockTest {
         Object result = logic.invoke(conn, method, new Object[]{query, columnIndexes});
 
         // verify
-        assertThat(result, is(instanceOf(PreparedStatement.class)));
+        assertThat(result).isInstanceOf(PreparedStatement.class);
         verifyPreparedStatement((PreparedStatement) result);
         verify(conn).prepareStatement(query, columnIndexes);
     }
@@ -165,7 +161,7 @@ public class ConnectionProxyLogicMockTest {
         Object result = logic.invoke(conn, method, new Object[]{query, columnNames});
 
         // verify
-        assertThat(result, is(instanceOf(PreparedStatement.class)));
+        assertThat(result).isInstanceOf(PreparedStatement.class);
         verifyPreparedStatement((PreparedStatement) result);
         verify(conn).prepareStatement(query, columnNames);
     }
@@ -185,7 +181,7 @@ public class ConnectionProxyLogicMockTest {
 
 
         // verify
-        assertThat(result, is(instanceOf(PreparedStatement.class)));
+        assertThat(result).isInstanceOf(PreparedStatement.class);
         verifyPreparedStatement((PreparedStatement) result);
         verify(conn).prepareStatement(query,
                 ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -205,18 +201,18 @@ public class ConnectionProxyLogicMockTest {
                 ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT});
 
         // verify
-        assertThat(result, is(instanceOf(PreparedStatement.class)));
+        assertThat(result).isInstanceOf(PreparedStatement.class);
         verifyPreparedStatement((PreparedStatement) result);
         verify(conn).prepareStatement(query,
                 ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT);
     }
 
     private void verifyPreparedStatement(PreparedStatement statement) {
-        assertThat(statement, notNullValue());
+        assertThat(statement).isNotNull();
 
-        assertThat(Proxy.isProxyClass(statement.getClass()), is(true));
+        assertThat(Proxy.isProxyClass(statement.getClass())).isTrue();
         InvocationHandler handler = Proxy.getInvocationHandler(statement);
-        assertThat(handler, is(instanceOf(PreparedStatementInvocationHandler.class)));
+        assertThat(handler).isInstanceOf(PreparedStatementInvocationHandler.class);
     }
 
 
@@ -229,9 +225,7 @@ public class ConnectionProxyLogicMockTest {
         Method method = ProxyJdbcObject.class.getMethod("getTarget");
         Object result = logic.invoke(orig, method, null);
 
-        assertThat(result, is(instanceOf(Connection.class)));
-        Connection resultConn = (Connection) result;
-        assertThat(resultConn, is(sameInstance(orig)));
+        assertThat(result).isSameAs(orig);
     }
 
     @Test
@@ -246,8 +240,7 @@ public class ConnectionProxyLogicMockTest {
         Object result = logic.invoke(mock, method, new Object[]{String.class});
 
         verify(mock).unwrap(String.class);
-        assertThat(result, is(instanceOf(String.class)));
-        assertThat((String) result, is("called"));
+        assertThat(result).isEqualTo("called");
     }
 
     @Test
@@ -262,8 +255,7 @@ public class ConnectionProxyLogicMockTest {
         Object result = logic.invoke(mock, method, new Object[]{String.class});
 
         verify(mock).isWrapperFor(String.class);
-        assertThat(result, is(instanceOf(boolean.class)));
-        assertThat((Boolean) result, is(true));
+        assertThat(result).isEqualTo(true);
     }
 
     @Test
@@ -276,8 +268,7 @@ public class ConnectionProxyLogicMockTest {
         Method method = Object.class.getMethod("toString");
         Object result = logic.invoke(conn, method, null);
 
-        assertThat(result, is(instanceOf(String.class)));
-        assertThat((String) result, is(conn.getClass().getSimpleName() + " [my conn]"));
+        assertThat(result).isEqualTo(conn.getClass().getSimpleName() + " [my conn]");
     }
 
     @Test
@@ -288,8 +279,7 @@ public class ConnectionProxyLogicMockTest {
         Method method = Object.class.getMethod("hashCode");
         Object result = logic.invoke(conn, method, null);
 
-        assertThat(result, is(instanceOf(Integer.class)));
-        assertThat((Integer) result, is(conn.hashCode()));
+        assertThat(result).isEqualTo(conn.hashCode());
     }
 
     @Test
@@ -301,13 +291,11 @@ public class ConnectionProxyLogicMockTest {
 
         // equals(null)
         Object result = logic.invoke(conn, method, new Object[]{null});
-        assertThat(result, is(instanceOf(Boolean.class)));
-        assertThat((Boolean) result, is(false));
+        assertThat(result).isEqualTo(false);
 
         // equals(true)
         result = logic.invoke(conn, method, new Object[]{conn});
-        assertThat(result, is(instanceOf(Boolean.class)));
-        assertThat((Boolean) result, is(true));
+        assertThat(result).isEqualTo(true);
     }
 
     @Test

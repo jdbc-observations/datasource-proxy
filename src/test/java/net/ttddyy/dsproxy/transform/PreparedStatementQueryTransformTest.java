@@ -18,10 +18,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.core.Is.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -89,19 +86,17 @@ public class PreparedStatementQueryTransformTest {
         getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
 
         // when preparedStatement method is called, intercept should be called
-        assertThat(interceptedQueries, hasSize(1));
-        assertThat(interceptedQueries, hasItem("UPDATE foo SET name = ?"));
+        assertThat(interceptedQueries).hasSize(1).containsExactly("UPDATE foo SET name = ?");
     }
 
     @Test
     public void testExecuteWithSelect() throws Exception {
         PreparedStatement ps = getProxyConnectionForSelect().prepareStatement("SELECT name FROM foo");
         boolean result = ps.execute();
-        assertThat(result, is(true));
+        assertThat(result).isTrue();
 
         // verify intercepted query
-        assertThat(interceptedQueries, hasSize(1));
-        assertThat(interceptedQueries, hasItem("SELECT name FROM foo"));
+        assertThat(interceptedQueries).hasSize(1).containsExactly("SELECT name FROM foo");
     }
 
     @Test
@@ -109,32 +104,30 @@ public class PreparedStatementQueryTransformTest {
         PreparedStatement ps = getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
         ps.setString(1, "FOO");
         boolean result = ps.execute();
-        assertThat(result, is(false));
+        assertThat(result).isFalse();
 
         // verify intercepted query
-        assertThat(interceptedQueries, hasSize(1));
-        assertThat(interceptedQueries, hasItem("UPDATE foo SET name = ?"));
+        assertThat(interceptedQueries).hasSize(1).containsExactly("UPDATE foo SET name = ?");
 
         // verify bar is updated instead of foo
         ResultSet rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
-        assertThat(rs.next(), is(true));
-        assertThat(rs.getString("name"), is("foo"));
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getString("name")).isEqualTo("foo");
         rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM bar");
-        assertThat(rs.next(), is(true));
-        assertThat(rs.getString("name"), is("FOO"));
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getString("name")).isEqualTo("FOO");
     }
 
     @Test
     public void testExecuteQuery() throws Exception {
         PreparedStatement ps = getProxyConnectionForSelect().prepareStatement("SELECT name FROM foo");
         ResultSet resultSet = ps.executeQuery();
-        assertThat(resultSet.next(), is(true));
-        assertThat(resultSet.getInt("id"), is(100));
-        assertThat(resultSet.getString("name"), is("bar"));
+        assertThat(resultSet.next()).isTrue();
+        assertThat(resultSet.getInt("id")).isEqualTo(100);
+        assertThat(resultSet.getString("name")).isEqualTo("bar");
 
         // verify intercepted query
-        assertThat(interceptedQueries, hasSize(1));
-        assertThat(interceptedQueries, hasItem("SELECT name FROM foo"));
+        assertThat(interceptedQueries).hasSize(1).containsExactly("SELECT name FROM foo");
     }
 
     @Test
@@ -142,19 +135,18 @@ public class PreparedStatementQueryTransformTest {
         PreparedStatement ps = getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
         ps.setString(1, "FOO");
         int count = ps.executeUpdate();
-        assertThat(count, is(1));
+        assertThat(count).isEqualTo(1);
 
         // verify intercepted query
-        assertThat(interceptedQueries, hasSize(1));
-        assertThat(interceptedQueries, hasItem("UPDATE foo SET name = ?"));
+        assertThat(interceptedQueries).hasSize(1).containsExactly("UPDATE foo SET name = ?");
 
         // verify bar is updated instead of foo
         ResultSet rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
-        assertThat(rs.next(), is(true));
-        assertThat(rs.getString("name"), is("foo"));
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getString("name")).isEqualTo("foo");
         rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM bar");
-        assertThat(rs.next(), is(true));
-        assertThat(rs.getString("name"), is("FOO"));
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getString("name")).isEqualTo("FOO");
     }
 
     @Test
@@ -165,21 +157,18 @@ public class PreparedStatementQueryTransformTest {
         ps.setString(1, "FOO2");
         ps.addBatch();
         int[] result = ps.executeBatch();
-        assertThat(result.length, is(2));
-        assertThat(result[0], is(1));
-        assertThat(result[1], is(1));
+        assertThat(result).containsExactly(1, 1);
 
         // verify intercepted query
-        assertThat(interceptedQueries, hasSize(1));
-        assertThat(interceptedQueries, hasItem("UPDATE foo SET name = ?"));
+        assertThat(interceptedQueries).hasSize(1).containsExactly("UPDATE foo SET name = ?");
 
         // verify bar is updated instead of foo
         ResultSet rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
-        assertThat(rs.next(), is(true));
-        assertThat(rs.getString("name"), is("foo"));
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getString("name")).isEqualTo("foo");
         rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM bar");
-        assertThat(rs.next(), is(true));
-        assertThat(rs.getString("name"), is("FOO2"));
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getString("name")).isEqualTo("FOO2");
     }
 
     @Test
@@ -188,8 +177,7 @@ public class PreparedStatementQueryTransformTest {
         ps.clearBatch();
 
         // even though batch is canceled, interceptor was called once.
-        assertThat(interceptedQueries, hasSize(1));
-        assertThat(interceptedQueries, hasItem("UPDATE foo SET name = ?"));
+        assertThat(interceptedQueries).hasSize(1).containsExactly("UPDATE foo SET name = ?");
     }
 
 }

@@ -20,9 +20,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -122,13 +120,13 @@ public class CallableStatementParameterTransformTest {
         verify(paramTransformer, only()).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
         String out1 = cs.getString("@p4");
-        assertThat(out1, is("FOO:first_REPLACED+second_REPLACED+100"));
+        assertThat(out1).isEqualTo("FOO:first_REPLACED+second_REPLACED+100");
 
         String out2 = cs.getString(5);
-        assertThat(out2, is("100"));
+        assertThat(out2).isEqualTo("100");
 
         int out3 = cs.getInt(6);
-        assertThat(out3, is("FOO:first_REPLACED+second_REPLACED+100".length()));
+        assertThat(out3).isEqualTo("FOO:first_REPLACED+second_REPLACED+100".length());
 
     }
 
@@ -164,13 +162,13 @@ public class CallableStatementParameterTransformTest {
         verify(paramTransformer, only()).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
         String out1 = cs.getString("@p4");
-        assertThat(out1, is("FOO:first_REPLACED+second_REPLACED+200"));
+        assertThat(out1).isEqualTo("FOO:first_REPLACED+second_REPLACED+200");
 
         String out2 = cs.getString(5);
-        assertThat(out2, is("200"));
+        assertThat(out2).isEqualTo("200");
 
         int out3 = cs.getInt(6);
-        assertThat(out3, is("FOO:first_REPLACED+second_REPLACED+200".length()));
+        assertThat(out3).isEqualTo("FOO:first_REPLACED+second_REPLACED+200".length());
 
     }
 
@@ -205,9 +203,7 @@ public class CallableStatementParameterTransformTest {
 
         verify(paramTransformer, times(2)).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
-        assertThat(batchValues, hasSize(2));
-        assertThat(batchValues.get(0), is("BAR:first-1+second-1_REPLACED"));
-        assertThat(batchValues.get(1), is("BAR:first-2+second-2_REPLACED"));
+        assertThat(batchValues).containsExactly("BAR:first-1+second-1_REPLACED", "BAR:first-2+second-2_REPLACED");
     }
 
     @Test
@@ -245,9 +241,7 @@ public class CallableStatementParameterTransformTest {
 
         verify(paramTransformer, times(2)).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
-        assertThat(batchValues, hasSize(2));
-        assertThat(batchValues.get(0), is("BAR:first-1_REPLACED+second-1_REPLACED"));
-        assertThat(batchValues.get(1), is("BAR:first-2+second-2_REPLACED"));
+        assertThat(batchValues).containsExactly("BAR:first-1_REPLACED+second-1_REPLACED", "BAR:first-2+second-2_REPLACED");
     }
 
 }

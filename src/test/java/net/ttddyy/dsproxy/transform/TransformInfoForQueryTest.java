@@ -15,10 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.typeCompatibleWith;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -68,12 +65,12 @@ public class TransformInfoForQueryTest {
 
         verify(queryTransformer).transformQuery(isA(TransformInfo.class));
 
-        assertThat(transformInfo, notNullValue());
-        assertThat(transformInfo.getClazz(), typeCompatibleWith(Statement.class));
-        assertThat(transformInfo.getQuery(), is("my-query"));
-        assertThat(transformInfo.getDataSourceName(), is("my-ds"));
-        assertThat(transformInfo.isBatch(), is(false));
-        assertThat(transformInfo.getCount(), is(0));
+        assertThat(transformInfo).isNotNull();
+        assertThat(transformInfo.getClazz()).isEqualTo(Statement.class);
+        assertThat(transformInfo.getQuery()).isEqualTo("my-query");
+        assertThat(transformInfo.getDataSourceName()).isEqualTo("my-ds");
+        assertThat(transformInfo.isBatch()).isFalse();
+        assertThat(transformInfo.getCount()).isEqualTo(0);
 
     }
 
@@ -93,23 +90,23 @@ public class TransformInfoForQueryTest {
         handler.invoke(null, method, new Object[]{"my-query-1"});
 
         verify(queryTransformer).transformQuery(isA(TransformInfo.class));
-        assertThat(transformInfo, notNullValue());
-        assertThat(transformInfo.getClazz(), typeCompatibleWith(Statement.class));
-        assertThat(transformInfo.getQuery(), is("my-query-1"));
-        assertThat(transformInfo.getDataSourceName(), is("my-ds"));
-        assertThat(transformInfo.isBatch(), is(true));
-        assertThat(transformInfo.getCount(), is(0));
+        assertThat(transformInfo).isNotNull();
+        assertThat(transformInfo.getClazz()).isEqualTo(Statement.class);
+        assertThat(transformInfo.getQuery()).isEqualTo("my-query-1");
+        assertThat(transformInfo.getDataSourceName()).isEqualTo("my-ds");
+        assertThat(transformInfo.isBatch()).isTrue();
+        assertThat(transformInfo.getCount()).isEqualTo(0);
 
         // second batch
         handler.invoke(null, method, new Object[]{"my-query-2"});
 
         verify(queryTransformer, times(2)).transformQuery(isA(TransformInfo.class));
-        assertThat(transformInfo, notNullValue());
-        assertThat(transformInfo.getClazz(), typeCompatibleWith(Statement.class));
-        assertThat(transformInfo.getQuery(), is("my-query-2"));
-        assertThat(transformInfo.getDataSourceName(), is("my-ds"));
-        assertThat(transformInfo.isBatch(), is(true));
-        assertThat(transformInfo.getCount(), is(1));
+        assertThat(transformInfo).isNotNull();
+        assertThat(transformInfo.getClazz()).isEqualTo(Statement.class);
+        assertThat(transformInfo.getQuery()).isEqualTo("my-query-2");
+        assertThat(transformInfo.getDataSourceName()).isEqualTo("my-ds");
+        assertThat(transformInfo.isBatch()).isTrue();
+        assertThat(transformInfo.getCount()).isEqualTo(1);
 
     }
 
@@ -127,12 +124,12 @@ public class TransformInfoForQueryTest {
         handler.invoke(null, method, new Object[]{"my-query"});
 
         verify(queryTransformer).transformQuery(isA(TransformInfo.class));
-        assertThat(transformInfo, notNullValue());
-        assertThat(transformInfo.getClazz(), typeCompatibleWith(PreparedStatement.class));
-        assertThat(transformInfo.getQuery(), is("my-query"));
-        assertThat(transformInfo.getDataSourceName(), is("my-ds"));
-        assertThat(transformInfo.isBatch(), is(false));
-        assertThat(transformInfo.getCount(), is(0));
+        assertThat(transformInfo).isNotNull();
+        assertThat(transformInfo.getClazz()).isEqualTo(PreparedStatement.class);
+        assertThat(transformInfo.getQuery()).isEqualTo("my-query");
+        assertThat(transformInfo.getDataSourceName()).isEqualTo("my-ds");
+        assertThat(transformInfo.isBatch()).isFalse();
+        assertThat(transformInfo.getCount()).isEqualTo(0);
 
     }
 
@@ -150,12 +147,12 @@ public class TransformInfoForQueryTest {
         handler.invoke(null, method, new Object[]{"my-query"});
 
         verify(queryTransformer).transformQuery(isA(TransformInfo.class));
-        assertThat(transformInfo, notNullValue());
-        assertThat(transformInfo.getClazz(), typeCompatibleWith(CallableStatement.class));
-        assertThat(transformInfo.getQuery(), is("my-query"));
-        assertThat(transformInfo.getDataSourceName(), is("my-ds"));
-        assertThat(transformInfo.isBatch(), is(false));
-        assertThat(transformInfo.getCount(), is(0));
+        assertThat(transformInfo).isNotNull();
+        assertThat(transformInfo.getClazz()).isEqualTo(CallableStatement.class);
+        assertThat(transformInfo.getQuery()).isEqualTo("my-query");
+        assertThat(transformInfo.getDataSourceName()).isEqualTo("my-ds");
+        assertThat(transformInfo.isBatch()).isFalse();
+        assertThat(transformInfo.getCount()).isEqualTo(0);
 
     }
 

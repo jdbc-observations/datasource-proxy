@@ -11,10 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -32,13 +29,11 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
 
         DataSourceProxyNativeJdbcExtractor extractor = new DataSourceProxyNativeJdbcExtractor();
         Connection result = extractor.doGetNativeConnection(proxy);
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(sameInstance(org)));
+        assertThat(result).isSameAs(org);
 
         Connection nonProxy = mock(Connection.class);
         result = extractor.doGetNativeConnection(nonProxy);
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(sameInstance(nonProxy)));
+        assertThat(result).isSameAs(nonProxy);
     }
 
     @Test
@@ -57,7 +52,7 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
         Connection result = extractor.doGetNativeConnection(proxy);
 
         verify(delegate).getNativeConnection(org);
-        assertThat(result, is(sameInstance(expected)));
+        assertThat(result).isSameAs(expected);
     }
 
     @Test
@@ -67,13 +62,11 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
 
         DataSourceProxyNativeJdbcExtractor extractor = new DataSourceProxyNativeJdbcExtractor();
         Statement result = extractor.getNativeStatement(proxy);
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(sameInstance(org)));
+        assertThat(result).isSameAs(org);
 
         Statement nonProxy = mock(Statement.class);
         result = extractor.getNativeStatement(nonProxy);
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(sameInstance(nonProxy)));
+        assertThat(result).isSameAs(nonProxy);
     }
 
     @Test
@@ -92,7 +85,7 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
         Statement result = extractor.getNativeStatement(proxy);
 
         verify(delegate).getNativeStatement(org);
-        assertThat(result, is(sameInstance(expected)));
+        assertThat(result).isSameAs(expected);
     }
 
 
@@ -103,13 +96,11 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
 
         DataSourceProxyNativeJdbcExtractor extractor = new DataSourceProxyNativeJdbcExtractor();
         PreparedStatement result = extractor.getNativePreparedStatement(proxy);
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(sameInstance(org)));
+        assertThat(result).isSameAs(org);
 
         PreparedStatement nonProxy = mock(PreparedStatement.class);
         result = extractor.getNativePreparedStatement(nonProxy);
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(sameInstance(nonProxy)));
+        assertThat(result).isSameAs(nonProxy);
     }
 
     @Test
@@ -128,7 +119,7 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
         PreparedStatement result = extractor.getNativePreparedStatement(proxy);
 
         verify(delegate).getNativePreparedStatement(org);
-        assertThat(result, is(sameInstance(expected)));
+        assertThat(result).isSameAs(expected);
     }
 
 
@@ -139,13 +130,11 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
 
         DataSourceProxyNativeJdbcExtractor extractor = new DataSourceProxyNativeJdbcExtractor();
         CallableStatement result = extractor.getNativeCallableStatement(proxy);
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(sameInstance(org)));
+        assertThat(result).isSameAs(org);
 
         CallableStatement nonProxy = mock(CallableStatement.class);
         result = extractor.getNativeCallableStatement(nonProxy);
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(sameInstance(nonProxy)));
+        assertThat(result).isSameAs(nonProxy);
     }
 
     @Test
@@ -164,7 +153,7 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
         CallableStatement result = extractor.getNativeCallableStatement(proxy);
 
         verify(delegate).getNativeCallableStatement(org);
-        assertThat(result, is(sameInstance(expected)));
+        assertThat(result).isSameAs(expected);
     }
 
     private ConnectionInfo getConnectionInfo() {

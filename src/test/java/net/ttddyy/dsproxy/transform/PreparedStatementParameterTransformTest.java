@@ -19,8 +19,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.isA;
 import static org.mockito.Mockito.mock;
@@ -101,9 +100,9 @@ public class PreparedStatementParameterTransformTest {
         ps.setInt(2, 1);
         ResultSet rs = ps.executeQuery();
 
-        assertThat(rs.next(), is(true));
-        assertThat(rs.getInt(1), is(2));
-        assertThat(rs.getString(2), is("bar"));
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getInt(1)).isEqualTo(2);
+        assertThat(rs.getString(2)).isEqualTo("bar");
 
         verify(paramTransformer, only()).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
@@ -129,7 +128,7 @@ public class PreparedStatementParameterTransformTest {
         ps.setInt(2, 1);
         ResultSet rs = ps.executeQuery();
 
-        assertThat("should have no matching record 'where id=1 and id=2'", rs.next(), is(false));
+        assertThat(rs.next()).as("should have no matching record 'where id=1 and id=2'").isFalse();
         verify(paramTransformer, only()).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
     }
@@ -158,15 +157,13 @@ public class PreparedStatementParameterTransformTest {
         ps.addBatch();
         int[] result = ps.executeBatch();
 
-        assertThat(result.length, is(2));
-        assertThat(result[0], is(1));
-        assertThat(result[1], is(1));
+        assertThat(result).containsExactly(1, 1);
 
         String name = queryForString("SELECT name FROM foo WHERE id = 1");
-        assertThat(name, is("FOO-INTERCEPTED"));
+        assertThat(name).isEqualTo("FOO-INTERCEPTED");
 
         name = queryForString("SELECT name FROM foo WHERE id = 2");
-        assertThat(name, is("BAR-INTERCEPTED"));
+        assertThat(name).isEqualTo("BAR-INTERCEPTED");
 
         verify(paramTransformer, times(2)).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
@@ -175,7 +172,7 @@ public class PreparedStatementParameterTransformTest {
     private String queryForString(String sql) throws SQLException {
         Statement stmt = rawDatasource.getConnection().createStatement();
         ResultSet rs = stmt.executeQuery(sql);
-        assertThat("ResultSet should have result ", rs.next(), is(true));
+        assertThat(rs.next()).as("ResultSet should have result").isTrue();
         String result = rs.getString(1);
         rs.close();
         stmt.close();
@@ -220,18 +217,16 @@ public class PreparedStatementParameterTransformTest {
         ps.addBatch();
         int[] result = ps.executeBatch();
 
-        assertThat(result.length, is(2));
-        assertThat(result[0], is(1));
-        assertThat(result[1], is(1));
+        assertThat(result).containsExactly(1, 1);
 
         String name = queryForString("SELECT name FROM foo WHERE id = 1");
-        assertThat(name, is("foo"));
+        assertThat(name).isEqualTo("foo");
 
         name = queryForString("SELECT name FROM foo WHERE id = 2");
-        assertThat(name, is("BAR-INTERCEPTED"));
+        assertThat(name).isEqualTo("BAR-INTERCEPTED");
 
         name = queryForString("SELECT name FROM foo WHERE id = 3");
-        assertThat(name, is("BAZ"));
+        assertThat(name).isEqualTo("BAZ");
 
         verify(paramTransformer, times(2)).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 

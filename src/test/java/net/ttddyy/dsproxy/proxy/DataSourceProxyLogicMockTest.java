@@ -12,11 +12,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -39,7 +35,7 @@ public class DataSourceProxyLogicMockTest {
         Method method = DataSource.class.getMethod("getConnection");
         Object result = logic.invoke(method, null);
 
-        assertThat(result, is(instanceOf(Connection.class)));
+        assertThat(result).isInstanceOf(Connection.class);
         verifyConnection((Connection) result);
         verify(ds).getConnection();
     }
@@ -55,13 +51,13 @@ public class DataSourceProxyLogicMockTest {
     }
 
     private void verifyConnection(Connection conn) {
-        assertThat(conn, notNullValue());
+        assertThat(conn).isNotNull();
 
-        assertThat(Proxy.isProxyClass(conn.getClass()), is(true));
+        assertThat(Proxy.isProxyClass(conn.getClass())).isTrue();
         InvocationHandler handler = Proxy.getInvocationHandler(conn);
-        assertThat(handler, is(instanceOf(ConnectionInvocationHandler.class)));
+        assertThat(handler).isInstanceOf(ConnectionInvocationHandler.class);
 
-        assertThat(conn, is(instanceOf(ProxyJdbcObject.class)));
+        assertThat(conn).isInstanceOf(ProxyJdbcObject.class);
     }
 
     @Test
@@ -72,9 +68,9 @@ public class DataSourceProxyLogicMockTest {
         Method method = ProxyJdbcObject.class.getMethod("getTarget");
         Object result = logic.invoke(method, null);
 
-        assertThat(result, is(instanceOf(DataSource.class)));
+        assertThat(result).isInstanceOf(DataSource.class);
         DataSource resultDS = (DataSource) result;
-        assertThat(resultDS, is(sameInstance(ds)));
+        assertThat(resultDS).isSameAs(ds);
     }
 
     @Test
@@ -88,8 +84,7 @@ public class DataSourceProxyLogicMockTest {
         Object result = logic.invoke(method, new Object[]{String.class});
 
         verify(ds).unwrap(String.class);
-        assertThat(result, is(instanceOf(String.class)));
-        assertThat((String) result, is("called"));
+        assertThat(result).isEqualTo("called");
     }
 
     @Test
@@ -103,8 +98,7 @@ public class DataSourceProxyLogicMockTest {
         Object result = logic.invoke(method, new Object[]{String.class});
 
         verify(ds).isWrapperFor(String.class);
-        assertThat(result, is(instanceOf(boolean.class)));
-        assertThat((Boolean) result, is(true));
+        assertThat(result).isEqualTo(true);
     }
 
     @Test
@@ -117,8 +111,7 @@ public class DataSourceProxyLogicMockTest {
         Method method = Object.class.getMethod("toString");
         Object result = logic.invoke(method, null);
 
-        assertThat(result, is(instanceOf(String.class)));
-        assertThat((String) result, is(ds.getClass().getSimpleName() + " [my ds]"));
+        assertThat(result).isEqualTo(ds.getClass().getSimpleName() + " [my ds]");
     }
 
     @Test
@@ -129,8 +122,7 @@ public class DataSourceProxyLogicMockTest {
         Method method = Object.class.getMethod("hashCode");
         Object result = logic.invoke(method, null);
 
-        assertThat(result, is(instanceOf(Integer.class)));
-        assertThat((Integer) result, is(ds.hashCode()));
+        assertThat(result).isEqualTo(ds.hashCode());
     }
 
     @Test
@@ -142,13 +134,11 @@ public class DataSourceProxyLogicMockTest {
 
         // equals(null)
         Object result = logic.invoke(method, new Object[]{null});
-        assertThat(result, is(instanceOf(Boolean.class)));
-        assertThat((Boolean) result, is(false));
+        assertThat(result).isEqualTo(false);
 
         // equals(true)
         result = logic.invoke(method, new Object[]{ds});
-        assertThat(result, is(instanceOf(Boolean.class)));
-        assertThat((Boolean) result, is(true));
+        assertThat(result).isEqualTo(true);
     }
 
     @Test

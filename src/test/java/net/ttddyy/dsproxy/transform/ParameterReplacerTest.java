@@ -8,8 +8,8 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Tadaya Tsuyukubo
@@ -32,13 +32,13 @@ public class ParameterReplacerTest {
         replacer.setString("foo", "replaced-foo");
 
         Map<ParameterKey, ParameterSetOperation> params = replacer.getModifiedParameters();
-        assertThat(params.keySet(), hasSize(4));
-        assertThat(params.keySet(), hasItems(new ParameterKey(1), new ParameterKey(2), new ParameterKey("foo"), new ParameterKey("bar")));
+        assertThat(params.keySet()).hasSize(4);
+        assertThat(params.keySet()).containsExactly(new ParameterKey(1), new ParameterKey(2), new ParameterKey("foo"), new ParameterKey("bar"));
 
-        assertThat((String) params.get(new ParameterKey(1)).getArgs()[1], is("replaced-1"));
-        assertThat((String) params.get(new ParameterKey(2)).getArgs()[1], is("value-2"));
-        assertThat((String) params.get(new ParameterKey("foo")).getArgs()[1], is("replaced-foo"));
-        assertThat((String) params.get(new ParameterKey("bar")).getArgs()[1], is("value-bar"));
+        assertThat((String) params.get(new ParameterKey(1)).getArgs()[1]).isEqualTo("replaced-1");
+        assertThat((String) params.get(new ParameterKey(2)).getArgs()[1]).isEqualTo("value-2");
+        assertThat((String) params.get(new ParameterKey("foo")).getArgs()[1]).isEqualTo("replaced-foo");
+        assertThat((String) params.get(new ParameterKey("bar")).getArgs()[1]).isEqualTo("value-bar");
 
     }
 
@@ -59,11 +59,10 @@ public class ParameterReplacerTest {
         replacer.setString("foo", "replaced-foo");
 
         Map<ParameterKey, ParameterSetOperation> params = replacer.getModifiedParameters();
-        assertThat(params.keySet(), hasSize(2));
-        assertThat(params.keySet(), hasItems(new ParameterKey(1), new ParameterKey("foo")));
+        assertThat(params.keySet()).containsExactly(new ParameterKey(1), new ParameterKey("foo"));
 
-        assertThat((String) params.get(new ParameterKey(1)).getArgs()[1], is("replaced-1"));
-        assertThat((String) params.get(new ParameterKey("foo")).getArgs()[1], is("replaced-foo"));
+        assertThat((String) params.get(new ParameterKey(1)).getArgs()[1]).isEqualTo("replaced-1");
+        assertThat((String) params.get(new ParameterKey("foo")).getArgs()[1]).isEqualTo("replaced-foo");
     }
 
 }

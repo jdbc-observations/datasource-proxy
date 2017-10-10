@@ -12,10 +12,7 @@ import java.lang.reflect.Method;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.typeCompatibleWith;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -62,12 +59,12 @@ public class TransformInfoForParametersTest {
 
         verify(parameterTransformer, only()).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
-        assertThat(this.transformInfo, notNullValue());
-        assertThat(this.transformInfo.getClazz(), typeCompatibleWith(PreparedStatement.class));
-        assertThat(this.transformInfo.getDataSourceName(), is("my-ds"));
-        assertThat(this.transformInfo.getQuery(), is("my-query"));
-        assertThat(this.transformInfo.isBatch(), is(false));
-        assertThat(this.transformInfo.getCount(), is(0));
+        assertThat(this.transformInfo).isNotNull();
+        assertThat(this.transformInfo.getClazz()).isAssignableFrom(ps.getClass());
+        assertThat(this.transformInfo.getDataSourceName()).isEqualTo("my-ds");
+        assertThat(this.transformInfo.getQuery()).isEqualTo("my-query");
+        assertThat(this.transformInfo.isBatch()).isFalse();
+        assertThat(this.transformInfo.getCount()).isEqualTo(0);
 
     }
 
@@ -86,24 +83,23 @@ public class TransformInfoForParametersTest {
         proxyLogic.invoke(method, args);
 
         verify(parameterTransformer, times(1)).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
-        assertThat(this.transformInfo, notNullValue());
-        assertThat(this.transformInfo.getClazz(), typeCompatibleWith(PreparedStatement.class));
-        assertThat(this.transformInfo.getDataSourceName(), is("my-ds"));
-        assertThat(this.transformInfo.getQuery(), is("my-query"));
-        assertThat(this.transformInfo.isBatch(), is(true));
-        assertThat(this.transformInfo.getCount(), is(0));
+        assertThat(this.transformInfo).isNotNull();
+        assertThat(this.transformInfo.getClazz()).isAssignableFrom(ps.getClass());
+        assertThat(this.transformInfo.getDataSourceName()).isEqualTo("my-ds");
+        assertThat(this.transformInfo.getQuery()).isEqualTo("my-query");
+        assertThat(this.transformInfo.isBatch()).isTrue();
+        assertThat(this.transformInfo.getCount()).isEqualTo(0);
 
         // second batch invocation
         proxyLogic.invoke(method, args);
 
         verify(parameterTransformer, times(2)).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
-        assertThat(this.transformInfo, notNullValue());
-        assertThat(this.transformInfo.getClazz(), typeCompatibleWith(PreparedStatement.class));
-        assertThat(this.transformInfo.getDataSourceName(), is("my-ds"));
-        assertThat(this.transformInfo.getQuery(), is("my-query"));
-        assertThat(this.transformInfo.isBatch(), is(true));
-        assertThat(this.transformInfo.getCount(), is(1));
-
+        assertThat(this.transformInfo).isNotNull();
+        assertThat(this.transformInfo.getClazz()).isAssignableFrom(ps.getClass());
+        assertThat(this.transformInfo.getDataSourceName()).isEqualTo("my-ds");
+        assertThat(this.transformInfo.getQuery()).isEqualTo("my-query");
+        assertThat(this.transformInfo.isBatch()).isTrue();
+        assertThat(this.transformInfo.getCount()).isEqualTo(1);
     }
 
     @Test
@@ -120,12 +116,12 @@ public class TransformInfoForParametersTest {
 
         verify(parameterTransformer, only()).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
-        assertThat(this.transformInfo, notNullValue());
-        assertThat(this.transformInfo.getClazz(), typeCompatibleWith(CallableStatement.class));
-        assertThat(this.transformInfo.getDataSourceName(), is("my-ds"));
-        assertThat(this.transformInfo.getQuery(), is("my-query"));
-        assertThat(this.transformInfo.isBatch(), is(false));
-        assertThat(this.transformInfo.getCount(), is(0));
+        assertThat(this.transformInfo).isNotNull();
+        assertThat(this.transformInfo.getClazz()).isAssignableFrom(cs.getClass());
+        assertThat(this.transformInfo.getDataSourceName()).isEqualTo("my-ds");
+        assertThat(this.transformInfo.getQuery()).isEqualTo("my-query");
+        assertThat(this.transformInfo.isBatch()).isFalse();
+        assertThat(this.transformInfo.getCount()).isEqualTo(0);
 
     }
 
@@ -144,23 +140,24 @@ public class TransformInfoForParametersTest {
         proxyLogic.invoke(method, args);
 
         verify(parameterTransformer, times(1)).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
-        assertThat(this.transformInfo, notNullValue());
-        assertThat(this.transformInfo.getClazz(), typeCompatibleWith(CallableStatement.class));
-        assertThat(this.transformInfo.getDataSourceName(), is("my-ds"));
-        assertThat(this.transformInfo.getQuery(), is("my-query"));
-        assertThat(this.transformInfo.isBatch(), is(true));
-        assertThat(this.transformInfo.getCount(), is(0));
+
+        assertThat(this.transformInfo).isNotNull();
+        assertThat(this.transformInfo.getClazz()).isAssignableFrom(cs.getClass());
+        assertThat(this.transformInfo.getDataSourceName()).isEqualTo("my-ds");
+        assertThat(this.transformInfo.getQuery()).isEqualTo("my-query");
+        assertThat(this.transformInfo.isBatch()).isTrue();
+        assertThat(this.transformInfo.getCount()).isEqualTo(0);
 
         // second batch invocation
         proxyLogic.invoke(method, args);
 
         verify(parameterTransformer, times(2)).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
-        assertThat(this.transformInfo, notNullValue());
-        assertThat(this.transformInfo.getClazz(), typeCompatibleWith(CallableStatement.class));
-        assertThat(this.transformInfo.getDataSourceName(), is("my-ds"));
-        assertThat(this.transformInfo.getQuery(), is("my-query"));
-        assertThat(this.transformInfo.isBatch(), is(true));
-        assertThat(this.transformInfo.getCount(), is(1));
+        assertThat(this.transformInfo).isNotNull();
+        assertThat(this.transformInfo.getClazz()).isAssignableFrom(cs.getClass());
+        assertThat(this.transformInfo.getDataSourceName()).isEqualTo("my-ds");
+        assertThat(this.transformInfo.getQuery()).isEqualTo("my-query");
+        assertThat(this.transformInfo.isBatch()).isTrue();
+        assertThat(this.transformInfo.getCount()).isEqualTo(1);
 
     }
 

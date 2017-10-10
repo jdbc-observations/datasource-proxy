@@ -10,12 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -32,9 +27,7 @@ public class JdkJdbcProxyFactoryTest {
 
         Connection result = factory.createConnection(conn, getConnectionInfo(), proxyConfig);
 
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(not(sameInstance(conn))));
-        assertThat(result, is(instanceOf(ProxyJdbcObject.class)));
+        assertThat(result).isNotNull().isNotSameAs(conn).isInstanceOf(ProxyJdbcObject.class);
     }
 
     @Test
@@ -44,9 +37,7 @@ public class JdkJdbcProxyFactoryTest {
 
         Statement result = factory.createStatement(stmt, getConnectionInfo(), null, proxyConfig);
 
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(not(sameInstance(stmt))));
-        assertThat(result, is(instanceOf(ProxyJdbcObject.class)));
+        assertThat(result).isNotNull().isNotSameAs(stmt).isInstanceOf(ProxyJdbcObject.class);
     }
 
     @Test
@@ -57,9 +48,7 @@ public class JdkJdbcProxyFactoryTest {
 
         PreparedStatement result = factory.createPreparedStatement(ps, "my-query", getConnectionInfo(), null, proxyConfig);
 
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(not(sameInstance(ps))));
-        assertThat(result, is(instanceOf(ProxyJdbcObject.class)));
+        assertThat(result).isNotNull().isNotSameAs(ps).isInstanceOf(ProxyJdbcObject.class);
     }
 
     @Test
@@ -70,9 +59,7 @@ public class JdkJdbcProxyFactoryTest {
 
         CallableStatement result = factory.createCallableStatement(cs, "my-query", getConnectionInfo(), null, proxyConfig);
 
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(not(sameInstance(cs))));
-        assertThat(result, is(instanceOf(ProxyJdbcObject.class)));
+        assertThat(result).isNotNull().isNotSameAs(cs).isInstanceOf(ProxyJdbcObject.class);
     }
 
     @Test
@@ -82,9 +69,7 @@ public class JdkJdbcProxyFactoryTest {
 
         DataSource result = factory.createDataSource(ds, proxyConfig);
 
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(not(sameInstance(ds))));
-        assertThat(result, is(instanceOf(ProxyJdbcObject.class)));
+        assertThat(result).isNotNull().isNotSameAs(ds).isInstanceOf(ProxyJdbcObject.class);
     }
 
 

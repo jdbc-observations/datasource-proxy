@@ -9,13 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.aMapWithSize;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -37,33 +31,33 @@ public class MockTestUtils {
         final int expectedBatchSize = expectedQueryParamsArray.length;
 
         ExecutionInfo execInfo = executionInfoCaptor.getValue();
-        assertThat(execInfo.getMethod(), is(notNullValue()));
-        assertThat(execInfo.getMethod().getName(), is("executeBatch"));
+        assertThat(execInfo.getMethod()).isNotNull();
+        assertThat(execInfo.getMethod().getName()).isEqualTo("executeBatch");
 
-        assertThat(execInfo.getMethodArgs(), is(nullValue()));
-        assertThat(execInfo.getDataSourceName(), is(dataSourceName));
-        assertThat(execInfo.getThrowable(), is(nullValue()));
-        assertThat(execInfo.isBatch(), is(true));
-        assertThat(execInfo.getBatchSize(), is(expectedBatchSize));
+        assertThat(execInfo.getMethodArgs()).isNull();
+        assertThat(execInfo.getDataSourceName()).isEqualTo(dataSourceName);
+        assertThat(execInfo.getThrowable()).isNull();
+        assertThat(execInfo.isBatch()).isTrue();
+        assertThat(execInfo.getBatchSize()).isEqualTo(expectedBatchSize);
 
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
-        assertThat("for prepared/callable statement, batch query size is always 1", queryInfoList.size(), is(1));
+        assertThat(queryInfoList).hasSize(1).as("for prepared/callable statement, batch query size is always 1");
         QueryInfo queryInfo = queryInfoList.get(0);
-        assertThat(queryInfo.getQuery(), is(query));
-        assertThat(queryInfo.getParametersList(), hasSize(expectedBatchSize));
+        assertThat(queryInfo.getQuery()).isEqualTo(query);
+        assertThat(queryInfo.getParametersList()).hasSize(expectedBatchSize);
 
         for (int i = 0; i < expectedBatchSize; i++) {
             Map<String, Object> expectedQueryArgs = expectedQueryParamsArray[i];
             Map<String, Object> actualQueryArgs = new HashMap<String, Object>();
-            for (ParameterSetOperation operation  : queryInfo.getParametersList().get(i)) {
+            for (ParameterSetOperation operation : queryInfo.getParametersList().get(i)) {
                 Object[] args = operation.getArgs();
                 actualQueryArgs.put(args[0].toString(), args[1]);
             }
 
 
-            assertThat(actualQueryArgs, aMapWithSize(expectedQueryArgs.size()));
+            assertThat(actualQueryArgs).hasSize(expectedQueryArgs.size());
             for (Map.Entry<String, Object> entry : expectedQueryArgs.entrySet()) {
-                assertThat(actualQueryArgs, hasEntry(entry.getKey(), entry.getValue()));
+                assertThat(actualQueryArgs).containsEntry(entry.getKey(), entry.getValue());
             }
         }
 

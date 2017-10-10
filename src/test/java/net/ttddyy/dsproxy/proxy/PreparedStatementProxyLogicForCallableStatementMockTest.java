@@ -31,16 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.aMapWithSize;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -71,8 +62,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         Method method = CallableStatement.class.getMethod("execute");
         Object result = logic.invoke(method, null);
 
-        assertThat(result, is(instanceOf(boolean.class)));
-        assertThat((Boolean) result, is(Boolean.TRUE));
+        assertThat(result).isEqualTo(Boolean.TRUE);
         verifyListenerWithNoParam(listener, "execute", query);
     }
 
@@ -91,8 +81,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         Method method = CallableStatement.class.getMethod("execute");
         Object result = logic.invoke(method, null);
 
-        assertThat(result, is(instanceOf(boolean.class)));
-        assertThat((Boolean) result, is(Boolean.TRUE));
+        assertThat(result).isEqualTo(Boolean.TRUE);
         verifyParametersByPosition(stat);
 
         verifyListenerWithParamByPosition(listener, "execute", query);
@@ -113,8 +102,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         Method method = CallableStatement.class.getMethod("execute");
         Object result = logic.invoke(method, null);
 
-        assertThat(result, is(instanceOf(boolean.class)));
-        assertThat((Boolean) result, is(true));
+        assertThat(result).isEqualTo(true);
         verifyParametersByName(stat);
 
         verifyListenerWithParamByName(listener, "execute", query);
@@ -134,8 +122,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         Method method = CallableStatement.class.getMethod("executeUpdate");
         Object result = logic.invoke(method, null);
 
-        assertThat(result, is(instanceOf(int.class)));
-        assertThat((Integer) result, is(100));
+        assertThat(result).isEqualTo(100);
         verifyListenerWithNoParam(listener, "executeUpdate", query);
     }
 
@@ -154,8 +141,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         Method method = CallableStatement.class.getMethod("executeUpdate");
         Object result = logic.invoke(method, null);
 
-        assertThat(result, is(instanceOf(int.class)));
-        assertThat((Integer) result, is(100));
+        assertThat(result).isEqualTo(100);
         verifyParametersByPosition(stat);
 
         verifyListenerWithParamByPosition(listener, "executeUpdate", query);
@@ -176,8 +162,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         Method method = CallableStatement.class.getMethod("executeUpdate");
         Object result = logic.invoke(method, null);
 
-        assertThat(result, is(instanceOf(int.class)));
-        assertThat((Integer) result, is(100));
+        assertThat(result).isEqualTo(100);
         verifyParametersByName(stat);
 
         verifyListenerWithParamByName(listener, "executeUpdate", query);
@@ -197,8 +182,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         Method method = CallableStatement.class.getMethod("executeQuery");
         Object result = logic.invoke(method, null);
 
-        assertThat(result, is(instanceOf(ResultSet.class)));
-        assertThat((ResultSet) result, is(mockResultSet));
+        assertThat(result).isEqualTo(mockResultSet);
         verifyListenerWithNoParam(listener, "executeQuery", query);
     }
 
@@ -217,8 +201,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         Method method = CallableStatement.class.getMethod("executeQuery");
         Object result = logic.invoke(method, null);
 
-        assertThat(result, is(instanceOf(ResultSet.class)));
-        assertThat((ResultSet) result, is(mockResultSet));
+        assertThat(result).isEqualTo(mockResultSet);
         verifyParametersByPosition(stat);
 
         verifyListenerWithParamByPosition(listener, "executeQuery", query);
@@ -240,8 +223,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         Method method = CallableStatement.class.getMethod("executeQuery");
         Object result = logic.invoke(method, null);
 
-        assertThat(result, is(instanceOf(ResultSet.class)));
-        assertThat((ResultSet) result, is(mockResultSet));
+        assertThat(result).isEqualTo(mockResultSet);
         verifyParametersByName(stat);
 
         verifyListenerWithParamByName(listener, "executeQuery", query);
@@ -407,11 +389,11 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         verify(listener).afterQuery(any(ExecutionInfo.class), queryInfoListCaptor.capture());
 
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
-        assertThat(queryInfoList.size(), is(1));
+        assertThat(queryInfoList).hasSize(1);
 
-        assertThat(queryInfoList.get(0).getParametersList(), hasSize(1));
+        assertThat(queryInfoList.get(0).getParametersList()).hasSize(1);
         List<ParameterSetOperation> firstArgs = queryInfoList.get(0).getParametersList().get(0);
-        assertThat("Args should be empty", firstArgs, empty());
+        assertThat(firstArgs).as("Args should be empty").isEmpty();
 
     }
 
@@ -669,22 +651,22 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         verify(listener).afterQuery(executionInfoCaptor.capture(), queryInfoListCaptor.capture());
 
         ExecutionInfo execInfo = executionInfoCaptor.getValue();
-        assertThat(execInfo.getMethod(), is(notNullValue()));
-        assertThat(execInfo.getMethod().getName(), is(methodName));
+        assertThat(execInfo.getMethod()).isNotNull();
+        assertThat(execInfo.getMethod().getName()).isEqualTo(methodName);
 
-        assertThat(execInfo.getMethodArgs(), is(nullValue()));
-        assertThat(execInfo.getDataSourceName(), is(DS_NAME));
-        assertThat(execInfo.getThrowable(), is(nullValue()));
+        assertThat(execInfo.getMethodArgs()).isNull();
+        assertThat(execInfo.getDataSourceName()).isEqualTo(DS_NAME);
+        assertThat(execInfo.getThrowable()).isNull();
 
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
-        assertThat(queryInfoList.size(), is(1));
+        assertThat(queryInfoList).hasSize(1);
         QueryInfo queryInfo = queryInfoList.get(0);
-        assertThat(queryInfo.getQuery(), is(equalTo(query)));
+        assertThat(queryInfo.getQuery()).isEqualTo(query);
 
         // TODO: clean up the comparison logic
 
         List<List<ParameterSetOperation>> queryArgsList = queryInfo.getParametersList();
-        assertThat("non-batch exec should have only one params.", queryArgsList, hasSize(1));
+        assertThat(queryArgsList).as("non-batch exec should have only one params.").hasSize(1);
 
         Map<String, Object> queryArgs = new HashMap<String, Object>();
         for (ParameterSetOperation operation : queryArgsList.get(0)) {
@@ -693,15 +675,15 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         }
         if (ParamStatus.NO_PARAM != paramStatus) {
             if (ParamStatus.BY_POSITION == paramStatus) {
-                assertThat(queryArgs.size(), is(PARAMS.size()));
+                assertThat(queryArgs).hasSize(PARAMS.size());
 
                 for (int i = 0; i < PARAMS.size(); i++) {
                     Param param = PARAMS.get(i);
                     String index = Integer.toString(param.index);  // param map key is String
                     Object value = queryArgs.get(index);
 
-                    assertThat(value, is(instanceOf(param.clazz)));
-                    assertThat(value, is(param.value));
+//                    assertThat(value).isInstanceOf(param.clazz);
+                    assertThat(value).isEqualTo(param.value);
                 }
 
             } else {
@@ -717,11 +699,11 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
 
                     Object value = queryArgs.get(index);
 
-                    assertThat(value, is(instanceOf(param.clazz)));
-                    assertThat(value, is(param.value));
+//                    assertThat(value).isEqualTo(param.clazz);
+                    assertThat(value).isEqualTo(param.value);
                 }
 
-                assertThat(queryArgs, aMapWithSize(totalSetParamCallForByName));
+                assertThat(queryArgs).hasSize(totalSetParamCallForByName);
             }
         }
     }
@@ -751,8 +733,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         Method method = ProxyJdbcObject.class.getMethod("getTarget");
         Object result = logic.invoke(method, null);
 
-        assertThat(result, is(instanceOf(CallableStatement.class)));
-        assertThat((CallableStatement) result, is(sameInstance(orig)));
+        assertThat(result).isSameAs(orig);
     }
 
     @Test
@@ -765,8 +746,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         Object result = logic.invoke(method, new Object[]{String.class});
 
         verify(mock).unwrap(String.class);
-        assertThat(result, is(instanceOf(String.class)));
-        assertThat((String) result, is("called"));
+        assertThat(result).isEqualTo("called");
     }
 
     @Test
@@ -780,8 +760,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         Object result = logic.invoke(method, new Object[]{String.class});
 
         verify(mock).isWrapperFor(String.class);
-        assertThat(result, is(instanceOf(boolean.class)));
-        assertThat((Boolean) result, is(true));
+        assertThat(result).isEqualTo(true);
     }
 
     @Test
@@ -795,8 +774,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         Method method = CallableStatement.class.getMethod("getConnection");
         Object result = logic.invoke(method, null);
 
-        assertThat(result, is(instanceOf(Connection.class)));
-        assertThat((Connection) result, sameInstance(conn));
+        assertThat(result).isSameAs(conn);
     }
 
     @Test

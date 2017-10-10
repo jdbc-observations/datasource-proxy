@@ -3,7 +3,6 @@ package net.ttddyy.dsproxy.listener.logging;
 import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,9 +14,8 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Tadaya Tsuyukubo
@@ -82,13 +80,13 @@ public class LoggingListenerLogLevelTest {
         for (CommonsLogLevel commonsLogLevel : CommonsLogLevel.values()) {
             List<String> messageList = log.getMessages(commonsLogLevel);
             if (commonsLogLevel == this.logLevel) {
-                assertThat(messageList, hasSize(queries.length));
+                assertThat(messageList).hasSize(queries.length);
                 for (int i = 0; i < queries.length; i++) {
                     final String query = queries[i];
-                    assertThat(messageList.get(i), containsString(query));
+                    assertThat(messageList.get(i)).contains(query);
                 }
             } else {
-                assertThat(messageList, Matchers.<String>empty());
+                assertThat(messageList).isEmpty();
             }
         }
 

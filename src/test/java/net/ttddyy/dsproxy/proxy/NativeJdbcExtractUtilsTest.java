@@ -9,9 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -26,11 +24,11 @@ public class NativeJdbcExtractUtilsTest {
 
         // check proxy
         Connection result = NativeJdbcExtractUtils.getConnection(proxy);
-        assertThat(result, is(sameInstance(source)));
+        assertThat(result).isSameAs(source);
 
         // check non-proxy
         result = NativeJdbcExtractUtils.getConnection(source);
-        assertThat(result, is(sameInstance(source)));
+        assertThat(result).isSameAs(source);
     }
 
     @Test
@@ -40,11 +38,11 @@ public class NativeJdbcExtractUtilsTest {
 
         // check proxy
         Statement result = NativeJdbcExtractUtils.getStatement(proxy);
-        assertThat(result, is(sameInstance(source)));
+        assertThat(result).isSameAs(source);
 
         // check non-proxy
         result = NativeJdbcExtractUtils.getStatement(source);
-        assertThat(result, is(sameInstance(source)));
+        assertThat(result).isSameAs(source);
     }
 
     @Test
@@ -54,11 +52,11 @@ public class NativeJdbcExtractUtilsTest {
 
         // check proxy
         PreparedStatement result = NativeJdbcExtractUtils.getPreparedStatement(proxy);
-        assertThat(result, is(sameInstance(source)));
+        assertThat(result).isSameAs(source);
 
         // check non-proxy
         result = NativeJdbcExtractUtils.getPreparedStatement(source);
-        assertThat(result, is(sameInstance(source)));
+        assertThat(result).isSameAs(source);
     }
 
     @Test
@@ -68,11 +66,11 @@ public class NativeJdbcExtractUtilsTest {
 
         // check proxy
         CallableStatement result = NativeJdbcExtractUtils.getCallableStatement(proxy);
-        assertThat(result, is(sameInstance(source)));
+        assertThat(result).isSameAs(source);
 
         // check non-proxy
         result = NativeJdbcExtractUtils.getCallableStatement(source);
-        assertThat(result, is(sameInstance(source)));
+        assertThat(result).isSameAs(source);
     }
 
     private ConnectionInfo getConnectionInfo() {

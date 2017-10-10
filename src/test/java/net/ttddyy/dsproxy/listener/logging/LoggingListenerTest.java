@@ -15,9 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.atIndex;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -135,12 +134,12 @@ public class LoggingListenerTest {
             List<String> messageList = entry.getValue();
 
             int expectedMsgSize = (msgLevel == logLevel) ? queries.length : 0;
-            assertThat(messageList, hasSize(expectedMsgSize));
+            assertThat(messageList).hasSize(expectedMsgSize);
 
             if (expectedMsgSize > 0) {
                 for (int i = 0; i < queries.length; i++) {
                     final String query = queries[i];
-                    assertThat(messageList.get(i), containsString(query));
+                    assertThat(messageList.get(i)).contains(query);
                 }
             }
         }

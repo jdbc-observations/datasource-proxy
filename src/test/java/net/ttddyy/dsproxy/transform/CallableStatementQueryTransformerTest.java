@@ -19,10 +19,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -125,16 +122,15 @@ public class CallableStatementQueryTransformerTest {
         CallableStatement cs = getProxyConnection(queryToReplace).prepareCall("CALL proc_foo(?)");
         cs.setString(1, "FOO");
         boolean result = cs.execute();
-        assertThat(result, is(true));
+        assertThat(result).isTrue();
 
         ResultSet rs = cs.getResultSet();
-        assertThat(rs.next(), is(true));
+        assertThat(rs.next()).isTrue();
         String output = rs.getString(1);
-        assertThat(output, is("bar=FOO"));
+        assertThat(output).isEqualTo("bar=FOO");
 
         // verify intercepted query
-        assertThat(interceptedQueries, hasSize(1));
-        assertThat(interceptedQueries, hasItem("CALL proc_foo(?)"));
+        assertThat(interceptedQueries).hasSize(1).contains("CALL proc_foo(?)");
     }
 
     @Test
@@ -149,30 +145,29 @@ public class CallableStatementQueryTransformerTest {
         cs.addBatch();
         int[] result = cs.executeBatch();
 
-        assertThat(result.length, is(2));
+        assertThat(result.length).isEqualTo(2);
 
         // verify intercepted query.
-        assertThat(interceptedQueries, hasSize(1));
-        assertThat(interceptedQueries, hasItem("CALL insert_foo(?, ?)"));
+        assertThat(interceptedQueries).hasSize(1).contains("CALL insert_foo(?, ?)");
 
 
         Statement statement = rawDatasource.getConnection().createStatement();
         ResultSet rs = statement.executeQuery("SELECT COUNT(*) FROM foo");
-        assertThat(rs.next(), is(true));
-        assertThat("table foo has no records", rs.getInt(1), is(0));
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getInt(1)).as("table foo has no records").isEqualTo(0);
 
         rs = statement.executeQuery("SELECT COUNT(*) FROM bar");
-        assertThat(rs.next(), is(true));
-        assertThat("table foo has 2 records", rs.getInt(1), is(2));
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getInt(1)).as("table foo has 2 records").isEqualTo(2);
 
         rs = statement.executeQuery("SELECT id, name FROM bar ORDER BY id ASC");
-        assertThat(rs.next(), is(true));
-        assertThat(rs.getInt("id"), is(100));
-        assertThat(rs.getString("name"), is("FOO1"));
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getInt("id")).isEqualTo(100);
+        assertThat(rs.getString("name")).isEqualTo("FOO1");
 
-        assertThat(rs.next(), is(true));
-        assertThat(rs.getInt("id"), is(200));
-        assertThat(rs.getString("name"), is("FOO2"));
+        assertThat(rs.next()).isTrue();
+        assertThat(rs.getInt("id")).isEqualTo(200);
+        assertThat(rs.getString("name")).isEqualTo("FOO2");
     }
 
 }
