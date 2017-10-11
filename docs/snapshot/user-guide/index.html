@@ -439,6 +439,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#installation">2. Installation</a>
 <ul class="sectlevel2">
 <li><a href="#_dependency">2.1. Dependency</a></li>
+<li><a href="#_supported_java_versions">2.2. Supported Java Versions</a></li>
 </ul>
 </li>
 <li><a href="#how-to-use">3. How to use</a>
@@ -453,13 +454,28 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_query_logging_listener">4.1. Query Logging Listener</a></li>
 <li><a href="#_slow_query_logging_listener">4.2. Slow Query Logging Listener</a></li>
 <li><a href="#_query_count_listener">4.3. Query Count Listener</a></li>
-<li><a href="#_tracing_method_listener">4.4. Tracing Method Listener</a></li>
+<li><a href="#tracing-method-listener">4.4. Tracing Method Listener</a></li>
 <li><a href="#custom-listeners">4.5. Custom Listeners</a></li>
 </ul>
 </li>
 <li><a href="#development">5. Development</a>
 <ul class="sectlevel2">
 <li><a href="#_build_documentation">5.1. Build Documentation</a></li>
+</ul>
+</li>
+<li><a href="#changelog">6. Changelog</a>
+<ul class="sectlevel2">
+<li><a href="#changelog-1.4.4">1.4.4</a></li>
+<li><a href="#changelog-1.4.3">1.4.3</a></li>
+<li><a href="#changelog-1.4.2">1.4.2</a></li>
+<li><a href="#changelog-1.4.1">1.4.1</a></li>
+<li><a href="#changelog-1.4">1.4</a></li>
+<li><a href="#changelog-1.3.3">1.3.3</a></li>
+<li><a href="#changelog-1.3.2">1.3.2</a></li>
+<li><a href="#changelog-1.3.1">1.3.1</a></li>
+<li><a href="#changelog-1.3">1.3</a></li>
+<li><a href="#changelog-1.2.1">1.2.1</a></li>
+<li><a href="#changelog-1.2">1.2</a></li>
 </ul>
 </li>
 </ul>
@@ -626,6 +642,13 @@ the dependency explicitly.</p>
 &lt;/repositories&gt;</code></pre>
 </div>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_supported_java_versions"><a class="anchor" href="#_supported_java_versions"></a>2.2. Supported Java Versions</h3>
+<div class="paragraph">
+<p><code>datasource-proxy</code> works with java 1.6+.<br>
+Java8(<em>JDBC4.2</em>) works fine, and planning to support java9(<em>JDBC 4.3</em>) specific feature.</p>
 </div>
 </div>
 </div>
@@ -1398,7 +1421,7 @@ Furthermore, there is a custom tag for jsp.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_tracing_method_listener"><a class="anchor" href="#_tracing_method_listener"></a>4.4. Tracing Method Listener</h3>
+<h3 id="tracing-method-listener"><a class="anchor" href="#tracing-method-listener"></a>4.4. Tracing Method Listener</h3>
 <div class="paragraph">
 <p><code>TracingMethodListener</code> is a method execution listener that prints out all JDBC API interaction.</p>
 </div>
@@ -1538,11 +1561,555 @@ conn.close();</code></pre>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="changelog"><a class="anchor" href="#changelog"></a>6. Changelog</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="changelog-1.4.4"><a class="anchor" href="#changelog-1.4.4"></a>1.4.4</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Added <code>TracingMethodListener</code> that prints out JDBC API interaction.
+See details on <a href="#tracing-method-listener">Tracing Method Listener</a>.</p>
+</li>
+<li>
+<p><code>ProxyConfigSpringXmlSupport</code> is added to support creating <code>ProxyConfig</code> bean in XML based spring config.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">Sample XML config:</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;bean id="proxyConfig"
+      factory-bean="proxyConfigSupport"
+      factory-method="create"/&gt;
+
+&lt;bean id="proxyConfigSupport" class="net.ttddyy.dsproxy.support.ProxyConfigSpringXmlSupport"&gt;
+  &lt;property name="dataSourceName" value="my-ds"/&gt;
+  &lt;property name="queryListener" ref="..."/&gt;
+  &lt;property name="methodListener" ref="..."/&gt;
+&lt;/bean&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="changelog-1.4.3"><a class="anchor" href="#changelog-1.4.3"></a>1.4.3</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>QueryLoggingListeners(Commons, SLF4J, JUL) added overridable <code>loggingCondition</code> callback(boolean supplier) that
+simply decides whether to skip entire logging logic based on the current log level set on its logger.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>e.g.: when <code>SLF4JQueryLoggingListener</code> writes SQL in DEBUG level, but the logger is set to INFO(more serious
+      than DEBUG), then it will NOT perform logging logic including constructing log statement, etc.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Proxying <code>ResultSet</code> is refactored to align how other proxies are managed.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Also, existing resultset-proxy is renamed to <code>RepeatableReadResultSetProxyLogic</code>.
+As part of refactoring, <code>ResultSetProxyJdbcProxyFactory</code> is removed.
+To enable proxying <code>ResultSet</code>, <code>ProxyDataSourceBuilder</code> now has <code>#proxyResultSet()</code> and <code>#repeatableReadResultSet()</code>
+methods.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">// before
+builder.jdbcProxyFactory(new ResultSetProxyJdbcProxyFactory()).build();
+// new
+builder.repeatableReadResultSet().build();  // or
+builder.proxyResultSet(new RepeatableReadResultSetProxyFactory()).build();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code>ProxyConfig</code> is added to represent all proxy related configurations <em>(datasource name, listeners, proxy factory,
+connection id manager)</em>. All values on <code>InterceptorHolder</code> are moved to <code>ProxyConfig</code> and <code>InterceptorHolder</code> class
+is removed.</p>
+</li>
+<li>
+<p><code>MethodExecutionListener</code> is added.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p><code>MethodExecutionListener</code> is a new type of listener that intercepts JDBC API calls:
+- <code>Connection</code>, <code>Statement</code>, <code>PreparedStatement</code>, <code>CallableStatement</code>: All methods
+- <code>ResultSet</code>: All methods when result set proxy is enabled. (<code>ProxyDataSourceBuilder#[proxyResultSet()|repeatableReadResultSet()]</code>)
+- <code>ProxyDataSource</code>: <code>getConnection()</code> method</p>
+</div>
+<div class="paragraph">
+<p>listeners can be registered via <code>ProxyDataSourceBuilder#methodListener()</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">builder.methodListener(myMethodListener).build();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code>ProxyDataSourceBuilder</code> has added <code>beforeMethod()</code>, <code>afterMethod()</code>, <code>beforeQuery()</code>, and <code>afterQuery()</code> methods.
+These methods help inlining listener definitions especially with Java8 Lambda expression.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">ProxyDataSourceBuilder
+  .create(actualDataSource)
+  .name("MyDS")
+  .proxyResultSet()  // apply listener on resultset
+  // register MethodExecutionListener
+  .afterMethod(executionContext -&gt; {
+      Method method = executionContext.getMethod();
+      Class&lt;?&gt; targetClass = executionContext.getTarget().getClass();
+      System.out.println(targetClass.getSimpleName() + "#" + method.getName());
+  })
+  // register QueryExecutionListener
+  .afterQuery((execInfo, queryInfoList) -&gt; {
+      System.out.println("Query took " + execInfo.getElapsedTime() + "msec");
+  })
+  .build();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><em>sample output:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sql" data-lang="sql"># code:
+Connection conn = ds.getConnection();
+PreparedStatement ps = conn.prepareStatement("INSERT INTO users (id, name) VALUES (?, ?)");
+ps.setString(2, "FOO");
+ps.setInt(1, 3);
+ps.addBatch();
+ps.setInt(1, 4);
+ps.setString(2, "BAR");
+ps.addBatch();
+ps.executeBatch();
+ps.close();
+conn.close();</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code># output:
+ProxyDataSource#getConnection
+JDBCConnection#prepareStatement
+JDBCPreparedStatement#setString
+JDBCPreparedStatement#setInt
+JDBCPreparedStatement#addBatch
+JDBCPreparedStatement#setInt
+JDBCPreparedStatement#setString
+JDBCPreparedStatement#addBatch
+JDBCPreparedStatement#executeBatch
+Query took 1msec
+JDBCPreparedStatement#close
+JDBCConnection#close</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="changelog-1.4.2"><a class="anchor" href="#changelog-1.4.2"></a>1.4.2</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Assign connection ID on each connection</p>
+<div class="paragraph">
+<p>When a connection is obtained from DataSource(<code>DataSource.getConnection()</code>), sequentially increasing unique number
+is assigned as its connection ID. (default implementation: <code>DefaultConnectionIdManager</code>)
+The connection ID is printed as <code>Connection</code> in logging.</p>
+</div>
+</li>
+<li>
+<p>Remove methods that don&#8217;t take <code>dataSourceName</code> on <code>JdbcProxyFactory</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Instead, you need to specify <code>null</code>, empty String, or datasource name to the <code>dataSourceName</code> parameter.
+Following methods are removed:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Connection createConnection(Connection connection, InterceptorHolder interceptorHolder);</code></p>
+</li>
+<li>
+<p><code>Statement createStatement(Statement statement, InterceptorHolder interceptorHolder);</code></p>
+</li>
+<li>
+<p><code>PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query, InterceptorHolder interceptorHolder);</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code>DataSourceQueryCountListener</code> now takes a strategy to resolve <code>QueryCount</code>.</p>
+<div class="paragraph">
+<p>Default uses <code>ThreadQueryCountHolder</code> that uses thread local to hold <code>QueryCount</code>. This behaves same as before that
+the <code>QueryCount</code> holds per request counts(servlet request-response lifecycle).</p>
+</div>
+<div class="paragraph">
+<p><code>SingleQueryCountHolder</code> uses single instance to hold count values. Therefore, this holds total accumulated
+values from all threads.</p>
+</div>
+</li>
+<li>
+<p>Update <code>SlowQueryListener</code> to use daemon threads as default.</p>
+<div class="paragraph">
+<p>It is configurable by <code>SlowQueryListener#setUseDaemonThread</code> method.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="changelog-1.4.1"><a class="anchor" href="#changelog-1.4.1"></a>1.4.1</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add <code>setLog</code>/<code>setLogger</code> to <code>{Commons|SLF4J|JUL}QueryLoggingListener</code> to allow users to set custom logger.
+Also added getters as well.</p>
+</li>
+<li>
+<p>Update <code>~QueryCountLoggingServletFilter</code> to allow configuring logger by name</p>
+</li>
+<li>
+<p>Add query count logging implementation for JUL(Java Util Logging)</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>JULQueryCountLoggingHandlerInterceptor</code></p>
+</li>
+<li>
+<p><code>JULQueryCountLoggingRequestListener</code></p>
+</li>
+<li>
+<p><code>JULQueryCountLoggingServletFilter</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Fix writing log with <code>null</code> in parameter set methods. (e.g: <code>setString(1, null);</code> )</p>
+</li>
+<li>
+<p>Add <code>SlowQueryListener</code> that triggers callback method when query takes longer than specified threshold time.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Also, added slow query logging listeners:
+<strong> <code>CommonsSlowQueryListener</code>
+</strong> <code>JULSlowQueryListener</code>
+<strong> <code>SLF4JSlowQueryListener</code>
+</strong> <code>SystemOutSlowQueryListener</code></p>
+</div>
+<div class="paragraph">
+<p>In <code>ProxyDataSourceBuilder</code>, these methods are added:
+<strong> <code>logSlowQueryByCommons()</code>
+</strong> <code>logSlowQueryByJUL()</code>
+<strong> <code>logSlowQueryBySlf4j()</code>
+</strong> <code>logSlowQueryToSysOut()</code></p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Add support to easily apply formatters on each query for logging.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p><code>DefaultQueryLogEntryCreator#formatQuery()</code> method has added.
+Subclass can override this method to provides formatted query.</p>
+</div>
+<div class="paragraph">
+<p>Example with <code>BasicFormatterImpl</code> in Hibernate.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">// set this instance to logging listeners
+public class PrettyQueryEntryCreator extends DefaultQueryLogEntryCreator {
+  private Formatter formatter = FormatStyle.BASIC.getFormatter();  // from hibernate
+
+  @Override
+  protected String formatQuery(String query) {
+    return this.formatter.format(query);
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Add multiline output support for query logging.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p><code>DefaultQueryLogEntryCreator</code> now has <code>setMultiline()</code> method, and <code>ProxyDataSourceBuilder</code> also has added
+<code>multiline()</code> method.
+When multiline is enabled, logged query entries become multi lined.</p>
+</div>
+<div class="paragraph">
+<p>sample log output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>Name:MyDS, Time:0, Success:True
+Type:Prepared, Batch:True, QuerySize:1, BatchSize:2
+Query:["INSERT INTO users (id, name) VALUES (?, ?)"]
+Params:[(1,foo),(2,bar)]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>set up with builder:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">DataSource dataSource =
+    ProxyDataSourceBuilder
+        .create(actualDataSource)
+        .logQueryByCommons(INFO)
+        .logSlowQueryByCommons(10, TimeUnit.MINUTES)
+        .multiline()   // applies to both query logger and slow query logger
+        .build();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Deprecate <code>{Commons|SLF4J|JUL}QueryLoggingListener#resetLogger()</code> methods.</p>
+<div class="paragraph">
+<p>Use newly added <code>setLog(String)</code> or <code>setLogger(String)</code> method instead.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="changelog-1.4"><a class="anchor" href="#changelog-1.4"></a>1.4</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Move logging related listeners to sub package</p>
+<div class="ulist">
+<ul>
+<li>
+<p>from <code>net.ttddyy.dsproxy.listener</code> to <code>net.ttddyy.dsproxy.listener.logging</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>classes for logging entry creation has been updated</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>QueryLogEntryCreator#getLogEntryAsJson</code> has removed.</p>
+</li>
+<li>
+<p>JSON style log entry creators is pulled up to <code>DefaultJsonQueryLogEntryCreator</code></p>
+</li>
+<li>
+<p>To use JSON style logging, you can set the <code>QueryLogEntryCreator</code> to <code>[Commons|SLF4J|JUL|SystemOut]QueryLoggingListener#setQueryLogEntryCreator()</code></p>
+</li>
+<li>
+<p><code>OracleOutputParameterLogEntryCreator</code> has been split to <code>OutputParameterLogEntryCreator</code> and <code>OutputParameterJsonLogEntryCreator</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>DefaultQueryLogEntryCreator#writeParamsForSingleEntry()</code> has split to <code>writeParamsEntryForSinglePreparedEntry()</code> and <code>writeParamsForSingleCallableEntry()</code></p>
+</li>
+<li>
+<p>Do not include parameter index for logging prepared statement.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Before(v1.3.3):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>..., Params:[(1=10,2=foo),(1=20,2=bar)]
+..., Params:[(1=30,2=FOO),(1=40,2=BAR)]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json" data-lang="json">..., "params":[{"1":"10","2":"foo"},{"1":"20","2":"bar"}]}
+..., "params":[{"1":"30","2":"FOO"},{"1":"40","2":"BAR"}]}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>..., Params:[(10,foo),(20,bar)]
+..., Params:[(30,FOO),(40,BAR)]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json" data-lang="json">..., "params":[["10","foo"],["20","bar"]]}
+..., "params":[["30","FOO"],["40","BAR"]]}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Add <code>JULQueryLoggingListener</code> which uses JUL(Java Utils Logging) to log executed queries</p>
+</li>
+<li>
+<p>Update logging for <code>setNull</code> and <code>registerOutParameter</code> to include sqltype</p>
+<div class="paragraph">
+<p>e.g.: <code>NULL(VARCHAR)</code>, <code>OUTPUT(VARCHAR[12])</code></p>
+</div>
+</li>
+<li>
+<p><code>ResultSetProxyJdbcProxyFactory</code> to create a proxy <code>ResultSet</code> that can be consumed more than once.</p>
+<div class="paragraph">
+<p>Thanks <em>Liam Williams</em> for this contribution!!</p>
+</div>
+</li>
+<li>
+<p><code>QueryExecutionListener</code> receives same instance of <code>ExecutionInfo</code> in <code>beforeQuery</code> and <code>afterQuery</code> methods</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="changelog-1.3.3"><a class="anchor" href="#changelog-1.3.3"></a>1.3.3</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>update <code>DefaultQueryLogEntryCreator</code> to allow subclasses to override log entry details</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="changelog-1.3.2"><a class="anchor" href="#changelog-1.3.2"></a>1.3.2</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>add <code>CommonsOracleOutputParameterLoggingListener</code></p>
+</li>
+<li>
+<p>add new listener for oracle to log output params. <code>CommonsOracleOutputParameterLoggingListener</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="changelog-1.3.1"><a class="anchor" href="#changelog-1.3.1"></a>1.3.1</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>make logger name configurable in <code>CommonsQueryLoggingListener</code> and <code>SLF4JQueryLoggingListener</code></p>
+</li>
+<li>
+<p><code>setNull</code> and <code>registerOutParameter</code> receives descriptive string value in <code>QueryInfo#getQueryArgsList</code> (temporal implementation)</p>
+</li>
+<li>
+<p><code>ExecutionInfo</code> will have access to the statement/prepared/callable object used by the execution</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="changelog-1.3"><a class="anchor" href="#changelog-1.3"></a>1.3</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>update minimum jdk to java6+</p>
+</li>
+<li>
+<p>add java8 new jdbc API (JDBC 4.2)</p>
+</li>
+<li>
+<p>new JNDI support class: <code>ProxyDataSourceObjectFactory</code></p>
+</li>
+<li>
+<p>new fluent API builder: <code>ProxyDataSourceBuilder</code></p>
+</li>
+<li>
+<p>logging:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>update log format</p>
+</li>
+<li>
+<p>add json format</p>
+</li>
+<li>
+<p>more entries:  statement-type, batch, batch-size</p>
+</li>
+<li>
+<p>new logger for System.Out</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>change metric names:
+call &#8658; total, elapsedTime &#8658; time, added success, failure, etc.</p>
+</li>
+<li>
+<p>rename <code>~QueryCountLoggingFilter</code> to <code>~QueryCountServletFilter</code></p>
+</li>
+<li>
+<p>remove deprecated methods</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="changelog-1.2.1"><a class="anchor" href="#changelog-1.2.1"></a>1.2.1</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>fixed prepared statement getting already executed queries in listener (<a href="https://github.com/ttddyy/datasource-proxy/issues/9">Issue #9</a>)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="changelog-1.2"><a class="anchor" href="#changelog-1.2"></a>1.2</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>QueryTransformer and ParameterTransformer for query and parameter replacement</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 1.4.4-SNAPSHOT<br>
-Last updated 2017-10-10 00:47:39 UTC
+Last updated 2017-10-11 00:52:34 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
