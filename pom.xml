@@ -100,6 +100,24 @@
       </build>
     </profile>
 
+    <!-- This profile is used for generating docs that will be published on github -->
+    <profile>
+      <id>publish-doc</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctor-maven-plugin</artifactId>
+            <configuration>
+              <attributes>
+                <insert-analytics>true</insert-analytics>
+              </attributes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
   </profiles>
 
   <build>

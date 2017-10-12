@@ -21,6 +21,6 @@ env:
   - secure: "gRUj21Z0K8gOGrHXj2WuH4bww3XcRZk1iScRbVdQhhTw8SFlcVhOpXoUiM68YYZABeGNJJ9XxP8QBoKKEKV5rkxAUG5+huPTdu4bwbQgHoz71awuWsrSVWXodzbT+lBxYjXkKD/AckM69olV9ZYZ5IgsFAka3geA2tPjLCO3YjE="
 
 after_success:
-  - ./mvnw asciidoctor:process-asciidoc@output-html
+  - ./mvnw -Ppublish-doc asciidoctor:process-asciidoc@output-html
   - bash ./src/build/publish-jar.sh
   - bash ./src/build/publish-doc.sh
