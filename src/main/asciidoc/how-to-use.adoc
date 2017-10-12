@@ -145,7 +145,7 @@ datasource-proxy.jar and your choice of logging library(commons, slf4j, etc) nee
 |===
 
 
-See Tomcat configuration examples in {datasource-proxy-examples}[datasource-proxy-example] project:
+See Tomcat configuration examples in {datasource-proxy-examples}[datasource-proxy-examples] project:
 
 - {jndi-embedded-example}[with embedded tomcat]
 - {jndi-external-example}[with external tomcat]

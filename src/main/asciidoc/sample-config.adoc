@@ -1,0 +1,130 @@
+[[getting-started]]
+== Sample Configuration
+
+=== Use Case
+
+* log all queries to System.out as JSON
+* log query metrics to commons logger at the end of each http request using servlet-filter
+
+=== pom.xml
+
+Install `datasource-proxy` and `commons-logging` since we chose to use commons logger for query metrics.
+
+```xml
+<dependency>
+  <groupId>net.ttddyy</groupId>
+  <artifactId>datasource-proxy</artifactId>
+  <version>[LATEST-VERSION]</version>
+</dependency>
+
+<dependency>
+  <groupId>commons-logging</groupId>
+  <artifactId>commons-logging</artifactId>
+  <version>[VERSION]</version>
+</dependency>
+```
+
+=== web.xml
+
+Add `CommonsQueryCountLoggingServletFilter` for query metrics
+
+```xml
+  <filter>
+    <filter-name>queryCountFilter</filter-name>
+    <filter-class>net.ttddyy.dsproxy.support.CommonsQueryCountLoggingServletFilter</filter-class>
+    <!-- Default to DEBUG level, use "logLevel" filter param to change the log level -->
+  </filter>
+
+  <filter-mapping>
+   <filter-name>queryCountFilter</filter-name>
+   <url-pattern>*</url-pattern>
+  </filter-mapping>
+```
+
+=== DataSource
+
+Create a proxy datasource that performs:
+
+- log query execution to System.out as json
+- collect query metrics
+
+.Java based:
+```java
+@Bean
+public DataSource dataSource(DataSource actualDataSource) {
+    return ProxyDataSourceBuilder
+            .create(actualDataSource)
+            .name("dataSource")
+            .logQueryToSysOut()    // log query execution to System.out
+            .asJson()
+            .countQuery()          // collect query metrics
+            .build();
+}
+```
+
+.XML based(applicationContext.xml)
+```xml
+<bean id="dataSource" primary="true" class="net.ttddyy.dsproxy.support.ProxyDataSource">
+  <property name="dataSource" ref="actualDataSource"/>
+  <property name="proxyConfig" ref="proxyConfig"/>
+</bean>
+
+<bean id="proxyConfig" factory-bean="proxyConfigSupport" factory-method="create"/>
+
+<bean id="proxyConfigSupport" class="net.ttddyy.dsproxy.support.ProxyConfigSpringXmlSupport">
+  <property name="dataSourceName" value="my-ds"/>
+  <property name="queryListener" ref="queryListeners"/>
+</bean>
+
+<bean id="queryListeners" class="net.ttddyy.dsproxy.listener.ChainListener">
+  <property name="listeners">
+    <list>
+      <bean class="net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener">
+        <property name="writeAsJson" value="true" />
+      </bean>
+      <bean class="net.ttddyy.dsproxy.listener.DataSourceQueryCountListener"/>
+    </list>
+  </property>
+</bean>
+```
+
+=== Controller
+
+Write a simple controller that returns query metrics info as json. (using spring-boot)
+
+```java
+@RestController
+public class MyController {
+
+    @RequestMapping
+    public QueryCount index() throws Exception {
+        // do some database operations
+        return QueryCountHolder.getGrandTotal();
+    }
+}
+```
+
+=== taglib (optional)
+
+Display query metrics on jsp.
+
+```jsp
+<%@ taglib prefix="dsp" uri="http://www.ttddyy.net/dsproxy/tags" %>
+
+<dsp:metrics metric="select"/>  - Select
+<dsp:metrics metric="update" dataSource="FOO" />  - Num of update queries for datasource FOO
+<dsp:metrics metric="total"/>  - Total Queries
+<dsp:metrics metric="time"/>  - Total TIme
+```
+
+=== Accessing application
+
+```sh
+> curl http://localhost:8080
+{"select":1,"insert":0,"update":0,"delete":0,"other":0,"total":1,"failure":0,"success":1,"time":6}
+```
+
+=== More examples
+
+See more examples in {datasource-proxy-examples}[datasource-proxy-examples] project.
+
