@@ -467,12 +467,24 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#custom-listeners">4.5. Custom Listeners</a></li>
 </ul>
 </li>
-<li><a href="#development">5. Development</a>
+<li><a href="#getting-started">5. Sample Configuration</a>
 <ul class="sectlevel2">
-<li><a href="#_build_documentation">5.1. Build Documentation</a></li>
+<li><a href="#_use_case">5.1. Use Case</a></li>
+<li><a href="#_pom_xml">5.2. pom.xml</a></li>
+<li><a href="#_web_xml">5.3. web.xml</a></li>
+<li><a href="#_datasource">5.4. DataSource</a></li>
+<li><a href="#_controller">5.5. Controller</a></li>
+<li><a href="#_taglib_optional">5.6. taglib (optional)</a></li>
+<li><a href="#_accessing_application">5.7. Accessing application</a></li>
+<li><a href="#_more_examples">5.8. More examples</a></li>
 </ul>
 </li>
-<li><a href="#changelog">6. Changelog</a>
+<li><a href="#development">6. Development</a>
+<ul class="sectlevel2">
+<li><a href="#_build_documentation">6.1. Build Documentation</a></li>
+</ul>
+</li>
+<li><a href="#changelog">7. Changelog</a>
 <ul class="sectlevel2">
 <li><a href="#changelog-1.4.4">1.4.4</a></li>
 <li><a href="#changelog-1.4.3">1.4.3</a></li>
@@ -876,7 +888,7 @@ build <code>ProxyConfig</code> aiming to support bean creation in XML based spri
 </tbody>
 </table>
 <div class="paragraph">
-<p>See Tomcat configuration examples in <a href="https://github.com/ttddyy/datasource-proxy-examples">datasource-proxy-example</a> project:</p>
+<p>See Tomcat configuration examples in <a href="https://github.com/ttddyy/datasource-proxy-examples">datasource-proxy-examples</a> project:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1544,13 +1556,180 @@ conn.close();</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="development"><a class="anchor" href="#development"></a>5. Development</h2>
+<h2 id="getting-started"><a class="anchor" href="#getting-started"></a>5. Sample Configuration</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_use_case"><a class="anchor" href="#_use_case"></a>5.1. Use Case</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>log all queries to System.out as JSON</p>
+</li>
+<li>
+<p>log query metrics to commons logger at the end of each http request using servlet-filter</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_pom_xml"><a class="anchor" href="#_pom_xml"></a>5.2. pom.xml</h3>
+<div class="paragraph">
+<p>Install <code>datasource-proxy</code> and <code>commons-logging</code> since we chose to use commons logger for query metrics.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+  &lt;groupId&gt;net.ttddyy&lt;/groupId&gt;
+  &lt;artifactId&gt;datasource-proxy&lt;/artifactId&gt;
+  &lt;version&gt;[LATEST-VERSION]&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+  &lt;groupId&gt;commons-logging&lt;/groupId&gt;
+  &lt;artifactId&gt;commons-logging&lt;/artifactId&gt;
+  &lt;version&gt;[VERSION]&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_web_xml"><a class="anchor" href="#_web_xml"></a>5.3. web.xml</h3>
+<div class="paragraph">
+<p>Add <code>CommonsQueryCountLoggingServletFilter</code> for query metrics</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">  &lt;filter&gt;
+    &lt;filter-name&gt;queryCountFilter&lt;/filter-name&gt;
+    &lt;filter-class&gt;net.ttddyy.dsproxy.support.CommonsQueryCountLoggingServletFilter&lt;/filter-class&gt;
+    &lt;!-- Default to DEBUG level, use "logLevel" filter param to change the log level --&gt;
+  &lt;/filter&gt;
+
+  &lt;filter-mapping&gt;
+   &lt;filter-name&gt;queryCountFilter&lt;/filter-name&gt;
+   &lt;url-pattern&gt;*&lt;/url-pattern&gt;
+  &lt;/filter-mapping&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_datasource"><a class="anchor" href="#_datasource"></a>5.4. DataSource</h3>
+<div class="paragraph">
+<p>Create a proxy datasource that performs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>log query execution to System.out as json</p>
+</li>
+<li>
+<p>collect query metrics</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">Java based:</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">@Bean
+public DataSource dataSource(DataSource actualDataSource) {
+    return ProxyDataSourceBuilder
+            .create(actualDataSource)
+            .name("dataSource")
+            .logQueryToSysOut()    // log query execution to System.out
+            .asJson()
+            .countQuery()          // collect query metrics
+            .build();
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">XML based(applicationContext.xml)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;bean id="dataSource" primary="true" class="net.ttddyy.dsproxy.support.ProxyDataSource"&gt;
+  &lt;property name="dataSource" ref="actualDataSource"/&gt;
+  &lt;property name="proxyConfig" ref="proxyConfig"/&gt;
+&lt;/bean&gt;
+
+&lt;bean id="proxyConfig" factory-bean="proxyConfigSupport" factory-method="create"/&gt;
+
+&lt;bean id="proxyConfigSupport" class="net.ttddyy.dsproxy.support.ProxyConfigSpringXmlSupport"&gt;
+  &lt;property name="dataSourceName" value="my-ds"/&gt;
+  &lt;property name="queryListener" ref="queryListeners"/&gt;
+&lt;/bean&gt;
+
+&lt;bean id="queryListeners" class="net.ttddyy.dsproxy.listener.ChainListener"&gt;
+  &lt;property name="listeners"&gt;
+    &lt;list&gt;
+      &lt;bean class="net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener"&gt;
+        &lt;property name="writeAsJson" value="true" /&gt;
+      &lt;/bean&gt;
+      &lt;bean class="net.ttddyy.dsproxy.listener.DataSourceQueryCountListener"/&gt;
+    &lt;/list&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_controller"><a class="anchor" href="#_controller"></a>5.5. Controller</h3>
+<div class="paragraph">
+<p>Write a simple controller that returns query metrics info as json. (using spring-boot)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">@RestController
+public class MyController {
+
+    @RequestMapping
+    public QueryCount index() throws Exception {
+        // do some database operations
+        return QueryCountHolder.getGrandTotal();
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_taglib_optional"><a class="anchor" href="#_taglib_optional"></a>5.6. taglib (optional)</h3>
+<div class="paragraph">
+<p>Display query metrics on jsp.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-jsp" data-lang="jsp">&lt;%@ taglib prefix="dsp" uri="http://www.ttddyy.net/dsproxy/tags" %&gt;
+
+&lt;dsp:metrics metric="select"/&gt;  - Select
+&lt;dsp:metrics metric="update" dataSource="FOO" /&gt;  - Num of update queries for datasource FOO
+&lt;dsp:metrics metric="total"/&gt;  - Total Queries
+&lt;dsp:metrics metric="time"/&gt;  - Total TIme</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_accessing_application"><a class="anchor" href="#_accessing_application"></a>5.7. Accessing application</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh" data-lang="sh">&gt; curl http://localhost:8080
+{"select":1,"insert":0,"update":0,"delete":0,"other":0,"total":1,"failure":0,"success":1,"time":6}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_more_examples"><a class="anchor" href="#_more_examples"></a>5.8. More examples</h3>
+<div class="paragraph">
+<p>See more examples in <a href="https://github.com/ttddyy/datasource-proxy-examples">datasource-proxy-examples</a> project.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="development"><a class="anchor" href="#development"></a>6. Development</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Github repository: <a href="https://github.com/ttddyy/datasource-proxy" class="bare">https://github.com/ttddyy/datasource-proxy</a></p>
 </div>
 <div class="sect2">
-<h3 id="_build_documentation"><a class="anchor" href="#_build_documentation"></a>5.1. Build Documentation</h3>
+<h3 id="_build_documentation"><a class="anchor" href="#_build_documentation"></a>6.1. Build Documentation</h3>
 <div class="paragraph">
 <p>Generate <code>index.html</code></p>
 </div>
@@ -1571,7 +1750,7 @@ conn.close();</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="changelog"><a class="anchor" href="#changelog"></a>6. Changelog</h2>
+<h2 id="changelog"><a class="anchor" href="#changelog"></a>7. Changelog</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="changelog-1.4.4"><a class="anchor" href="#changelog-1.4.4"></a>1.4.4</h3>
@@ -2118,7 +2297,7 @@ call &#8658; total, elapsedTime &#8658; time, added success, failure, etc.</p>
 <div id="footer">
 <div id="footer-text">
 Version 1.4.4-SNAPSHOT<br>
-Last updated 2017-10-12 04:35:33 UTC
+Last updated 2017-10-13 04:59:09 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
