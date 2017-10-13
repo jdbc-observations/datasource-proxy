@@ -4,7 +4,11 @@
 [[what-is-datasource-proxy]]
 === What is datasource-proxy?
 
-Provide proxy classes for JDBC API to intercept executing queries.
+datasource-proxy provides simple API to intercept JDBC interactions and allows user to perform own logic
+before/after query or method executions. +
+With built-in interceptors, it supports query logging, slow query detection, query
+statistics, interaction tracing, and more out of the box, as well as adding your own interceptors.
+
 
 [[feature]]
 === Feature
