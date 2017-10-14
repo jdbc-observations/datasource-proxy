@@ -114,6 +114,27 @@
               </attributes>
             </configuration>
           </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <!-- disable java8 doclint for @see reference to generic class -->
+              <additionalparam>-Xdoclint:none --allow-script-in-comments</additionalparam>
+              <footer>
+                <![CDATA[
+                <!-- Global site tag (gtag.js) - Google Analytics -->
+                <script async src="https://www.googletagmanager.com/gtag/js?id=UA-1318853-6"></script>
+                <script>
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+
+                  gtag('config', 'UA-1318853-6');
+                </script>
+                ]]>]
+              </footer>
+            </configuration>
+          </plugin>
         </plugins>
       </build>
     </profile>
@@ -169,7 +190,7 @@
         </executions>
         <configuration>
           <!-- disable java8 doclint for @see reference to generic class -->
-          <additionalparam>-Xdoclint:none</additionalparam>
+          <additionalparam>-Xdoclint:none --allow-script-in-comments</additionalparam>
         </configuration>
       </plugin>
 
