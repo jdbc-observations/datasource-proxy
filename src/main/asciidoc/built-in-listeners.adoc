@@ -1,6 +1,7 @@
 [[built-in-listeners]]
 == Built-in Listeners
 
+[[query-logging-listener]]
 === Query Logging Listener
 
 Query logging listener is the most used listener that logs executing query with actual parameters
@@ -97,6 +98,41 @@ builder
   .multiline()           // enable multiline output
   .build();
 ```
+
+[NOTE]
+.Elapsed Time
+====
+`SlowQueryListener` triggers callback when query execution exceeds specified threshold time.
+
+For example, when 1 min is set to the threshold in a slow query logging listener and a query takes 5 min to run,
+it will log the query when 1 min has passed while the query is still running. +
+This is expected behavior; however, elapsed time in ExecutionInfo is not populated because it is still executing
+the query.
+
+To log queries that have passed threshold with elapsed time populated, you can customize existing
+<<query-logging-listener>> instead of `SlowQueryListener`.
+
+Here is sample implementation with SLF4JQueryLoggingListener:
+
+```java
+long thresholdInMills = ...
+SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener() {
+  @Override
+  public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    // call query logging logic only when it took more than threshold
+    if (thresholdInMills <= execInfo.getElapsedTime()) {
+      super.afterQuery(execInfo, queryInfoList);
+    }
+  }
+};
+
+listener.setLogLevel(SLF4JLogLevel.WARN);
+```
+
+This implementation will log queries that took longer than specified threshold _AFTER_ query execution has finished.
+So that, query execution time is populated.
+
+====
 
 
 === Query Count Listener
