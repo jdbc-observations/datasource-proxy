@@ -202,8 +202,19 @@ Example projects: https://github.com/ttddyy/datasource-proxy-examples
 
 # Documents
 
-- [User Guide (Current)](http://ttddyy.github.io/datasource-proxy/docs/current/user-guide/)
-- [User Guide (Snapshot)](http://ttddyy.github.io/datasource-proxy/docs/snapshot/user-guide/)
+- [User Guide (Current)][user-guide-current]
+- [Javadoc (Current)][javadoc-current]
+
+## Snapshot
+
+- [User Guide (Snapshot)][user-guide-snapshot]
+- [Javadoc (Snapshot)][javadoc-snapshot]
+
+## Older versions
+
+- [Javadoc](https://github.com/ttddyy/datasource-proxy/wiki/Javadoc)
+
+----
 
 ### Old Documents
 - [Getting Started](https://github.com/ttddyy/datasource-proxy/wiki/Getting-Started)
@@ -218,3 +229,7 @@ Example projects: https://github.com/ttddyy/datasource-proxy-examples
 ----
 
 [maven-central_badge]: https://maven-badges.herokuapp.com/maven-central/net.ttddyy/datasource-proxy/
+[user-guide-current]: http://ttddyy.github.io/datasource-proxy/docs/current/user-guide/
+[user-guide-snapshot]: http://ttddyy.github.io/datasource-proxy/docs/snapshot/user-guide/
+[javadoc-current]: http://ttddyy.github.io/datasource-proxy/docs/current/api/
+[javadoc-snapshot]: http://ttddyy.github.io/datasource-proxy/docs/snapshot/api/
