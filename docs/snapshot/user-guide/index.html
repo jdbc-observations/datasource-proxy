@@ -460,7 +460,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#built-in-listeners">4. Built-in Listeners</a>
 <ul class="sectlevel2">
-<li><a href="#_query_logging_listener">4.1. Query Logging Listener</a></li>
+<li><a href="#query-logging-listener">4.1. Query Logging Listener</a></li>
 <li><a href="#_slow_query_logging_listener">4.2. Slow Query Logging Listener</a></li>
 <li><a href="#_query_count_listener">4.3. Query Count Listener</a></li>
 <li><a href="#tracing-method-listener">4.4. Tracing Method Listener</a></li>
@@ -1048,7 +1048,7 @@ query, and thrown exception.</p>
 <h2 id="built-in-listeners"><a class="anchor" href="#built-in-listeners"></a>4. Built-in Listeners</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_query_logging_listener"><a class="anchor" href="#_query_logging_listener"></a>4.1. Query Logging Listener</h3>
+<h3 id="query-logging-listener"><a class="anchor" href="#query-logging-listener"></a>4.1. Query Logging Listener</h3>
 <div class="paragraph">
 <p>Query logging listener is the most used listener that logs executing query with actual parameters
 to commons/slf4j/JUL logger or System.out.</p>
@@ -1211,6 +1211,54 @@ to its corresponding logger.</p>
   .multiline()           // enable multiline output
   .build();</code></pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Elapsed Time</div>
+<div class="paragraph">
+<p><code>SlowQueryListener</code> triggers callback when query execution exceeds specified threshold time.</p>
+</div>
+<div class="paragraph">
+<p>For example, when 1 min is set to the threshold in a slow query logging listener and a query takes 5 min to run,
+it will log the query when 1 min has passed while the query is still running.<br>
+This is expected behavior; however, elapsed time in ExecutionInfo is not populated because it is still executing
+the query.</p>
+</div>
+<div class="paragraph">
+<p>To log queries that have passed threshold with elapsed time populated, you can customize existing
+<a href="#query-logging-listener">Query Logging Listener</a> instead of <code>SlowQueryListener</code>.</p>
+</div>
+<div class="paragraph">
+<p>Here is sample implementation with SLF4JQueryLoggingListener:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">long thresholdInMills = ...
+SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener() {
+  @Override
+  public void afterQuery(ExecutionInfo execInfo, List&lt;QueryInfo&gt; queryInfoList) {
+    // call query logging logic only when it took more than threshold
+    if (thresholdInMills &lt;= execInfo.getElapsedTime()) {
+      super.afterQuery(execInfo, queryInfoList);
+    }
+  }
+};
+
+listener.setLogLevel(SLF4JLogLevel.WARN);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This implementation will log queries that took longer than specified threshold <em>AFTER</em> query execution has finished.
+So that, query execution time is populated.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -2300,7 +2348,7 @@ call &#8658; total, elapsedTime &#8658; time, added success, failure, etc.</p>
 <div id="footer">
 <div id="footer-text">
 Version 1.4.4-SNAPSHOT<br>
-Last updated 2017-10-13 22:04:10 UTC
+Last updated 2017-10-14 00:16:22 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
