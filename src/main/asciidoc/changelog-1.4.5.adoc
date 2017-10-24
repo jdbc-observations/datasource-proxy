@@ -1,0 +1,5 @@
+[[changelog-1.4.5]]
+=== 1.4.5
+
+* `ConnectionInfo` now has information whether the connection is closed or not.
+
