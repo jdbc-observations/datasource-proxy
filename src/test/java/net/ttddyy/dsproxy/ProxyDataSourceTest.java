@@ -195,4 +195,19 @@ public class ProxyDataSourceTest {
         assertFalse("methodListener should NOT be called for setLogWriter", this.methodListener.isAfterMethodCalled());
     }
 
+    @Test
+    public void connectionClose() throws Exception {
+        Connection conn = proxyDataSource.getConnection();
+        Statement st = conn.createStatement();
+
+        ConnectionInfo connInfo = this.methodListener.getBeforeMethodContext().getConnectionInfo();
+        assertThat(connInfo.isClosed()).isFalse();
+
+        st.close();
+        assertThat(connInfo.isClosed()).isFalse();
+
+        conn.close();
+        assertThat(connInfo.isClosed()).isTrue();
+    }
+
 }

@@ -40,13 +40,18 @@ public class ConnectionProxyLogic {
 
     public Object invoke(final Object proxyConnection, Method method, Object[] args) throws Throwable {
 
+        final boolean isCloseMethod = "close".equals(method.getName());
+
         return MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
             @Override
             public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
-                return performQueryExecutionListener(proxyConnection, method, args);
+                Object result = performQueryExecutionListener(proxyConnection, method, args);
+                if (isCloseMethod) {
+                    ConnectionProxyLogic.this.connectionInfo.setClosed(true);
+                }
+                return result;
             }
         }, this.proxyConfig, this.connection, this.connectionInfo, method, args);
-
     }
 
     private Object performQueryExecutionListener(Object proxy, Method method, Object[] args) throws Throwable {

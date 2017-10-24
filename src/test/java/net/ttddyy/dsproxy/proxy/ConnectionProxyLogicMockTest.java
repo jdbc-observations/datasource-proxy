@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
+import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.PreparedStatementInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler;
@@ -15,6 +16,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertSame;
@@ -319,6 +321,47 @@ public class ConnectionProxyLogicMockTest {
         assertSame("createStatement", executionContext.getMethod().getName());
         assertSame(conn, executionContext.getTarget());
         assertSame(connectionInfo, executionContext.getConnectionInfo());
+    }
+
+    @Test
+    public void close() throws Throwable {
+        final AtomicBoolean isClosedBefore = new AtomicBoolean();
+        final AtomicBoolean isClosedAfter = new AtomicBoolean();
+        final AtomicBoolean isClosedBeforeCalled = new AtomicBoolean();
+        final AtomicBoolean isClosedAfterCalled = new AtomicBoolean();
+
+        MethodExecutionListener listener = new MethodExecutionListener() {
+            @Override
+            public void beforeMethod(MethodExecutionContext executionContext) {
+                isClosedBefore.set(executionContext.getConnectionInfo().isClosed());
+                isClosedBeforeCalled.set(true);
+            }
+
+            @Override
+            public void afterMethod(MethodExecutionContext executionContext) {
+                isClosedAfter.set(executionContext.getConnectionInfo().isClosed());
+                isClosedAfterCalled.set(true);
+            }
+        };
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ConnectionInfo connectionInfo = new ConnectionInfo();
+
+        Connection conn = mock(Connection.class);
+        ConnectionProxyLogic logic = new ConnectionProxyLogic(conn, connectionInfo, proxyConfig);
+
+        Method method = Connection.class.getMethod("close");
+
+        assertThat(isClosedBefore).isFalse();
+        assertThat(isClosedBeforeCalled).isFalse();
+        assertThat(isClosedAfter).isFalse();
+        assertThat(isClosedAfterCalled).isFalse();
+
+        logic.invoke(conn, method, null);
+
+        assertThat(isClosedBefore).isFalse();
+        assertThat(isClosedBeforeCalled).isTrue();
+        assertThat(isClosedAfter).isTrue();
+        assertThat(isClosedAfterCalled).isTrue();
     }
 
 }
