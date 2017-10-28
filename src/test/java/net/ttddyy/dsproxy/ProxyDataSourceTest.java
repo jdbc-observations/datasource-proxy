@@ -18,7 +18,6 @@ import java.sql.Statement;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 
@@ -208,6 +207,31 @@ public class ProxyDataSourceTest {
 
         conn.close();
         assertThat(connInfo.isClosed()).isTrue();
+    }
+
+    @Test
+    public void commitAndRollbackCount() throws Exception {
+        Connection conn = proxyDataSource.getConnection();
+        Statement st = conn.createStatement();
+
+        ConnectionInfo connInfo = this.methodListener.getBeforeMethodContext().getConnectionInfo();
+
+        st.close();
+        conn.commit();
+        assertThat(connInfo.getCommitCount()).isEqualTo(1);
+        assertThat(connInfo.getRollbackCount()).isEqualTo(0);
+
+        conn.commit();
+        assertThat(connInfo.getCommitCount()).isEqualTo(2);
+        assertThat(connInfo.getRollbackCount()).isEqualTo(0);
+
+        conn.rollback();
+        assertThat(connInfo.getCommitCount()).isEqualTo(2);
+        assertThat(connInfo.getRollbackCount()).isEqualTo(1);
+
+        conn.rollback();
+        assertThat(connInfo.getCommitCount()).isEqualTo(2);
+        assertThat(connInfo.getRollbackCount()).isEqualTo(2);
     }
 
 }

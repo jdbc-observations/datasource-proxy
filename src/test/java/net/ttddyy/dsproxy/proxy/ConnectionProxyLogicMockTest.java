@@ -364,4 +364,36 @@ public class ConnectionProxyLogicMockTest {
         assertThat(isClosedAfterCalled).isTrue();
     }
 
+    @Test
+    public void commitAndRollbackCount() throws Throwable {
+
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
+        ConnectionInfo connectionInfo = new ConnectionInfo();
+
+        Connection conn = mock(Connection.class);
+        ConnectionProxyLogic logic = new ConnectionProxyLogic(conn, connectionInfo, proxyConfig);
+
+        Method commitMethod = Connection.class.getMethod("commit");
+        Method rollbackMethod = Connection.class.getMethod("rollback");
+
+        assertThat(connectionInfo.getCommitCount()).isEqualTo(0);
+        assertThat(connectionInfo.getRollbackCount()).isEqualTo(0);
+
+        logic.invoke(conn, commitMethod, null);
+        assertThat(connectionInfo.getCommitCount()).isEqualTo(1);
+        assertThat(connectionInfo.getRollbackCount()).isEqualTo(0);
+
+        logic.invoke(conn, commitMethod, null);
+        assertThat(connectionInfo.getCommitCount()).isEqualTo(2);
+        assertThat(connectionInfo.getRollbackCount()).isEqualTo(0);
+
+        logic.invoke(conn, rollbackMethod, null);
+        assertThat(connectionInfo.getCommitCount()).isEqualTo(2);
+        assertThat(connectionInfo.getRollbackCount()).isEqualTo(1);
+
+        logic.invoke(conn, rollbackMethod, null);
+        assertThat(connectionInfo.getCommitCount()).isEqualTo(2);
+        assertThat(connectionInfo.getRollbackCount()).isEqualTo(2);
+    }
+
 }

@@ -41,13 +41,20 @@ public class ConnectionProxyLogic {
     public Object invoke(final Object proxyConnection, Method method, Object[] args) throws Throwable {
 
         final boolean isCloseMethod = "close".equals(method.getName());
+        final boolean isCommitMethod = "commit".equals(method.getName());
+        final boolean isRollbackMethod = "rollback".equals(method.getName());
 
         return MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
             @Override
             public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
                 Object result = performQueryExecutionListener(proxyConnection, method, args);
-                if (isCloseMethod) {
-                    ConnectionProxyLogic.this.connectionInfo.setClosed(true);
+                ConnectionInfo connectionInfo = ConnectionProxyLogic.this.connectionInfo;
+                if (isCommitMethod) {
+                    connectionInfo.incrementCommitCount();
+                } else if (isRollbackMethod) {
+                    connectionInfo.incrementRollbackCount();
+                } else if (isCloseMethod) {
+                    connectionInfo.setClosed(true);
                 }
                 return result;
             }
