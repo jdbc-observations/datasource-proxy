@@ -23,7 +23,7 @@ public class ProxyConfig {
         private ParameterTransformer parameterTransformer = ParameterTransformer.DEFAULT;
         private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
         private ResultSetProxyLogicFactory resultSetProxyLogicFactory;  // can be null if resultset proxy is disabled
-        private ConnectionIdManager connectionIdManager = ConnectionIdManager.DEFAULT;
+        private ConnectionIdManager connectionIdManager = new DefaultConnectionIdManager();  // create instance every time
         private CompositeMethodListener methodListener = new CompositeMethodListener();  // empty default
 
         public static Builder create() {

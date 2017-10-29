@@ -312,13 +312,12 @@ public class ProxyDataSourceBuilderTest {
 
     @Test
     public void connectionIdManager() {
-        ProxyDataSource ds;
-
-        ds = ProxyDataSourceBuilder.create().build();
-        assertThat(ds.getProxyConfig().getConnectionIdManager()).as("Default one should be used").isSameAs(ConnectionIdManager.DEFAULT);
+        ProxyDataSource ds1 = ProxyDataSourceBuilder.create().build();
+        ProxyDataSource ds2 = ProxyDataSourceBuilder.create().build();
+        assertThat(ds1.getConnectionIdManager()).as("new instance should be created").isNotSameAs(ds2.getConnectionIdManager());
 
         ConnectionIdManager connectionIdManager = mock(ConnectionIdManager.class);
-        ds = ProxyDataSourceBuilder.create().connectionIdManager(connectionIdManager).build();
+        ProxyDataSource ds = ProxyDataSourceBuilder.create().connectionIdManager(connectionIdManager).build();
         assertThat(ds.getProxyConfig().getConnectionIdManager()).isSameAs(connectionIdManager);
     }
 

@@ -23,6 +23,7 @@ import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener;
+import net.ttddyy.dsproxy.proxy.DefaultConnectionIdManager;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.RepeatableReadResultSetProxyLogicFactory;
@@ -881,7 +882,7 @@ public class ProxyDataSourceBuilder {
         if (this.connectionIdManager != null) {
             proxyConfigBuilder.connectionIdManager(this.connectionIdManager);
         } else {
-            proxyConfigBuilder.connectionIdManager(ConnectionIdManager.DEFAULT);
+            proxyConfigBuilder.connectionIdManager(new DefaultConnectionIdManager());
         }
 
         // this can be null if creation of resultset proxy is disabled

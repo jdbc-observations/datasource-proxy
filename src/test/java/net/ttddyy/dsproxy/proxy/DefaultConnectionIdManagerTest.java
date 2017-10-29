@@ -29,4 +29,23 @@ public class DefaultConnectionIdManagerTest {
         assertThat(idManager.getId(conn)).isEqualTo(3L);
     }
 
+    @Test
+    public void getOpenConnectionIds() {
+        DefaultConnectionIdManager idManager = new DefaultConnectionIdManager();
+
+        assertThat(idManager.getOpenConnectionIds()).isEmpty();
+
+        long id1 = idManager.getId(null);
+        assertThat(idManager.getOpenConnectionIds()).containsExactly(id1);
+
+        long id2 = idManager.getId(null);
+        assertThat(idManager.getOpenConnectionIds()).containsExactly(id1, id2);
+
+        idManager.addClosedId(id2);
+        assertThat(idManager.getOpenConnectionIds()).containsExactly(id1);
+
+        idManager.addClosedId(id1);
+        assertThat(idManager.getOpenConnectionIds()).isEmpty();
+
+    }
 }

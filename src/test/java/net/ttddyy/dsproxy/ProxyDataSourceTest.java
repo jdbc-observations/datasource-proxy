@@ -196,17 +196,21 @@ public class ProxyDataSourceTest {
 
     @Test
     public void connectionClose() throws Exception {
+        ConnectionIdManager connIdManager = proxyDataSource.getConnectionIdManager();
         Connection conn = proxyDataSource.getConnection();
         Statement st = conn.createStatement();
 
         ConnectionInfo connInfo = this.methodListener.getBeforeMethodContext().getConnectionInfo();
         assertThat(connInfo.isClosed()).isFalse();
+        assertThat(connIdManager.getOpenConnectionIds()).containsOnly(connInfo.getConnectionId());
 
         st.close();
         assertThat(connInfo.isClosed()).isFalse();
+        assertThat(connIdManager.getOpenConnectionIds()).containsOnly(connInfo.getConnectionId());
 
         conn.close();
         assertThat(connInfo.isClosed()).isTrue();
+        assertThat(connIdManager.getOpenConnectionIds()).isEmpty();
     }
 
     @Test
