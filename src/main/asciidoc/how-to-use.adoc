@@ -128,10 +128,10 @@ datasource-proxy.jar and your choice of logging library(commons, slf4j, etc) nee
 |===
 | Parameter     | Description
 
-| sysout        | Alias to net.ttddyy.dsproxy.listener.SystemOutQueryLoggingListener
-| commons       | Alias to net.ttddyy.dsproxy.listener.CommonsQueryLoggingListener
-| slf4j         | Alias to net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener
-| count         | Alias to net.ttddyy.dsproxy.listener.DataSourceQueryCountListener
+| sysout        | Alias to net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener
+| commons       | Alias to net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener
+| slf4j         | Alias to net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener
+| count         | Alias to net.ttddyy.dsproxy.listener.logging.DataSourceQueryCountListener
 | x.y.z.MyQueryExecutionListener  | Fully qualified class name of QueryExecutionListener implementation
 |===
 
