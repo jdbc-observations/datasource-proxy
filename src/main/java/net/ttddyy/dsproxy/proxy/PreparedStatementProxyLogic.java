@@ -21,6 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static net.ttddyy.dsproxy.proxy.StatementMethodNames.EXEC_METHODS;
+import static net.ttddyy.dsproxy.proxy.StatementMethodNames.GET_GENERATED_KEYS_METHOD;
 import static net.ttddyy.dsproxy.proxy.StatementMethodNames.METHODS_TO_RETURN_RESULTSET;
 
 /**
@@ -95,6 +97,7 @@ public class PreparedStatementProxyLogic {
 
     private Connection proxyConnection;
     private ProxyConfig proxyConfig;
+    private ResultSet generatedKeys;
 
     public Object invoke(Method method, Object[] args) throws Throwable {
 
@@ -233,9 +236,18 @@ public class PreparedStatementProxyLogic {
 
             final long afterTime = System.currentTimeMillis();
 
+            if (EXEC_METHODS.contains(methodName)){
+                generatedKeys = proxyFactory.createGeneratedKeys(ps, this.connectionInfo, this.proxyConfig);
+                execInfo.setGeneratedKeys(generatedKeys);
+            }
+
             // execInfo.setResult will have proxied ResultSet if enabled
             if (METHODS_TO_RETURN_RESULTSET.contains(methodName)) {
-                retVal = proxyFactory.createResultSet((ResultSet) retVal, this.connectionInfo, this.proxyConfig);
+                if (GET_GENERATED_KEYS_METHOD.equals(methodName) && generatedKeys != null){
+                    retVal = generatedKeys;
+                } else{
+                    retVal = proxyFactory.createResultSet((ResultSet) retVal, this.connectionInfo, this.proxyConfig);
+                }
             }
 
             execInfo.setResult(retVal);

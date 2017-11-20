@@ -23,6 +23,7 @@ public class ProxyConfig {
         private ParameterTransformer parameterTransformer = ParameterTransformer.DEFAULT;
         private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
         private ResultSetProxyLogicFactory resultSetProxyLogicFactory;  // can be null if resultset proxy is disabled
+        private ResultSetProxyLogicFactory generatedKeysProxyLogicFactory; // can be null if generated keys proxy is disabled
         private ConnectionIdManager connectionIdManager = new DefaultConnectionIdManager();  // create instance every time
         private CompositeMethodListener methodListener = new CompositeMethodListener();  // empty default
 
@@ -38,6 +39,7 @@ public class ProxyConfig {
                     .parameterTransformer(proxyConfig.parameterTransformer)
                     .jdbcProxyFactory(proxyConfig.jdbcProxyFactory)
                     .resultSetProxyLogicFactory(proxyConfig.resultSetProxyLogicFactory)
+                    .generatedKeysProxyLogicFactory(proxyConfig.generatedKeysProxyLogicFactory)
                     .connectionIdManager(proxyConfig.connectionIdManager)
                     .methodListener(proxyConfig.methodListener);
         }
@@ -50,6 +52,7 @@ public class ProxyConfig {
             proxyConfig.parameterTransformer = this.parameterTransformer;
             proxyConfig.jdbcProxyFactory = this.jdbcProxyFactory;
             proxyConfig.resultSetProxyLogicFactory = this.resultSetProxyLogicFactory;
+            proxyConfig.generatedKeysProxyLogicFactory = this.generatedKeysProxyLogicFactory;
             proxyConfig.connectionIdManager = this.connectionIdManager;
             proxyConfig.methodListener = this.methodListener;
             return proxyConfig;
@@ -91,6 +94,11 @@ public class ProxyConfig {
             return this;
         }
 
+        public Builder generatedKeysProxyLogicFactory(ResultSetProxyLogicFactory generatedKeysProxyLogicFactory){
+            this.generatedKeysProxyLogicFactory = generatedKeysProxyLogicFactory;
+            return this;
+        }
+
         public Builder connectionIdManager(ConnectionIdManager connectionIdManager) {
             this.connectionIdManager = connectionIdManager;
             return this;
@@ -114,6 +122,7 @@ public class ProxyConfig {
     private ParameterTransformer parameterTransformer;
     private JdbcProxyFactory jdbcProxyFactory;
     private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
+    private ResultSetProxyLogicFactory generatedKeysProxyLogicFactory;
     private ConnectionIdManager connectionIdManager;
     private CompositeMethodListener methodListener;
 
@@ -139,6 +148,10 @@ public class ProxyConfig {
 
     public ResultSetProxyLogicFactory getResultSetProxyLogicFactory() {
         return resultSetProxyLogicFactory;
+    }
+
+    public ResultSetProxyLogicFactory getGeneratedKeysProxyLogicFactory() {
+        return generatedKeysProxyLogicFactory;
     }
 
     public ConnectionIdManager getConnectionIdManager() {

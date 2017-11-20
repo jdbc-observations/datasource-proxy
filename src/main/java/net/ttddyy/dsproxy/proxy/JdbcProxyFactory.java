@@ -4,11 +4,7 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 
 import javax.sql.DataSource;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * Factory interface to return a proxy with InvocationHandler used by datasource-proxy.
@@ -44,5 +40,13 @@ public interface JdbcProxyFactory {
      * @since 1.4.3
      */
     ResultSet createResultSet(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig);
+
+    /**
+     * Create a proxy for {@link ResultSet} generated keys.
+     *
+     * @return null if no proxy has been created
+     * @since 1.4.5
+     */
+    ResultSet createGeneratedKeys(Statement statement, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) throws SQLException;
 
 }

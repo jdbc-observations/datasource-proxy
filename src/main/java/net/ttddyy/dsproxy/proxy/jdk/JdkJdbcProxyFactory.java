@@ -4,14 +4,11 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
+import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Proxy;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * Dynamic Proxy Class(Jdk Proxy) based {@link net.ttddyy.dsproxy.proxy.JdbcProxyFactory} implementation.
@@ -75,13 +72,27 @@ public class JdkJdbcProxyFactory implements JdbcProxyFactory {
      */
     @Override
     public ResultSet createResultSet(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
+        ResultSetProxyLogicFactory factory = proxyConfig.getResultSetProxyLogicFactory();
         // when proxy logic factory is specified, create a proxy
-        if (proxyConfig.getResultSetProxyLogicFactory() != null) {
+        if (factory != null) {
             return (ResultSet) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
                     new Class[]{ProxyJdbcObject.class, ResultSet.class},
-                    new ResultSetInvocationHandler(resultSet, connectionInfo, proxyConfig));
+                    new ResultSetInvocationHandler(factory, resultSet, connectionInfo, proxyConfig));
         } else {
             return resultSet;
+        }
+    }
+
+    @Override
+    public ResultSet createGeneratedKeys(Statement statement, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) throws SQLException {
+        ResultSetProxyLogicFactory factory = proxyConfig.getGeneratedKeysProxyLogicFactory();
+        // when proxy logic factory is specified, create a proxy
+        if (factory != null) {
+            return (ResultSet) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
+                    new Class[]{ProxyJdbcObject.class, ResultSet.class},
+                    new ResultSetInvocationHandler(factory, statement.getGeneratedKeys(), connectionInfo, proxyConfig));
+        } else {
+            return null;
         }
     }
 

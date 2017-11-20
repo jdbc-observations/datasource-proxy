@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy;
 
 import java.lang.reflect.Method;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 /**
@@ -21,6 +22,7 @@ public class ExecutionInfo {
     private boolean isBatch;
     private int batchSize;
     private Statement statement;
+    private ResultSet generatedKeys;
 
     public ExecutionInfo() {
     }
@@ -168,5 +170,17 @@ public class ExecutionInfo {
 
     public void setStatement(Statement statement) {
         this.statement = statement;
+    }
+
+    /**
+     * @return Generated keys of the current statement
+     * @since 1.4.5
+     */
+    public ResultSet getGeneratedKeys() {
+        return generatedKeys;
+    }
+
+    public void setGeneratedKeys(ResultSet generatedKeys) {
+        this.generatedKeys = generatedKeys;
     }
 }
