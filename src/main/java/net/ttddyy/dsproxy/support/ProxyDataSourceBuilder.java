@@ -679,9 +679,6 @@ public class ProxyDataSourceBuilder {
      * When it is enabled, generated keys {@link java.sql.ResultSet} will be proxied(e.g.: Statement#getGeneratedKeys()).
      * The built proxy will be returned by {@link ExecutionInfo#getGeneratedKeys()}
      *
-     * By using {@link RepeatableReadResultSetProxyLogicFactory},
-     * it allows to read generated keys {@link java.sql.ResultSet} multiple times.
-     *
      * @return builder
      * @since 1.4.5
      */
@@ -698,6 +695,16 @@ public class ProxyDataSourceBuilder {
      */
     public ProxyDataSourceBuilder proxyGeneratedKeys(ResultSetProxyLogicFactory factory){
         this.generatedKeysProxyLogicFactory = factory;
+        return this;
+    }
+
+    /**
+     * Enable generated keys resultset proxy that allows repeatable read.
+     * @return builder
+     * @since 1.4.5
+     */
+    public ProxyDataSourceBuilder repeatableReadGeneratedKeys(){
+        this.generatedKeysProxyLogicFactory = new RepeatableReadResultSetProxyLogicFactory();
         return this;
     }
 
