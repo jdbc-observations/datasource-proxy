@@ -25,7 +25,7 @@ public class RepeatableReadResultSetProxyLogicTest {
     private static final int NUMBER_OF_COLUMNS = 3;
     private static final String COLUMN_1_LABEL = "FIRST";
     private static final String COLUMN_2_LABEL = "SECOND";
-    private static final String COLUMN_3_LABEL = "THIRD";
+    private static final String COLUMN_3_LABEL = "third";
     private static final String COLUMN_1_VALUE = "result1";
     private static final Integer COLUMN_2_VALUE = 999;
     private static final Timestamp COLUMN_3_VALUE = new Timestamp(2312413L);
