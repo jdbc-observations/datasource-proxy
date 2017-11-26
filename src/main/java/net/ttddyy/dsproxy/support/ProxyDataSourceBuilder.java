@@ -135,6 +135,7 @@ public class ProxyDataSourceBuilder {
     private ConnectionIdManager connectionIdManager;
 
     private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
+    private ResultSetProxyLogicFactory generatedKeysProxyLogicFactory;
 
     private List<MethodExecutionListener> methodExecutionListeners = new ArrayList<MethodExecutionListener>();
 
@@ -673,6 +674,41 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
+     * Enable generated keys proxy.
+     *
+     * When it is enabled, generated keys {@link java.sql.ResultSet} will be proxied(e.g.: Statement#getGeneratedKeys()).
+     * The built proxy will be returned by {@link ExecutionInfo#getGeneratedKeys()}
+     *
+     * @return builder
+     * @since 1.4.5
+     */
+    public ProxyDataSourceBuilder proxyGeneratedKeys() {
+        this.generatedKeysProxyLogicFactory = ResultSetProxyLogicFactory.DEFAULT;
+        return this;
+    }
+
+    /**
+     * Enable generated keys proxy with given proxy logic factory.
+     *
+     * @return builder
+     * @since 1.4.5
+     */
+    public ProxyDataSourceBuilder proxyGeneratedKeys(ResultSetProxyLogicFactory factory){
+        this.generatedKeysProxyLogicFactory = factory;
+        return this;
+    }
+
+    /**
+     * Enable generated keys resultset proxy that allows repeatable read.
+     * @return builder
+     * @since 1.4.5
+     */
+    public ProxyDataSourceBuilder repeatableReadGeneratedKeys(){
+        this.generatedKeysProxyLogicFactory = new RepeatableReadResultSetProxyLogicFactory();
+        return this;
+    }
+
+    /**
      * Enable resultset proxy that allows repeatable read.
      *
      * Equivalent to {@code proxyResultSet(new RepeatableReadResultSetProxyLogicFactory())}
@@ -887,6 +923,9 @@ public class ProxyDataSourceBuilder {
 
         // this can be null if creation of resultset proxy is disabled
         proxyConfigBuilder.resultSetProxyLogicFactory(this.resultSetProxyLogicFactory);
+
+        // this can be null if creation of generated keys proxy is disabled
+        proxyConfigBuilder.generatedKeysProxyLogicFactory(this.generatedKeysProxyLogicFactory);
 
         // build ProxyDataSource
         ProxyDataSource proxyDataSource = new ProxyDataSource();

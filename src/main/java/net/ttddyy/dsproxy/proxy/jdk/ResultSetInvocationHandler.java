@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy.proxy.jdk;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogic;
+import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -19,8 +20,8 @@ public class ResultSetInvocationHandler implements InvocationHandler {
 
     private ResultSetProxyLogic delegate;
 
-    public ResultSetInvocationHandler(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
-        this.delegate = proxyConfig.getResultSetProxyLogicFactory().create(resultSet, connectionInfo, proxyConfig);
+    public ResultSetInvocationHandler(ResultSetProxyLogicFactory factory, ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
+        this.delegate = factory.create(resultSet, connectionInfo, proxyConfig);
     }
 
     @Override
