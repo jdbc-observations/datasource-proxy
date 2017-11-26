@@ -132,17 +132,20 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
         }
 
 
-        if (isGetMetaDataMethod(method)) {
-            return method.invoke(resultSet, args);
+        if (methodName.equals("getMetaData")) {
+            return method.invoke(this.resultSet, args);
+        } else if (methodName.equals("close")) {
+            this.closed = true;
+            return method.invoke(this.resultSet, args);
+        } else if (methodName.equals("isClosed")) {
+            return method.invoke(this.resultSet, args);
+//            return this.closed;
         }
-        if (isCloseMethod(method)) {
-            closed = true;
-            return method.invoke(resultSet, args);
-        }
-        if (closed) {
+
+        if (this.closed) {
             throw new SQLException("Already closed");
         }
-        if (resultSetConsumed) {
+        if (this.resultSetConsumed) {
             if (isGetMethod(method)) {
                 return handleGetMethodUsingCache(args);
             }
@@ -202,14 +205,6 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
         } else {
             throw new SQLException(format("Result set exhausted. There were %d result(s) only", cachedResults.size()));
         }
-    }
-
-    private boolean isCloseMethod(Method method) {
-        return method.getName().equals("close");
-    }
-
-    private boolean isGetMetaDataMethod(Method method) {
-        return method.getName().equals("getMetaData");
     }
 
     private boolean isGetMethod(Method method) {

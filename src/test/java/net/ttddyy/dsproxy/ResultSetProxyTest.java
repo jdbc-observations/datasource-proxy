@@ -73,7 +73,12 @@ public class ResultSetProxyTest {
         assertThat(resultSet.getInt("b")).isEqualTo(6);
 
         assertThat(resultSet.next()).isFalse();
+
+        assertThat(resultSet.isClosed()).isFalse();
+
         resultSet.close();
+
+        assertThat(resultSet.isClosed()).isTrue();
     }
 
     private static class LoggingExecutionListener implements QueryExecutionListener {
