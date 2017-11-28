@@ -199,20 +199,32 @@ public class StatementProxyLogic {
         try {
             final long beforeTime = System.currentTimeMillis();
 
-            Object retVal = method.invoke(stmt, args);
+            Object retVal = method.invoke(this.stmt, args);
 
             final long afterTime = System.currentTimeMillis();
 
-            if (EXEC_METHODS.contains(methodName)){
-                generatedKeys = proxyFactory.createGeneratedKeys(stmt, this.connectionInfo, this.proxyConfig);
-                execInfo.setGeneratedKeys(generatedKeys);
+            // Retrieve generatedKeys when it is enabled
+            if (EXEC_METHODS.contains(methodName) && this.proxyConfig.isAutoRetrieveGeneratedKeys()) {
+                ResultSet generatedKeysResultSet = this.stmt.getGeneratedKeys();
+                if (this.proxyConfig.isGeneratedKeysProxyEnabled()) {
+                    this.generatedKeys = proxyFactory.createGeneratedKeys(generatedKeysResultSet, this.connectionInfo, this.proxyConfig);
+                } else {
+                    this.generatedKeys = generatedKeysResultSet;
+                }
+                execInfo.setGeneratedKeys(this.generatedKeys);
             }
 
             // execInfo.setResult will have proxied ResultSet if enabled
             if (METHODS_TO_RETURN_RESULTSET.contains(methodName)) {
-                if (GET_GENERATED_KEYS_METHOD.equals(methodName) && generatedKeys != null){
-                    retVal = generatedKeys;
-                } else{
+                if (GET_GENERATED_KEYS_METHOD.equals(methodName)) {
+                    if (this.proxyConfig.isAutoRetrieveGeneratedKeys()) {
+                        // generatedKeys is already proxied at retrieval.
+                        retVal = this.generatedKeys;
+                    } else if (this.proxyConfig.isGeneratedKeysProxyEnabled()) {
+                        retVal = proxyFactory.createGeneratedKeys((ResultSet) retVal, this.connectionInfo, this.proxyConfig);
+                    }
+                    // else use raw value
+                } else {
                     retVal = proxyFactory.createResultSet((ResultSet) retVal, this.connectionInfo, this.proxyConfig);
                 }
             }
@@ -228,6 +240,12 @@ public class StatementProxyLogic {
             throw ex.getTargetException();
         } finally {
             queryListener.afterQuery(execInfo, queries);
+
+            // close ResultSet for generated keys
+            if (this.proxyConfig.isAutoCloseGeneratedKeys() && this.generatedKeys != null && !this.generatedKeys.isClosed()) {
+                this.generatedKeys.close();
+            }
+
         }
 
     }

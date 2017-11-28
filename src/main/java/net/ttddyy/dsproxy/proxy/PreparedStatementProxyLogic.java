@@ -232,20 +232,32 @@ public class PreparedStatementProxyLogic {
         try {
             final long beforeTime = System.currentTimeMillis();
 
-            Object retVal = method.invoke(ps, args);
+            Object retVal = method.invoke(this.ps, args);
 
             final long afterTime = System.currentTimeMillis();
 
-            if (EXEC_METHODS.contains(methodName)){
-                generatedKeys = proxyFactory.createGeneratedKeys(ps, this.connectionInfo, this.proxyConfig);
-                execInfo.setGeneratedKeys(generatedKeys);
+            // Retrieve generatedKeys when it is enabled
+            if (EXEC_METHODS.contains(methodName) && this.proxyConfig.isAutoRetrieveGeneratedKeys()) {
+                ResultSet generatedKeysResultSet = this.ps.getGeneratedKeys();
+                if (this.proxyConfig.isGeneratedKeysProxyEnabled()) {
+                    this.generatedKeys = proxyFactory.createGeneratedKeys(generatedKeysResultSet, this.connectionInfo, this.proxyConfig);
+                } else {
+                    this.generatedKeys = generatedKeysResultSet;
+                }
+                execInfo.setGeneratedKeys(this.generatedKeys);
             }
 
             // execInfo.setResult will have proxied ResultSet if enabled
             if (METHODS_TO_RETURN_RESULTSET.contains(methodName)) {
-                if (GET_GENERATED_KEYS_METHOD.equals(methodName) && generatedKeys != null){
-                    retVal = generatedKeys;
-                } else{
+                if (GET_GENERATED_KEYS_METHOD.equals(methodName)) {
+                    if (this.proxyConfig.isAutoRetrieveGeneratedKeys()) {
+                        // generatedKeys is already proxied at retrieval.
+                        retVal = this.generatedKeys;
+                    } else if (this.proxyConfig.isGeneratedKeysProxyEnabled()) {
+                        retVal = proxyFactory.createGeneratedKeys((ResultSet) retVal, this.connectionInfo, this.proxyConfig);
+                    }
+                    // else use raw value
+                } else {
                     retVal = proxyFactory.createResultSet((ResultSet) retVal, this.connectionInfo, this.proxyConfig);
                 }
             }
@@ -261,6 +273,11 @@ public class PreparedStatementProxyLogic {
             throw ex.getTargetException();
         } finally {
             queryListener.afterQuery(execInfo, queries);
+
+            if (this.proxyConfig.isAutoCloseGeneratedKeys() && this.generatedKeys != null && !this.generatedKeys.isClosed()) {
+                this.generatedKeys.close();
+            }
+
         }
     }
 
@@ -281,7 +298,7 @@ public class PreparedStatementProxyLogic {
             for (ParameterSetOperation operation : modifiedParameters.values()) {
                 final Method paramMethod = operation.getMethod();
                 final Object[] paramArgs = operation.getArgs();
-                paramMethod.invoke(ps, paramArgs);
+                paramMethod.invoke(this.ps, paramArgs);
             }
 
             // replace

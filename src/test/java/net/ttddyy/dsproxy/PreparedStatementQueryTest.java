@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy;
 
+import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
+import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -15,7 +17,10 @@ import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
@@ -370,6 +375,204 @@ public class PreparedStatementQueryTest {
         assertThat(result).isInstanceOf(ResultSet.class);
         assertThat(Proxy.isProxyClass(result.getClass())).isTrue();
         assertThat(Proxy.getInvocationHandler(result)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
+    }
+
+    @Test
+    public void generatedKeysProxy() throws Throwable {
+        String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
+        Connection conn = this.jdbcDataSource.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().generatedKeysProxyLogicFactory(new SimpleResultSetProxyLogicFactory()).build();
+
+        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+
+        proxyPs.executeUpdate();
+
+        // verify getGeneratedKeys
+        ResultSet generatedKeys = proxyPs.getGeneratedKeys();
+        assertThat(generatedKeys).isInstanceOf(ResultSet.class);
+        assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
+        assertThat(Proxy.getInvocationHandler(generatedKeys)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
+
+        // other ResultSet returning methods should not return proxy
+        conn.close();
+
+        sql = "select * from emp;";
+        conn = this.jdbcDataSource.getConnection();
+        ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+
+        // verify executeQuery
+        ResultSet result = proxyPs.executeQuery();
+        assertThat(result).isInstanceOf(ResultSet.class);
+        assertThat(Proxy.isProxyClass(result.getClass())).isFalse();
+
+        // generated keys will be empty
+        generatedKeys = proxyPs.getGeneratedKeys();
+        assertThat(generatedKeys).isInstanceOf(ResultSet.class);
+        assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
+        assertThat(generatedKeys.next()).isFalse();
+
+    }
+
+    @Test
+    public void autoRetrieveGeneratedKeys() throws Throwable {
+        String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
+        Connection conn = this.jdbcDataSource.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
+        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+            @Override
+            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                // since generatedKeys will NOT be closed, they can be read afterwards.
+                listenerReceivedExecutionInfo.set(execInfo);
+            }
+        };
+
+        // autoRetrieveGeneratedKeys=true
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(listener)
+                .autoRetrieveGeneratedKeys(true)
+                .autoCloseGeneratedKeys(false)
+                .build();
+        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
+        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+
+        proxyPs.executeUpdate();
+
+        ExecutionInfo info = listenerReceivedExecutionInfo.get();
+        assertThat(info).isNotNull();
+
+        ResultSet generatedKeys = info.getGeneratedKeys();
+        assertThat(generatedKeys).isInstanceOf(ResultSet.class);
+        assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isFalse();
+
+        generatedKeys.next();
+        int generatedId = generatedKeys.getInt(1);
+        assertThat(generatedId).as("generated ID").isEqualTo(2);
+
+        // reset
+        listenerReceivedExecutionInfo.set(null);
+
+        // autoRetrieveGeneratedKeys=false
+        proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(listener)
+                .autoRetrieveGeneratedKeys(false)
+                .autoCloseGeneratedKeys(false)
+                .build();
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+
+        proxyPs.executeUpdate();
+
+        info = listenerReceivedExecutionInfo.get();
+        assertThat(info).isNotNull();
+
+        assertThat(info.getGeneratedKeys()).isNull();
+
+    }
+
+    @Test
+    public void autoCloseGeneratedKeysProxy() throws Throwable {
+        String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
+        Connection conn = this.jdbcDataSource.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
+        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+            @Override
+            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                ResultSet generatedKeys = execInfo.getGeneratedKeys();
+                boolean isClosed = true;
+                try {
+                    isClosed = generatedKeys.isClosed();
+                } catch (SQLException ex) {
+                    fail("Failed to call generatedKeys.isClosed() message=" + ex.getMessage());
+                }
+                assertThat(isClosed).isFalse();
+                listenerReceivedExecutionInfo.set(execInfo);
+            }
+        };
+
+        // autoCloseGeneratedKeys=false
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(listener)
+                .autoRetrieveGeneratedKeys(true)
+                .autoCloseGeneratedKeys(false)
+                .build();
+        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
+        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+
+        proxyPs.executeUpdate();
+
+        ExecutionInfo info = listenerReceivedExecutionInfo.get();
+        ResultSet generatedKeys = info.getGeneratedKeys();
+        assertThat(generatedKeys.isClosed()).isFalse();
+
+        try {
+            generatedKeys.close();
+        } catch (SQLException ex) {
+            fail("closing non closed ResultSet should success. message=" + ex.getMessage());
+        }
+
+        listenerReceivedExecutionInfo.set(null);
+
+        // autoCloseGeneratedKeys=true
+        proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(listener)
+                .autoRetrieveGeneratedKeys(true)
+                .autoCloseGeneratedKeys(true)
+                .build();
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+
+        proxyPs.executeUpdate();
+
+        info = listenerReceivedExecutionInfo.get();
+        generatedKeys = info.getGeneratedKeys();
+        assertThat(generatedKeys.isClosed()).isTrue();
+
+    }
+
+    @Test
+    public void autoRetrieveGeneratedKeysWithGeneratedKeysProxy() throws Throwable {
+        String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
+        Connection conn = this.jdbcDataSource.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
+        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+            @Override
+            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                listenerReceivedExecutionInfo.set(execInfo);
+            }
+        };
+
+        // specify autoRetrieveGeneratedKeys and proxy factory
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(listener)
+                .autoRetrieveGeneratedKeys(true)
+                .generatedKeysProxyLogicFactory(new SimpleResultSetProxyLogicFactory())
+                .autoCloseGeneratedKeys(false)
+                .build();
+        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
+        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+
+        proxyPs.executeUpdate();
+
+        ExecutionInfo info = listenerReceivedExecutionInfo.get();
+        assertThat(info).isNotNull();
+        assertThat(info.getGeneratedKeys()).isInstanceOf(ResultSet.class);
+
+        ResultSet generatedKeys = info.getGeneratedKeys();
+        assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
+        assertThat(Proxy.getInvocationHandler(generatedKeys)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
+
+        generatedKeys.next();
+        int generatedId = generatedKeys.getInt(1);
+        assertThat(generatedId).as("generated ID").isEqualTo(2);
+
     }
 
 }

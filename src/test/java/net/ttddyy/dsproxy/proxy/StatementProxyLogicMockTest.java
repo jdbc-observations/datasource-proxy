@@ -22,12 +22,15 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -421,17 +424,18 @@ public class StatementProxyLogicMockTest {
 
 
     private StatementProxyLogic getProxyLogic(Statement statement, QueryExecutionListener listener, Connection proxyConnection) {
-        return getProxyLogic(statement, listener, proxyConnection, false);
+        return getProxyLogic(statement, listener, proxyConnection, false, false);
     }
 
     private StatementProxyLogic getProxyLogic(Statement statement, QueryExecutionListener listener, Connection proxyConnection,
-                                              boolean createResultSetProxy) {
+                                              boolean createResultSetProxy, boolean createGenerateKeysProxy) {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName(DS_NAME);
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
                 .queryListener(listener)
                 .resultSetProxyLogicFactory(createResultSetProxy ? new SimpleResultSetProxyLogicFactory() : null)
+                .generatedKeysProxyLogicFactory(createGenerateKeysProxy ? new SimpleResultSetProxyLogicFactory() : null)
                 .build();
 
         return StatementProxyLogic.Builder.create()
@@ -817,7 +821,7 @@ public class StatementProxyLogicMockTest {
         when(stmt.executeQuery(anyString())).thenReturn(resultSet);
         when(stmt.getGeneratedKeys()).thenReturn(resultSet);
         when(stmt.getResultSet()).thenReturn(resultSet);
-        StatementProxyLogic logic = getProxyLogic(stmt, listener, null, true);
+        StatementProxyLogic logic = getProxyLogic(stmt, listener, null, true, false);
 
 
         // "executeQuery", "getGeneratedKeys", "getResultSet"
@@ -835,6 +839,54 @@ public class StatementProxyLogicMockTest {
 
         listenerReceivedResult.set(null);
 
+        // check "getResultSet"
+        result = logic.invoke(getResultSetMethod, null);
+        assertThat(result).isInstanceOf(ResultSet.class);
+        assertTrue(Proxy.isProxyClass(result.getClass()));
+        assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
+        assertThat(listenerReceivedResult.get()).as("listener should receive proxied resultset").isSameAs(result);
+
+        listenerReceivedResult.set(null);
+
+        // check "getGeneratedKeys". generated keys has separate configuration
+        result = logic.invoke(getGeneratedKeysMethod, null);
+        assertThat(result).isInstanceOf(ResultSet.class);
+        assertFalse(Proxy.isProxyClass(result.getClass()));
+
+
+    }
+
+    @Test
+    public void proxyGeneratedKeysResultSet() throws Throwable {
+
+        final AtomicReference<Object> listenerReceivedResult = new AtomicReference<Object>();
+        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+            @Override
+            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                listenerReceivedResult.set(execInfo.getResult());
+            }
+        };
+
+
+        ResultSetMetaData metaData = mock(ResultSetMetaData.class);
+
+        ResultSet resultSet = mock(ResultSet.class);
+        when(resultSet.getMetaData()).thenReturn(metaData);
+
+
+        Statement stmt = mock(Statement.class);
+        when(stmt.executeQuery(anyString())).thenReturn(resultSet);
+        when(stmt.getGeneratedKeys()).thenReturn(resultSet);
+        when(stmt.getResultSet()).thenReturn(resultSet);
+        StatementProxyLogic logic = getProxyLogic(stmt, listener, null, false, true);
+
+
+        // "executeQuery", "getGeneratedKeys", "getResultSet"
+        Method executeQueryMethod = Statement.class.getMethod("executeQuery", String.class);
+        Method getGeneratedKeysMethod = Statement.class.getMethod("getGeneratedKeys");
+        Method getResultSetMethod = Statement.class.getMethod("getResultSet");
+        Object result;
+
         // check "getGeneratedKeys"
         result = logic.invoke(getGeneratedKeysMethod, null);
         assertThat(result).isInstanceOf(ResultSet.class);
@@ -844,12 +896,68 @@ public class StatementProxyLogicMockTest {
 
         listenerReceivedResult.set(null);
 
+        // check "executeQuery"
+        result = logic.invoke(executeQueryMethod, new Object[]{"SELECT *"});
+        assertThat(result).isInstanceOf(ResultSet.class);
+        assertFalse(Proxy.isProxyClass(result.getClass()));
+
+        listenerReceivedResult.set(null);
+
         // check "getResultSet"
         result = logic.invoke(getResultSetMethod, null);
         assertThat(result).isInstanceOf(ResultSet.class);
-        assertTrue(Proxy.isProxyClass(result.getClass()));
-        assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
-        assertThat(listenerReceivedResult.get()).as("listener should receive proxied resultset").isSameAs(result);
+        assertFalse(Proxy.isProxyClass(result.getClass()));
+
+    }
+
+    @Test
+    public void autoCloseGeneratedKeys() throws Throwable {
+
+        ResultSet resultSet = mock(ResultSet.class);
+        when(resultSet.isClosed()).thenReturn(false);
+
+        Statement stmt = mock(Statement.class);
+        when(stmt.getGeneratedKeys()).thenReturn(resultSet);
+
+        // autoCloseGeneratedKeys=true
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .autoRetrieveGeneratedKeys(true)
+                .autoCloseGeneratedKeys(true)
+                .build();
+
+        StatementProxyLogic logic = StatementProxyLogic.Builder.create()
+                .statement(stmt)
+                .connectionInfo(new ConnectionInfo())
+                .proxyConfig(proxyConfig)
+                .build();
+
+
+        // "executeQuery
+        Method executeQueryMethod = Statement.class.getMethod("executeQuery", String.class);
+        logic.invoke(executeQueryMethod, new Object[]{"SELECT *"});
+
+        verify(resultSet).close();
+
+
+        reset(resultSet);
+
+        // autoCloseGeneratedKeys=false
+        proxyConfig = ProxyConfig.Builder.create()
+                .autoRetrieveGeneratedKeys(true)
+                .autoCloseGeneratedKeys(false)
+                .build();
+
+        logic = StatementProxyLogic.Builder.create()
+                .statement(stmt)
+                .connectionInfo(new ConnectionInfo())
+                .proxyConfig(proxyConfig)
+                .build();
+
+
+        // "executeQuery
+        logic.invoke(executeQueryMethod, new Object[]{"SELECT *"});
+
+        verify(resultSet, never()).close();
 
     }
 

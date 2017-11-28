@@ -84,16 +84,11 @@ public class JdkJdbcProxyFactory implements JdbcProxyFactory {
     }
 
     @Override
-    public ResultSet createGeneratedKeys(Statement statement, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) throws SQLException {
+    public ResultSet createGeneratedKeys(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
         ResultSetProxyLogicFactory factory = proxyConfig.getGeneratedKeysProxyLogicFactory();
-        // when proxy logic factory is specified, create a proxy
-        if (factory != null) {
-            return (ResultSet) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
-                    new Class[]{ProxyJdbcObject.class, ResultSet.class},
-                    new ResultSetInvocationHandler(factory, statement.getGeneratedKeys(), connectionInfo, proxyConfig));
-        } else {
-            return null;
-        }
+        return (ResultSet) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
+                new Class[]{ProxyJdbcObject.class, ResultSet.class},
+                new ResultSetInvocationHandler(factory, resultSet, connectionInfo, proxyConfig));
     }
 
 
