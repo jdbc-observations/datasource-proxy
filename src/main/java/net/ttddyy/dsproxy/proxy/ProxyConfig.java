@@ -21,6 +21,12 @@ import java.util.List;
  */
 public class ProxyConfig {
 
+    private static class GeneratedKeysConfig {
+        private ResultSetProxyLogicFactory proxyLogicFactory; // can be null if generated keys proxy is disabled
+        private boolean autoRetrieve;
+        private boolean autoClose;
+    }
+
     public static class Builder {
         private String dataSourceName = "";
         private ChainListener queryListener = new ChainListener();  // empty default
@@ -28,11 +34,9 @@ public class ProxyConfig {
         private ParameterTransformer parameterTransformer = ParameterTransformer.DEFAULT;
         private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
         private ResultSetProxyLogicFactory resultSetProxyLogicFactory;  // can be null if resultset proxy is disabled
-        private ResultSetProxyLogicFactory generatedKeysProxyLogicFactory; // can be null if generated keys proxy is disabled
         private ConnectionIdManager connectionIdManager = new DefaultConnectionIdManager();  // create instance every time
         private CompositeMethodListener methodListener = new CompositeMethodListener();  // empty default
-        private boolean autoRetrieveGeneratedKeys;
-        private boolean autoCloseGeneratedKeys;
+        private GeneratedKeysConfig generatedKeysConfig = new GeneratedKeysConfig();
 
         public static Builder create() {
             return new Builder();
@@ -46,11 +50,12 @@ public class ProxyConfig {
                     .parameterTransformer(proxyConfig.parameterTransformer)
                     .jdbcProxyFactory(proxyConfig.jdbcProxyFactory)
                     .resultSetProxyLogicFactory(proxyConfig.resultSetProxyLogicFactory)
-                    .autoRetrieveGeneratedKeys(proxyConfig.autoRetrieveGeneratedKeys)
-                    .autoCloseGeneratedKeys(proxyConfig.autoCloseGeneratedKeys)
-                    .generatedKeysProxyLogicFactory(proxyConfig.generatedKeysProxyLogicFactory)
                     .connectionIdManager(proxyConfig.connectionIdManager)
-                    .methodListener(proxyConfig.methodListener);
+                    .methodListener(proxyConfig.methodListener)
+                    .generatedKeysProxyLogicFactory(proxyConfig.generatedKeysConfig.proxyLogicFactory)
+                    .autoRetrieveGeneratedKeys(proxyConfig.generatedKeysConfig.autoRetrieve)
+                    .autoCloseGeneratedKeys(proxyConfig.generatedKeysConfig.autoClose)
+                    ;
         }
 
         public ProxyConfig build() {
@@ -61,11 +66,14 @@ public class ProxyConfig {
             proxyConfig.parameterTransformer = this.parameterTransformer;
             proxyConfig.jdbcProxyFactory = this.jdbcProxyFactory;
             proxyConfig.resultSetProxyLogicFactory = this.resultSetProxyLogicFactory;
-            proxyConfig.generatedKeysProxyLogicFactory = this.generatedKeysProxyLogicFactory;
             proxyConfig.connectionIdManager = this.connectionIdManager;
             proxyConfig.methodListener = this.methodListener;
-            proxyConfig.autoRetrieveGeneratedKeys = this.autoRetrieveGeneratedKeys;
-            proxyConfig.autoCloseGeneratedKeys = this.autoCloseGeneratedKeys;
+
+            // generated keys
+            proxyConfig.generatedKeysConfig.proxyLogicFactory = this.generatedKeysConfig.proxyLogicFactory;
+            proxyConfig.generatedKeysConfig.autoRetrieve = this.generatedKeysConfig.autoRetrieve;
+            proxyConfig.generatedKeysConfig.autoClose = this.generatedKeysConfig.autoClose;
+
             return proxyConfig;
         }
 
@@ -106,17 +114,17 @@ public class ProxyConfig {
         }
 
         public Builder autoRetrieveGeneratedKeys(boolean autoRetrieveGeneratedKeys) {
-            this.autoRetrieveGeneratedKeys = autoRetrieveGeneratedKeys;
+            this.generatedKeysConfig.autoRetrieve = autoRetrieveGeneratedKeys;
             return this;
         }
 
         public Builder autoCloseGeneratedKeys(boolean autoCloseGeneratedKeys) {
-            this.autoCloseGeneratedKeys = autoCloseGeneratedKeys;
+            this.generatedKeysConfig.autoClose = autoCloseGeneratedKeys;
             return this;
         }
 
         public Builder generatedKeysProxyLogicFactory(ResultSetProxyLogicFactory generatedKeysProxyLogicFactory) {
-            this.generatedKeysProxyLogicFactory = generatedKeysProxyLogicFactory;
+            this.generatedKeysConfig.proxyLogicFactory = generatedKeysProxyLogicFactory;
             return this;
         }
 
@@ -143,11 +151,9 @@ public class ProxyConfig {
     private ParameterTransformer parameterTransformer;
     private JdbcProxyFactory jdbcProxyFactory;
     private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
-    private ResultSetProxyLogicFactory generatedKeysProxyLogicFactory;
-    private boolean autoRetrieveGeneratedKeys;
-    private boolean autoCloseGeneratedKeys;
     private ConnectionIdManager connectionIdManager;
     private CompositeMethodListener methodListener;
+    private GeneratedKeysConfig generatedKeysConfig = new GeneratedKeysConfig();
 
     public String getDataSourceName() {
         return dataSourceName;
@@ -186,7 +192,7 @@ public class ProxyConfig {
      * @since 1.4.5
      */
     public ResultSetProxyLogicFactory getGeneratedKeysProxyLogicFactory() {
-        return generatedKeysProxyLogicFactory;
+        return this.generatedKeysConfig.proxyLogicFactory;
     }
 
     /**
@@ -198,7 +204,7 @@ public class ProxyConfig {
      * @since 1.4.5
      */
     public boolean isAutoRetrieveGeneratedKeys() {
-        return this.autoRetrieveGeneratedKeys;
+        return this.generatedKeysConfig.autoRetrieve;
     }
 
     /**
@@ -209,7 +215,7 @@ public class ProxyConfig {
      * @since 1.4.5
      */
     public boolean isGeneratedKeysProxyEnabled() {
-        return this.generatedKeysProxyLogicFactory != null;
+        return this.generatedKeysConfig.proxyLogicFactory != null;
     }
 
     /**
@@ -221,7 +227,7 @@ public class ProxyConfig {
      * @since 1.4.5
      */
     public boolean isAutoCloseGeneratedKeys() {
-        return this.autoCloseGeneratedKeys;
+        return this.generatedKeysConfig.autoClose;
     }
 
     public ConnectionIdManager getConnectionIdManager() {
