@@ -59,28 +59,12 @@ public class JdkJdbcProxyFactory implements JdbcProxyFactory {
                         proxyConnection, proxyConfig));
     }
 
-    /**
-     * Create a proxy for {@link ResultSet} if given proxyConfig contains {@link net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory}.
-     *
-     * When {@link ProxyConfig#getResultSetProxyLogicFactory()} returns any factory object, this returns proxied
-     * {@link ResultSet}. If {@code null} is returned, this method returns non-proxied original {@link ResultSet}.
-     *
-     * @param resultSet   a result set
-     * @param proxyConfig a proxy config
-     * @return proxied ResultSet if config has ResultSetProxyLogicFactory, otherwise returns original ResultSet
-     * @since 1.4.3
-     */
     @Override
     public ResultSet createResultSet(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
         ResultSetProxyLogicFactory factory = proxyConfig.getResultSetProxyLogicFactory();
-        // when proxy logic factory is specified, create a proxy
-        if (factory != null) {
-            return (ResultSet) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
-                    new Class[]{ProxyJdbcObject.class, ResultSet.class},
-                    new ResultSetInvocationHandler(factory, resultSet, connectionInfo, proxyConfig));
-        } else {
-            return resultSet;
-        }
+        return (ResultSet) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
+                new Class[]{ProxyJdbcObject.class, ResultSet.class},
+                new ResultSetInvocationHandler(factory, resultSet, connectionInfo, proxyConfig));
     }
 
     @Override

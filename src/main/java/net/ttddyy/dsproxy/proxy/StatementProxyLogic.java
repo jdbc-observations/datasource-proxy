@@ -225,7 +225,9 @@ public class StatementProxyLogic {
                     }
                     // else use raw value
                 } else {
-                    retVal = proxyFactory.createResultSet((ResultSet) retVal, this.connectionInfo, this.proxyConfig);
+                    if (this.proxyConfig.isResultSetProxyEnabled()) {
+                        retVal = proxyFactory.createResultSet((ResultSet) retVal, this.connectionInfo, this.proxyConfig);
+                    }
                 }
             }
 

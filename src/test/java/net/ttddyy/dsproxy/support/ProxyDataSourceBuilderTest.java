@@ -508,6 +508,32 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
+    public void proxyResultSet() {
+        ProxyDataSource ds;
+        ResultSetProxyLogicFactory factory = mock(ResultSetProxyLogicFactory.class);
+
+        // default
+        ds = ProxyDataSourceBuilder.create().build();
+        assertThat(ds.getProxyConfig().isResultSetProxyEnabled()).isFalse();
+
+        // with default proxy logic factory
+        ds = ProxyDataSourceBuilder.create().proxyResultSet().build();
+        assertThat(ds.getProxyConfig().isResultSetProxyEnabled()).isTrue();
+        assertThat(ds.getProxyConfig().getResultSetProxyLogicFactory()).isSameAs(ResultSetProxyLogicFactory.DEFAULT);
+
+        // with proxy factory
+        ds = ProxyDataSourceBuilder.create().proxyResultSet(factory).build();
+        assertThat(ds.getProxyConfig().isResultSetProxyEnabled()).isTrue();
+        assertThat(ds.getProxyConfig().getResultSetProxyLogicFactory()).isSameAs(factory);
+
+        // with repeatable read proxy factory
+        ds = ProxyDataSourceBuilder.create().repeatableReadResultSet().build();
+        assertThat(ds.getProxyConfig().isResultSetProxyEnabled()).isTrue();
+        assertThat(ds.getProxyConfig().getResultSetProxyLogicFactory()).isInstanceOf(RepeatableReadResultSetProxyLogicFactory.class);
+
+    }
+
+    @Test
     public void proxyGeneratedKeys() {
         ProxyDataSource ds;
         ResultSetProxyLogicFactory factory = mock(ResultSetProxyLogicFactory.class);
