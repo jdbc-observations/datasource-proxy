@@ -27,6 +27,8 @@ import net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.RepeatableReadResultSetProxyLogicFactory;
+import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 import org.junit.Test;
 
 import java.util.List;
@@ -502,6 +504,88 @@ public class ProxyDataSourceBuilderTest {
         listener = chainListener.getListeners().get(0);
         listener.afterQuery(null, null);  // invoke
         assertThat(isAfterInvoked.get()).isTrue();
+
+    }
+
+    @Test
+    public void proxyGeneratedKeys() {
+        ProxyDataSource ds;
+        ResultSetProxyLogicFactory factory = mock(ResultSetProxyLogicFactory.class);
+
+        // default
+        ds = ProxyDataSourceBuilder.create().build();
+        assertThat(ds.getProxyConfig().isAutoRetrieveGeneratedKeys()).isFalse();
+        assertThat(ds.getProxyConfig().isGeneratedKeysProxyEnabled()).isFalse();
+
+        // with default proxy logic factory
+        ds = ProxyDataSourceBuilder.create().proxyGeneratedKeys().build();
+        assertThat(ds.getProxyConfig().isGeneratedKeysProxyEnabled()).isTrue();
+        assertThat(ds.getProxyConfig().isAutoRetrieveGeneratedKeys()).isFalse();
+        assertThat(ds.getProxyConfig().getGeneratedKeysProxyLogicFactory()).isSameAs(ResultSetProxyLogicFactory.DEFAULT);
+
+        // with proxy factory
+        ds = ProxyDataSourceBuilder.create().proxyGeneratedKeys(factory).build();
+        assertThat(ds.getProxyConfig().isGeneratedKeysProxyEnabled()).isTrue();
+        assertThat(ds.getProxyConfig().isAutoRetrieveGeneratedKeys()).isFalse();
+        assertThat(ds.getProxyConfig().getGeneratedKeysProxyLogicFactory()).isSameAs(factory);
+
+        // with repeatable read proxy factory
+        ds = ProxyDataSourceBuilder.create().repeatableReadGeneratedKeys().build();
+        assertThat(ds.getProxyConfig().isGeneratedKeysProxyEnabled()).isTrue();
+        assertThat(ds.getProxyConfig().isAutoRetrieveGeneratedKeys()).isFalse();
+        assertThat(ds.getProxyConfig().getGeneratedKeysProxyLogicFactory()).isInstanceOf(RepeatableReadResultSetProxyLogicFactory.class);
+
+    }
+
+    @Test
+    public void autoRetrievalGeneratedKeys() {
+        ProxyDataSource ds;
+        ResultSetProxyLogicFactory factory = mock(ResultSetProxyLogicFactory.class);
+
+        // default
+        ds = ProxyDataSourceBuilder.create().build();
+        assertThat(ds.getProxyConfig().isAutoRetrieveGeneratedKeys()).isFalse();
+        assertThat(ds.getProxyConfig().isAutoCloseGeneratedKeys()).isFalse();
+        assertThat(ds.getProxyConfig().isGeneratedKeysProxyEnabled()).isFalse();
+
+        // set true
+        ds = ProxyDataSourceBuilder.create().autoRetrieveGeneratedKeys(true).build();
+        assertThat(ds.getProxyConfig().isAutoRetrieveGeneratedKeys()).isTrue();
+        assertThat(ds.getProxyConfig().isAutoCloseGeneratedKeys()).isTrue();
+        assertThat(ds.getProxyConfig().isGeneratedKeysProxyEnabled()).isFalse();
+
+        // set false
+        ds = ProxyDataSourceBuilder.create().autoRetrieveGeneratedKeys(false).build();
+        assertThat(ds.getProxyConfig().isAutoRetrieveGeneratedKeys()).isTrue();
+        assertThat(ds.getProxyConfig().isAutoCloseGeneratedKeys()).isFalse();
+        assertThat(ds.getProxyConfig().isGeneratedKeysProxyEnabled()).isFalse();
+
+
+        // with proxy factory
+        ds = ProxyDataSourceBuilder.create().autoRetrieveGeneratedKeys(true, factory).build();
+        assertThat(ds.getProxyConfig().isAutoRetrieveGeneratedKeys()).isTrue();
+        assertThat(ds.getProxyConfig().isAutoCloseGeneratedKeys()).isTrue();
+        assertThat(ds.getProxyConfig().isGeneratedKeysProxyEnabled()).isTrue();
+        assertThat(ds.getProxyConfig().getGeneratedKeysProxyLogicFactory()).isSameAs(factory);
+
+        ds = ProxyDataSourceBuilder.create().autoRetrieveGeneratedKeys(false, factory).build();
+        assertThat(ds.getProxyConfig().isAutoRetrieveGeneratedKeys()).isTrue();
+        assertThat(ds.getProxyConfig().isAutoCloseGeneratedKeys()).isFalse();
+        assertThat(ds.getProxyConfig().isGeneratedKeysProxyEnabled()).isTrue();
+        assertThat(ds.getProxyConfig().getGeneratedKeysProxyLogicFactory()).isSameAs(factory);
+
+        // with repeatable read proxy factory
+        ds = ProxyDataSourceBuilder.create().autoRetrieveGeneratedKeysWithRepeatableReadProxy(true).build();
+        assertThat(ds.getProxyConfig().isAutoRetrieveGeneratedKeys()).isTrue();
+        assertThat(ds.getProxyConfig().isAutoCloseGeneratedKeys()).isTrue();
+        assertThat(ds.getProxyConfig().isGeneratedKeysProxyEnabled()).isTrue();
+        assertThat(ds.getProxyConfig().getGeneratedKeysProxyLogicFactory()).isInstanceOf(RepeatableReadResultSetProxyLogicFactory.class);
+
+        ds = ProxyDataSourceBuilder.create().autoRetrieveGeneratedKeysWithRepeatableReadProxy(false).build();
+        assertThat(ds.getProxyConfig().isAutoRetrieveGeneratedKeys()).isTrue();
+        assertThat(ds.getProxyConfig().isAutoCloseGeneratedKeys()).isFalse();
+        assertThat(ds.getProxyConfig().isGeneratedKeysProxyEnabled()).isTrue();
+        assertThat(ds.getProxyConfig().getGeneratedKeysProxyLogicFactory()).isInstanceOf(RepeatableReadResultSetProxyLogicFactory.class);
 
     }
 }

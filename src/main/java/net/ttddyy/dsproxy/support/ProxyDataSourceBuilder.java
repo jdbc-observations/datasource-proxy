@@ -764,7 +764,7 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 1.4.5
      */
-    public ProxyDataSourceBuilder autoRetrieveGeneratedKeysWithRepeatableRead(boolean autoClose) {
+    public ProxyDataSourceBuilder autoRetrieveGeneratedKeysWithRepeatableReadProxy(boolean autoClose) {
         this.autoRetrieveGeneratedKeys = true;
         this.autoCloseGeneratedKeys = autoClose;
         this.generatedKeysProxyLogicFactory = new RepeatableReadResultSetProxyLogicFactory();

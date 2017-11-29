@@ -30,7 +30,7 @@ public class GeneratedKeysProxyTest {
         GeneratedKeysProxyTest.LoggingExecutionListener listener = new GeneratedKeysProxyTest.LoggingExecutionListener();
         ProxyDataSource proxyDataSource = ProxyDataSourceBuilder.create(dataSourceWithData)
                 .listener(listener)
-                .autoRetrieveGeneratedKeysWithRepeatableRead(false)
+                .autoRetrieveGeneratedKeysWithRepeatableReadProxy(false)
                 .build();
 
         checkThatResultSetCanBeConsumedViaTheProxyDataSource(proxyDataSource);
