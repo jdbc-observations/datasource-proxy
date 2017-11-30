@@ -168,6 +168,65 @@ public class StatementQueryTest {
     }
 
     @Test
+    public void getGeneratedKeysWithAutoRetrievalAndAutoCloseFalse() throws Throwable {
+        Connection conn = this.jdbcDataSource.getConnection();
+        Statement st = conn.createStatement();
+
+        // autoCloseGeneratedKeys=false
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .autoRetrieveGeneratedKeys(true)
+                .autoCloseGeneratedKeys(false)
+                .build();
+        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
+        Statement proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+
+        proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", Statement.RETURN_GENERATED_KEYS);
+
+        // while they are not closed, getGeneratedKeys() should return same object
+        ResultSet generatedKeys1 = proxySt.getGeneratedKeys();
+        ResultSet generatedKeys2 = proxySt.getGeneratedKeys();
+
+        assertThat(generatedKeys2).isSameAs(generatedKeys1);
+
+        // when generatedKeys is closed, getGeneratedKeys() should return new ResultSet
+        generatedKeys1.close();
+        ResultSet generatedKeys3 = proxySt.getGeneratedKeys();
+
+        assertThat(generatedKeys3).isNotSameAs(generatedKeys1);
+        assertThat(generatedKeys3.isClosed()).isFalse();
+
+        ResultSet generatedKeys4 = proxySt.getGeneratedKeys();
+        assertThat(generatedKeys4).isNotSameAs(generatedKeys3);
+
+    }
+
+    @Test
+    public void getGeneratedKeysWithAutoRetrievalAndAutoCloseTrue() throws Throwable {
+        Connection conn = this.jdbcDataSource.getConnection();
+        Statement st = conn.createStatement();
+
+        // autoCloseGeneratedKeys=true
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .autoRetrieveGeneratedKeys(true)
+                .autoCloseGeneratedKeys(true)
+                .build();
+        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
+        Statement proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+
+        proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", Statement.RETURN_GENERATED_KEYS);
+
+        // calling getGeneratedKeys() multiple time is not defined in JDBC spec
+        // For hsqldb, calling second time closes previously returned ResultSet and returns new ResultSet.
+        ResultSet generatedKeys1 = proxySt.getGeneratedKeys();
+        assertThat(generatedKeys1.isClosed()).isFalse();
+
+        ResultSet generatedKeys2 = proxySt.getGeneratedKeys();
+        assertThat(generatedKeys2.isClosed()).isFalse();
+
+        assertThat(generatedKeys2).isNotSameAs(generatedKeys1);
+    }
+
+    @Test
     public void autoCloseGeneratedKeysProxy() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
