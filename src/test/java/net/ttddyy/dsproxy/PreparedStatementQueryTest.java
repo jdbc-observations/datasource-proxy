@@ -450,6 +450,11 @@ public class PreparedStatementQueryTest {
         assertThat(generatedKeys).isInstanceOf(ResultSet.class);
         assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isFalse();
 
+        // calling "statement.getGeneratedKeys()" should return the same object
+        ResultSet directGeneratedKeys = proxyPs.getGeneratedKeys();
+        assertThat(directGeneratedKeys).isSameAs(generatedKeys);
+
+        // verify generated keys ResultSet
         generatedKeys.next();
         int generatedId = generatedKeys.getInt(1);
         assertThat(generatedId).as("generated ID").isEqualTo(2);
@@ -471,6 +476,63 @@ public class PreparedStatementQueryTest {
         assertThat(info).isNotNull();
 
         assertThat(info.getGeneratedKeys()).isNull();
+
+    }
+
+    @Test
+    public void getGeneratedKeys() throws Throwable {
+        String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
+        Connection conn = this.jdbcDataSource.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        // when no configuration is specified for generated keys (disabling generated keys related feature)
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
+        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
+        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+
+        proxyPs.executeUpdate();
+
+        // calling getGeneratedKeys() multiple time is not defined in JDBC spec
+        // For hsqldb, calling second time closes previously returned ResultSet and returns new ResultSet.
+        ResultSet generatedKeys1 = proxyPs.getGeneratedKeys();
+        assertThat(generatedKeys1.isClosed()).isFalse();
+
+        ResultSet generatedKeys2 = proxyPs.getGeneratedKeys();
+        assertThat(generatedKeys2.isClosed()).isFalse();
+
+        // everytime it should return a new generatedKeys
+        assertThat(generatedKeys2).isNotSameAs(generatedKeys1);
+
+
+        // only specify autoRetrieveGeneratedKeys=true
+        proxyConfig = ProxyConfig.Builder.create()
+                .autoRetrieveGeneratedKeys(true)
+                .build();
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+
+        proxyPs.executeUpdate();
+
+        ResultSet generatedKeys3 = proxyPs.getGeneratedKeys();
+        assertThat(generatedKeys3.isClosed()).isFalse();
+
+        ResultSet generatedKeys4 = proxyPs.getGeneratedKeys();
+        assertThat(generatedKeys4.isClosed()).isFalse();
+
+        // since first generated-keys is open, second call should return the same one
+        assertThat(generatedKeys4).isSameAs(generatedKeys3);
+
+        generatedKeys4.close();
+        ResultSet generatedKeys5 = proxyPs.getGeneratedKeys();
+        assertThat(generatedKeys5.isClosed()).isFalse();
+
+        // once it is closed, getGeneratedKeys should return a new ResultSet
+        assertThat(generatedKeys5).isNotSameAs(generatedKeys4);
+
+        ResultSet generatedKeys6 = proxyPs.getGeneratedKeys();
+        assertThat(generatedKeys6.isClosed()).isFalse();
+
+        // again it's not closed, thus same ResultSet should be returned
+        assertThat(generatedKeys6).isSameAs(generatedKeys5);
 
     }
 
@@ -503,8 +565,9 @@ public class PreparedStatementQueryTest {
         assertThat(generatedKeys3).isNotSameAs(generatedKeys1);
         assertThat(generatedKeys3.isClosed()).isFalse();
 
+        // since generatedKeys3 is open, calling getGeneratedKeys() should return the same resultset
         ResultSet generatedKeys4 = proxyPs.getGeneratedKeys();
-        assertThat(generatedKeys4).isNotSameAs(generatedKeys3);
+        assertThat(generatedKeys4).isSameAs(generatedKeys3);
 
     }
 
@@ -524,15 +587,16 @@ public class PreparedStatementQueryTest {
 
         proxyPs.executeUpdate();
 
-        // calling getGeneratedKeys() multiple time is not defined in JDBC spec
-        // For hsqldb, calling second time closes previously returned ResultSet and returns new ResultSet.
+        // auto close should not affect the result of "getGeneratedKeys" method.
         ResultSet generatedKeys1 = proxyPs.getGeneratedKeys();
         assertThat(generatedKeys1.isClosed()).isFalse();
 
         ResultSet generatedKeys2 = proxyPs.getGeneratedKeys();
         assertThat(generatedKeys2.isClosed()).isFalse();
 
-        assertThat(generatedKeys2).isNotSameAs(generatedKeys1);
+        // result of "getGeneratedKeys" is still open, thus second call of "getGeneratedKeys" should return the same one
+        assertThat(generatedKeys2).isSameAs(generatedKeys1);
+        assertThat(generatedKeys1.isClosed()).isFalse();
     }
 
 

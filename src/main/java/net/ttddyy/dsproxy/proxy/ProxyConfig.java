@@ -198,6 +198,11 @@ public class ProxyConfig {
     /**
      * When this returns {@code true}, the proxy logic always call {@link Statement#getGeneratedKeys()} and set it to
      * {@link net.ttddyy.dsproxy.ExecutionInfo}.
+     * Also, if {@link Statement#getGeneratedKeys()} is called, it will return cached generated keys {@link ResultSet}
+     * when cached {@link ResultSet} is still open. If cached {@link ResultSet} is closed, calling
+     * {@link Statement#getGeneratedKeys()} returns a new {@link ResultSet}. (Calling {@link Statement#getGeneratedKeys()}
+     * multiple times is not defined in JDBC spec. Therefore, behavior depends on JDBC driver.)
+     *
      * If {@code false} is returned, {@link ExecutionInfo#getGeneratedKeys()} returns {@code null}.
      *
      * @return true if generated-keys retrieval is enabled
@@ -219,10 +224,12 @@ public class ProxyConfig {
     }
 
     /**
-     * Whether auto closing {@link ResultSet} for generated-keys is enabled.
+     * Whether to auto close {@link ResultSet} for generated-keys that is automatically retrieved.
      *
      * When this returns {@code true}, always close the {@link ResultSet} for generated keys when
      * {@link QueryExecutionListener#afterQuery(ExecutionInfo, List)} has finished.
+     * The result of {@link Statement#getGeneratedKeys()} method will not be closed by this. Only auto retrieved
+     * {@link ResultSet} of generated keys is closed.
      *
      * @since 1.4.5
      */

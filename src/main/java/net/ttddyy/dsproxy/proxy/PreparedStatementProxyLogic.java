@@ -250,11 +250,10 @@ public class PreparedStatementProxyLogic {
             if (EXEC_METHODS.contains(methodName) && this.proxyConfig.isAutoRetrieveGeneratedKeys()) {
                 ResultSet generatedKeysResultSet = this.ps.getGeneratedKeys();
                 if (this.proxyConfig.isGeneratedKeysProxyEnabled()) {
-                    this.generatedKeys = proxyFactory.createGeneratedKeys(generatedKeysResultSet, this.connectionInfo, this.proxyConfig);
-                } else {
-                    this.generatedKeys = generatedKeysResultSet;
+                    generatedKeysResultSet = proxyFactory.createGeneratedKeys(generatedKeysResultSet, this.connectionInfo, this.proxyConfig);
                 }
-                execInfo.setGeneratedKeys(this.generatedKeys);
+                execInfo.setGeneratedKeys(generatedKeysResultSet);
+                this.generatedKeys = generatedKeysResultSet;  // cache it
             }
 
             // execInfo.setResult will have proxied ResultSet if enabled
@@ -262,6 +261,12 @@ public class PreparedStatementProxyLogic {
                 if (GET_GENERATED_KEYS_METHOD.equals(methodName)) {
                     if (this.proxyConfig.isGeneratedKeysProxyEnabled()) {
                         retVal = proxyFactory.createGeneratedKeys((ResultSet) retVal, this.connectionInfo, this.proxyConfig);
+                    }
+
+                    // if auto-retrieval is enabled, cache the result
+                    if (this.proxyConfig.isAutoRetrieveGeneratedKeys()) {
+                        // At this point, cache is already nullified. put the result into the cache.
+                        this.generatedKeys = (ResultSet) retVal;
                     }
                     // else use raw value
                 } else if (this.proxyConfig.isResultSetProxyEnabled()) {
@@ -281,7 +286,9 @@ public class PreparedStatementProxyLogic {
         } finally {
             queryListener.afterQuery(execInfo, queries);
 
-            if (this.proxyConfig.isAutoCloseGeneratedKeys() && this.generatedKeys != null && !this.generatedKeys.isClosed()) {
+            // auto-close the auto-retrieved generated keys. result of "getGeneratedKeys" should not be affected.
+            if (!GET_GENERATED_KEYS_METHOD.equals(methodName) && this.proxyConfig.isAutoCloseGeneratedKeys()
+                    && this.generatedKeys != null && !this.generatedKeys.isClosed()) {
                 this.generatedKeys.close();
                 this.generatedKeys = null;
             }
