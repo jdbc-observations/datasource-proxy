@@ -1,12 +1,17 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
+import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.listener.ChainListener;
 import net.ttddyy.dsproxy.listener.CompositeMethodListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
+
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.List;
 
 /**
  * Hold configuration objects for creating a proxy.
@@ -16,6 +21,12 @@ import net.ttddyy.dsproxy.transform.QueryTransformer;
  */
 public class ProxyConfig {
 
+    private static class GeneratedKeysConfig {
+        private ResultSetProxyLogicFactory proxyLogicFactory; // can be null if generated keys proxy is disabled
+        private boolean autoRetrieve;
+        private boolean autoClose;
+    }
+
     public static class Builder {
         private String dataSourceName = "";
         private ChainListener queryListener = new ChainListener();  // empty default
@@ -23,9 +34,9 @@ public class ProxyConfig {
         private ParameterTransformer parameterTransformer = ParameterTransformer.DEFAULT;
         private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
         private ResultSetProxyLogicFactory resultSetProxyLogicFactory;  // can be null if resultset proxy is disabled
-        private ResultSetProxyLogicFactory generatedKeysProxyLogicFactory; // can be null if generated keys proxy is disabled
         private ConnectionIdManager connectionIdManager = new DefaultConnectionIdManager();  // create instance every time
         private CompositeMethodListener methodListener = new CompositeMethodListener();  // empty default
+        private GeneratedKeysConfig generatedKeysConfig = new GeneratedKeysConfig();
 
         public static Builder create() {
             return new Builder();
@@ -39,9 +50,12 @@ public class ProxyConfig {
                     .parameterTransformer(proxyConfig.parameterTransformer)
                     .jdbcProxyFactory(proxyConfig.jdbcProxyFactory)
                     .resultSetProxyLogicFactory(proxyConfig.resultSetProxyLogicFactory)
-                    .generatedKeysProxyLogicFactory(proxyConfig.generatedKeysProxyLogicFactory)
                     .connectionIdManager(proxyConfig.connectionIdManager)
-                    .methodListener(proxyConfig.methodListener);
+                    .methodListener(proxyConfig.methodListener)
+                    .generatedKeysProxyLogicFactory(proxyConfig.generatedKeysConfig.proxyLogicFactory)
+                    .autoRetrieveGeneratedKeys(proxyConfig.generatedKeysConfig.autoRetrieve)
+                    .autoCloseGeneratedKeys(proxyConfig.generatedKeysConfig.autoClose)
+                    ;
         }
 
         public ProxyConfig build() {
@@ -52,9 +66,14 @@ public class ProxyConfig {
             proxyConfig.parameterTransformer = this.parameterTransformer;
             proxyConfig.jdbcProxyFactory = this.jdbcProxyFactory;
             proxyConfig.resultSetProxyLogicFactory = this.resultSetProxyLogicFactory;
-            proxyConfig.generatedKeysProxyLogicFactory = this.generatedKeysProxyLogicFactory;
             proxyConfig.connectionIdManager = this.connectionIdManager;
             proxyConfig.methodListener = this.methodListener;
+
+            // generated keys
+            proxyConfig.generatedKeysConfig.proxyLogicFactory = this.generatedKeysConfig.proxyLogicFactory;
+            proxyConfig.generatedKeysConfig.autoRetrieve = this.generatedKeysConfig.autoRetrieve;
+            proxyConfig.generatedKeysConfig.autoClose = this.generatedKeysConfig.autoClose;
+
             return proxyConfig;
         }
 
@@ -94,8 +113,18 @@ public class ProxyConfig {
             return this;
         }
 
-        public Builder generatedKeysProxyLogicFactory(ResultSetProxyLogicFactory generatedKeysProxyLogicFactory){
-            this.generatedKeysProxyLogicFactory = generatedKeysProxyLogicFactory;
+        public Builder autoRetrieveGeneratedKeys(boolean autoRetrieveGeneratedKeys) {
+            this.generatedKeysConfig.autoRetrieve = autoRetrieveGeneratedKeys;
+            return this;
+        }
+
+        public Builder autoCloseGeneratedKeys(boolean autoCloseGeneratedKeys) {
+            this.generatedKeysConfig.autoClose = autoCloseGeneratedKeys;
+            return this;
+        }
+
+        public Builder generatedKeysProxyLogicFactory(ResultSetProxyLogicFactory generatedKeysProxyLogicFactory) {
+            this.generatedKeysConfig.proxyLogicFactory = generatedKeysProxyLogicFactory;
             return this;
         }
 
@@ -122,9 +151,9 @@ public class ProxyConfig {
     private ParameterTransformer parameterTransformer;
     private JdbcProxyFactory jdbcProxyFactory;
     private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
-    private ResultSetProxyLogicFactory generatedKeysProxyLogicFactory;
     private ConnectionIdManager connectionIdManager;
     private CompositeMethodListener methodListener;
+    private GeneratedKeysConfig generatedKeysConfig = new GeneratedKeysConfig();
 
     public String getDataSourceName() {
         return dataSourceName;
@@ -150,8 +179,62 @@ public class ProxyConfig {
         return resultSetProxyLogicFactory;
     }
 
+    /**
+     * @return {@code true} when {@link ResultSetProxyLogicFactory} for {@link ResultSet} is specified
+     * @since 1.4.5
+     */
+    public boolean isResultSetProxyEnabled() {
+        return this.resultSetProxyLogicFactory != null;
+    }
+
+
+    /**
+     * @since 1.4.5
+     */
     public ResultSetProxyLogicFactory getGeneratedKeysProxyLogicFactory() {
-        return generatedKeysProxyLogicFactory;
+        return this.generatedKeysConfig.proxyLogicFactory;
+    }
+
+    /**
+     * When this returns {@code true}, the proxy logic always call {@link Statement#getGeneratedKeys()} and set it to
+     * {@link net.ttddyy.dsproxy.ExecutionInfo}.
+     * Also, if {@link Statement#getGeneratedKeys()} is called, it will return cached generated keys {@link ResultSet}
+     * when cached {@link ResultSet} is still open. If cached {@link ResultSet} is closed, calling
+     * {@link Statement#getGeneratedKeys()} returns a new {@link ResultSet}. (Calling {@link Statement#getGeneratedKeys()}
+     * multiple times is not defined in JDBC spec. Therefore, behavior depends on JDBC driver.)
+     *
+     * If {@code false} is returned, {@link ExecutionInfo#getGeneratedKeys()} returns {@code null}.
+     *
+     * @return true if generated-keys retrieval is enabled
+     * @since 1.4.5
+     */
+    public boolean isAutoRetrieveGeneratedKeys() {
+        return this.generatedKeysConfig.autoRetrieve;
+    }
+
+    /**
+     * When {@link JdbcProxyFactory} for generated-keys is specified, return {@code true}.
+     *
+     * @return {@code true} when {@link ResultSetProxyLogicFactory} for generated keys is specified
+     * @see ProxyConfig.Builder#generatedKeysProxyLogicFactory(ResultSetProxyLogicFactory)
+     * @since 1.4.5
+     */
+    public boolean isGeneratedKeysProxyEnabled() {
+        return this.generatedKeysConfig.proxyLogicFactory != null;
+    }
+
+    /**
+     * Whether to auto close {@link ResultSet} for generated-keys that is automatically retrieved.
+     *
+     * When this returns {@code true}, always close the {@link ResultSet} for generated keys when
+     * {@link QueryExecutionListener#afterQuery(ExecutionInfo, List)} has finished.
+     * The result of {@link Statement#getGeneratedKeys()} method will not be closed by this. Only auto retrieved
+     * {@link ResultSet} of generated keys is closed.
+     *
+     * @since 1.4.5
+     */
+    public boolean isAutoCloseGeneratedKeys() {
+        return this.generatedKeysConfig.autoClose;
     }
 
     public ConnectionIdManager getConnectionIdManager() {

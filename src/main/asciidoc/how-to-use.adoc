@@ -153,6 +153,82 @@ See Tomcat configuration examples in {datasource-proxy-examples}[datasource-prox
 Also see `ProxyDataSourceObjectFactory` javadoc
 
 
+[[generated-keys]]
+=== Generated Keys
+
+[[auto-retrieve-generated-keys]]
+==== Auto retrieve generated keys
+
+When query execution methods(`execute`, `executeUpdate`, `executeBatch`, etc) are called, automatically calls
+`getGeneratedKeys()` and make the returned `ResultSet` available via `ExecutionInfo#getGeneratedKeys()` in
+`QueryExecutionListener`.
+
+To enable auto retrieval of generated-keys:
+
+```java
+builder
+  .autoRetrieveGeneratedKeys(...)
+  .build();
+```
+
+NOTE: When `getExecutionKeys()` is called:  +
+If there is a cached(auto retrieved) generated-keys and it is still open, then cached `ResultSet` is returned.
+If there is no cached generated-keys or cached one exists but it is already closed, it will perform the
+actual `getExecutionKeys()` on underlying `Statement` object, keep the result into the cache, then return it.
+
+[[auto-close-generated-keys]]
+==== Auto close generated keys
+
+When auto-close is enabled, close the <<auto-retrieve-generated-keys, auto-retrieved generated-keys>> after
+all `QueryExecutionListener#afterQuery()` are performed.
+
+This option is used with <<auto-retrieve-generated-keys, auto retrieve generated keys>> feature.
+
+```java
+builder
+  .autoRetrieveGeneratedKeys(true)  // specify `true` or `false` to auto-close the `ResultSet`
+  .build();
+```
+
+
+If you want to *reuse* the auto-retrieved generated-keys in upper layer, such as OR mapper or application, turn
+off this auto-close feature; so that, cached generated-keys will be returned when `getGeneratedKeys()` is called.
+Based on jdbc-driver implementation, calling `getGeneratedKeys()` might be limited to once.
+When you decided to reuse generated-keys, you might need to support repeatable read on the `ResultSet`. see
+<<proxying-generated-keys>> for how to support repeatable read on generated-keys.
+
+
+NOTE: When `getExecutionKeys()` is called, the returned `ResultSet` will NOT be closed by this feature since it is
+not auto-retrieved generated-keys.
+
+[[proxying-generated-keys]]
+==== Proxying generated keys
+
+Create a proxy for generated-keys' `ResultSet`.
+This applies to both <<auto-retrieve-generated-keys, auto-retrieved generated-keys>> and result of
+`getGeneratedKeys()`.
+
+*Usecase*
+
+You have a `QueryExecutionListener` that reads values from  generated-keys' `ResultSet`. Also, in upper layer, such as
+ORM or application logic, it needs to use the same generated-keys' `ResultSet`.
+
+Based on `ResultSet` implementation, reading values may be limited to only once; therefore, when
+`QueryExecutionListener` reads values from generated-keys' `ResultSet` and upper layer tries to read values from it,
+the `ResultSet` may not allow the repeated read.
+
+To allow multiple reads, you can proxy the generated-keys' `ResultSet` with `RepeatableReadResultSetProxyLogic`.
+
+```java
+builder
+   // specify proxy factory for generated-keys' result-set
+  .autoRetrieveGeneratedKeys(false, new RepeatableReadResultSetProxyLogicFactory());
+  // equivalent of above
+  //   .autoRetrieveGeneratedKeysWithRepeatableReadProxy(false);
+  .build();
+```
+
+
 === Proxying ResultSet
 
 By default, datasource-proxy does *NOT* proxy `ResultSet`. However, in some case, you want to return a proxied
@@ -170,6 +246,8 @@ builder
 In addition, the `proxyResultSet()` method takes `ResultSetProxyLogicFactory` to add some logic on
 interacting with `ResultSet`. Default logic is no-op.
 
+NOTE: This proxying does NOT apply to the `ResultSet` from `getGeneratedKeys()`. To proxy the result of
+`getGeneratedKeys()`, see <<proxying-generated-keys>>.
 
 ==== Repeatable Read ResultSet
 

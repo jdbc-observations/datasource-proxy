@@ -32,6 +32,7 @@ import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 
 import javax.sql.DataSource;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -135,6 +136,9 @@ public class ProxyDataSourceBuilder {
     private ConnectionIdManager connectionIdManager;
 
     private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
+
+    private boolean autoRetrieveGeneratedKeys;
+    private boolean autoCloseGeneratedKeys;
     private ResultSetProxyLogicFactory generatedKeysProxyLogicFactory;
 
     private List<MethodExecutionListener> methodExecutionListeners = new ArrayList<MethodExecutionListener>();
@@ -674,10 +678,7 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Enable generated keys proxy.
-     *
-     * When it is enabled, generated keys {@link java.sql.ResultSet} will be proxied(e.g.: Statement#getGeneratedKeys()).
-     * The built proxy will be returned by {@link ExecutionInfo#getGeneratedKeys()}
+     * Enable {@link java.sql.ResultSet} proxy for generated keys(e.g.: Statement#getGeneratedKeys()).
      *
      * @return builder
      * @since 1.4.5
@@ -688,22 +689,84 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Enable generated keys proxy with given proxy logic factory.
+     * Enable {@link java.sql.ResultSet} proxy for generated keys with given proxy logic factory.
      *
      * @return builder
      * @since 1.4.5
      */
-    public ProxyDataSourceBuilder proxyGeneratedKeys(ResultSetProxyLogicFactory factory){
+    public ProxyDataSourceBuilder proxyGeneratedKeys(ResultSetProxyLogicFactory factory) {
         this.generatedKeysProxyLogicFactory = factory;
         return this;
     }
 
     /**
-     * Enable generated keys resultset proxy that allows repeatable read.
+     * Enable {@link java.sql.ResultSet} proxy for generated keys that allows repeatable read.
+     *
      * @return builder
      * @since 1.4.5
      */
-    public ProxyDataSourceBuilder repeatableReadGeneratedKeys(){
+    public ProxyDataSourceBuilder repeatableReadGeneratedKeys() {
+        this.generatedKeysProxyLogicFactory = new RepeatableReadResultSetProxyLogicFactory();
+        return this;
+    }
+
+    /**
+     * Enable auto retrieval of generated keys.
+     *
+     * When it is enabled, after executing query, it always call {@link Statement#getGeneratedKeys()}.
+     * The retrieved {@link java.sql.ResultSet} is available via {@link ExecutionInfo#getGeneratedKeys()}.
+     *
+     * When this configuration is combined with {@link #proxyGeneratedKeys(ResultSetProxyLogicFactory)}, the proxied
+     * {@link java.sql.ResultSet} will be returned from {@link ExecutionInfo#getGeneratedKeys()}.
+     *
+     * When autoClose parameter is set to {@code true}, datasource-proxy will close the generated-keys {@link java.sql.ResultSet}
+     * after it called {@link QueryExecutionListener#afterQuery(ExecutionInfo, List)}.
+     * This behavior might not be ideal if above layer, such as OR Mapper or application code, need to access generated-keys
+     * because when they access generated-keys, the resultset is already closed.
+     *
+     * To support such usecase, specify {@link RepeatableReadResultSetProxyLogicFactory} and set {@code autoClose=false}.
+     * This way, even though your {@link QueryExecutionListener} has accessed generated-keys, it is still readable at
+     * upper layer of the code, and they can close the generated-keys resultset.
+     *
+     * @param autoClose set {@code true} to close the generated-keys {@link java.sql.ResultSet} after query listener execution
+     * @return builder
+     * @since 1.4.5
+     */
+    public ProxyDataSourceBuilder autoRetrieveGeneratedKeys(boolean autoClose) {
+        this.autoRetrieveGeneratedKeys = true;
+        this.autoCloseGeneratedKeys = autoClose;
+        return this;
+    }
+
+    /**
+     * Enable auto retrieval of generated keys with proxy created by specified factory.
+     *
+     * See detail on {@link #autoRetrieveGeneratedKeys(boolean)}.
+     *
+     * @param autoClose set {@code true} to close the generated-keys {@link java.sql.ResultSet} after query listener execution
+     * @param factory   a factory to create a generated-keys proxy
+     * @return builder
+     * @since 1.4.5
+     */
+    public ProxyDataSourceBuilder autoRetrieveGeneratedKeys(boolean autoClose, ResultSetProxyLogicFactory factory) {
+        this.autoRetrieveGeneratedKeys = true;
+        this.autoCloseGeneratedKeys = autoClose;
+        this.generatedKeysProxyLogicFactory = factory;
+        return this;
+    }
+
+    /**
+     * Enable auto retrieval of generated keys with {@link RepeatableReadResultSetProxyLogicFactory}.
+     *
+     * See detail on {@link #autoRetrieveGeneratedKeys(boolean)}.
+     *
+     * @param autoClose set {@code true} to close the generated-keys {@link java.sql.ResultSet} after query listener execution
+     * @return builder
+     * @since 1.4.5
+     */
+    public ProxyDataSourceBuilder autoRetrieveGeneratedKeysWithRepeatableReadProxy(boolean autoClose) {
+        this.autoRetrieveGeneratedKeys = true;
+        this.autoCloseGeneratedKeys = autoClose;
         this.generatedKeysProxyLogicFactory = new RepeatableReadResultSetProxyLogicFactory();
         return this;
     }
@@ -924,8 +987,12 @@ public class ProxyDataSourceBuilder {
         // this can be null if creation of resultset proxy is disabled
         proxyConfigBuilder.resultSetProxyLogicFactory(this.resultSetProxyLogicFactory);
 
+        // generated keys
+        proxyConfigBuilder.autoRetrieveGeneratedKeys(this.autoRetrieveGeneratedKeys);
+        proxyConfigBuilder.autoCloseGeneratedKeys(this.autoCloseGeneratedKeys);
         // this can be null if creation of generated keys proxy is disabled
         proxyConfigBuilder.generatedKeysProxyLogicFactory(this.generatedKeysProxyLogicFactory);
+
 
         // build ProxyDataSource
         ProxyDataSource proxyDataSource = new ProxyDataSource();

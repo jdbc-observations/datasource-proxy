@@ -139,7 +139,6 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
             return method.invoke(this.resultSet, args);
         } else if (methodName.equals("isClosed")) {
             return method.invoke(this.resultSet, args);
-//            return this.closed;
         }
 
         if (this.closed) {

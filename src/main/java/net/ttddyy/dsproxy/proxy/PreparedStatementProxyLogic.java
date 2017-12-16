@@ -224,6 +224,18 @@ public class PreparedStatementProxyLogic {
             queries.add(queryInfo);
         }
 
+        final boolean isGetGeneratedKeysMethod = GET_GENERATED_KEYS_METHOD.equals(methodName);
+
+        // For "getGeneratedKeys()", if auto retrieval is enabled and retrieved resultset is still open, return it from
+        // the cache. If it is already closed, then proceed to invoke the actual "getGeneratedKeys()" method.
+        if (isGetGeneratedKeysMethod && this.generatedKeys != null) {
+            if (this.generatedKeys.isClosed()) {
+                this.generatedKeys = null;
+            } else {
+                return this.generatedKeys;  // return from cache
+            }
+        }
+
         final ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo, this.ps, isBatchExecution, batchSize, method, args);
 
         queryListener.beforeQuery(execInfo, queries);
@@ -232,25 +244,42 @@ public class PreparedStatementProxyLogic {
         try {
             final long beforeTime = System.currentTimeMillis();
 
-            Object retVal = method.invoke(ps, args);
+            Object retVal = method.invoke(this.ps, args);
 
             final long afterTime = System.currentTimeMillis();
 
-            if (EXEC_METHODS.contains(methodName)){
-                generatedKeys = proxyFactory.createGeneratedKeys(ps, this.connectionInfo, this.proxyConfig);
-                execInfo.setGeneratedKeys(generatedKeys);
+
+            // method that returns ResultSet but exclude "getGeneratedKeys()"
+            final boolean isResultSetReturningMethod = !isGetGeneratedKeysMethod && METHODS_TO_RETURN_RESULTSET.contains(methodName);
+
+            final boolean isCreateGeneratedKeysProxy = isGetGeneratedKeysMethod && this.proxyConfig.isGeneratedKeysProxyEnabled();
+            final boolean isCreateResultSetProxy = isResultSetReturningMethod && this.proxyConfig.isResultSetProxyEnabled();
+
+            // create proxy for returned ResultSet
+            if (isCreateGeneratedKeysProxy) {
+                retVal = proxyFactory.createGeneratedKeys((ResultSet) retVal, this.connectionInfo, this.proxyConfig);
+            } else if (isCreateResultSetProxy) {
+                retVal = proxyFactory.createResultSet((ResultSet) retVal, this.connectionInfo, this.proxyConfig);
             }
 
-            // execInfo.setResult will have proxied ResultSet if enabled
-            if (METHODS_TO_RETURN_RESULTSET.contains(methodName)) {
-                if (GET_GENERATED_KEYS_METHOD.equals(methodName) && generatedKeys != null){
-                    retVal = generatedKeys;
-                } else{
-                    retVal = proxyFactory.createResultSet((ResultSet) retVal, this.connectionInfo, this.proxyConfig);
+
+            // cache generated-keys ResultSet if auto-retrieval is enabled
+            if (this.proxyConfig.isAutoRetrieveGeneratedKeys()) {
+                final boolean isQueryExecutionMethod = EXEC_METHODS.contains(methodName);
+
+                if (isGetGeneratedKeysMethod) {
+                    this.generatedKeys = (ResultSet) retVal;  // result may be proxied
+                } else if (isQueryExecutionMethod) {
+                    ResultSet generatedKeysResultSet = this.ps.getGeneratedKeys();  // auto retrieve generated-keys
+                    if (this.proxyConfig.isGeneratedKeysProxyEnabled()) {
+                        generatedKeysResultSet = proxyFactory.createGeneratedKeys(generatedKeysResultSet, this.connectionInfo, this.proxyConfig);
+                    }
+                    this.generatedKeys = generatedKeysResultSet;  // cache generated-keys
                 }
             }
 
             execInfo.setResult(retVal);
+            execInfo.setGeneratedKeys(this.generatedKeys);
             execInfo.setElapsedTime(afterTime - beforeTime);
             execInfo.setSuccess(true);
 
@@ -261,6 +290,14 @@ public class PreparedStatementProxyLogic {
             throw ex.getTargetException();
         } finally {
             queryListener.afterQuery(execInfo, queries);
+
+            // auto-close the auto-retrieved generated keys. result of "getGeneratedKeys()" should not be affected.
+            if (!isGetGeneratedKeysMethod && this.proxyConfig.isAutoCloseGeneratedKeys()
+                    && this.generatedKeys != null && !this.generatedKeys.isClosed()) {
+                this.generatedKeys.close();
+                this.generatedKeys = null;
+            }
+
         }
     }
 
@@ -281,7 +318,7 @@ public class PreparedStatementProxyLogic {
             for (ParameterSetOperation operation : modifiedParameters.values()) {
                 final Method paramMethod = operation.getMethod();
                 final Object[] paramArgs = operation.getArgs();
-                paramMethod.invoke(ps, paramArgs);
+                paramMethod.invoke(this.ps, paramArgs);
             }
 
             // replace

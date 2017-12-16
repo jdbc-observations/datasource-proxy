@@ -6,7 +6,11 @@ import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.Test;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +30,7 @@ public class GeneratedKeysProxyTest {
         GeneratedKeysProxyTest.LoggingExecutionListener listener = new GeneratedKeysProxyTest.LoggingExecutionListener();
         ProxyDataSource proxyDataSource = ProxyDataSourceBuilder.create(dataSourceWithData)
                 .listener(listener)
-                .repeatableReadGeneratedKeys()
+                .autoRetrieveGeneratedKeysWithRepeatableReadProxy(false)
                 .build();
 
         checkThatResultSetCanBeConsumedViaTheProxyDataSource(proxyDataSource);
