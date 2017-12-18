@@ -3,7 +3,7 @@
 
   <groupId>net.ttddyy</groupId>
   <artifactId>datasource-proxy</artifactId>
-  <version>1.4.5</version>
+  <version>1.5-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>datasource-proxy</name>
@@ -22,7 +22,7 @@
     <connection>scm:git:git@github.com:ttddyy/datasource-proxy.git</connection>
     <developerConnection>scm:git:git@github.com:ttddyy/datasource-proxy.git</developerConnection>
     <url>git@github.com:ttddyy/datasource-proxy.git</url>
-    <tag>datasource-proxy-1.4.5</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <distributionManagement>
