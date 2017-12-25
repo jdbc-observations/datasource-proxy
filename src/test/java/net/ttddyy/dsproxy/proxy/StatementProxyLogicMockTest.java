@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
@@ -439,7 +440,7 @@ public class StatementProxyLogicMockTest {
                 .build();
 
         return StatementProxyLogic.Builder.create()
-                .statement(statement)
+                .statement(statement, StatementType.STATEMENT)
                 .connectionInfo(connectionInfo)
                 .proxyConnection(proxyConnection)
                 .proxyConfig(proxyConfig)
@@ -926,7 +927,7 @@ public class StatementProxyLogicMockTest {
                 .build();
 
         StatementProxyLogic logic = StatementProxyLogic.Builder.create()
-                .statement(stmt)
+                .statement(stmt, StatementType.STATEMENT)
                 .connectionInfo(new ConnectionInfo())
                 .proxyConfig(proxyConfig)
                 .build();
@@ -948,7 +949,7 @@ public class StatementProxyLogicMockTest {
                 .build();
 
         logic = StatementProxyLogic.Builder.create()
-                .statement(stmt)
+                .statement(stmt, StatementType.STATEMENT)
                 .connectionInfo(new ConnectionInfo())
                 .proxyConfig(proxyConfig)
                 .build();
@@ -975,7 +976,7 @@ public class StatementProxyLogicMockTest {
         connectionInfo.setDataSourceName(DS_NAME);
 
         StatementProxyLogic logic = new StatementProxyLogic.Builder()
-                .statement(statement)
+                .statement(statement, StatementType.STATEMENT)
                 .connectionInfo(connectionInfo)
                 .proxyConfig(proxyConfig)
                 .build();

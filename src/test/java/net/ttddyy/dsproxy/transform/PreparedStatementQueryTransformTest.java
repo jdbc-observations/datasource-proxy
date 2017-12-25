@@ -85,7 +85,7 @@ public class PreparedStatementQueryTransformTest {
     public void testCreatePreparedStatement() throws Exception {
         getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
 
-        // when preparedStatement method is called, intercept should be called
+        // when statement method is called, intercept should be called
         assertThat(interceptedQueries).hasSize(1).containsExactly("UPDATE foo SET name = ?");
     }
 

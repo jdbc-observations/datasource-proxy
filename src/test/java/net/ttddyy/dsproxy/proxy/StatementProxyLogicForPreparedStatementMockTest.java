@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
@@ -51,7 +52,7 @@ import static org.mockito.Mockito.when;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class PreparedStatementProxyLogicMockTest {
+public class StatementProxyLogicForPreparedStatementMockTest {
 
     private static final String DS_NAME = "myDS";
 
@@ -62,7 +63,7 @@ public class PreparedStatementProxyLogicMockTest {
         PreparedStatement stat = mock(PreparedStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
 
         Array array = mock(Array.class);
@@ -183,13 +184,13 @@ public class PreparedStatementProxyLogicMockTest {
 
     }
 
-    private PreparedStatementProxyLogic getProxyLogic(PreparedStatement ps, String query, QueryExecutionListener listener, Connection proxyConnection) {
+    private StatementProxyLogic getProxyLogic(PreparedStatement ps, String query, QueryExecutionListener listener, Connection proxyConnection) {
         return getProxyLogic(ps, query, listener, proxyConnection, false, false);
     }
 
-    private PreparedStatementProxyLogic getProxyLogic(PreparedStatement ps, String query,
-                                                      QueryExecutionListener listener, Connection proxyConnection,
-                                                      boolean createResultSetProxy, boolean createGenerateKeysProxy) {
+    private StatementProxyLogic getProxyLogic(PreparedStatement ps, String query,
+                                              QueryExecutionListener listener, Connection proxyConnection,
+                                              boolean createResultSetProxy, boolean createGenerateKeysProxy) {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName(DS_NAME);
 
@@ -199,8 +200,8 @@ public class PreparedStatementProxyLogicMockTest {
                 .generatedKeysProxyLogicFactory(createGenerateKeysProxy ? new SimpleResultSetProxyLogicFactory() : null)
                 .build();
 
-        return PreparedStatementProxyLogic.Builder.create()
-                .preparedStatement(ps)
+        return StatementProxyLogic.Builder.create()
+                .statement(ps, StatementType.PREPARED)
                 .query(query)
                 .connectionInfo(connectionInfo)
                 .proxyConnection(proxyConnection)
@@ -256,7 +257,7 @@ public class PreparedStatementProxyLogicMockTest {
 
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
         Method setString = PreparedStatement.class.getMethod("setString", int.class, String.class);
         Method setInt = PreparedStatement.class.getMethod("setInt", int.class, int.class);
@@ -317,7 +318,7 @@ public class PreparedStatementProxyLogicMockTest {
 
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
         Method setString = PreparedStatement.class.getMethod("setString", int.class, String.class);
         Method setInt = PreparedStatement.class.getMethod("setInt", int.class, int.class);
@@ -367,7 +368,7 @@ public class PreparedStatementProxyLogicMockTest {
 
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
         Method setString = PreparedStatement.class.getMethod("setString", int.class, String.class);
         Method setInt = PreparedStatement.class.getMethod("setInt", int.class, int.class);
@@ -411,7 +412,7 @@ public class PreparedStatementProxyLogicMockTest {
 
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
         Method setString = PreparedStatement.class.getMethod("setString", int.class, String.class);
         Method setInt = PreparedStatement.class.getMethod("setInt", int.class, int.class);
@@ -448,7 +449,7 @@ public class PreparedStatementProxyLogicMockTest {
     @Test
     public void testGetTarget() throws Throwable {
         PreparedStatement stmt = mock(PreparedStatement.class);
-        PreparedStatementProxyLogic logic = getProxyLogic(stmt, null, null, null);
+        StatementProxyLogic logic = getProxyLogic(stmt, null, null, null);
 
         Method method = ProxyJdbcObject.class.getMethod("getTarget");
         Object result = logic.invoke(method, null);
@@ -461,7 +462,7 @@ public class PreparedStatementProxyLogicMockTest {
         PreparedStatement mock = mock(PreparedStatement.class);
         when(mock.unwrap(String.class)).thenReturn("called");
 
-        PreparedStatementProxyLogic logic = getProxyLogic(mock, null, null, null);
+        StatementProxyLogic logic = getProxyLogic(mock, null, null, null);
 
         Method method = PreparedStatement.class.getMethod("unwrap", Class.class);
         Object result = logic.invoke(method, new Object[]{String.class});
@@ -475,7 +476,7 @@ public class PreparedStatementProxyLogicMockTest {
         PreparedStatement mock = mock(PreparedStatement.class);
         when(mock.isWrapperFor(String.class)).thenReturn(true);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(mock, null, null, null);
+        StatementProxyLogic logic = getProxyLogic(mock, null, null, null);
 
         Method method = PreparedStatement.class.getMethod("isWrapperFor", Class.class);
         Object result = logic.invoke(method, new Object[]{String.class});
@@ -490,7 +491,7 @@ public class PreparedStatementProxyLogicMockTest {
         PreparedStatement stat = mock(PreparedStatement.class);
 
         when(stat.getConnection()).thenReturn(conn);
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, null, null, conn);
+        StatementProxyLogic logic = getProxyLogic(stat, null, null, conn);
 
         Method method = PreparedStatement.class.getMethod("getConnection");
         Object result = logic.invoke(method, null);
@@ -503,7 +504,7 @@ public class PreparedStatementProxyLogicMockTest {
         PreparedStatement stat = mock(PreparedStatement.class);
 
         when(stat.toString()).thenReturn("my ps");
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, null, null, null);
+        StatementProxyLogic logic = getProxyLogic(stat, null, null, null);
 
         Method method = Object.class.getMethod("toString");
         Object result = logic.invoke(method, null);
@@ -514,7 +515,7 @@ public class PreparedStatementProxyLogicMockTest {
     @Test
     public void testHashCode() throws Throwable {
         PreparedStatement stat = mock(PreparedStatement.class);
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, null, null, null);
+        StatementProxyLogic logic = getProxyLogic(stat, null, null, null);
 
         Method method = Object.class.getMethod("hashCode");
         Object result = logic.invoke(method, null);
@@ -525,7 +526,7 @@ public class PreparedStatementProxyLogicMockTest {
     @Test
     public void testEquals() throws Throwable {
         PreparedStatement stat = mock(PreparedStatement.class);
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, null, null, null);
+        StatementProxyLogic logic = getProxyLogic(stat, null, null, null);
 
         Method method = Object.class.getMethod("equals", Object.class);
 
@@ -558,7 +559,7 @@ public class PreparedStatementProxyLogicMockTest {
         PreparedStatement ps = mock(PreparedStatement.class);
         when(ps.executeQuery()).thenReturn(resultSet);
         when(ps.getGeneratedKeys()).thenReturn(resultSet);
-        PreparedStatementProxyLogic logic = getProxyLogic(ps, "", listener, null, true, false);
+        StatementProxyLogic logic = getProxyLogic(ps, "", listener, null, true, false);
 
 
         // "executeQuery" with no args
@@ -604,7 +605,7 @@ public class PreparedStatementProxyLogicMockTest {
         when(ps.executeQuery()).thenReturn(resultSet);
         when(ps.getGeneratedKeys()).thenReturn(resultSet);
         when(ps.getResultSet()).thenReturn(resultSet);
-        PreparedStatementProxyLogic logic = getProxyLogic(ps, "", listener, null, false, true);
+        StatementProxyLogic logic = getProxyLogic(ps, "", listener, null, false, true);
 
 
         // "executeQuery", "getGeneratedKeys", "getResultSet"
@@ -650,8 +651,8 @@ public class PreparedStatementProxyLogicMockTest {
                 .autoCloseGeneratedKeys(true)
                 .build();
 
-        PreparedStatementProxyLogic logic = PreparedStatementProxyLogic.Builder.create()
-                .preparedStatement(ps)
+        StatementProxyLogic logic = StatementProxyLogic.Builder.create()
+                .statement(ps, StatementType.PREPARED)
                 .connectionInfo(new ConnectionInfo())
                 .proxyConfig(proxyConfig)
                 .build();
@@ -672,8 +673,8 @@ public class PreparedStatementProxyLogicMockTest {
                 .autoCloseGeneratedKeys(false)
                 .build();
 
-        logic = PreparedStatementProxyLogic.Builder.create()
-                .preparedStatement(ps)
+        logic = StatementProxyLogic.Builder.create()
+                .statement(ps, StatementType.PREPARED)
                 .connectionInfo(new ConnectionInfo())
                 .proxyConfig(proxyConfig)
                 .build();
@@ -697,8 +698,8 @@ public class PreparedStatementProxyLogicMockTest {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName(DS_NAME);
 
-        PreparedStatementProxyLogic logic = new PreparedStatementProxyLogic.Builder()
-                .preparedStatement(ps)
+        StatementProxyLogic logic = new StatementProxyLogic.Builder()
+                .statement(ps, StatementType.PREPARED)
                 .connectionInfo(connectionInfo)
                 .proxyConfig(proxyConfig)
                 .build();

@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
@@ -45,7 +46,7 @@ import static org.mockito.Mockito.when;
  *
  * @author Tadaya Tsuyukubo
  */
-public class PreparedStatementProxyLogicForCallableStatementMockTest {
+public class StatementProxyLogicForCallableStatementMockTest {
     private static final String DS_NAME = "myDS";
 
     @Test
@@ -57,7 +58,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
 
         when(stat.execute()).thenReturn(true);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
         Method method = CallableStatement.class.getMethod("execute");
         Object result = logic.invoke(method, null);
@@ -75,7 +76,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
 
         when(stat.execute()).thenReturn(true);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
         setParameterByPosition(logic);
         Method method = CallableStatement.class.getMethod("execute");
@@ -96,7 +97,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
 
         when(stat.execute()).thenReturn(true);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
         setParameterByName(logic);
         Method method = CallableStatement.class.getMethod("execute");
@@ -117,7 +118,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
 
         when(stat.executeUpdate()).thenReturn(100);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
         Method method = CallableStatement.class.getMethod("executeUpdate");
         Object result = logic.invoke(method, null);
@@ -135,7 +136,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
 
         when(stat.executeUpdate()).thenReturn(100);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
         setParameterByPosition(logic);
         Method method = CallableStatement.class.getMethod("executeUpdate");
@@ -156,7 +157,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
 
         when(stat.executeUpdate()).thenReturn(100);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
         setParameterByName(logic);
         Method method = CallableStatement.class.getMethod("executeUpdate");
@@ -178,7 +179,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         ResultSet mockResultSet = mock(ResultSet.class);
         when(stat.executeQuery()).thenReturn(mockResultSet);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
         Method method = CallableStatement.class.getMethod("executeQuery");
         Object result = logic.invoke(method, null);
 
@@ -196,7 +197,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         ResultSet mockResultSet = mock(ResultSet.class);
         when(stat.executeQuery()).thenReturn(mockResultSet);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
         setParameterByPosition(logic);
         Method method = CallableStatement.class.getMethod("executeQuery");
         Object result = logic.invoke(method, null);
@@ -217,7 +218,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         ResultSet mockResultSet = mock(ResultSet.class);
         when(stat.executeQuery()).thenReturn(mockResultSet);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
         setParameterByName(logic);
         Method method = CallableStatement.class.getMethod("executeQuery");
@@ -237,7 +238,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
         Method setString = CallableStatement.class.getMethod("setString", int.class, String.class);
         Method setInt = CallableStatement.class.getMethod("setInt", int.class, int.class);
@@ -283,7 +284,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
         Method setString = CallableStatement.class.getMethod("setString", int.class, String.class);
         Method setInt = CallableStatement.class.getMethod("setInt", int.class, int.class);
@@ -326,7 +327,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
         Method setString = CallableStatement.class.getMethod("setString", int.class, String.class);
         Method setInt = CallableStatement.class.getMethod("setInt", int.class, int.class);
@@ -365,7 +366,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         CallableStatement stat = mock(CallableStatement.class);
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
+        StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
         Method setString = CallableStatement.class.getMethod("setString", int.class, String.class);
         Method setInt = CallableStatement.class.getMethod("setInt", int.class, int.class);
         Method addBatch = CallableStatement.class.getMethod("addBatch");
@@ -490,7 +491,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
     };
 
 
-    private void setParameterByPosition(PreparedStatementProxyLogic logic) throws Throwable {
+    private void setParameterByPosition(StatementProxyLogic logic) throws Throwable {
 
         Method setArray = CallableStatement.class.getMethod("setArray", int.class, Array.class);
         Method setAsciiStream = CallableStatement.class.getMethod("setAsciiStream", int.class, InputStream.class);
@@ -537,7 +538,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         logic.invoke(setURL, new Object[]{PARAM_URL.index, PARAM_URL.value});
     }
 
-    private void setParameterByName(PreparedStatementProxyLogic logic) throws Throwable {
+    private void setParameterByName(StatementProxyLogic logic) throws Throwable {
 
         Method setAsciiStream = CallableStatement.class.getMethod("setAsciiStream", String.class, InputStream.class);
         Method setBigDecimal = CallableStatement.class.getMethod("setBigDecimal", String.class, BigDecimal.class);
@@ -708,15 +709,15 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         }
     }
 
-    private PreparedStatementProxyLogic getProxyLogic(CallableStatement cs, String query, QueryExecutionListener listener, Connection proxyConnection) {
+    private StatementProxyLogic getProxyLogic(CallableStatement cs, String query, QueryExecutionListener listener, Connection proxyConnection) {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName(DS_NAME);
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().queryListener(listener).build();
 
 
-        return PreparedStatementProxyLogic.Builder.create()
-                .preparedStatement(cs)
+        return StatementProxyLogic.Builder.create()
+                .statement(cs, StatementType.CALLABLE)
                 .query(query)
                 .connectionInfo(connectionInfo)
                 .proxyConnection(proxyConnection)
@@ -728,7 +729,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
     @Test
     public void testGetTarget() throws Throwable {
         CallableStatement orig = mock(CallableStatement.class);
-        PreparedStatementProxyLogic logic = getProxyLogic(orig, null, null, null);
+        StatementProxyLogic logic = getProxyLogic(orig, null, null, null);
 
         Method method = ProxyJdbcObject.class.getMethod("getTarget");
         Object result = logic.invoke(method, null);
@@ -741,7 +742,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         CallableStatement mock = mock(CallableStatement.class);
         when(mock.unwrap(String.class)).thenReturn("called");
 
-        PreparedStatementProxyLogic logic = getProxyLogic(mock, null, null, null);
+        StatementProxyLogic logic = getProxyLogic(mock, null, null, null);
         Method method = CallableStatement.class.getMethod("unwrap", Class.class);
         Object result = logic.invoke(method, new Object[]{String.class});
 
@@ -754,7 +755,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         CallableStatement mock = mock(CallableStatement.class);
         when(mock.isWrapperFor(String.class)).thenReturn(true);
 
-        PreparedStatementProxyLogic logic = getProxyLogic(mock, null, null, null);
+        StatementProxyLogic logic = getProxyLogic(mock, null, null, null);
 
         Method method = CallableStatement.class.getMethod("isWrapperFor", Class.class);
         Object result = logic.invoke(method, new Object[]{String.class});
@@ -769,7 +770,7 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         CallableStatement stat = mock(CallableStatement.class);
 
         when(stat.getConnection()).thenReturn(conn);
-        PreparedStatementProxyLogic logic = getProxyLogic(stat, null, null, conn);
+        StatementProxyLogic logic = getProxyLogic(stat, null, null, conn);
 
         Method method = CallableStatement.class.getMethod("getConnection");
         Object result = logic.invoke(method, null);
@@ -787,8 +788,8 @@ public class PreparedStatementProxyLogicForCallableStatementMockTest {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName(DS_NAME);
 
-        PreparedStatementProxyLogic logic = new PreparedStatementProxyLogic.Builder()
-                .preparedStatement(cs)
+        StatementProxyLogic logic = new StatementProxyLogic.Builder()
+                .statement(cs, StatementType.CALLABLE)
                 .connectionInfo(connectionInfo)
                 .proxyConfig(proxyConfig)
                 .build();

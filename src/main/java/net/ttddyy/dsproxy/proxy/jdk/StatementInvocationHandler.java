@@ -1,8 +1,9 @@
 package net.ttddyy.dsproxy.proxy.jdk;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.proxy.StatementProxyLogic;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -22,7 +23,7 @@ public class StatementInvocationHandler implements InvocationHandler {
             Statement stmt, ConnectionInfo connectionInfo,
             Connection proxyConnection, ProxyConfig proxyConfig) {
         this.delegate = StatementProxyLogic.Builder.create()
-                .statement(stmt)
+                .statement(stmt, StatementType.STATEMENT)
                 .connectionInfo(connectionInfo)
                 .proxyConnection(proxyConnection)
                 .proxyConfig(proxyConfig)

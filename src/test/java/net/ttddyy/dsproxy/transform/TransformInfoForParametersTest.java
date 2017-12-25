@@ -1,7 +1,8 @@
 package net.ttddyy.dsproxy.transform;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.proxy.PreparedStatementProxyLogic;
+import net.ttddyy.dsproxy.StatementType;
+import net.ttddyy.dsproxy.proxy.StatementProxyLogic;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,7 +52,7 @@ public class TransformInfoForParametersTest {
         ParameterTransformer parameterTransformer = getMockParameterTransformer();
 
         PreparedStatement ps = mock(PreparedStatement.class);
-        PreparedStatementProxyLogic proxyLogic = getProxyLogic(ps, parameterTransformer);
+        StatementProxyLogic proxyLogic = getProxyLogic(ps, parameterTransformer);
 
         Method method = PreparedStatement.class.getMethod("execute");
         Object[] args = new Object[]{};
@@ -74,7 +75,7 @@ public class TransformInfoForParametersTest {
         ParameterTransformer parameterTransformer = getMockParameterTransformer();
 
         PreparedStatement ps = mock(PreparedStatement.class);
-        PreparedStatementProxyLogic proxyLogic = getProxyLogic(ps, parameterTransformer);
+        StatementProxyLogic proxyLogic = getProxyLogic(ps, parameterTransformer);
 
         Method method = PreparedStatement.class.getMethod("addBatch");
         Object[] args = new Object[]{};
@@ -108,7 +109,7 @@ public class TransformInfoForParametersTest {
         ParameterTransformer parameterTransformer = getMockParameterTransformer();
 
         CallableStatement cs = mock(CallableStatement.class);
-        PreparedStatementProxyLogic proxyLogic = getProxyLogic(cs, parameterTransformer);
+        StatementProxyLogic proxyLogic = getProxyLogic(cs, parameterTransformer);
 
         Method method = PreparedStatement.class.getMethod("execute");
         Object[] args = new Object[]{};
@@ -131,7 +132,7 @@ public class TransformInfoForParametersTest {
         ParameterTransformer parameterTransformer = getMockParameterTransformer();
 
         CallableStatement cs = mock(CallableStatement.class);
-        PreparedStatementProxyLogic proxyLogic = getProxyLogic(cs, parameterTransformer);
+        StatementProxyLogic proxyLogic = getProxyLogic(cs, parameterTransformer);
 
         Method method = PreparedStatement.class.getMethod("addBatch");
         Object[] args = new Object[]{};
@@ -162,14 +163,14 @@ public class TransformInfoForParametersTest {
     }
 
 
-    private PreparedStatementProxyLogic getProxyLogic(PreparedStatement ps, ParameterTransformer parameterTransformer) {
+    private StatementProxyLogic getProxyLogic(PreparedStatement ps, ParameterTransformer parameterTransformer) {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("my-ds");
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().parameterTransformer(parameterTransformer).build();
 
-        return PreparedStatementProxyLogic.Builder.create()
-                .preparedStatement(ps)
+        return StatementProxyLogic.Builder.create()
+                .statement(ps, StatementType.PREPARED)
                 .query("my-query")
                 .connectionInfo(connectionInfo)
                 .proxyConnection(null)

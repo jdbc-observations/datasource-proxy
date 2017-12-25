@@ -3,36 +3,48 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.transform.ParameterReplacer;
+import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import net.ttddyy.dsproxy.transform.TransformInfo;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import static net.ttddyy.dsproxy.proxy.StatementMethodNames.EXEC_METHODS;
 import static net.ttddyy.dsproxy.proxy.StatementMethodNames.GET_GENERATED_KEYS_METHOD;
 import static net.ttddyy.dsproxy.proxy.StatementMethodNames.METHODS_TO_RETURN_RESULTSET;
 
 /**
- * Proxy Logic implementation for {@link Statement} methods.
+ * Shared proxy logic for {@link Statement}, {@link PreparedStatement} and {@link CallableStatement} invocation.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.2
  */
 public class StatementProxyLogic {
 
+    /**
+     * Builder for {@link StatementProxyLogic}.
+     *
+     * @since 1.4.2
+     */
     public static class Builder {
-        private Statement stmt;
+        private Statement statement;
+        private StatementType statementType;
+        private String query;
         private ConnectionInfo connectionInfo;
         private Connection proxyConnection;
         private ProxyConfig proxyConfig;
@@ -43,15 +55,23 @@ public class StatementProxyLogic {
 
         public StatementProxyLogic build() {
             StatementProxyLogic logic = new StatementProxyLogic();
-            logic.stmt = this.stmt;
+            logic.statement = this.statement;
+            logic.query = this.query;
             logic.connectionInfo = this.connectionInfo;
             logic.proxyConnection = this.proxyConnection;
             logic.proxyConfig = this.proxyConfig;
+            logic.statementType = this.statementType;
             return logic;
         }
 
-        public Builder statement(Statement statement) {
-            this.stmt = statement;
+        public Builder statement(Statement statement, StatementType statementType) {
+            this.statement = statement;
+            this.statementType = statementType;
+            return this;
+        }
+
+        public Builder query(String query) {
+            this.query = query;
             return this;
         }
 
@@ -71,28 +91,21 @@ public class StatementProxyLogic {
         }
     }
 
-    private static final Set<String> METHODS_TO_INTERCEPT = Collections.unmodifiableSet(
-            new HashSet<String>() {
-                {
-                    addAll(StatementMethodNames.BATCH_PARAM_METHODS);
-                    addAll(StatementMethodNames.EXEC_METHODS);
-                    addAll(StatementMethodNames.JDBC4_METHODS);
-                    addAll(StatementMethodNames.GET_CONNECTION_METHOD);
-                    addAll(METHODS_TO_RETURN_RESULTSET);
-                    add("getDataSourceName");
-                    add("toString");
-                    add("getTarget"); // from ProxyJdbcObject
-                }
-            }
-    );
-
-    private Statement stmt;
+    private Statement statement;
+    private StatementType statementType;
+    private String query;
     private ConnectionInfo connectionInfo;
-    private List<String> batchQueries = new ArrayList<String>();
+
+    // when same key(index/name) is used for parameter set operation, old value will be replaced. To implement that logic
+    // using a map, so that putting same key will override the entry.
+    private Map<ParameterKey, ParameterSetOperation> parameters = new LinkedHashMap<ParameterKey, ParameterSetOperation>();
+
+    private List<String> batchQueries = new ArrayList<String>();  // used for batch statement
+    private List<Map<ParameterKey, ParameterSetOperation>> batchParameters = new ArrayList<Map<ParameterKey, ParameterSetOperation>>();
+
     private Connection proxyConnection;
     private ProxyConfig proxyConfig;
     private ResultSet generatedKeys;
-
 
     public Object invoke(Method method, Object[] args) throws Throwable {
 
@@ -101,7 +114,7 @@ public class StatementProxyLogic {
             public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
                 return performQueryExecutionListener(method, args);
             }
-        }, this.proxyConfig, this.stmt, this.connectionInfo, method, args);
+        }, this.proxyConfig, this.statement, this.connectionInfo, method, args);
 
     }
 
@@ -109,86 +122,161 @@ public class StatementProxyLogic {
 
         final String methodName = method.getName();
 
-        if (!METHODS_TO_INTERCEPT.contains(methodName)) {
-            return MethodUtils.proceedExecution(method, stmt, args);
+        if (!StatementMethodNames.METHODS_TO_INTERCEPT.contains(methodName)) {
+            return MethodUtils.proceedExecution(method, statement, args);
         }
+
+        QueryTransformer queryTransformer = this.proxyConfig.getQueryTransformer();
+        ParameterTransformer parameterTransformer = this.proxyConfig.getParameterTransformer();
+        QueryExecutionListener queryListener = this.proxyConfig.getQueryListener();
+        JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
+
 
         // special treat for toString method
         if ("toString".equals(methodName)) {
             final StringBuilder sb = new StringBuilder();
-            sb.append(stmt.getClass().getSimpleName());
+            sb.append(statement.getClass().getSimpleName());   // Statement, PreparedStatement, or CallableStatement
             sb.append(" [");
-            sb.append(stmt.toString());
+            sb.append(statement.toString());
             sb.append("]");
             return sb.toString(); // differentiate toString message.
         } else if ("getDataSourceName".equals(methodName)) {
             return this.connectionInfo.getDataSourceName();
         } else if ("getTarget".equals(methodName)) {
-            // ProxyJdbcObject interface has method to return original object.
-            return stmt;
+            // ProxyJdbcObject interface has a method to return original object.
+            return statement;
         }
 
-        QueryExecutionListener queryListener = this.proxyConfig.getQueryListener();
-        QueryTransformer queryTransformer = this.proxyConfig.getQueryTransformer();
-        JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
-
+        // "unwrap", "isWrapperFor"
         if (StatementMethodNames.JDBC4_METHODS.contains(methodName)) {
             final Class<?> clazz = (Class<?>) args[0];
             if ("unwrap".equals(methodName)) {
-                return stmt.unwrap(clazz);
+                return statement.unwrap(clazz);
             } else if ("isWrapperFor".equals(methodName)) {
-                return stmt.isWrapperFor(clazz);
+                return statement.isWrapperFor(clazz);
             }
         }
 
+        // "getConnection"
         if (StatementMethodNames.GET_CONNECTION_METHOD.contains(methodName)) {
             return this.proxyConnection;
         }
 
-        if ("addBatch".equals(methodName) || "clearBatch".equals(methodName)) {
-            if ("addBatch".equals(methodName) && ObjectArrayUtils.isFirstArgString(args)) {
-                final String query = (String) args[0];
-                final Class<? extends Statement> clazz = Statement.class;
-                final int batchCount = batchQueries.size();
-                final TransformInfo transformInfo = new TransformInfo(clazz, this.connectionInfo.getDataSourceName(), query, true, batchCount);
-                final String transformedQuery = queryTransformer.transformQuery(transformInfo);
-                args[0] = transformedQuery;  // replace to the new query
-                batchQueries.add(transformedQuery);
-            } else if ("clearBatch".equals(methodName)) {
-                batchQueries.clear();
+        // handle add/clear batch related methods
+        if (StatementType.STATEMENT == statementType) {
+            if ("addBatch".equals(methodName) || "clearBatch".equals(methodName)) {
+                if ("addBatch".equals(methodName)) {
+                    final String query = (String) args[0];
+                    final Class<? extends Statement> clazz = Statement.class;
+                    final int batchCount = batchQueries.size();
+                    final TransformInfo transformInfo = new TransformInfo(clazz, this.connectionInfo.getDataSourceName(), query, true, batchCount);
+                    final String transformedQuery = queryTransformer.transformQuery(transformInfo);
+                    args[0] = transformedQuery;  // replace to the new query
+                    batchQueries.add(transformedQuery);
+                } else {  // for "clearBatch" method
+                    batchQueries.clear();
+                }
+
+                // proceed execution, no need to call listener
+                return MethodUtils.proceedExecution(method, statement, args);
             }
 
-            // proceed execution, no need to call listener
-            try {
-                return method.invoke(stmt, args);
-            } catch (InvocationTargetException ex) {
-                throw ex.getTargetException();
+        } else {
+            PreparedStatement ps = (PreparedStatement) this.statement;
+
+            if (StatementMethodNames.METHODS_TO_OPERATE_PARAMETER.contains(methodName)) {
+
+                // for parameter operation method
+                if (StatementMethodNames.PARAMETER_METHODS.contains(methodName)) {
+
+                    // operation to set or clear parameterOperationHolder
+                    if ("clearParameters".equals(methodName)) {
+                        parameters.clear();
+                    } else {
+
+                        ParameterKey parameterKey;
+                        if (args[0] instanceof Integer) {
+                            parameterKey = new ParameterKey((Integer) args[0]);
+                        } else if (args[0] instanceof String) {
+                            parameterKey = new ParameterKey((String) args[0]);
+                        } else {
+                            return MethodUtils.proceedExecution(method, ps, args);
+                        }
+
+                        // when same key is specified, old value will be overridden
+                        parameters.put(parameterKey, new ParameterSetOperation(method, args));
+                    }
+
+                } else if (StatementMethodNames.BATCH_PARAM_METHODS.contains(methodName)) {
+
+                    // Batch parameter operation
+                    if ("addBatch".equals(methodName)) {
+
+                        // TODO: check
+                        transformParameters(parameterTransformer, ps, true, batchParameters.size());
+
+                        // copy values
+                        Map<ParameterKey, ParameterSetOperation> newParams = new LinkedHashMap<ParameterKey, ParameterSetOperation>(parameters);
+                        batchParameters.add(newParams);
+
+                        parameters.clear();
+                    } else if ("clearBatch".equals(methodName)) {
+                        batchParameters.clear();
+                    }
+                }
+
+                // proceed execution, no need to call listener
+                return MethodUtils.proceedExecution(method, ps, args);
             }
+
         }
 
 
+        // query execution methods
+
         final List<QueryInfo> queries = new ArrayList<QueryInfo>();
-        boolean isBatchExecute = false;
+        boolean isBatchExecution = StatementMethodNames.BATCH_EXEC_METHODS.contains(methodName);
         int batchSize = 0;
 
-        if (StatementMethodNames.BATCH_EXEC_METHODS.contains(methodName)) {
+        // "executeBatch", "executeLargeBatch"
+        if (isBatchExecution) {
+            if (StatementType.STATEMENT == statementType) {
 
-            for (String batchQuery : batchQueries) {
-                queries.add(new QueryInfo(batchQuery));
+                for (String batchQuery : batchQueries) {
+                    queries.add(new QueryInfo(batchQuery));
+                }
+                batchSize = batchQueries.size();
+                batchQueries.clear();
+            } else {
+                // one query with multiple parameters
+                QueryInfo queryInfo = new QueryInfo(this.query);
+                for (Map<ParameterKey, ParameterSetOperation> params : batchParameters) {
+                    queryInfo.getParametersList().add(new ArrayList<ParameterSetOperation>(params.values()));
+                }
+                queries.add(queryInfo);
+
+                batchSize = batchParameters.size();
+                batchParameters.clear();
             }
-            batchSize = batchQueries.size();
-            batchQueries.clear();
-            isBatchExecute = true;
 
+            //  "executeQuery", "executeUpdate", "execute", "executeLargeUpdate"
         } else if (StatementMethodNames.QUERY_EXEC_METHODS.contains(methodName)) {
-
-            if (ObjectArrayUtils.isFirstArgString(args)) {
+            QueryInfo queryInfo;
+            if (StatementType.STATEMENT == statementType) {
                 final String query = (String) args[0];
                 final TransformInfo transformInfo = new TransformInfo(Statement.class, this.connectionInfo.getDataSourceName(), query, false, 0);
                 final String transformedQuery = queryTransformer.transformQuery(transformInfo);
                 args[0] = transformedQuery; // replace to the new query
-                queries.add(new QueryInfo(transformedQuery));
+
+                queryInfo = new QueryInfo(transformedQuery);
+            } else {
+                PreparedStatement ps = (PreparedStatement) this.statement;
+                transformParameters(parameterTransformer, ps, false, 0);
+
+                queryInfo = new QueryInfo(this.query);
+                queryInfo.getParametersList().add(new ArrayList<ParameterSetOperation>(parameters.values()));
             }
+            queries.add(queryInfo);
         }
 
         final boolean isGetGeneratedKeysMethod = GET_GENERATED_KEYS_METHOD.equals(methodName);
@@ -203,7 +291,7 @@ public class StatementProxyLogic {
             }
         }
 
-        final ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo, this.stmt, isBatchExecute, batchSize, method, args);
+        final ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo, this.statement, isBatchExecution, batchSize, method, args);
 
         queryListener.beforeQuery(execInfo, queries);
 
@@ -211,7 +299,7 @@ public class StatementProxyLogic {
         try {
             final long beforeTime = System.currentTimeMillis();
 
-            Object retVal = method.invoke(this.stmt, args);
+            Object retVal = method.invoke(this.statement, args);
 
             final long afterTime = System.currentTimeMillis();
 
@@ -237,7 +325,7 @@ public class StatementProxyLogic {
                 if (isGetGeneratedKeysMethod) {
                     this.generatedKeys = (ResultSet) retVal;  // result may be proxied
                 } else if (isQueryExecutionMethod) {
-                    ResultSet generatedKeysResultSet = this.stmt.getGeneratedKeys();  // auto retrieve generated-keys
+                    ResultSet generatedKeysResultSet = this.statement.getGeneratedKeys();  // auto retrieve generated-keys
                     if (this.proxyConfig.isGeneratedKeysProxyEnabled()) {
                         generatedKeysResultSet = proxyFactory.createGeneratedKeys(generatedKeysResultSet, this.connectionInfo, this.proxyConfig);
                     }
@@ -266,7 +354,31 @@ public class StatementProxyLogic {
             }
 
         }
+    }
 
+
+    private void transformParameters(ParameterTransformer parameterTransformer, PreparedStatement ps, boolean isBatch, int count) throws SQLException, IllegalAccessException, InvocationTargetException {
+
+        // transform parameters
+        final ParameterReplacer parameterReplacer = new ParameterReplacer(this.parameters);
+        final TransformInfo transformInfo = new TransformInfo(ps.getClass(), this.connectionInfo.getDataSourceName(), query, isBatch, count);
+        parameterTransformer.transformParameters(parameterReplacer, transformInfo);
+
+        if (parameterReplacer.isModified()) {
+
+            ps.clearParameters();  // clear existing parameters
+
+            // re-set parameters
+            Map<ParameterKey, ParameterSetOperation> modifiedParameters = parameterReplacer.getModifiedParameters();
+            for (ParameterSetOperation operation : modifiedParameters.values()) {
+                final Method paramMethod = operation.getMethod();
+                final Object[] paramArgs = operation.getArgs();
+                paramMethod.invoke(ps, paramArgs);
+            }
+
+            // replace
+            this.parameters = modifiedParameters;
+        }
     }
 
 }

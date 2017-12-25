@@ -1,8 +1,9 @@
 package net.ttddyy.dsproxy.proxy.jdk;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.proxy.PreparedStatementProxyLogic;
+import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.proxy.StatementProxyLogic;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -16,16 +17,14 @@ import java.sql.Connection;
  */
 public class CallableStatementInvocationHandler implements InvocationHandler {
 
-    private PreparedStatementProxyLogic delegate;
-
-    public CallableStatementInvocationHandler() {
-    }
+    private StatementProxyLogic delegate;
 
     public CallableStatementInvocationHandler(
             CallableStatement cs, String query, ConnectionInfo connectionInfo,
             Connection proxyConnection, ProxyConfig proxyConfig) {
-        this.delegate = PreparedStatementProxyLogic.Builder.create()
-                .preparedStatement(cs)
+
+        this.delegate = StatementProxyLogic.Builder.create()
+                .statement(cs, StatementType.CALLABLE)
                 .query(query)
                 .connectionInfo(connectionInfo)
                 .proxyConnection(proxyConnection)
