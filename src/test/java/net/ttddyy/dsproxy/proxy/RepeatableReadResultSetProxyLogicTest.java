@@ -7,9 +7,11 @@ import org.assertj.core.api.ThrowableAssert;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -338,6 +340,14 @@ public class RepeatableReadResultSetProxyLogicTest {
         Object result = logic.invoke(method, null);
 
         assertThat(result).isInstanceOf(Integer.class).isEqualTo(rs.hashCode());
+    }
+
+    @Test
+    public void aaa() throws Throwable {
+        Method mp = PreparedStatement.class.getMethod("execute", String.class);
+        Method ms = Statement.class.getMethod("execute", String.class);
+
+        System.out.println();
     }
 
     @Test

@@ -8,7 +8,11 @@ import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Proxy;
-import java.sql.*;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 /**
  * Dynamic Proxy Class(Jdk Proxy) based {@link net.ttddyy.dsproxy.proxy.JdbcProxyFactory} implementation.
