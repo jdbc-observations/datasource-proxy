@@ -19,6 +19,7 @@ public interface StatementMethodNames {
     static final String PARAMETER_METHOD_SET_NULL = "setNull";
     static final String PARAMETER_METHOD_REGISTER_OUT_PARAMETER = "registerOutParameter";
     static final String GET_GENERATED_KEYS_METHOD = "getGeneratedKeys";
+    static final String GET_CONNECTION_METHOD = "getConnection";
 
     static final Set<String> PARAMETER_METHODS = Collections.unmodifiableSet(
             new HashSet<String>(Arrays.asList("setArray", "setAsciiStream", "setBigDecimal",
@@ -63,10 +64,6 @@ public interface StatementMethodNames {
             new HashSet<String>(Arrays.asList("unwrap", "isWrapperFor"))
     );
 
-    static final Set<String> GET_CONNECTION_METHOD = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("getConnection"))
-    );
-
     static final Set<String> METHODS_TO_RETURN_RESULTSET = Collections.unmodifiableSet(
             new HashSet<String>(Arrays.asList(
                     "executeQuery", GET_GENERATED_KEYS_METHOD, "getResultSet",  // from Statement
@@ -81,8 +78,8 @@ public interface StatementMethodNames {
                     addAll(BATCH_PARAM_METHODS);
                     addAll(EXEC_METHODS);
                     addAll(JDBC4_METHODS);
-                    addAll(GET_CONNECTION_METHOD);
                     addAll(METHODS_TO_RETURN_RESULTSET);
+                    add(GET_CONNECTION_METHOD);
                     add("getDataSourceName");
                     add("toString");
                     add("getTarget"); // from ProxyJdbcObject

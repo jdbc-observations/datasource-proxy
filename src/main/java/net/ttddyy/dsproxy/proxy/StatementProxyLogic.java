@@ -158,7 +158,7 @@ public class StatementProxyLogic {
         }
 
         // "getConnection"
-        if (StatementMethodNames.GET_CONNECTION_METHOD.contains(methodName)) {
+        if (StatementMethodNames.GET_CONNECTION_METHOD.equals(methodName)) {
             return this.proxyConnection;
         }
 
