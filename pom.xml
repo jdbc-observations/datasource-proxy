@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>net.ttddyy</groupId>
@@ -160,6 +161,40 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
+
+        <executions>
+
+          <!-- Override default execution to test with jdk-proxy -->
+          <execution>
+            <id>default-test</id>
+            <phase>test</phase>
+            <configuration>
+              <systemProperties>
+                <property>
+                  <name>proxyType</name>
+                  <value>JDK_PROXY</value>
+                </property>
+              </systemProperties>
+            </configuration>
+          </execution>
+
+          <!-- Add another execution to test with delegating-impl proxy -->
+          <execution>
+            <id>concrete-proxy-test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <systemProperties>
+                <property>
+                  <name>proxyType</name>
+                  <value>IMPL</value>
+                </property>
+              </systemProperties>
+            </configuration>
+          </execution>
+
+        </executions>
       </plugin>
 
       <plugin>
@@ -213,9 +248,9 @@
               <attributes>
                 <toc>left</toc>
                 <highlightjs-theme>github</highlightjs-theme>
-                <sectanchors />
+                <sectanchors/>
                 <icons>font</icons>
-                <sectnums />
+                <sectnums/>
                 <revnumber>${project.version}</revnumber>
               </attributes>
             </configuration>

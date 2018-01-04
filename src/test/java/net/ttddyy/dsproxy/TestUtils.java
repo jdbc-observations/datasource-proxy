@@ -7,10 +7,47 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import static net.ttddyy.dsproxy.TestUtils.TestingProxyType.IMPL;
+import static net.ttddyy.dsproxy.TestUtils.TestingProxyType.JDK_PROXY;
+
 /**
  * @author Tadaya Tsuyukubo
  */
 public class TestUtils {
+
+    public static final TestingProxyType TESTING_PROXY_TYPE;
+
+    static {
+        // Populate proxy type via system property. See surefire plugin setting on pom.xml.
+        String proxyType = System.getProperty("proxyType", JDK_PROXY.toString());  // default to JDK_PROXY
+        TESTING_PROXY_TYPE = TestingProxyType.valueOf(proxyType);
+    }
+
+    public enum TestingProxyType {
+        /**
+         * Test with jdk proxy
+         */
+        JDK_PROXY,
+
+        /**
+         * Test with concrete JDBC API implementation classes
+         */
+        IMPL
+    }
+
+    /**
+     * Testing with jdk proxy
+     */
+    public static boolean isTestingProxy() {
+        return JDK_PROXY == TESTING_PROXY_TYPE;
+    }
+
+    /**
+     * Testing with delegating class impl
+     */
+    public static boolean isTestingImpl() {
+        return IMPL == TESTING_PROXY_TYPE;
+    }
 
     public static DataSource getDataSourceWithData() throws Exception {
         JDBCDataSource dataSource = new JDBCDataSource();
