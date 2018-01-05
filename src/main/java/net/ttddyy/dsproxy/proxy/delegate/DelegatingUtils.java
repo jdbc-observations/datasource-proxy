@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.proxy.delegate;
 
 import net.ttddyy.dsproxy.DataSourceProxyException;
+import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
 
 import java.lang.reflect.Method;
 import java.sql.SQLException;
@@ -12,6 +13,17 @@ import java.sql.SQLException;
  * @since 1.5
  */
 public class DelegatingUtils {
+
+    public static final Method GET_TARGET_METHOD;
+
+    static {
+        try {
+            GET_TARGET_METHOD = ProxyJdbcObject.class.getMethod("getTarget");
+        } catch (NoSuchMethodException e) {
+            throw new DataSourceProxyException("Cannot find ProxyJdbcObject#getTarget()");
+        }
+    }
+
 
     public static Method getMethodIfAvailable(Class<?> clazz, String name, Class... parameterTypes) {
         try {

@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.proxy.delegate;
 
+import net.ttddyy.dsproxy.DataSourceProxyException;
+import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
 import net.ttddyy.dsproxy.proxy.StatementProxyLogic;
 
 import java.lang.reflect.Method;
@@ -16,7 +18,7 @@ import java.sql.Statement;
  * @see DelegatingJdbcProxyFactory
  * @since 1.5
  */
-public class DelegatingStatement implements Statement {
+public class DelegatingStatement implements Statement, ProxyJdbcObject {
 
     private static final Method EXECUTE_QUERY_METHOD = getMethodIfAvailable("executeQuery", String.class);
     private static final Method EXECUTE_UPDATE_METHOD = getMethodIfAvailable("executeUpdate", String.class);
@@ -79,6 +81,15 @@ public class DelegatingStatement implements Statement {
 
     public DelegatingStatement(StatementProxyLogic proxyLogic) {
         this.proxyLogic = proxyLogic;
+    }
+
+    @Override
+    public Object getTarget() {
+        try {
+            return this.proxyLogic.invoke(DelegatingUtils.GET_TARGET_METHOD, null);
+        } catch (Throwable throwable) {
+            throw new DataSourceProxyException("Failed to invoke method: getTarget", throwable);
+        }
     }
 
     private Object invoke(final Method method, final Object... args) throws SQLException {

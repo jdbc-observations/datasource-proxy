@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.proxy.delegate;
 
 import net.ttddyy.dsproxy.DataSourceProxyException;
 import net.ttddyy.dsproxy.proxy.ConnectionProxyLogic;
+import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
 
 import java.lang.reflect.Method;
 import java.sql.Array;
@@ -30,7 +31,7 @@ import java.util.concurrent.Executor;
  * @see DelegatingJdbcProxyFactory
  * @since 1.5
  */
-public class DelegatingConnection implements Connection {
+public class DelegatingConnection implements Connection, ProxyJdbcObject {
 
     private static final Method CREATE_STATEMENT_METHOD = getMethodIfAvailable("createStatement");
     private static final Method PREPARE_STATEMENT_METHOD = getMethodIfAvailable("prepareStatement", String.class);
@@ -98,6 +99,14 @@ public class DelegatingConnection implements Connection {
         this.proxyLogic = proxyLogic;
     }
 
+    @Override
+    public Object getTarget() {
+        try {
+            return this.proxyLogic.invoke(DelegatingConnection.this, DelegatingUtils.GET_TARGET_METHOD, null);
+        } catch (Throwable throwable) {
+            throw new DataSourceProxyException("Failed to invoke method: getTarget", throwable);
+        }
+    }
 
     private Object invoke(final Method method, final Object... args) throws SQLException {
         return DelegatingUtils.invoke(method, new DelegatingUtils.InvocationCallback() {
