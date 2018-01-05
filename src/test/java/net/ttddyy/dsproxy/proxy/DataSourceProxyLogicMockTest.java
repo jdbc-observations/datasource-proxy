@@ -45,7 +45,7 @@ public class DataSourceProxyLogicMockTest {
     private DataSourceProxyLogic getProxyLogic(DataSource ds) {
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create()
                 .dataSourceName(DS_NAME)
                 .queryListener(listener)
                 .build();
@@ -154,7 +154,7 @@ public class DataSourceProxyLogicMockTest {
 
         DataSource ds = mock(DataSource.class);
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create()
                 .dataSourceName(DS_NAME)
                 .methodListener(listener)
                 .build();

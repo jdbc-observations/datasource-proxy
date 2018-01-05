@@ -85,7 +85,7 @@ public class ConnectionProxyLogicMockTest {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().queryListener(listener).build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().queryListener(listener).build();
         return new ConnectionProxyLogic(mockConnection, connectionInfo, proxyConfig);
     }
 
@@ -316,7 +316,7 @@ public class ConnectionProxyLogicMockTest {
     @Test
     public void methodExecutionListener() throws Throwable {
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().methodListener(listener).build();
         ConnectionInfo connectionInfo = new ConnectionInfo();
 
         Connection conn = mock(Connection.class);
@@ -356,7 +356,7 @@ public class ConnectionProxyLogicMockTest {
                 isClosedAfterCalled.set(true);
             }
         };
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().methodListener(listener).build();
         ConnectionInfo connectionInfo = new ConnectionInfo();
 
         Connection conn = mock(Connection.class);
@@ -380,7 +380,7 @@ public class ConnectionProxyLogicMockTest {
     @Test
     public void commitAndRollbackCount() throws Throwable {
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().build();
         ConnectionInfo connectionInfo = new ConnectionInfo();
 
         Connection conn = mock(Connection.class);

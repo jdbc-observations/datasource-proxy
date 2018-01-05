@@ -196,7 +196,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName(DS_NAME);
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create()
                 .queryListener(listener)
                 .resultSetProxyLogicFactory(createResultSetProxy ? new SimpleResultSetProxyLogicFactory() : null)
                 .generatedKeysProxyLogicFactory(createGenerateKeysProxy ? new SimpleResultSetProxyLogicFactory() : null)
@@ -660,7 +660,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         when(ps.getGeneratedKeys()).thenReturn(resultSet);
 
         // autoCloseGeneratedKeys=true
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create()
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(true)
                 .build();
@@ -682,7 +682,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         reset(resultSet);
 
         // autoCloseGeneratedKeys=false
-        proxyConfig = ProxyConfig.Builder.create()
+        proxyConfig = TestProxyConfigBuilder.create()
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -705,7 +705,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
     @Test
     public void methodExecutionListener() throws Throwable {
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().methodListener(listener).build();
 
         PreparedStatement ps = mock(PreparedStatement.class);
 

@@ -224,7 +224,7 @@ public class RepeatableReadResultSetProxyLogicTest {
 
     private RepeatableReadResultSetProxyLogic createProxyLogic(ResultSet resultSet) {
         RepeatableReadResultSetProxyLogicFactory factory = new RepeatableReadResultSetProxyLogicFactory();
-        return (RepeatableReadResultSetProxyLogic) factory.create(resultSet, new ConnectionInfo(), ProxyConfig.Builder.create().build());
+        return (RepeatableReadResultSetProxyLogic) factory.create(resultSet, new ConnectionInfo(), TestProxyConfigBuilder.create().build());
     }
 
     private void consumeResultSetAndCallBeforeFirst(ResultSet resultSet, RepeatableReadResultSetProxyLogic resultSetProxyLogic) throws Throwable {
@@ -369,7 +369,7 @@ public class RepeatableReadResultSetProxyLogicTest {
     @Test
     public void methodExecutionListener() throws Throwable {
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().methodListener(listener).build();
         ResultSet rs = mock(ResultSet.class);
         ResultSetMetaData metaData = mock(ResultSetMetaData.class);
         when(rs.getMetaData()).thenReturn(metaData);

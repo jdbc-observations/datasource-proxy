@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.proxy.TestProxyConfigBuilder;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -39,7 +40,7 @@ public class StatementInvocationHandlerTest {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create()
                 .queryListener(this.testListener)
                 .queryListener(this.lastQueryListener)
                 .build();

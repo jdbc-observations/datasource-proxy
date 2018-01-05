@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.transform;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.proxy.TestProxyConfigBuilder;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler;
 import org.junit.Before;
@@ -55,7 +56,7 @@ public class TransformInfoForQueryTest {
 
         Statement stmt = mock(Statement.class);
         QueryTransformer queryTransformer = getMockQueryTransformer(1);
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().queryTransformer(queryTransformer).build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().queryTransformer(queryTransformer).build();
 
         StatementInvocationHandler handler = new StatementInvocationHandler(stmt, getConnectionInfo(), null, proxyConfig);
 
@@ -80,7 +81,7 @@ public class TransformInfoForQueryTest {
 
         Statement stmt = mock(Statement.class);
         QueryTransformer queryTransformer = getMockQueryTransformer(2);
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().queryTransformer(queryTransformer).build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().queryTransformer(queryTransformer).build();
 
         StatementInvocationHandler handler = new StatementInvocationHandler(stmt, getConnectionInfo(), null, proxyConfig);
 
@@ -115,7 +116,7 @@ public class TransformInfoForQueryTest {
 
         Connection conn = mock(Connection.class);
         QueryTransformer queryTransformer = getMockQueryTransformer(1);
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().queryTransformer(queryTransformer).build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().queryTransformer(queryTransformer).build();
 
         ConnectionInvocationHandler handler = new ConnectionInvocationHandler(conn, getConnectionInfo(), proxyConfig);
 
@@ -138,7 +139,7 @@ public class TransformInfoForQueryTest {
 
         Connection conn = mock(Connection.class);
         QueryTransformer queryTransformer = getMockQueryTransformer(1);
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().queryTransformer(queryTransformer).build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().queryTransformer(queryTransformer).build();
 
         ConnectionInvocationHandler handler = new ConnectionInvocationHandler(conn, getConnectionInfo(), proxyConfig);
 

@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.sql.CallableStatement;
@@ -17,10 +17,20 @@ import static org.mockito.Mockito.mock;
  */
 public class NativeJdbcExtractUtilsTest {
 
+    private ProxyConfig proxyConfig;
+    private JdbcProxyFactory jdbcProxyFactory;
+
+    @Before
+    public void setUp() {
+        this.proxyConfig = TestProxyConfigBuilder.create().build();
+        this.jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
+    }
+
     @Test
     public void testGetConnection() {
+
         Connection source = mock(Connection.class);
-        Connection proxy = new JdkJdbcProxyFactory().createConnection(source, getConnectionInfo(), ProxyConfig.Builder.create().build());
+        Connection proxy = this.jdbcProxyFactory.createConnection(source, getConnectionInfo(), this.proxyConfig);
 
         // check proxy
         Connection result = NativeJdbcExtractUtils.getConnection(proxy);
@@ -34,7 +44,7 @@ public class NativeJdbcExtractUtilsTest {
     @Test
     public void testGetStatement() {
         Statement source = mock(Statement.class);
-        Statement proxy = new JdkJdbcProxyFactory().createStatement(source, getConnectionInfo(), null, ProxyConfig.Builder.create().build());
+        Statement proxy = this.jdbcProxyFactory.createStatement(source, getConnectionInfo(), null, this.proxyConfig);
 
         // check proxy
         Statement result = NativeJdbcExtractUtils.getStatement(proxy);
@@ -48,7 +58,7 @@ public class NativeJdbcExtractUtilsTest {
     @Test
     public void testGetPreparedStatement() {
         PreparedStatement source = mock(PreparedStatement.class);
-        PreparedStatement proxy = new JdkJdbcProxyFactory().createPreparedStatement(source, null, getConnectionInfo(), null, ProxyConfig.Builder.create().build());
+        PreparedStatement proxy = this.jdbcProxyFactory.createPreparedStatement(source, null, getConnectionInfo(), null, this.proxyConfig);
 
         // check proxy
         PreparedStatement result = NativeJdbcExtractUtils.getPreparedStatement(proxy);
@@ -62,7 +72,7 @@ public class NativeJdbcExtractUtilsTest {
     @Test
     public void testGetCallableStatement() {
         CallableStatement source = mock(CallableStatement.class);
-        CallableStatement proxy = new JdkJdbcProxyFactory().createCallableStatement(source, null, getConnectionInfo(), null, ProxyConfig.Builder.create().build());
+        CallableStatement proxy = this.jdbcProxyFactory.createCallableStatement(source, null, getConnectionInfo(), null, this.proxyConfig);
 
         // check proxy
         CallableStatement result = NativeJdbcExtractUtils.getCallableStatement(proxy);

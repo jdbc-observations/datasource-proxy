@@ -4,6 +4,7 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.proxy.StatementProxyLogic;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.proxy.TestProxyConfigBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -167,7 +168,7 @@ public class TransformInfoForParametersTest {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("my-ds");
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().parameterTransformer(parameterTransformer).build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().parameterTransformer(parameterTransformer).build();
 
         return StatementProxyLogic.Builder.create()
                 .statement(ps, StatementType.PREPARED)

@@ -5,6 +5,7 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.SimpleResultSetProxyLogicFactory;
+import net.ttddyy.dsproxy.proxy.TestProxyConfigBuilder;
 import net.ttddyy.dsproxy.proxy.delegate.DelegatingResultSet;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
@@ -49,7 +50,7 @@ public class StatementQueryTest {
         Statement st = conn.createStatement();
 
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().resultSetProxyLogicFactory(new SimpleResultSetProxyLogicFactory()).build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().resultSetProxyLogicFactory(new SimpleResultSetProxyLogicFactory()).build();
         Statement proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
 
         // verify executeQuery
@@ -95,7 +96,7 @@ public class StatementQueryTest {
         Statement st = conn.createStatement();
 
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().generatedKeysProxyLogicFactory(new SimpleResultSetProxyLogicFactory()).build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().generatedKeysProxyLogicFactory(new SimpleResultSetProxyLogicFactory()).build();
         Statement proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
 
         // verify getGeneratedKeys
@@ -167,7 +168,7 @@ public class StatementQueryTest {
         };
 
         // autoRetrieveGeneratedKeys=true
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create()
                 .queryListener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
@@ -197,7 +198,7 @@ public class StatementQueryTest {
         listenerReceivedExecutionInfo.set(null);
 
         // autoRetrieveGeneratedKeys=false
-        proxyConfig = ProxyConfig.Builder.create()
+        proxyConfig = TestProxyConfigBuilder.create()
                 .queryListener(listener)
                 .autoRetrieveGeneratedKeys(false)
                 .autoCloseGeneratedKeys(false)
@@ -218,7 +219,7 @@ public class StatementQueryTest {
         Statement st = conn.createStatement();
 
         // when no configuration is specified for generated keys (disabling generated keys related feature)
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().build();
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
         Statement proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
 
@@ -237,7 +238,7 @@ public class StatementQueryTest {
 
 
         // only specify autoRetrieveGeneratedKeys=true
-        proxyConfig = ProxyConfig.Builder.create()
+        proxyConfig = TestProxyConfigBuilder.create()
                 .autoRetrieveGeneratedKeys(true)
                 .build();
         proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
@@ -274,7 +275,7 @@ public class StatementQueryTest {
         Statement st = conn.createStatement();
 
         // autoCloseGeneratedKeys=false
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create()
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -308,7 +309,7 @@ public class StatementQueryTest {
         Statement st = conn.createStatement();
 
         // autoCloseGeneratedKeys=true
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create()
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(true)
                 .build();
@@ -352,7 +353,7 @@ public class StatementQueryTest {
 
         // autoCloseGeneratedKeys=false
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create()
                 .queryListener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
@@ -374,7 +375,7 @@ public class StatementQueryTest {
         listenerReceivedExecutionInfo.set(null);
 
         // autoCloseGeneratedKeys=true
-        proxyConfig = ProxyConfig.Builder.create()
+        proxyConfig = TestProxyConfigBuilder.create()
                 .queryListener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(true)
@@ -404,7 +405,7 @@ public class StatementQueryTest {
 
         // specify autoRetrieveGeneratedKeys and proxy factory
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create()
                 .queryListener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .generatedKeysProxyLogicFactory(new SimpleResultSetProxyLogicFactory())

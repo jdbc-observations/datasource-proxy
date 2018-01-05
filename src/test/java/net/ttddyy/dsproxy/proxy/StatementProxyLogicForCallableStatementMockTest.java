@@ -713,7 +713,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName(DS_NAME);
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().queryListener(listener).build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().queryListener(listener).build();
 
 
         return StatementProxyLogic.Builder.create()
@@ -781,7 +781,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
     @Test
     public void methodExecutionListener() throws Throwable {
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().methodListener(listener).build();
 
         CallableStatement cs = mock(CallableStatement.class);
 

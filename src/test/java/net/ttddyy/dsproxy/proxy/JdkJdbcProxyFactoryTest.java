@@ -23,7 +23,7 @@ public class JdkJdbcProxyFactoryTest {
     @Test
     public void testCreateConnection() {
         Connection conn = mock(Connection.class);
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().build();
 
         Connection result = factory.createConnection(conn, getConnectionInfo(), proxyConfig);
 
@@ -33,7 +33,7 @@ public class JdkJdbcProxyFactoryTest {
     @Test
     public void testCreateStatement() {
         Statement stmt = mock(Statement.class);
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().build();
 
         Statement result = factory.createStatement(stmt, getConnectionInfo(), null, proxyConfig);
 
@@ -44,7 +44,7 @@ public class JdkJdbcProxyFactoryTest {
     public void testCreatePreparedStatement() {
         PreparedStatement ps = mock(PreparedStatement.class);
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().build();
 
         PreparedStatement result = factory.createPreparedStatement(ps, "my-query", getConnectionInfo(), null, proxyConfig);
 
@@ -55,7 +55,7 @@ public class JdkJdbcProxyFactoryTest {
     public void testCreateCallableStatement() {
         CallableStatement cs = mock(CallableStatement.class);
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().build();
 
         CallableStatement result = factory.createCallableStatement(cs, "my-query", getConnectionInfo(), null, proxyConfig);
 
@@ -65,7 +65,7 @@ public class JdkJdbcProxyFactoryTest {
     @Test
     public void testCreateDataSource() {
         DataSource ds = mock(DataSource.class);
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().dataSourceName("my-ds").build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().dataSourceName("my-ds").build();
 
         DataSource result = factory.createDataSource(ds, proxyConfig);
 

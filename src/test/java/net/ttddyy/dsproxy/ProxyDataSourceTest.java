@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.proxy.TestProxyConfigBuilder;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import org.junit.After;
 import org.junit.Before;
@@ -39,7 +40,7 @@ public class ProxyDataSourceTest {
         listener = new TestListener();
         methodListener = new CallCheckMethodExecutionListener();
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create()
                 .queryListener(this.listener)
                 .methodListener(this.methodListener)
                 .build();

@@ -23,7 +23,7 @@ public class SimpleResultSetProxyLogicTest {
     public void testToString() throws Throwable {
 
         ResultSet rs = mock(ResultSet.class);
-        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, new ConnectionInfo(), ProxyConfig.Builder.create().build());
+        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, new ConnectionInfo(), TestProxyConfigBuilder.create().build());
 
         when(rs.toString()).thenReturn("my rs");
 
@@ -36,7 +36,7 @@ public class SimpleResultSetProxyLogicTest {
     @Test
     public void testHashCode() throws Throwable {
         ResultSet rs = mock(ResultSet.class);
-        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, new ConnectionInfo(), ProxyConfig.Builder.create().build());
+        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, new ConnectionInfo(), TestProxyConfigBuilder.create().build());
 
         Method method = Object.class.getMethod("hashCode");
         Object result = logic.invoke(method, null);
@@ -47,7 +47,7 @@ public class SimpleResultSetProxyLogicTest {
     @Test
     public void testEquals() throws Throwable {
         ResultSet rs = mock(ResultSet.class);
-        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, new ConnectionInfo(), ProxyConfig.Builder.create().build());
+        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, new ConnectionInfo(), TestProxyConfigBuilder.create().build());
 
         Method method = Object.class.getMethod("equals", Object.class);
 
@@ -63,7 +63,7 @@ public class SimpleResultSetProxyLogicTest {
     @Test
     public void methodExecutionListener() throws Throwable {
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().methodListener(listener).build();
         ResultSet rs = mock(ResultSet.class);
         ConnectionInfo connectionInfo = new ConnectionInfo();
 

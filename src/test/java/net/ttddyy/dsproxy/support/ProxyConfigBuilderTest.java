@@ -5,6 +5,7 @@ import net.ttddyy.dsproxy.listener.CompositeMethodListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.proxy.TestProxyConfigBuilder;
 import org.junit.Test;
 
 import java.util.List;
@@ -28,12 +29,12 @@ public class ProxyConfigBuilderTest {
         QueryExecutionListener listener3 = mock(QueryExecutionListener.class);
 
         // specify listeners directly one by one
-        proxyConfig = ProxyConfig.Builder.create().queryListener(listener1).queryListener(listener2).build();
+        proxyConfig = TestProxyConfigBuilder.create().queryListener(listener1).queryListener(listener2).build();
         listeners = proxyConfig.getQueryListener().getListeners();
         assertThat(listeners).hasSize(2).contains(listener1, listener2);
 
         // with empty ChainListener
-        proxyConfig = ProxyConfig.Builder.create().queryListener(new ChainListener()).build();
+        proxyConfig = TestProxyConfigBuilder.create().queryListener(new ChainListener()).build();
         listeners = proxyConfig.getQueryListener().getListeners();
         assertThat(listeners).isEmpty();
 
@@ -42,7 +43,7 @@ public class ProxyConfigBuilderTest {
         chainListener.addListener(listener1);
         chainListener.addListener(listener2);
 
-        proxyConfig = ProxyConfig.Builder.create().queryListener(chainListener).build();
+        proxyConfig = TestProxyConfigBuilder.create().queryListener(chainListener).build();
         listeners = proxyConfig.getQueryListener().getListeners();
         assertThat(listeners).hasSize(2).contains(listener1, listener2);
 
@@ -51,7 +52,7 @@ public class ProxyConfigBuilderTest {
         chainListener.addListener(listener1);
         chainListener.addListener(listener2);
 
-        proxyConfig = ProxyConfig.Builder.create().queryListener(chainListener).queryListener(listener3).build();
+        proxyConfig = TestProxyConfigBuilder.create().queryListener(chainListener).queryListener(listener3).build();
         listeners = proxyConfig.getQueryListener().getListeners();
         assertThat(listeners).hasSize(3).contains(listener1, listener2, listener3);
 
@@ -69,12 +70,12 @@ public class ProxyConfigBuilderTest {
         MethodExecutionListener listener3 = mock(MethodExecutionListener.class);
 
         // specify listeners directly one by one
-        proxyConfig = ProxyConfig.Builder.create().methodListener(listener1).methodListener(listener2).build();
+        proxyConfig = TestProxyConfigBuilder.create().methodListener(listener1).methodListener(listener2).build();
         listeners = proxyConfig.getMethodListener().getListeners();
         assertThat(listeners).hasSize(2).contains(listener1, listener2);
 
         // with empty CompositeMethodListener
-        proxyConfig = ProxyConfig.Builder.create().methodListener(new CompositeMethodListener()).build();
+        proxyConfig = TestProxyConfigBuilder.create().methodListener(new CompositeMethodListener()).build();
         listeners = proxyConfig.getMethodListener().getListeners();
         assertThat(listeners).isEmpty();
 
@@ -83,7 +84,7 @@ public class ProxyConfigBuilderTest {
         compositeListener.addListener(listener1);
         compositeListener.addListener(listener2);
 
-        proxyConfig = ProxyConfig.Builder.create().methodListener(compositeListener).build();
+        proxyConfig = TestProxyConfigBuilder.create().methodListener(compositeListener).build();
         listeners = proxyConfig.getMethodListener().getListeners();
         assertThat(listeners).hasSize(2).contains(listener1, listener2);
 
@@ -92,7 +93,7 @@ public class ProxyConfigBuilderTest {
         compositeListener.addListener(listener1);
         compositeListener.addListener(listener2);
 
-        proxyConfig = ProxyConfig.Builder.create().methodListener(compositeListener).methodListener(listener3).build();
+        proxyConfig = TestProxyConfigBuilder.create().methodListener(compositeListener).methodListener(listener3).build();
         listeners = proxyConfig.getMethodListener().getListeners();
         assertThat(listeners).hasSize(3).contains(listener1, listener2, listener3);
 

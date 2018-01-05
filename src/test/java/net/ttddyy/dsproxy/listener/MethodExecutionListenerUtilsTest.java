@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.proxy.TestProxyConfigBuilder;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -60,7 +61,7 @@ public class MethodExecutionListenerUtilsTest {
         };
 
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().methodListener(listener).build();
 
         Object result = MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
             @Override
@@ -107,7 +108,7 @@ public class MethodExecutionListenerUtilsTest {
         };
 
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = TestProxyConfigBuilder.create().methodListener(listener).build();
 
         // when callback throws exception
         Throwable thrownException = null;
