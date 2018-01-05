@@ -1,10 +1,13 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.proxy.delegate.DelegatingPreparedStatement;
+import net.ttddyy.dsproxy.proxy.delegate.DelegatingStatement;
 import net.ttddyy.dsproxy.proxy.jdk.PreparedStatementInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler;
 import org.junit.Test;
@@ -89,9 +92,14 @@ public class ConnectionProxyLogicMockTest {
     private void verifyStatement(Statement statement) {
         assertThat(statement).isNotNull();
 
-        assertThat(Proxy.isProxyClass(statement.getClass())).isTrue();
-        InvocationHandler handler = Proxy.getInvocationHandler(statement);
-        assertThat(handler).isInstanceOf(StatementInvocationHandler.class);
+        if (TestUtils.isTestingProxy()) {
+            assertThat(Proxy.isProxyClass(statement.getClass())).isTrue();
+            InvocationHandler handler = Proxy.getInvocationHandler(statement);
+            assertThat(handler).isInstanceOf(StatementInvocationHandler.class);
+        } else {
+            assertThat(statement).isInstanceOf(DelegatingStatement.class);
+        }
+
     }
 
 
@@ -212,9 +220,14 @@ public class ConnectionProxyLogicMockTest {
     private void verifyPreparedStatement(PreparedStatement statement) {
         assertThat(statement).isNotNull();
 
-        assertThat(Proxy.isProxyClass(statement.getClass())).isTrue();
-        InvocationHandler handler = Proxy.getInvocationHandler(statement);
-        assertThat(handler).isInstanceOf(PreparedStatementInvocationHandler.class);
+        if (TestUtils.isTestingProxy()) {
+            assertThat(Proxy.isProxyClass(statement.getClass())).isTrue();
+            InvocationHandler handler = Proxy.getInvocationHandler(statement);
+            assertThat(handler).isInstanceOf(PreparedStatementInvocationHandler.class);
+        } else {
+            assertThat(statement).isInstanceOf(DelegatingPreparedStatement.class);
+        }
+
     }
 
 

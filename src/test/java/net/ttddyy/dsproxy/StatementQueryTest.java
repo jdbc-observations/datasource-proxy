@@ -5,6 +5,7 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.SimpleResultSetProxyLogicFactory;
+import net.ttddyy.dsproxy.proxy.delegate.DelegatingResultSet;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
 import org.junit.After;
@@ -54,21 +55,38 @@ public class StatementQueryTest {
         // verify executeQuery
         ResultSet result = proxySt.executeQuery("select * from emp;");
         assertThat(result).isInstanceOf(ResultSet.class);
-        assertThat(Proxy.isProxyClass(result.getClass())).isTrue();
-        assertThat(Proxy.getInvocationHandler(result)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
+
+        if (TestUtils.isTestingProxy()) {
+            assertThat(Proxy.isProxyClass(result.getClass())).isTrue();
+            assertThat(Proxy.getInvocationHandler(result)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
+        } else {
+            assertThat(result).isInstanceOf(DelegatingResultSet.class);
+        }
 
         // verify getResultSet
         proxySt.execute("select * from emp;");
         result = proxySt.getResultSet();
         assertThat(result).isInstanceOf(ResultSet.class);
-        assertThat(Proxy.isProxyClass(result.getClass())).isTrue();
-        assertThat(Proxy.getInvocationHandler(result)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
+
+        if (TestUtils.isTestingProxy()) {
+            assertThat(Proxy.isProxyClass(result.getClass())).isTrue();
+            assertThat(Proxy.getInvocationHandler(result)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
+        } else {
+            assertThat(result).isInstanceOf(DelegatingResultSet.class);
+        }
+
 
         // verify getGeneratedKeys
         // generatedKeys have own proxy factory, thus expecting non-proxy to be returned
         result = proxySt.getGeneratedKeys();
         assertThat(result).isInstanceOf(ResultSet.class);
-        assertThat(Proxy.isProxyClass(result.getClass())).isFalse();
+
+        if (TestUtils.isTestingProxy()) {
+            assertThat(Proxy.isProxyClass(result.getClass())).isFalse();
+        } else {
+            assertThat(result).isNotInstanceOf(DelegatingResultSet.class);
+        }
+
     }
 
     @Test
@@ -83,8 +101,13 @@ public class StatementQueryTest {
         // verify getGeneratedKeys
         ResultSet generatedKeys = proxySt.getGeneratedKeys();
         assertThat(generatedKeys).isInstanceOf(ResultSet.class);
-        assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
-        assertThat(Proxy.getInvocationHandler(generatedKeys)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
+
+        if (TestUtils.isTestingProxy()) {
+            assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
+            assertThat(Proxy.getInvocationHandler(generatedKeys)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
+        } else {
+            assertThat(generatedKeys).isInstanceOf(DelegatingResultSet.class);
+        }
 
         // other ResultSet returning methods should not return proxy
 
@@ -96,19 +119,36 @@ public class StatementQueryTest {
         // generated keys should have empty proxied result set
         generatedKeys = proxySt.getGeneratedKeys();
         assertThat(generatedKeys).isInstanceOf(ResultSet.class);
-        assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
+
+        if (TestUtils.isTestingProxy()) {
+            assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
+        } else {
+            assertThat(generatedKeys).isInstanceOf(DelegatingResultSet.class);
+        }
+
         assertThat(generatedKeys.next()).isFalse();
 
         // verify getResultSet
         proxySt.execute("select * from emp;");
         result = proxySt.getResultSet();
         assertThat(result).isInstanceOf(ResultSet.class);
-        assertThat(Proxy.isProxyClass(result.getClass())).isFalse();
+
+        if (TestUtils.isTestingProxy()) {
+            assertThat(Proxy.isProxyClass(result.getClass())).isFalse();
+        } else {
+            assertThat(result).isNotInstanceOf(DelegatingResultSet.class);
+        }
 
         // generated keys should have empty proxied result set
         generatedKeys = proxySt.getGeneratedKeys();
         assertThat(generatedKeys).isInstanceOf(ResultSet.class);
-        assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
+
+        if (TestUtils.isTestingProxy()) {
+            assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
+        } else {
+            assertThat(generatedKeys).isInstanceOf(DelegatingResultSet.class);
+        }
+
         assertThat(generatedKeys.next()).isFalse();
     }
 
@@ -380,8 +420,13 @@ public class StatementQueryTest {
         assertThat(info.getGeneratedKeys()).isInstanceOf(ResultSet.class);
 
         ResultSet generatedKeys = info.getGeneratedKeys();
-        assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
-        assertThat(Proxy.getInvocationHandler(generatedKeys)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
+
+        if (TestUtils.isTestingProxy()) {
+            assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
+            assertThat(Proxy.getInvocationHandler(generatedKeys)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
+        } else {
+            assertThat(generatedKeys).isInstanceOf(DelegatingResultSet.class);
+        }
 
         generatedKeys.next();
         int generatedId = generatedKeys.getInt(1);

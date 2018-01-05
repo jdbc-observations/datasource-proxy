@@ -4,10 +4,12 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
+import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.proxy.delegate.DelegatingResultSet;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -834,8 +836,14 @@ public class StatementProxyLogicMockTest {
         // check "executeQuery"
         result = logic.invoke(executeQueryMethod, new Object[]{"SELECT *"});
         assertThat(result).isInstanceOf(ResultSet.class);
-        assertTrue(Proxy.isProxyClass(result.getClass()));
-        assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
+
+        if (TestUtils.isTestingProxy()) {
+            assertTrue(Proxy.isProxyClass(result.getClass()));
+            assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
+        } else {
+            assertThat(result).isInstanceOf(DelegatingResultSet.class);
+        }
+
         assertThat(listenerReceivedResult.get()).as("listener should receive proxied resultset").isSameAs(result);
 
         listenerReceivedResult.set(null);
@@ -843,8 +851,14 @@ public class StatementProxyLogicMockTest {
         // check "getResultSet"
         result = logic.invoke(getResultSetMethod, null);
         assertThat(result).isInstanceOf(ResultSet.class);
-        assertTrue(Proxy.isProxyClass(result.getClass()));
-        assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
+
+        if (TestUtils.isTestingProxy()) {
+            assertTrue(Proxy.isProxyClass(result.getClass()));
+            assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
+        } else {
+            assertThat(result).isInstanceOf(DelegatingResultSet.class);
+        }
+
         assertThat(listenerReceivedResult.get()).as("listener should receive proxied resultset").isSameAs(result);
 
         listenerReceivedResult.set(null);
@@ -891,8 +905,14 @@ public class StatementProxyLogicMockTest {
         // check "getGeneratedKeys"
         result = logic.invoke(getGeneratedKeysMethod, null);
         assertThat(result).isInstanceOf(ResultSet.class);
-        assertTrue(Proxy.isProxyClass(result.getClass()));
-        assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
+
+        if (TestUtils.isTestingProxy()) {
+            assertTrue(Proxy.isProxyClass(result.getClass()));
+            assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
+        } else {
+            assertThat(result).isInstanceOf(DelegatingResultSet.class);
+        }
+
         assertThat(listenerReceivedResult.get()).as("listener should receive proxied resultset").isSameAs(result);
 
         listenerReceivedResult.set(null);

@@ -1,8 +1,10 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.proxy.delegate.DelegatingConnection;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
 import org.junit.Test;
 
@@ -53,11 +55,16 @@ public class DataSourceProxyLogicMockTest {
     private void verifyConnection(Connection conn) {
         assertThat(conn).isNotNull();
 
-        assertThat(Proxy.isProxyClass(conn.getClass())).isTrue();
-        InvocationHandler handler = Proxy.getInvocationHandler(conn);
-        assertThat(handler).isInstanceOf(ConnectionInvocationHandler.class);
+        if (TestUtils.isTestingProxy()) {
+            assertThat(Proxy.isProxyClass(conn.getClass())).isTrue();
+            InvocationHandler handler = Proxy.getInvocationHandler(conn);
+            assertThat(handler).isInstanceOf(ConnectionInvocationHandler.class);
 
-        assertThat(conn).isInstanceOf(ProxyJdbcObject.class);
+            assertThat(conn).isInstanceOf(ProxyJdbcObject.class);
+        } else {
+            assertThat(conn).isInstanceOf(DelegatingConnection.class);
+        }
+
     }
 
     @Test

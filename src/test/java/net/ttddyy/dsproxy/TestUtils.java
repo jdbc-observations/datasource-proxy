@@ -20,7 +20,8 @@ public class TestUtils {
     static {
         // Populate proxy type via system property. See surefire plugin setting on pom.xml.
         String proxyType = System.getProperty("proxyType", JDK_PROXY.toString());  // default to JDK_PROXY
-        TESTING_PROXY_TYPE = TestingProxyType.valueOf(proxyType);
+        TESTING_PROXY_TYPE = TestingProxyType.valueOfIgnoreCase(proxyType);
+
     }
 
     public enum TestingProxyType {
@@ -32,7 +33,16 @@ public class TestUtils {
         /**
          * Test with concrete JDBC API implementation classes
          */
-        IMPL
+        IMPL;
+
+        public static TestingProxyType valueOfIgnoreCase(String value) {
+            for (TestingProxyType type : values()) {
+                if (type.name().equalsIgnoreCase(value)) {
+                    return type;
+                }
+            }
+            throw new RuntimeException("Cannot find enum for " + value);
+        }
     }
 
     /**
