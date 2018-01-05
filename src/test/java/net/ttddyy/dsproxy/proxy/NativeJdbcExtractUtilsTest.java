@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -80,6 +81,25 @@ public class NativeJdbcExtractUtilsTest {
 
         // check non-proxy
         result = NativeJdbcExtractUtils.getCallableStatement(source);
+        assertThat(result).isSameAs(source);
+    }
+
+    @Test
+    public void testGetResultSet() {
+
+        // specify result-set proxy factory
+        this.proxyConfig = TestProxyConfigBuilder.create().resultSetProxyLogicFactory(new SimpleResultSetProxyLogicFactory()).build();
+        this.jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
+
+        ResultSet source = mock(ResultSet.class);
+        ResultSet proxy = this.jdbcProxyFactory.createResultSet(source, getConnectionInfo(), this.proxyConfig);
+
+        // check proxy
+        ResultSet result = NativeJdbcExtractUtils.getResultSet(proxy);
+        assertThat(result).isSameAs(source);
+
+        // check non-proxy
+        result = NativeJdbcExtractUtils.getResultSet(source);
         assertThat(result).isSameAs(source);
     }
 
