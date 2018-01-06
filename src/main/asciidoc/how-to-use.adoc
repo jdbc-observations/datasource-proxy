@@ -311,3 +311,36 @@ Based on the type of query execution, number of queries and parameters changes.
 - `ResultSet`: All methods when result set proxy is enabled.
 - `ProxyDataSource`: `getConnection()` method
 
+
+===== Replacing invoking method and parameters
+
+In `MethodExecutionListener#beforeMethod()`, you could change the invoking method and its parameters on target JDBC object.
+
+For example, in application code, it calls `Statement#execute(String)`. However, in order to leverage
+<<generated-keys,generated-keys retrieval>>, you may want to call `Statement#execute(String,int)` instead.
+
+To update/replace method and parameters, you could set new method or parameters via `MethodExecutionContext#setMethod()`
+ and `MethodExecutionContext#setMethodArgs()` in `MethodExecutionListener#beforeMethod()`.
+
+
+For above example use case:
+
+```java
+private static final Method EXECUTE_METHOD = Statement.class.getMethod("execute", String.class);
+private static final Method EXECUTE_WITH_INT_METHOD = Statement.class.getMethod("execute", String.class, int.class);
+
+@Override
+public void beforeMethod(MethodExecutionContext executionContext) {
+  // replace "Statement#execute(sql)" to "Statement#execute(sql, RETURN_GENERATED_KEYS)"
+  if(EXECUTE_METHOD.equals(executionContext.getMethod())) {
+
+    Object[] orgArgs = executionContext.getMethodArgs();
+    Object[] newArgs = new Object[]{orgArgs[0], Statement.RETURN_GENERATED_KEYS};
+
+    executionContext.setMethod(EXECUTE_WITH_INT_METHOD);  // new method
+    executionContext.setMethodArgs(newArgs);  // new method params
+  }
+
+}
+```
+
