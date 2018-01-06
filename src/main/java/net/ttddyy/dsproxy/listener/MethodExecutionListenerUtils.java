@@ -30,11 +30,15 @@ public class MethodExecutionListenerUtils {
         MethodExecutionListener methodExecutionListener = proxyConfig.getMethodListener();
         methodExecutionListener.beforeMethod(methodContext);
 
+        // method and args may be replaced in MethodExecutionListener
+        Method methodToInvoke = methodContext.getMethod();
+        Object[] methodArgsToInvoke = methodContext.getMethodArgs();
+
         final long beforeTime = System.currentTimeMillis();
         Object result = null;
         Throwable thrown = null;
         try {
-            result = callback.execute(proxyTarget, method, args);
+            result = callback.execute(proxyTarget, methodToInvoke, methodArgsToInvoke);
         } catch (Throwable throwable) {
             thrown = throwable;
             throw throwable;

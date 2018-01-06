@@ -104,6 +104,14 @@ public class MethodExecutionContext {
         return method;
     }
 
+    /**
+     * Set a method to invoke.
+     *
+     * If new method is set on {@link MethodExecutionListener#beforeMethod(MethodExecutionContext)}, the newly set
+     * method will be invoked.
+     *
+     * @param method a method to invoke
+     */
     public void setMethod(Method method) {
         this.method = method;
     }
@@ -112,6 +120,14 @@ public class MethodExecutionContext {
         return methodArgs;
     }
 
+    /**
+     * Set method parameters to invoke.
+     *
+     * If new method parameters are set on {@link MethodExecutionListener#beforeMethod(MethodExecutionContext)},
+     * newly set parameters will be invoked.
+     *
+     * @param methodArgs method parameters
+     */
     public void setMethodArgs(Object[] methodArgs) {
         this.methodArgs = methodArgs;
     }
@@ -161,4 +177,5 @@ public class MethodExecutionContext {
     public void setProxyConfig(ProxyConfig proxyConfig) {
         this.proxyConfig = proxyConfig;
     }
+
 }

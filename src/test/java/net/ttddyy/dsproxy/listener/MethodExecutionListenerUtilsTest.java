@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.sql.Statement;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertSame;
@@ -125,6 +126,57 @@ public class MethodExecutionListenerUtilsTest {
         assertSame(exception, thrownException);
         assertTrue(listener.isBeforeMethodCalled());
         assertTrue(listener.isAfterMethodCalled());
+    }
+
+    @Test
+    public void methodAndParameterUpdate() throws Throwable {
+        final Object target = new Object();
+        final Method method = Statement.class.getMethod("execute", String.class);
+        final Object[] methodArgs = new Object[]{};
+        final Method replacedMethod = Statement.class.getMethod("execute", String.class, int.class);
+        final Object[] replacedMethodArgs = new Object[]{Statement.RETURN_GENERATED_KEYS};
+
+
+        final ConnectionInfo connectionInfo = new ConnectionInfo();
+
+        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener() {
+            @Override
+            public void beforeMethod(MethodExecutionContext executionContext) {
+                super.beforeMethod(executionContext);
+
+                // replace method and args
+                executionContext.setMethod(replacedMethod);
+                executionContext.setMethodArgs(replacedMethodArgs);
+            }
+
+            @Override
+            public void afterMethod(MethodExecutionContext executionContext) {
+                super.afterMethod(executionContext);
+
+                assertThat(executionContext.getMethod()).isSameAs(replacedMethod);
+                assertThat(executionContext.getMethodArgs()).isSameAs(replacedMethodArgs);
+            }
+        };
+
+
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+
+        final AtomicReference<Method> invokedMethod = new AtomicReference<Method>();
+        final AtomicReference<Object[]> invokedMethodArgs = new AtomicReference<Object[]>();
+
+        // when callback throws exception
+        MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
+            @Override
+            public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
+                invokedMethod.set(method);
+                invokedMethodArgs.set(args);
+                return null;
+            }
+        }, proxyConfig, target, connectionInfo, method, methodArgs);
+
+        assertThat(invokedMethod.get()).isSameAs(replacedMethod);
+        assertThat(invokedMethodArgs.get()).isSameAs(replacedMethodArgs);
+
     }
 
 }
