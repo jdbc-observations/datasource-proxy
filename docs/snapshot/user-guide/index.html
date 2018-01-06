@@ -433,7 +433,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>datasource-proxy User Guide</h1>
 <div class="details">
 <span id="author" class="author">Tadaya Tsuyukubo</span><br>
-<span id="revnumber">version 1.4.5</span>
+<span id="revnumber">version 1.4.6-SNAPSHOT</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -456,36 +456,41 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#creating-proxydatasource">3.1. Creating ProxyDataSource</a></li>
 <li><a href="#generated-keys">3.2. Generated Keys</a></li>
 <li><a href="#_proxying_resultset">3.3. Proxying ResultSet</a></li>
-<li><a href="#listeners">3.4. Listeners</a></li>
 </ul>
 </li>
-<li><a href="#built-in-listeners">4. Built-in Listeners</a>
+<li><a href="#listeners">4. Listeners</a>
 <ul class="sectlevel2">
-<li><a href="#query-logging-listener">4.1. Query Logging Listener</a></li>
-<li><a href="#_slow_query_logging_listener">4.2. Slow Query Logging Listener</a></li>
-<li><a href="#_query_count_listener">4.3. Query Count Listener</a></li>
-<li><a href="#tracing-method-listener">4.4. Tracing Method Listener</a></li>
-<li><a href="#custom-listeners">4.5. Custom Listeners</a></li>
+<li><a href="#_queryexecutionlistener">4.1. QueryExecutionListener</a></li>
+<li><a href="#_methodexecutionlistener">4.2. MethodExecutionListener</a></li>
 </ul>
 </li>
-<li><a href="#getting-started">5. Sample Configuration</a>
+<li><a href="#built-in-listeners">5. Built-in Listeners</a>
 <ul class="sectlevel2">
-<li><a href="#_use_case">5.1. Use Case</a></li>
-<li><a href="#_pom_xml">5.2. pom.xml</a></li>
-<li><a href="#_web_xml">5.3. web.xml</a></li>
-<li><a href="#_datasource">5.4. DataSource</a></li>
-<li><a href="#_controller">5.5. Controller</a></li>
-<li><a href="#_taglib_optional">5.6. taglib (optional)</a></li>
-<li><a href="#_accessing_application">5.7. Accessing application</a></li>
-<li><a href="#_more_examples">5.8. More examples</a></li>
+<li><a href="#query-logging-listener">5.1. Query Logging Listener</a></li>
+<li><a href="#_slow_query_logging_listener">5.2. Slow Query Logging Listener</a></li>
+<li><a href="#_query_count_listener">5.3. Query Count Listener</a></li>
+<li><a href="#tracing-method-listener">5.4. Tracing Method Listener</a></li>
+<li><a href="#custom-listeners">5.5. Custom Listeners</a></li>
 </ul>
 </li>
-<li><a href="#development">6. Development</a>
+<li><a href="#getting-started">6. Sample Configuration</a>
 <ul class="sectlevel2">
-<li><a href="#_build_documentation">6.1. Build Documentation</a></li>
+<li><a href="#_use_case">6.1. Use Case</a></li>
+<li><a href="#_pom_xml">6.2. pom.xml</a></li>
+<li><a href="#_web_xml">6.3. web.xml</a></li>
+<li><a href="#_datasource">6.4. DataSource</a></li>
+<li><a href="#_controller">6.5. Controller</a></li>
+<li><a href="#_taglib_optional">6.6. taglib (optional)</a></li>
+<li><a href="#_accessing_application">6.7. Accessing application</a></li>
+<li><a href="#_more_examples">6.8. More examples</a></li>
 </ul>
 </li>
-<li><a href="#changelog">7. Changelog</a>
+<li><a href="#development">7. Development</a>
+<ul class="sectlevel2">
+<li><a href="#_build_documentation">7.1. Build Documentation</a></li>
+</ul>
+</li>
+<li><a href="#changelog">8. Changelog</a>
 <ul class="sectlevel2">
 <li><a href="#changelog-1.4.5">1.4.5</a></li>
 <li><a href="#changelog-1.4.4">1.4.4</a></li>
@@ -1066,13 +1071,16 @@ This proxying does NOT apply to the <code>ResultSet</code> from <code>getGenerat
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="listeners"><a class="anchor" href="#listeners"></a>3.4. Listeners</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="listeners"><a class="anchor" href="#listeners"></a>4. Listeners</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Currently, datasource-proxy provides two types of listener, <code>QueryExecutionListener</code> and <code>MethodExecutionListener</code>.</p>
 </div>
-<div class="sect3">
-<h4 id="_queryexecutionlistener"><a class="anchor" href="#_queryexecutionlistener"></a>3.4.1. QueryExecutionListener</h4>
+<div class="sect2">
+<h3 id="_queryexecutionlistener"><a class="anchor" href="#_queryexecutionlistener"></a>4.1. QueryExecutionListener</h3>
 <div class="paragraph">
 <p><code>QueryExecutionListener</code> is called when query execution methods are invoked.
 (e.g.: <code>execute</code>, <code>executeBatch</code>, <code>executeQuery</code>, etc.)</p>
@@ -1143,8 +1151,8 @@ query, and thrown exception.</p>
 </tbody>
 </table>
 </div>
-<div class="sect3">
-<h4 id="_methodexecutionlistener"><a class="anchor" href="#_methodexecutionlistener"></a>3.4.2. MethodExecutionListener</h4>
+<div class="sect2">
+<h3 id="_methodexecutionlistener"><a class="anchor" href="#_methodexecutionlistener"></a>4.2. MethodExecutionListener</h3>
 <div class="paragraph">
 <p><code>MethodExecutionListener</code> intercepts JDBC API calls on followings:</p>
 </div>
@@ -1161,15 +1169,53 @@ query, and thrown exception.</p>
 </li>
 </ul>
 </div>
+<div class="sect3">
+<h4 id="_replace_invoking_method_and_parameters"><a class="anchor" href="#_replace_invoking_method_and_parameters"></a>4.2.1. Replace invoking method and parameters</h4>
+<div class="paragraph">
+<p>In <code>MethodExecutionListener#beforeMethod()</code>, you could change the invoking method and its parameters on target JDBC object.</p>
+</div>
+<div class="paragraph">
+<p>For example, in application code, it calls <code>Statement#execute(String)</code>. However, in order to leverage
+<a href="#generated-keys">generated-keys retrieval</a>, you may want to call <code>Statement#execute(String,int)</code> instead without
+changing application code.</p>
+</div>
+<div class="paragraph">
+<p>To update/replace method and parameters, you could set new method or parameters via <code>MethodExecutionContext#setMethod()</code>
+ and <code>MethodExecutionContext#setMethodArgs()</code> in <code>MethodExecutionListener#beforeMethod()</code>.</p>
+</div>
+<div class="paragraph">
+<p>For above example use case:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">private static final Method EXECUTE_METHOD = Statement.class.getMethod("execute", String.class);
+private static final Method EXECUTE_WITH_INT_METHOD = Statement.class.getMethod("execute", String.class, int.class);
+
+@Override
+public void beforeMethod(MethodExecutionContext executionContext) {
+
+  // replace "Statement#execute(sql)" to "Statement#execute(sql, RETURN_GENERATED_KEYS)"
+  if(EXECUTE_METHOD.equals(executionContext.getMethod())) {
+
+    Object[] orgArgs = executionContext.getMethodArgs();
+    Object[] newArgs = new Object[]{orgArgs[0], Statement.RETURN_GENERATED_KEYS};
+
+    executionContext.setMethod(EXECUTE_WITH_INT_METHOD);  // new method
+    executionContext.setMethodArgs(newArgs);  // new method params
+  }
+
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="built-in-listeners"><a class="anchor" href="#built-in-listeners"></a>4. Built-in Listeners</h2>
+<h2 id="built-in-listeners"><a class="anchor" href="#built-in-listeners"></a>5. Built-in Listeners</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="query-logging-listener"><a class="anchor" href="#query-logging-listener"></a>4.1. Query Logging Listener</h3>
+<h3 id="query-logging-listener"><a class="anchor" href="#query-logging-listener"></a>5.1. Query Logging Listener</h3>
 <div class="paragraph">
 <p>Query logging listener is the most used listener that logs executing query with actual parameters
 to commons/slf4j/JUL logger or System.out.</p>
@@ -1293,7 +1339,7 @@ a log over multiple lines. Also, <code>json()</code> option prints out log in js
 </div>
 </div>
 <div class="sect2">
-<h3 id="_slow_query_logging_listener"><a class="anchor" href="#_slow_query_logging_listener"></a>4.2. Slow Query Logging Listener</h3>
+<h3 id="_slow_query_logging_listener"><a class="anchor" href="#_slow_query_logging_listener"></a>5.2. Slow Query Logging Listener</h3>
 <div class="paragraph">
 <p>When query takes more than specified threshold, <code>SlowQueryListener</code> executes a callback method.
 The callback is invoked only once for the target query if it exceeds the threshold time.</p>
@@ -1383,7 +1429,7 @@ So that, query execution time is populated.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_query_count_listener"><a class="anchor" href="#_query_count_listener"></a>4.3. Query Count Listener</h3>
+<h3 id="_query_count_listener"><a class="anchor" href="#_query_count_listener"></a>5.3. Query Count Listener</h3>
 <div class="paragraph">
 <p><code>DataSourceQueryCountListener</code> collects statistics of executed queries, such as number of query types(select, insert,
 update, delete), statement types(statement, prepared, callable), etc.
@@ -1430,7 +1476,7 @@ They are available in servlet <code>Filter</code> and <code>ServletRequestListen
 Furthermore, there is a custom tag for jsp.</p>
 </div>
 <div class="sect3">
-<h4 id="_query_count_logging_with_servlet_filter"><a class="anchor" href="#_query_count_logging_with_servlet_filter"></a>4.3.1. Query count logging with servlet Filter</h4>
+<h4 id="_query_count_logging_with_servlet_filter"><a class="anchor" href="#_query_count_logging_with_servlet_filter"></a>5.3.1. Query count logging with servlet Filter</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -1469,7 +1515,7 @@ Furthermore, there is a custom tag for jsp.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_query_count_logging_with_servletrequestlistener"><a class="anchor" href="#_query_count_logging_with_servletrequestlistener"></a>4.3.2. Query count logging with ServletRequestListener</h4>
+<h4 id="_query_count_logging_with_servletrequestlistener"><a class="anchor" href="#_query_count_logging_with_servletrequestlistener"></a>5.3.2. Query count logging with ServletRequestListener</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -1504,7 +1550,7 @@ Furthermore, there is a custom tag for jsp.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_taglib_support"><a class="anchor" href="#_taglib_support"></a>4.3.3. Taglib Support</h4>
+<h4 id="_taglib_support"><a class="anchor" href="#_taglib_support"></a>5.3.3. Taglib Support</h4>
 <div class="paragraph">
 <p>For jsp, a custom tag is supported to display query count metrics.</p>
 </div>
@@ -1614,7 +1660,7 @@ Furthermore, there is a custom tag for jsp.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="tracing-method-listener"><a class="anchor" href="#tracing-method-listener"></a>4.4. Tracing Method Listener</h3>
+<h3 id="tracing-method-listener"><a class="anchor" href="#tracing-method-listener"></a>5.4. Tracing Method Listener</h3>
 <div class="paragraph">
 <p><code>TracingMethodListener</code> is a method execution listener that prints out all JDBC API interaction.</p>
 </div>
@@ -1686,7 +1732,7 @@ conn.close();</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="custom-listeners"><a class="anchor" href="#custom-listeners"></a>4.5. Custom Listeners</h3>
+<h3 id="custom-listeners"><a class="anchor" href="#custom-listeners"></a>5.5. Custom Listeners</h3>
 <div class="paragraph">
 <p>When you create a custom listener, you can register it via <code>listener()</code> or <code>methodListener</code> methods.</p>
 </div>
@@ -1728,10 +1774,10 @@ conn.close();</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="getting-started"><a class="anchor" href="#getting-started"></a>5. Sample Configuration</h2>
+<h2 id="getting-started"><a class="anchor" href="#getting-started"></a>6. Sample Configuration</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_use_case"><a class="anchor" href="#_use_case"></a>5.1. Use Case</h3>
+<h3 id="_use_case"><a class="anchor" href="#_use_case"></a>6.1. Use Case</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -1744,7 +1790,7 @@ conn.close();</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_pom_xml"><a class="anchor" href="#_pom_xml"></a>5.2. pom.xml</h3>
+<h3 id="_pom_xml"><a class="anchor" href="#_pom_xml"></a>6.2. pom.xml</h3>
 <div class="paragraph">
 <p>Install <code>datasource-proxy</code> and <code>commons-logging</code> since we chose to use commons logger for query metrics.</p>
 </div>
@@ -1765,7 +1811,7 @@ conn.close();</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_web_xml"><a class="anchor" href="#_web_xml"></a>5.3. web.xml</h3>
+<h3 id="_web_xml"><a class="anchor" href="#_web_xml"></a>6.3. web.xml</h3>
 <div class="paragraph">
 <p>Add <code>CommonsQueryCountLoggingServletFilter</code> for query metrics</p>
 </div>
@@ -1785,7 +1831,7 @@ conn.close();</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_datasource"><a class="anchor" href="#_datasource"></a>5.4. DataSource</h3>
+<h3 id="_datasource"><a class="anchor" href="#_datasource"></a>6.4. DataSource</h3>
 <div class="paragraph">
 <p>Create a proxy datasource that performs:</p>
 </div>
@@ -1843,7 +1889,7 @@ public DataSource dataSource(DataSource actualDataSource) {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_controller"><a class="anchor" href="#_controller"></a>5.5. Controller</h3>
+<h3 id="_controller"><a class="anchor" href="#_controller"></a>6.5. Controller</h3>
 <div class="paragraph">
 <p>Write a simple controller that returns query metrics info as json. (using spring-boot)</p>
 </div>
@@ -1862,7 +1908,7 @@ public class MyController {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_taglib_optional"><a class="anchor" href="#_taglib_optional"></a>5.6. taglib (optional)</h3>
+<h3 id="_taglib_optional"><a class="anchor" href="#_taglib_optional"></a>6.6. taglib (optional)</h3>
 <div class="paragraph">
 <p>Display query metrics on jsp.</p>
 </div>
@@ -1878,7 +1924,7 @@ public class MyController {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_accessing_application"><a class="anchor" href="#_accessing_application"></a>5.7. Accessing application</h3>
+<h3 id="_accessing_application"><a class="anchor" href="#_accessing_application"></a>6.7. Accessing application</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-sh" data-lang="sh">&gt; curl http://localhost:8080
@@ -1887,7 +1933,7 @@ public class MyController {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_more_examples"><a class="anchor" href="#_more_examples"></a>5.8. More examples</h3>
+<h3 id="_more_examples"><a class="anchor" href="#_more_examples"></a>6.8. More examples</h3>
 <div class="paragraph">
 <p>See more examples in <a href="https://github.com/ttddyy/datasource-proxy-examples">datasource-proxy-examples</a> project.</p>
 </div>
@@ -1895,13 +1941,13 @@ public class MyController {
 </div>
 </div>
 <div class="sect1">
-<h2 id="development"><a class="anchor" href="#development"></a>6. Development</h2>
+<h2 id="development"><a class="anchor" href="#development"></a>7. Development</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Github repository: <a href="https://github.com/ttddyy/datasource-proxy" class="bare">https://github.com/ttddyy/datasource-proxy</a></p>
 </div>
 <div class="sect2">
-<h3 id="_build_documentation"><a class="anchor" href="#_build_documentation"></a>6.1. Build Documentation</h3>
+<h3 id="_build_documentation"><a class="anchor" href="#_build_documentation"></a>7.1. Build Documentation</h3>
 <div class="paragraph">
 <p>Generate <code>index.html</code></p>
 </div>
@@ -1922,7 +1968,7 @@ public class MyController {
 </div>
 </div>
 <div class="sect1">
-<h2 id="changelog"><a class="anchor" href="#changelog"></a>7. Changelog</h2>
+<h2 id="changelog"><a class="anchor" href="#changelog"></a>8. Changelog</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="changelog-1.4.5"><a class="anchor" href="#changelog-1.4.5"></a>1.4.5</h3>
@@ -2483,8 +2529,8 @@ call &#8658; total, elapsedTime &#8658; time, added success, failure, etc.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.4.5<br>
-Last updated 2017-12-18 00:17:12 UTC
+Version 1.4.6-SNAPSHOT<br>
+Last updated 2018-01-06 06:28:03 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
