@@ -1,0 +1,6 @@
+[[changelog-1.4.6]]
+=== 1.4.6
+
+* Executing target method and parameter replacement in `MethodExecutionListener`.
+  See details on <<replace-invoking-method-and-parameters>>.
+
