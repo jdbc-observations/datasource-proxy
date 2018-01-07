@@ -164,7 +164,6 @@ public class MethodExecutionListenerUtilsTest {
         final AtomicReference<Method> invokedMethod = new AtomicReference<Method>();
         final AtomicReference<Object[]> invokedMethodArgs = new AtomicReference<Object[]>();
 
-        // when callback throws exception
         MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
             @Override
             public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
