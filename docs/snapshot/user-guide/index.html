@@ -492,6 +492,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#changelog">8. Changelog</a>
 <ul class="sectlevel2">
+<li><a href="#changelog-1.4.6">1.4.6</a></li>
 <li><a href="#changelog-1.4.5">1.4.5</a></li>
 <li><a href="#changelog-1.4.4">1.4.4</a></li>
 <li><a href="#changelog-1.4.3">1.4.3</a></li>
@@ -1170,7 +1171,7 @@ query, and thrown exception.</p>
 </ul>
 </div>
 <div class="sect3">
-<h4 id="_replace_invoking_method_and_parameters"><a class="anchor" href="#_replace_invoking_method_and_parameters"></a>4.2.1. Replace invoking method and parameters</h4>
+<h4 id="replace-invoking-method-and-parameters"><a class="anchor" href="#replace-invoking-method-and-parameters"></a>4.2.1. Replace invoking method and parameters</h4>
 <div class="paragraph">
 <p>In <code>MethodExecutionListener#beforeMethod()</code>, you could change the invoking method and its parameters on target JDBC object.</p>
 </div>
@@ -1971,6 +1972,17 @@ public class MyController {
 <h2 id="changelog"><a class="anchor" href="#changelog"></a>8. Changelog</h2>
 <div class="sectionbody">
 <div class="sect2">
+<h3 id="changelog-1.4.6"><a class="anchor" href="#changelog-1.4.6"></a>1.4.6</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Executing target method and parameter replacement in <code>MethodExecutionListener</code>.
+See details on <a href="#replace-invoking-method-and-parameters">Replace invoking method and parameters</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
 <h3 id="changelog-1.4.5"><a class="anchor" href="#changelog-1.4.5"></a>1.4.5</h3>
 <div class="ulist">
 <ul>
@@ -2530,7 +2542,7 @@ call &#8658; total, elapsedTime &#8658; time, added success, failure, etc.</p>
 <div id="footer">
 <div id="footer-text">
 Version 1.4.6-SNAPSHOT<br>
-Last updated 2018-01-06 06:34:28 UTC
+Last updated 2018-01-07 16:30:55 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
