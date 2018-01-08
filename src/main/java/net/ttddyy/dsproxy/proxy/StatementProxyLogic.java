@@ -29,7 +29,8 @@ import static net.ttddyy.dsproxy.proxy.StatementMethodNames.GET_GENERATED_KEYS_M
 import static net.ttddyy.dsproxy.proxy.StatementMethodNames.METHODS_TO_RETURN_RESULTSET;
 
 /**
- * Shared proxy logic for {@link Statement}, {@link PreparedStatement} and {@link CallableStatement} invocation.
+ * Shared proxy logic for {@link Statement}, {@link PreparedStatement} and
+ * {@link CallableStatement} invocation.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.2
@@ -42,6 +43,7 @@ public class StatementProxyLogic {
      * @since 1.4.2
      */
     public static class Builder {
+
         private Statement statement;
         private StatementType statementType;
         private String query;
@@ -130,7 +132,6 @@ public class StatementProxyLogic {
         ParameterTransformer parameterTransformer = this.proxyConfig.getParameterTransformer();
         QueryExecutionListener queryListener = this.proxyConfig.getQueryListener();
         JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
-
 
         // special treat for toString method
         if ("toString".equals(methodName)) {
@@ -231,9 +232,7 @@ public class StatementProxyLogic {
 
         }
 
-
         // query execution methods
-
         final List<QueryInfo> queries = new ArrayList<QueryInfo>();
         boolean isBatchExecution = StatementMethodNames.BATCH_EXEC_METHODS.contains(methodName);
         int batchSize = 0;
@@ -303,7 +302,6 @@ public class StatementProxyLogic {
 
             final long afterTime = System.currentTimeMillis();
 
-
             // method that returns ResultSet but exclude "getGeneratedKeys()"
             final boolean isResultSetReturningMethod = !isGetGeneratedKeysMethod && METHODS_TO_RETURN_RESULTSET.contains(methodName);
 
@@ -317,7 +315,6 @@ public class StatementProxyLogic {
                 retVal = proxyFactory.createResultSet((ResultSet) retVal, this.connectionInfo, this.proxyConfig);
             }
 
-
             // cache generated-keys ResultSet if auto-retrieval is enabled
             if (this.proxyConfig.isAutoRetrieveGeneratedKeys()) {
                 final boolean isQueryExecutionMethod = EXEC_METHODS.contains(methodName);
@@ -325,11 +322,15 @@ public class StatementProxyLogic {
                 if (isGetGeneratedKeysMethod) {
                     this.generatedKeys = (ResultSet) retVal;  // result may be proxied
                 } else if (isQueryExecutionMethod) {
-                    ResultSet generatedKeysResultSet = this.statement.getGeneratedKeys();  // auto retrieve generated-keys
-                    if (this.proxyConfig.isGeneratedKeysProxyEnabled()) {
-                        generatedKeysResultSet = proxyFactory.createGeneratedKeys(generatedKeysResultSet, this.connectionInfo, this.proxyConfig);
+                    // Whether keys are returned or not is stored at index 1
+                    if (args.length > 1 && (Integer) args[1] == Statement.RETURN_GENERATED_KEYS) {
+                        ResultSet generatedKeysResultSet = this.statement.getGeneratedKeys();  // auto retrieve generated-keys
+
+                        if (this.proxyConfig.isGeneratedKeysProxyEnabled()) {
+                            generatedKeysResultSet = proxyFactory.createGeneratedKeys(generatedKeysResultSet, this.connectionInfo, this.proxyConfig);
+                        }
+                        this.generatedKeys = generatedKeysResultSet;  // cache generated-keys
                     }
-                    this.generatedKeys = generatedKeysResultSet;  // cache generated-keys
                 }
             }
 
@@ -355,7 +356,6 @@ public class StatementProxyLogic {
 
         }
     }
-
 
     private void transformParameters(ParameterTransformer parameterTransformer, PreparedStatement ps, boolean isBatch, int count) throws SQLException, IllegalAccessException, InvocationTargetException {
 
