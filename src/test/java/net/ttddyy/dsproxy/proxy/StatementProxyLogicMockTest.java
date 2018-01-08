@@ -933,15 +933,55 @@ public class StatementProxyLogicMockTest {
                 .build();
 
 
-        // "executeQuery
-        Method executeQueryMethod = Statement.class.getMethod("executeQuery", String.class);
-        logic.invoke(executeQueryMethod, new Object[]{"SELECT *"});
+        // "execute, generated keys not requested
+        Method executeMethodWithoutKeys = Statement.class.getMethod("execute", String.class);
+        logic.invoke(executeMethodWithoutKeys, new Object[]{"SELECT *"});
+
+        verify(resultSet, never()).close();
+
+
+        reset(resultSet);
+        
+        
+        // "execute, generated keys requested
+        Method executeMethodWithKeys = Statement.class.getMethod("execute", String.class, int.class);
+        logic.invoke(executeMethodWithKeys, new Object[]{"SELECT *", Statement.RETURN_GENERATED_KEYS});
 
         verify(resultSet).close();
 
 
         reset(resultSet);
+        
+        
+        // "executeQuery
+        Method executeQueryMethod = Statement.class.getMethod("executeQuery", String.class);
+        logic.invoke(executeQueryMethod, new Object[]{"SELECT *"});
 
+        verify(resultSet, never()).close();
+
+
+        reset(resultSet);
+        
+        
+        // "executeUpdate, generated keys requested
+        Method executeUpdateMethodWithKeys = Statement.class.getMethod("executeUpdate", String.class, int.class);
+        logic.invoke(executeUpdateMethodWithKeys, new Object[]{"SELECT *", Statement.RETURN_GENERATED_KEYS});
+
+        verify(resultSet).close();
+
+
+        reset(resultSet);
+        
+        
+        // "executeUpdate, generated keys not requested
+        Method executeUpdateMethodWithoutKeys = Statement.class.getMethod("executeUpdate", String.class);
+        logic.invoke(executeUpdateMethodWithoutKeys, new Object[]{"SELECT *"});
+
+        verify(resultSet, never()).close();
+
+
+        reset(resultSet);
+        
         // autoCloseGeneratedKeys=false
         proxyConfig = ProxyConfig.Builder.create()
                 .autoRetrieveGeneratedKeys(true)
@@ -955,11 +995,54 @@ public class StatementProxyLogicMockTest {
                 .build();
 
 
+        // "execute, generated keys not requested
+        logic.invoke(executeMethodWithoutKeys, new Object[]{"SELECT *"});
+
+        verify(resultSet, never()).close();
+
+
+        reset(resultSet);
+        
+        
+        // "execute, generated keys requested
+        executeMethodWithKeys = Statement.class.getMethod("execute", String.class, int.class);
+        logic.invoke(executeMethodWithKeys, new Object[]{"SELECT *", Statement.RETURN_GENERATED_KEYS});
+
+        verify(resultSet, never()).close();
+
+
+        reset(resultSet);
+        
+        
         // "executeQuery
+        executeQueryMethod = Statement.class.getMethod("executeQuery", String.class);
         logic.invoke(executeQueryMethod, new Object[]{"SELECT *"});
 
         verify(resultSet, never()).close();
 
+
+        reset(resultSet);
+        
+        
+        // "executeUpdate, generated keys requested
+        executeUpdateMethodWithKeys = Statement.class.getMethod("executeUpdate", String.class, int.class);
+        logic.invoke(executeUpdateMethodWithKeys, new Object[]{"SELECT *", Statement.RETURN_GENERATED_KEYS});
+
+        verify(resultSet, never()).close();
+
+
+        reset(resultSet);
+        
+        
+        // "executeUpdate, generated keys not requested
+        executeUpdateMethodWithoutKeys = Statement.class.getMethod("executeUpdate", String.class);
+        logic.invoke(executeUpdateMethodWithoutKeys, new Object[]{"SELECT *"});
+
+        verify(resultSet, never()).close();
+
+
+        reset(resultSet);
+        
     }
 
     @Test
