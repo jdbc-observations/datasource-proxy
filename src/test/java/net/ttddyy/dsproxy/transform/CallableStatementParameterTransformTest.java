@@ -99,9 +99,9 @@ public class CallableStatementParameterTransformTest {
         doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
-                replacer.setString("@p1", "first_REPLACED");  // replace first parameter by name
+                replacer.setString("in1", "first_REPLACED");  // replace first parameter by name
                 replacer.setString(2, "second_REPLACED");  // replace second parameter by index
-                replacer.registerOutParameter("@p4", Types.VARCHAR);
+                replacer.registerOutParameter("out1", Types.VARCHAR);
                 return null;
             }
         }).when(paramTransformer).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
@@ -109,17 +109,17 @@ public class CallableStatementParameterTransformTest {
         Connection conn = getProxyConnection(paramTransformer);
 
         CallableStatement cs = conn.prepareCall("{call foo(?,?,?,?,?,?)}");
-        cs.setString("@p1", "first");
+        cs.setString("in1", "first");
         cs.setString(2, "second");
         cs.setInt(3, 100);
-        cs.registerOutParameter("@p4", Types.VARCHAR);
+        cs.registerOutParameter("out1", Types.VARCHAR);
         cs.registerOutParameter(5, Types.VARCHAR);
         cs.registerOutParameter(6, Types.INTEGER);
         cs.execute();
 
         verify(paramTransformer, only()).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
-        String out1 = cs.getString("@p4");
+        String out1 = cs.getString("out1");
         assertThat(out1).isEqualTo("FOO:first_REPLACED+second_REPLACED+100");
 
         String out2 = cs.getString(5);
@@ -138,10 +138,10 @@ public class CallableStatementParameterTransformTest {
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
                 replacer.clearParameters();
-                replacer.setString("@p1", "first_REPLACED");
+                replacer.setString("in1", "first_REPLACED");
                 replacer.setString(2, "second_REPLACED");
                 replacer.setInt(3, 200);
-                replacer.registerOutParameter("@p4", Types.VARCHAR);
+                replacer.registerOutParameter("out1", Types.VARCHAR);
                 replacer.registerOutParameter(5, Types.VARCHAR);
                 replacer.registerOutParameter(6, Types.INTEGER);
                 return null;
@@ -151,17 +151,17 @@ public class CallableStatementParameterTransformTest {
         Connection conn = getProxyConnection(paramTransformer);
 
         CallableStatement cs = conn.prepareCall("{call foo(?,?,?,?,?,?)}");
-        cs.setString("@p1", "first");
+        cs.setString("in1", "first");
         cs.setString(2, "second");
         cs.setInt(3, 100);
-        cs.registerOutParameter("@p4", Types.VARCHAR);
+        cs.registerOutParameter("out1", Types.VARCHAR);
         cs.registerOutParameter(5, Types.VARCHAR);
         cs.registerOutParameter(6, Types.INTEGER);
         cs.execute();
 
         verify(paramTransformer, only()).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
 
-        String out1 = cs.getString("@p4");
+        String out1 = cs.getString(4);
         assertThat(out1).isEqualTo("FOO:first_REPLACED+second_REPLACED+200");
 
         String out2 = cs.getString(5);
@@ -179,13 +179,13 @@ public class CallableStatementParameterTransformTest {
         doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
-                replacer.setString("@p2", "second-1_REPLACED");  // first batch
+                replacer.setString("in2", "second-1_REPLACED");  // first batch
                 return null;
             }
         }).doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
-                replacer.setString("@p2", "second-2_REPLACED");  // second batch
+                replacer.setString("in2", "second-2_REPLACED");  // second batch
                 return null;
             }
         }).when(paramTransformer).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
@@ -194,10 +194,10 @@ public class CallableStatementParameterTransformTest {
 
         CallableStatement cs = conn.prepareCall("{call bar(?,?)}");
         cs.setString(1, "first-1");
-        cs.setString("@p2", "second-1");
+        cs.setString("in2", "second-1");
         cs.addBatch();
         cs.setString(1, "first-2");
-        cs.setString("@p2", "second-2");
+        cs.setString("in2", "second-2");
         cs.addBatch();
         cs.executeBatch();
 
@@ -216,14 +216,14 @@ public class CallableStatementParameterTransformTest {
                 ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
                 replacer.clearParameters();
                 replacer.setString(1, "first-1_REPLACED");
-                replacer.setString("@p2", "second-1_REPLACED");
+                replacer.setString("in2", "second-1_REPLACED");
                 return null;
             }
         }).doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 // second batch. don't call clearParameters().
                 ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
-                replacer.setString("@p2", "second-2_REPLACED");
+                replacer.setString("in2", "second-2_REPLACED");
                 return null;
             }
         }).when(paramTransformer).transformParameters(isA(ParameterReplacer.class), isA(TransformInfo.class));
@@ -232,10 +232,10 @@ public class CallableStatementParameterTransformTest {
 
         CallableStatement cs = conn.prepareCall("{call bar(?,?)}");
         cs.setString(1, "first-1");
-        cs.setString("@p2", "second-1");
+        cs.setString("in2", "second-1");
         cs.addBatch();
         cs.setString(1, "first-2");
-        cs.setString("@p2", "second-2");
+        cs.setString("in2", "second-2");
         cs.addBatch();
         cs.executeBatch();
 
