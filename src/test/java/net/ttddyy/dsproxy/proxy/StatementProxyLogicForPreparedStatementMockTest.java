@@ -655,12 +655,13 @@ public class StatementProxyLogicForPreparedStatementMockTest {
                 .statement(ps, StatementType.PREPARED)
                 .connectionInfo(new ConnectionInfo())
                 .proxyConfig(proxyConfig)
+                .generateKey(true)
                 .build();
 
 
-        // "executeQuery
-        Method executeQueryMethod = PreparedStatement.class.getMethod("executeQuery");
-        logic.invoke(executeQueryMethod, null);
+        // executeUpdate
+        Method executeUpdate = PreparedStatement.class.getMethod("executeUpdate");
+        logic.invoke(executeUpdate, null);
 
         verify(resultSet).close();
 
@@ -681,7 +682,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
 
 
         // "executeQuery
-        logic.invoke(executeQueryMethod, null);
+        logic.invoke(executeUpdate, null);
 
         verify(resultSet, never()).close();
 

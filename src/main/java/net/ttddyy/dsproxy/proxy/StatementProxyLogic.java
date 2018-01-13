@@ -24,7 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static net.ttddyy.dsproxy.proxy.StatementMethodNames.EXEC_METHODS;
 import static net.ttddyy.dsproxy.proxy.StatementMethodNames.GET_GENERATED_KEYS_METHOD;
 import static net.ttddyy.dsproxy.proxy.StatementMethodNames.METHODS_TO_RETURN_RESULTSET;
 
@@ -48,6 +47,7 @@ public class StatementProxyLogic {
         private ConnectionInfo connectionInfo;
         private Connection proxyConnection;
         private ProxyConfig proxyConfig;
+        private boolean generateKey;
 
         public static Builder create() {
             return new Builder();
@@ -61,6 +61,7 @@ public class StatementProxyLogic {
             logic.proxyConnection = this.proxyConnection;
             logic.proxyConfig = this.proxyConfig;
             logic.statementType = this.statementType;
+            logic.generateKey = this.generateKey;
             return logic;
         }
 
@@ -89,6 +90,11 @@ public class StatementProxyLogic {
             this.proxyConfig = proxyConfig;
             return this;
         }
+
+        public Builder generateKey(boolean generateKey) {
+            this.generateKey = generateKey;
+            return this;
+        }
     }
 
     private Statement statement;
@@ -106,6 +112,7 @@ public class StatementProxyLogic {
     private Connection proxyConnection;
     private ProxyConfig proxyConfig;
     private ResultSet generatedKeys;
+    private boolean generateKey;  // set true if auto-generate keys is enabled at "Connection#prepareStatement()"
 
     public Object invoke(Method method, Object[] args) throws Throwable {
 
@@ -320,16 +327,26 @@ public class StatementProxyLogic {
 
             // cache generated-keys ResultSet if auto-retrieval is enabled
             if (this.proxyConfig.isAutoRetrieveGeneratedKeys()) {
-                final boolean isQueryExecutionMethod = EXEC_METHODS.contains(methodName);
 
                 if (isGetGeneratedKeysMethod) {
                     this.generatedKeys = (ResultSet) retVal;  // result may be proxied
-                } else if (isQueryExecutionMethod) {
-                    ResultSet generatedKeysResultSet = this.statement.getGeneratedKeys();  // auto retrieve generated-keys
-                    if (this.proxyConfig.isGeneratedKeysProxyEnabled()) {
-                        generatedKeysResultSet = proxyFactory.createGeneratedKeys(generatedKeysResultSet, this.connectionInfo, this.proxyConfig);
+                } else {
+
+                    // for query execution methods: execute(), executeUpdate(), executeLargeUpdate()
+                    if (GeneratedKeysUtils.isMethodToRetrieveGeneratedKeys(method)) {
+
+                        // Perform auto retrieval IF PreparedStatement is created by specifying auto-generate keys
+                        // - Connection#prepareStatement with int, int[], or String[] in second arg -
+                        // OR if execute method has parameter specified to retrieve auto-generated keys -
+                        // Statement#[execute|executeUpdate|executeLargeUpdate] with int, int[], or String[] in second arg.
+                        if (this.generateKey || GeneratedKeysUtils.isAutoGenerateEnabledParameters(args)) {
+                            ResultSet generatedKeysResultSet = this.statement.getGeneratedKeys();  // auto retrieve generated-keys
+                            if (this.proxyConfig.isGeneratedKeysProxyEnabled()) {
+                                generatedKeysResultSet = proxyFactory.createGeneratedKeys(generatedKeysResultSet, this.connectionInfo, this.proxyConfig);
+                            }
+                            this.generatedKeys = generatedKeysResultSet;  // cache generated-keys
+                        }
                     }
-                    this.generatedKeys = generatedKeysResultSet;  // cache generated-keys
                 }
             }
 

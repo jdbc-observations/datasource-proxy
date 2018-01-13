@@ -933,9 +933,9 @@ public class StatementProxyLogicMockTest {
                 .build();
 
 
-        // "executeQuery
-        Method executeQueryMethod = Statement.class.getMethod("executeQuery", String.class);
-        logic.invoke(executeQueryMethod, new Object[]{"SELECT *"});
+        // execute
+        Method execute = Statement.class.getMethod("execute", String.class, int.class);
+        logic.invoke(execute, new Object[]{"SELECT *", Statement.RETURN_GENERATED_KEYS});
 
         verify(resultSet).close();
 
@@ -955,8 +955,8 @@ public class StatementProxyLogicMockTest {
                 .build();
 
 
-        // "executeQuery
-        logic.invoke(executeQueryMethod, new Object[]{"SELECT *"});
+        // execute
+        logic.invoke(execute, new Object[]{"SELECT *", Statement.RETURN_GENERATED_KEYS});
 
         verify(resultSet, never()).close();
 

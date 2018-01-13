@@ -21,7 +21,7 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
 
     public PreparedStatementInvocationHandler(
             PreparedStatement ps, String query, ConnectionInfo connectionInfo,
-            Connection proxyConnection, ProxyConfig proxyConfig) {
+            Connection proxyConnection, ProxyConfig proxyConfig, boolean generateKey) {
 
         this.delegate = StatementProxyLogic.Builder.create()
                 .statement(ps, StatementType.PREPARED)
@@ -29,6 +29,7 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
                 .connectionInfo(connectionInfo)
                 .proxyConnection(proxyConnection)
                 .proxyConfig(proxyConfig)
+                .generateKey(generateKey)
                 .build();
     }
 

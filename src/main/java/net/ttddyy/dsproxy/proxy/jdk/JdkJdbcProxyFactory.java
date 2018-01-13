@@ -43,10 +43,10 @@ public class JdkJdbcProxyFactory implements JdbcProxyFactory {
     @Override
     public PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query,
                                                      ConnectionInfo connectionInfo, Connection proxyConnection,
-                                                     ProxyConfig proxyConfig) {
+                                                     ProxyConfig proxyConfig, boolean generateKey) {
         return (PreparedStatement) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
                 new Class[]{ProxyJdbcObject.class, PreparedStatement.class},
-                new PreparedStatementInvocationHandler(preparedStatement, query, connectionInfo, proxyConnection, proxyConfig));
+                new PreparedStatementInvocationHandler(preparedStatement, query, connectionInfo, proxyConnection, proxyConfig, generateKey));
     }
 
     @Override

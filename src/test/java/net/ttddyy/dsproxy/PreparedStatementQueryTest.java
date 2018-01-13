@@ -368,7 +368,7 @@ public class PreparedStatementQueryTest {
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().resultSetProxyLogicFactory(new SimpleResultSetProxyLogicFactory()).build();
 
-        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, false);
 
         ResultSet result = proxyPs.executeQuery();
 
@@ -386,7 +386,7 @@ public class PreparedStatementQueryTest {
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().generatedKeysProxyLogicFactory(new SimpleResultSetProxyLogicFactory()).build();
 
-        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, false);
 
         proxyPs.executeUpdate();
 
@@ -402,7 +402,7 @@ public class PreparedStatementQueryTest {
         sql = "select * from emp;";
         conn = this.jdbcDataSource.getConnection();
         ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, false);
 
         // verify executeQuery
         ResultSet result = proxyPs.executeQuery();
@@ -439,7 +439,7 @@ public class PreparedStatementQueryTest {
                 .autoCloseGeneratedKeys(false)
                 .build();
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
-        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, true);
 
         proxyPs.executeUpdate();
 
@@ -468,7 +468,7 @@ public class PreparedStatementQueryTest {
                 .autoRetrieveGeneratedKeys(false)
                 .autoCloseGeneratedKeys(false)
                 .build();
-        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, false);
 
         proxyPs.executeUpdate();
 
@@ -476,6 +476,93 @@ public class PreparedStatementQueryTest {
         assertThat(info).isNotNull();
 
         assertThat(info.getGeneratedKeys()).isNull();
+
+    }
+
+    @Test
+    public void autoRetrieveGeneratedKeysWithGenerateKeyParameter() throws Throwable {
+        String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
+        Connection conn = this.jdbcDataSource.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        final AtomicReference<ResultSet> listenerReceivedGeneratedKeys = new AtomicReference<ResultSet>();
+        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+            @Override
+            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                listenerReceivedGeneratedKeys.set(execInfo.getGeneratedKeys());
+            }
+        };
+
+        // autoRetrieveGeneratedKeys=true
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(listener)
+                .autoRetrieveGeneratedKeys(true)
+                .autoCloseGeneratedKeys(false)
+                .build();
+        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
+        PreparedStatement proxyPs;
+
+        // for execute() method
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, true);
+        proxyPs.execute();
+        assertThat(listenerReceivedGeneratedKeys.get()).isNotNull();
+
+        // for executeUpdate() method
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, true);
+        proxyPs.executeUpdate();
+        assertThat(listenerReceivedGeneratedKeys.get()).isNotNull();
+
+        // for executeLargeUpdate() method
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, true);
+        proxyPs.executeLargeUpdate();
+        assertThat(listenerReceivedGeneratedKeys.get()).isNotNull();
+
+
+        // When generateKey=false is specified
+
+        // for execute() method
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, false);
+        proxyPs.execute();
+        assertThat(listenerReceivedGeneratedKeys.get()).isNull();
+
+        // for executeUpdate() method
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, false);
+        proxyPs.executeUpdate();
+        assertThat(listenerReceivedGeneratedKeys.get()).isNull();
+
+        // for executeLargeUpdate() method
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, false);
+        proxyPs.executeLargeUpdate();
+        assertThat(listenerReceivedGeneratedKeys.get()).isNull();
+    }
+
+    @Test
+    public void autoRetrieveGeneratedKeysWithExecuteQueryMethod() throws Throwable {
+        String sql = "select * from emp;";
+        Connection conn = this.jdbcDataSource.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        final AtomicReference<ResultSet> listenerReceivedGeneratedKeys = new AtomicReference<ResultSet>();
+        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+            @Override
+            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                listenerReceivedGeneratedKeys.set(execInfo.getGeneratedKeys());
+            }
+        };
+
+        // autoRetrieveGeneratedKeys=true
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(listener)
+                .autoRetrieveGeneratedKeys(true)
+                .autoCloseGeneratedKeys(false)
+                .build();
+        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
+        PreparedStatement proxyPs;
+
+        // for executeQuery() method, it should NOT retrieve generated-keys
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, true);
+        proxyPs.executeQuery();
+        assertThat(listenerReceivedGeneratedKeys.get()).isNull();
 
     }
 
@@ -488,7 +575,7 @@ public class PreparedStatementQueryTest {
         // when no configuration is specified for generated keys (disabling generated keys related feature)
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
-        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, false);
 
         proxyPs.executeUpdate();
 
@@ -508,7 +595,7 @@ public class PreparedStatementQueryTest {
         proxyConfig = ProxyConfig.Builder.create()
                 .autoRetrieveGeneratedKeys(true)
                 .build();
-        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, false);
 
         proxyPs.executeUpdate();
 
@@ -548,7 +635,7 @@ public class PreparedStatementQueryTest {
                 .autoCloseGeneratedKeys(false)
                 .build();
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
-        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, false);
 
         proxyPs.executeUpdate();
 
@@ -583,7 +670,7 @@ public class PreparedStatementQueryTest {
                 .autoCloseGeneratedKeys(true)
                 .build();
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
-        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, false);
 
         proxyPs.executeUpdate();
 
@@ -629,7 +716,7 @@ public class PreparedStatementQueryTest {
                 .autoCloseGeneratedKeys(false)
                 .build();
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
-        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, true);
 
         proxyPs.executeUpdate();
 
@@ -651,7 +738,7 @@ public class PreparedStatementQueryTest {
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(true)
                 .build();
-        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, true);
 
         proxyPs.executeUpdate();
 
@@ -683,7 +770,7 @@ public class PreparedStatementQueryTest {
                 .autoCloseGeneratedKeys(false)
                 .build();
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
-        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig);
+        PreparedStatement proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, true);
 
         proxyPs.executeUpdate();
 

@@ -46,7 +46,7 @@ public class JdkJdbcProxyFactoryTest {
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
 
-        PreparedStatement result = factory.createPreparedStatement(ps, "my-query", getConnectionInfo(), null, proxyConfig);
+        PreparedStatement result = factory.createPreparedStatement(ps, "my-query", getConnectionInfo(), null, proxyConfig, false);
 
         assertThat(result).isNotNull().isNotSameAs(ps).isInstanceOf(ProxyJdbcObject.class);
     }

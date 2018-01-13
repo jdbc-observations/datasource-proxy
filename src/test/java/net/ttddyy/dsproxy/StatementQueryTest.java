@@ -173,6 +173,122 @@ public class StatementQueryTest {
     }
 
     @Test
+    public void autoRetrieveGeneratedKeysWithExecuteQueryMethod() throws Throwable {
+        Connection conn = this.jdbcDataSource.getConnection();
+        Statement st = conn.createStatement();
+
+        final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
+        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+            @Override
+            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                // since generatedKeys will NOT be closed, they can be read afterwards.
+                listenerReceivedExecutionInfo.set(execInfo);
+            }
+        };
+
+        // autoRetrieveGeneratedKeys=true
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(listener)
+                .autoRetrieveGeneratedKeys(true)
+                .autoCloseGeneratedKeys(false)
+                .build();
+        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
+        Statement proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+
+        // it should NOT generate keys for executeQuery method
+        proxySt.executeQuery("insert into emp_with_auto_id ( name ) values ('BAZ');");
+        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
+
+
+    }
+
+    @Test
+    public void autoRetrieveGeneratedKeysWithQueryExecutionMethods() throws Throwable {
+        Connection conn = this.jdbcDataSource.getConnection();
+        Statement st = conn.createStatement();
+
+        final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
+        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+            @Override
+            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                // since generatedKeys will NOT be closed, they can be read afterwards.
+                listenerReceivedExecutionInfo.set(execInfo);
+            }
+        };
+
+        // autoRetrieveGeneratedKeys=true
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(listener)
+                .autoRetrieveGeneratedKeys(true)
+                .autoCloseGeneratedKeys(false)
+                .build();
+        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
+        Statement proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+
+
+        // Test with NOT enabling generated-keys
+        proxySt.execute("insert into emp_with_auto_id ( name ) values ('BAZ');");
+        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
+
+        proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+        proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');");
+        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
+
+        // Statement#executeLargeUpdate is not implemented in HSQL yet
+
+        // Specify NO_GENERATED_KEYS
+        proxySt.execute("insert into emp_with_auto_id ( name ) values ('BAZ');", Statement.NO_GENERATED_KEYS);
+        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
+
+        proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+        proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", Statement.NO_GENERATED_KEYS);
+        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
+
+
+        // Test with enabling generated-keys
+
+        // with Statement.RETURN_GENERATED_KEYS
+        proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+        proxySt.execute("insert into emp_with_auto_id ( name ) values ('BAZ');", Statement.RETURN_GENERATED_KEYS);
+        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
+        listenerReceivedExecutionInfo.set(null);
+
+        proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+        proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", Statement.RETURN_GENERATED_KEYS);
+        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
+        listenerReceivedExecutionInfo.set(null);
+
+        // with int[]
+        proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+        proxySt.execute("insert into emp_with_auto_id ( name ) values ('BAZ');", new int[]{1});
+        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
+        listenerReceivedExecutionInfo.set(null);
+
+        proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+        proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", new int[]{1});
+        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
+        listenerReceivedExecutionInfo.set(null);
+
+        // with String[]
+        proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+        proxySt.execute("insert into emp_with_auto_id ( name ) values ('BAZ');", new String[]{"id"});
+        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
+        listenerReceivedExecutionInfo.set(null);
+
+        proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+        proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", new String[]{"id"});
+        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
+        listenerReceivedExecutionInfo.set(null);
+
+
+        // TODO: maybe create new test method
+        proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+        proxySt.executeQuery("insert into emp_with_auto_id ( name ) values ('BAZ');");
+        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
+
+    }
+
+    @Test
     public void getGeneratedKeys() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();

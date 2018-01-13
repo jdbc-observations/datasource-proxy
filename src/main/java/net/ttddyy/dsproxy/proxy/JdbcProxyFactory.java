@@ -32,7 +32,7 @@ public interface JdbcProxyFactory {
 
     PreparedStatement createPreparedStatement(PreparedStatement preparedStatement, String query,
                                               ConnectionInfo connectionInfo, Connection proxyConnection,
-                                              ProxyConfig proxyConfig);
+                                              ProxyConfig proxyConfig, boolean generateKey);
 
     CallableStatement createCallableStatement(CallableStatement callableStatement, String query,
                                               ConnectionInfo connectionInfo,

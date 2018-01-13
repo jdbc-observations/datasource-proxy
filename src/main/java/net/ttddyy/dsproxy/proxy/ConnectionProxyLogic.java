@@ -122,8 +122,13 @@ public class ConnectionProxyLogic {
         } else if ("prepareStatement".equals(methodName)) {
             if (ObjectArrayUtils.isFirstArgString(args)) {
                 final String query = (String) args[0];
+
+                // check auto-generated-keys is enabled for these methods:
+                //   prepareStatement(String,int), prepareStatement(String,int[]), prepareStatement(String,String[])
+                final boolean generateKey = GeneratedKeysUtils.isAutoGenerateEnabledParameters(args);
+
                 return jdbcProxyFactory.createPreparedStatement((PreparedStatement) retVal, query,
-                        this.connectionInfo, proxyConnection, this.proxyConfig);
+                        this.connectionInfo, proxyConnection, this.proxyConfig, generateKey);
             }
         } else if ("prepareCall".equals(methodName)) {  // for stored procedure call
             if (ObjectArrayUtils.isFirstArgString(args)) {
