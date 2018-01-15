@@ -567,6 +567,74 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
+    public void autoRetrieveGeneratedKeysWithBatchPrepared() throws Throwable {
+        String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
+        Connection conn = this.jdbcDataSource.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        final AtomicReference<ResultSet> listenerReceivedGeneratedKeys = new AtomicReference<ResultSet>();
+        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+            @Override
+            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                listenerReceivedGeneratedKeys.set(execInfo.getGeneratedKeys());
+            }
+        };
+
+        // for default (expected to retrieve)
+        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
+        ProxyConfig proxyConfig;
+        PreparedStatement proxyPs;
+        proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(listener)
+                .autoRetrieveGeneratedKeys(true)
+                .autoCloseGeneratedKeys(false)
+                .build();
+
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, true);
+        proxyPs.addBatch();
+        proxyPs.addBatch();
+        proxyPs.addBatch();
+        proxyPs.executeBatch();
+        assertThat(listenerReceivedGeneratedKeys.get()).isNotNull();
+        listenerReceivedGeneratedKeys.set(null);
+
+        // executeLargeBatch is not implemented in HSQLDB
+
+        // autoRetrieve for batch prepared = true
+        proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(listener)
+                .autoRetrieveGeneratedKeys(true)
+                .autoCloseGeneratedKeys(false)
+                .retrieveGeneratedKeysForBatchPreparedOrCallable(true)  // set true
+                .build();
+
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, true);
+        proxyPs.addBatch();
+        proxyPs.addBatch();
+        proxyPs.addBatch();
+        proxyPs.executeBatch();
+        assertThat(listenerReceivedGeneratedKeys.get()).isNotNull();
+        listenerReceivedGeneratedKeys.set(null);
+
+
+        // autoRetrieve for batch prepared = false
+        proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(listener)
+                .autoRetrieveGeneratedKeys(true)
+                .autoCloseGeneratedKeys(false)
+                .retrieveGeneratedKeysForBatchPreparedOrCallable(false)  // set false
+                .build();
+
+        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, true);
+        proxyPs.addBatch();
+        proxyPs.addBatch();
+        proxyPs.addBatch();
+        proxyPs.executeBatch();
+        assertThat(listenerReceivedGeneratedKeys.get()).isNull();
+        listenerReceivedGeneratedKeys.set(null);
+    }
+
+    @Test
     public void getGeneratedKeys() throws Throwable {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();

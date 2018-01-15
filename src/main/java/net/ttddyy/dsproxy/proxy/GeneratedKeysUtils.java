@@ -21,11 +21,19 @@ public class GeneratedKeysUtils {
         methodNames.add("execute");
         methodNames.add("executeUpdate");
         methodNames.add("executeLargeUpdate");
+
+        // for batch execution (whether to generate key is driver impl dependent)
+        methodNames.add("executeBatch");
+        methodNames.add("executeLargeBatch");
         METHOD_NAMES_TO_CHECK = Collections.unmodifiableSet(methodNames);
     }
 
     /**
      * Whether the given method supports auto-generated keys.
+     *
+     * For batch execution methods, whether to return generated-keys is implementation specific.
+     * In datasource-proxy, it is controlled by {@link ProxyConfig#isRetrieveGeneratedKeysForBatchStatement()} and
+     * {@link ProxyConfig#isRetrieveGeneratedKeysForBatchPreparedOrCallable()}.
      *
      * @see Connection#prepareStatement(String)
      * @see Connection#prepareStatement(String, int[])
@@ -39,6 +47,8 @@ public class GeneratedKeysUtils {
      * @see Statement#executeLargeUpdate(String, int)
      * @see Statement#executeLargeUpdate(String, int[])
      * @see Statement#executeLargeUpdate(String, String[])
+     * @see Statement#executeBatch()
+     * @see Statement#executeLargeBatch()
      */
     public static boolean isMethodToRetrieveGeneratedKeys(Method method) {
         return METHOD_NAMES_TO_CHECK.contains(method.getName());

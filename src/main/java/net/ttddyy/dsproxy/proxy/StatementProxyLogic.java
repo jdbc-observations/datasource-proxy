@@ -332,14 +332,33 @@ public class StatementProxyLogic {
                     this.generatedKeys = (ResultSet) retVal;  // result may be proxied
                 } else {
 
-                    // for query execution methods: execute(), executeUpdate(), executeLargeUpdate()
+                    // for query execution methods:
+                    //   execute(), executeUpdate(), executeLargeUpdate(), or executeBatch() or executeLargeBatch()
                     if (GeneratedKeysUtils.isMethodToRetrieveGeneratedKeys(method)) {
 
-                        // Perform auto retrieval IF PreparedStatement is created by specifying auto-generate keys
-                        // - Connection#prepareStatement with int, int[], or String[] in second arg -
-                        // OR if execute method has parameter specified to retrieve auto-generated keys -
-                        // Statement#[execute|executeUpdate|executeLargeUpdate] with int, int[], or String[] in second arg.
-                        if (this.generateKey || GeneratedKeysUtils.isAutoGenerateEnabledParameters(args)) {
+                        boolean isTypeStatement = StatementType.STATEMENT == this.statementType;
+
+                        boolean retrieveGeneratedKey;
+                        if (isBatchExecution) {
+                            if (isTypeStatement) {
+                                // batch execution for statement: determined by configuration
+                                retrieveGeneratedKey = this.proxyConfig.isRetrieveGeneratedKeysForBatchStatement();
+                            } else {
+                                // batch execution for prepared or callable: determined by constructor AND configuration
+                                retrieveGeneratedKey = this.generateKey && this.proxyConfig.isRetrieveGeneratedKeysForBatchPreparedOrCallable();
+                            }
+                        } else {
+                            if (isTypeStatement) {
+                                // execution for statement: determined by method parameter
+                                // Statement#[execute|executeUpdate|executeLargeUpdate] with int, int[], or String[] in second arg.
+                                retrieveGeneratedKey = GeneratedKeysUtils.isAutoGenerateEnabledParameters(args);
+                            } else {
+                                // execution for prepared or callable: determined at creation of prepared/callable
+                                retrieveGeneratedKey = this.generateKey;
+                            }
+                        }
+
+                        if (retrieveGeneratedKey) {
                             ResultSet generatedKeysResultSet = this.statement.getGeneratedKeys();  // auto retrieve generated-keys
                             if (this.proxyConfig.isGeneratedKeysProxyEnabled()) {
                                 generatedKeysResultSet = proxyFactory.createGeneratedKeys(generatedKeysResultSet, this.connectionInfo, this.proxyConfig);

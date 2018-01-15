@@ -280,13 +280,76 @@ public class StatementQueryTest {
         assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
         listenerReceivedExecutionInfo.set(null);
 
-
-        // TODO: maybe create new test method
-        proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
-        proxySt.executeQuery("insert into emp_with_auto_id ( name ) values ('BAZ');");
-        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
-
     }
+
+    @Test
+    public void autoRetrieveGeneratedKeysWithBatchStatement() throws Throwable {
+        Connection conn = this.jdbcDataSource.getConnection();
+        Statement st = conn.createStatement();
+
+        final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
+        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+            @Override
+            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                // since generatedKeys will NOT be closed, they can be read afterwards.
+                listenerReceivedExecutionInfo.set(execInfo);
+            }
+        };
+
+        JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
+        ProxyConfig proxyConfig;
+        Statement proxySt;
+
+        // default value (expected to NOT auto-retrieve)
+        proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(listener)
+                .autoRetrieveGeneratedKeys(true)
+                .autoCloseGeneratedKeys(false)
+                .build();
+        proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+
+        proxySt.addBatch("insert into emp_with_auto_id ( name ) values ('BAZ');");
+        proxySt.addBatch("insert into emp_with_auto_id ( name ) values ('BAZ');");
+        proxySt.addBatch("insert into emp_with_auto_id ( name ) values ('BAZ');");
+        proxySt.executeBatch();
+        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
+        listenerReceivedExecutionInfo.set(null);
+
+        // executeLargeBatch is not implemented for HSQLDB
+
+        // autoRetrieve for batch statement = true
+        proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(listener)
+                .autoRetrieveGeneratedKeys(true)
+                .autoCloseGeneratedKeys(false)
+                .retrieveGeneratedKeysForBatchStatement(true)  // set true
+                .build();
+        proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+
+        proxySt.addBatch("insert into emp_with_auto_id ( name ) values ('BAZ');");
+        proxySt.addBatch("insert into emp_with_auto_id ( name ) values ('BAZ');");
+        proxySt.addBatch("insert into emp_with_auto_id ( name ) values ('BAZ');");
+        proxySt.executeBatch();
+        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
+        listenerReceivedExecutionInfo.set(null);
+
+
+        // autoRetrieve for batch statement = false
+        proxyConfig = ProxyConfig.Builder.create()
+                .queryListener(listener)
+                .autoRetrieveGeneratedKeys(true)
+                .autoCloseGeneratedKeys(false)
+                .retrieveGeneratedKeysForBatchStatement(false)  // set false
+                .build();
+        proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+
+        proxySt.addBatch("insert into emp_with_auto_id ( name ) values ('BAZ');");
+        proxySt.addBatch("insert into emp_with_auto_id ( name ) values ('BAZ');");
+        proxySt.addBatch("insert into emp_with_auto_id ( name ) values ('BAZ');");
+        proxySt.executeBatch();
+        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
+    }
+
 
     @Test
     public void getGeneratedKeys() throws Throwable {

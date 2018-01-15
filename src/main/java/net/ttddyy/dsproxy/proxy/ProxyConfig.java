@@ -24,6 +24,8 @@ public class ProxyConfig {
     private static class GeneratedKeysConfig {
         private ResultSetProxyLogicFactory proxyLogicFactory; // can be null if generated keys proxy is disabled
         private boolean autoRetrieve;
+        private boolean retrieveForBatchStatement = false;  // default false
+        private boolean retrieveForBatchPreparedOrCallable = true;  // default true
         private boolean autoClose;
     }
 
@@ -54,6 +56,8 @@ public class ProxyConfig {
                     .methodListener(proxyConfig.methodListener)
                     .generatedKeysProxyLogicFactory(proxyConfig.generatedKeysConfig.proxyLogicFactory)
                     .autoRetrieveGeneratedKeys(proxyConfig.generatedKeysConfig.autoRetrieve)
+                    .retrieveGeneratedKeysForBatchStatement(proxyConfig.generatedKeysConfig.retrieveForBatchStatement)
+                    .retrieveGeneratedKeysForBatchPreparedOrCallable(proxyConfig.generatedKeysConfig.retrieveForBatchPreparedOrCallable)
                     .autoCloseGeneratedKeys(proxyConfig.generatedKeysConfig.autoClose)
                     ;
         }
@@ -73,6 +77,8 @@ public class ProxyConfig {
             proxyConfig.generatedKeysConfig.proxyLogicFactory = this.generatedKeysConfig.proxyLogicFactory;
             proxyConfig.generatedKeysConfig.autoRetrieve = this.generatedKeysConfig.autoRetrieve;
             proxyConfig.generatedKeysConfig.autoClose = this.generatedKeysConfig.autoClose;
+            proxyConfig.generatedKeysConfig.retrieveForBatchStatement = this.generatedKeysConfig.retrieveForBatchStatement;
+            proxyConfig.generatedKeysConfig.retrieveForBatchPreparedOrCallable = this.generatedKeysConfig.retrieveForBatchPreparedOrCallable;
 
             return proxyConfig;
         }
@@ -120,6 +126,16 @@ public class ProxyConfig {
 
         public Builder autoCloseGeneratedKeys(boolean autoCloseGeneratedKeys) {
             this.generatedKeysConfig.autoClose = autoCloseGeneratedKeys;
+            return this;
+        }
+
+        public Builder retrieveGeneratedKeysForBatchStatement(boolean retrieveForBatchStatement) {
+            this.generatedKeysConfig.retrieveForBatchStatement = retrieveForBatchStatement;
+            return this;
+        }
+
+        public Builder retrieveGeneratedKeysForBatchPreparedOrCallable(boolean retrieveForBatchPreparedOrCallable) {
+            this.generatedKeysConfig.retrieveForBatchPreparedOrCallable = retrieveForBatchPreparedOrCallable;
             return this;
         }
 
@@ -235,6 +251,28 @@ public class ProxyConfig {
      */
     public boolean isAutoCloseGeneratedKeys() {
         return this.generatedKeysConfig.autoClose;
+    }
+
+    /**
+     * Perform generated-keys auto retrieval for batch statement.
+     *
+     * Default is set to {@code false}.
+     *
+     * @since 1.4.6
+     */
+    public boolean isRetrieveGeneratedKeysForBatchStatement() {
+        return this.generatedKeysConfig.retrieveForBatchStatement;
+    }
+
+    /**
+     * Perform generated-keys auto retrieval for batch prepared or callable.
+     *
+     * Default is set to {@code true}.
+     *
+     * @since 1.4.6
+     */
+    public boolean isRetrieveGeneratedKeysForBatchPreparedOrCallable() {
+        return this.generatedKeysConfig.retrieveForBatchPreparedOrCallable;
     }
 
     public ConnectionIdManager getConnectionIdManager() {
