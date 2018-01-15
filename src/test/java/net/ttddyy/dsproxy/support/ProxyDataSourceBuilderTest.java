@@ -614,4 +614,30 @@ public class ProxyDataSourceBuilderTest {
         assertThat(ds.getProxyConfig().getGeneratedKeysProxyLogicFactory()).isInstanceOf(RepeatableReadResultSetProxyLogicFactory.class);
 
     }
+
+    @Test
+    public void autoRetrievalGeneratedKeysForBatch() {
+        ProxyDataSource ds;
+
+        // default
+        ds = ProxyDataSourceBuilder.create().build();
+        assertThat(ds.getProxyConfig().isRetrieveGeneratedKeysForBatchStatement()).isFalse();
+        assertThat(ds.getProxyConfig().isRetrieveGeneratedKeysForBatchPreparedOrCallable()).isTrue();
+
+        // set true
+        ds = ProxyDataSourceBuilder.create()
+                .retrieveGeneratedKeysForBatch(true, true)
+                .build();
+        assertThat(ds.getProxyConfig().isRetrieveGeneratedKeysForBatchStatement()).isTrue();
+        assertThat(ds.getProxyConfig().isRetrieveGeneratedKeysForBatchPreparedOrCallable()).isTrue();
+
+
+        // set false
+        ds = ProxyDataSourceBuilder.create()
+                .retrieveGeneratedKeysForBatch(false, false)
+                .build();
+        assertThat(ds.getProxyConfig().isRetrieveGeneratedKeysForBatchStatement()).isFalse();
+        assertThat(ds.getProxyConfig().isRetrieveGeneratedKeysForBatchPreparedOrCallable()).isFalse();
+
+    }
 }

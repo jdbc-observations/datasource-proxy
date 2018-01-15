@@ -138,6 +138,8 @@ public class ProxyDataSourceBuilder {
     private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
 
     private boolean autoRetrieveGeneratedKeys;
+    private Boolean retrieveGeneratedKeysForBatchStatement;
+    private Boolean retrieveGeneratedKeysForBatchPreparedOrCallable;
     private boolean autoCloseGeneratedKeys;
     private ResultSetProxyLogicFactory generatedKeysProxyLogicFactory;
 
@@ -772,6 +774,29 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
+     * Configure generated-keys retrieval for batch statement and prepared/callable when auto retrieval is enabled.
+     *
+     * Since JDBC spec defines creation of generated-keys for batch executions are driver implementation specific,
+     * this method controls whether to auto-retrieve generated-keys for batch execution of {@link Statement} and
+     * {@link java.sql.PreparedStatement} / {@link java.sql.CallableStatement}.
+     * Setting is only effective when generated-keys auto-retrieval is enabled.
+     *
+     * Defult values are set {@code false} for {@link Statement}, {@code true} for {@link java.sql.PreparedStatement}
+     * and {@link java.sql.CallableStatement}.
+     *
+     * @param forStatement          for {@link Statement}
+     * @param forPreparedOrCallable for {@link java.sql.PreparedStatement} and {@link java.sql.CallableStatement}
+     * @return builder
+     * @since 1.4.6
+     */
+    public ProxyDataSourceBuilder retrieveGeneratedKeysForBatch(boolean forStatement, boolean forPreparedOrCallable) {
+        this.retrieveGeneratedKeysForBatchStatement = forStatement;
+        this.retrieveGeneratedKeysForBatchPreparedOrCallable = forPreparedOrCallable;
+        return this;
+    }
+
+
+    /**
      * Enable resultset proxy that allows repeatable read.
      *
      * Equivalent to {@code proxyResultSet(new RepeatableReadResultSetProxyLogicFactory())}
@@ -989,6 +1014,12 @@ public class ProxyDataSourceBuilder {
 
         // generated keys
         proxyConfigBuilder.autoRetrieveGeneratedKeys(this.autoRetrieveGeneratedKeys);
+        if (this.retrieveGeneratedKeysForBatchStatement != null) {
+            proxyConfigBuilder.retrieveGeneratedKeysForBatchStatement(this.retrieveGeneratedKeysForBatchStatement);
+        }
+        if (this.retrieveGeneratedKeysForBatchPreparedOrCallable != null) {
+            proxyConfigBuilder.retrieveGeneratedKeysForBatchPreparedOrCallable(this.retrieveGeneratedKeysForBatchPreparedOrCallable);
+        }
         proxyConfigBuilder.autoCloseGeneratedKeys(this.autoCloseGeneratedKeys);
         // this can be null if creation of generated keys proxy is disabled
         proxyConfigBuilder.generatedKeysProxyLogicFactory(this.generatedKeysProxyLogicFactory);
