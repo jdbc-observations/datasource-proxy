@@ -176,6 +176,44 @@ If there is a cached(auto retrieved) generated-keys and it is still open, then c
 If there is no cached generated-keys or cached one exists but it is already closed, it will perform the
 actual `getExecutionKeys()` on underlying `Statement` object, keep the result into the cache, then return it.
 
+[[auto-retrieve-generated-keys-for-batch]]
+===== For batch execution: `executeBatch()` and `executeLargeBatch()`
+
+According to JDBC specification, returning `getGeneratedKeys()` for `executeBatch()` and `executeLargeBatch()` is
+implementation specific:
+
+[quote, from JDBC specification]
+""
+Note – It is implementation-defined as to whether
+Statement.getGeneratedKeys will return generated values after invoking the
+executeBatch or executeLargeBatch methods.
+""
+
+
+In datasource-proxy, whether to auto-retrieve batch execution is configurable by
+`ProxyDataSourceBuilder#retrieveGeneratedKeysForBatch`.
+
+```java
+builder
+  .autoRetrieveGeneratedKeys(...)
+  .retrieveGeneratedKeysForBatch(false, true)  // first arg is for Statement,
+                                               // second is for Prepared/Callable
+  .build();
+```
+
+Default behavior for batch executions:
+
+.Default behavior for auto retrieving generated keys for batch execution
+[cols="20,80"]
+|===
+| Type               | Auto Retrieval
+
+| Statement          | NOT Retrieve
+| Prepared/Callable  | Retrieve
+|===
+
+
+
 [[auto-close-generated-keys]]
 ==== Auto close generated keys
 
