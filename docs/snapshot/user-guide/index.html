@@ -950,6 +950,64 @@ actual <code>getExecutionKeys()</code> on underlying <code>Statement</code> obje
 </tr>
 </table>
 </div>
+<div class="sect4">
+<h5 id="auto-retrieve-generated-keys-for-batch"><a class="anchor" href="#auto-retrieve-generated-keys-for-batch"></a>For batch execution: <code>executeBatch()</code> and <code>executeLargeBatch()</code></h5>
+<div class="paragraph">
+<p>According to JDBC specification, returning <code>getGeneratedKeys()</code> for <code>executeBatch()</code> and <code>executeLargeBatch()</code> is
+implementation specific:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Note – It is implementation-defined as to whether
+Statement.getGeneratedKeys will return generated values after invoking the
+executeBatch or executeLargeBatch methods.</p>
+</div>
+</blockquote>
+<div class="attribution">
+&#8212; from JDBC specification
+</div>
+</div>
+<div class="paragraph">
+<p>In datasource-proxy, whether to auto-retrieve batch execution is configurable by
+<code>ProxyDataSourceBuilder#retrieveGeneratedKeysForBatch</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">builder
+  .autoRetrieveGeneratedKeys(...)
+  .retrieveGeneratedKeysForBatch(false, true)  // first arg is for Statement,
+                                               // second is for Prepared/Callable
+  .build();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Default behavior for batch executions:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 4. Default behavior for auto retrieving generated keys for batch execution</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Auto Retrieval</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Statement</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NOT Retrieve</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Prepared/Callable</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Retrieve</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="sect3">
 <h4 id="auto-close-generated-keys"><a class="anchor" href="#auto-close-generated-keys"></a>3.2.2. Auto close generated keys</h4>
@@ -1596,7 +1654,7 @@ Furthermore, there is a custom tag for jsp.</p>
 </div>
 </div>
 <table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 4. metric attribute</caption>
+<caption class="title">Table 5. metric attribute</caption>
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 80%;">
@@ -1978,6 +2036,69 @@ public class MyController {
 <li>
 <p>Executing target method and parameter replacement in <code>MethodExecutionListener</code>.
 See details on <a href="#replace-invoking-method-and-parameters">Replace invoking method and parameters</a>.</p>
+</li>
+<li>
+<p>Update <a href="#auto-retrieve-generated-keys">Auto retrieve generated keys</a> to be called only when key-generation is specified.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Connection#prepareStatement(String)</code></p>
+</li>
+<li>
+<p><code>Connection#prepareStatement(String, int[])</code></p>
+</li>
+<li>
+<p><code>Connection#prepareStatement(String, String[])</code></p>
+</li>
+<li>
+<p><code>Statement#execute(String)</code></p>
+</li>
+<li>
+<p><code>Statement#execute(String, int[])</code></p>
+</li>
+<li>
+<p><code>Statement#execute(String, String[])</code></p>
+</li>
+<li>
+<p><code>Statement#executeUpdate(String)</code></p>
+</li>
+<li>
+<p><code>Statement#executeUpdate(String, int[])</code></p>
+</li>
+<li>
+<p><code>Statement#executeUpdate(String, String[])</code></p>
+</li>
+<li>
+<p><code>Statement#executeLargeUpdate(String, int)</code></p>
+</li>
+<li>
+<p><code>Statement#executeLargeUpdate(String, int[])</code></p>
+</li>
+<li>
+<p><code>Statement#executeLargeUpdate(String, String[])</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Make <a href="#auto-retrieve-generated-keys-for-batch">generated-keys auto-retrieval for batch execution configurable</a>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ProxyDataSourceBuilder#retrieveGeneratedKeysForBatch</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>batch execution for <code>Statement</code>: auto-retrieval is set to <code>false</code> to default</p>
+</li>
+<li>
+<p>batch execution for <code>Prepared/Callable</code>: auto-retrieval is set to <code>true</code> to default</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -2542,7 +2663,7 @@ call &#8658; total, elapsedTime &#8658; time, added success, failure, etc.</p>
 <div id="footer">
 <div id="footer-text">
 Version 1.4.6-SNAPSHOT<br>
-Last updated 2018-01-15 08:30:14 UTC
+Last updated 2018-01-16 05:03:05 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
