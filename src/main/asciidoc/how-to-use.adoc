@@ -159,9 +159,10 @@ Also see `ProxyDataSourceObjectFactory` javadoc
 [[auto-retrieve-generated-keys]]
 ==== Auto retrieve generated keys
 
-When query execution methods(`execute`, `executeUpdate`, `executeBatch`, etc) are called, automatically calls
-`getGeneratedKeys()` and make the returned `ResultSet` available via `ExecutionInfo#getGeneratedKeys()` in
-`QueryExecutionListener`.
+When 1) generated-keys are available(e.g.: `Statement#RETURN_GENERATED_KEYS` is specified at execution of statement
+or at creation of prepared/callable statement) and 2) query execution methods(`execute`, `executeUpdate`, `executeBatch`,
+etc) are called, automatically calls `getGeneratedKeys()` and make the returned `ResultSet` available via
+`ExecutionInfo#getGeneratedKeys()` in `QueryExecutionListener`.
 
 To enable auto retrieval of generated-keys:
 
@@ -175,6 +176,10 @@ NOTE: When `getExecutionKeys()` is called:  +
 If there is a cached(auto retrieved) generated-keys and it is still open, then cached `ResultSet` is returned.
 If there is no cached generated-keys or cached one exists but it is already closed, it will perform the
 actual `getExecutionKeys()` on underlying `Statement` object, keep the result into the cache, then return it.
+
+If you want to *always* retrieve generated-keys without changing application code that may be executing query without
+`Statement#RETURN_GENERATED_KEYS`, see <<replace-invoking-method-and-parameters>>.
+You could modify query executions to set `RETURN_GENERATED_KEYS`.
 
 [[auto-retrieve-generated-keys-for-batch]]
 ===== For batch execution: `executeBatch()` and `executeLargeBatch()`
