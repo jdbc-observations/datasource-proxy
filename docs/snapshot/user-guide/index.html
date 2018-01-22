@@ -921,9 +921,10 @@ build <code>ProxyConfig</code> aiming to support bean creation in XML based spri
 <div class="sect3">
 <h4 id="auto-retrieve-generated-keys"><a class="anchor" href="#auto-retrieve-generated-keys"></a>3.2.1. Auto retrieve generated keys</h4>
 <div class="paragraph">
-<p>When query execution methods(<code>execute</code>, <code>executeUpdate</code>, <code>executeBatch</code>, etc) are called, automatically calls
-<code>getGeneratedKeys()</code> and make the returned <code>ResultSet</code> available via <code>ExecutionInfo#getGeneratedKeys()</code> in
-<code>QueryExecutionListener</code>.</p>
+<p>When 1) generated-keys are available(e.g.: <code>Statement#RETURN_GENERATED_KEYS</code> is specified at execution of statement
+or at creation of prepared/callable statement) and 2) query execution methods(<code>execute</code>, <code>executeUpdate</code>, <code>executeBatch</code>,
+etc) are called, automatically calls <code>getGeneratedKeys()</code> and make the returned <code>ResultSet</code> available via
+<code>ExecutionInfo#getGeneratedKeys()</code> in <code>QueryExecutionListener</code>.</p>
 </div>
 <div class="paragraph">
 <p>To enable auto retrieval of generated-keys:</p>
@@ -949,6 +950,11 @@ actual <code>getExecutionKeys()</code> on underlying <code>Statement</code> obje
 </td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>If you want to <strong>always</strong> retrieve generated-keys without changing application code that may be executing query without
+<code>Statement#RETURN_GENERATED_KEYS</code>, see <a href="#replace-invoking-method-and-parameters">Replace invoking method and parameters</a>.
+You could modify query executions to set <code>RETURN_GENERATED_KEYS</code>.</p>
 </div>
 <div class="sect4">
 <h5 id="auto-retrieve-generated-keys-for-batch"><a class="anchor" href="#auto-retrieve-generated-keys-for-batch"></a>For batch execution: <code>executeBatch()</code> and <code>executeLargeBatch()</code></h5>
@@ -2663,7 +2669,7 @@ call &#8658; total, elapsedTime &#8658; time, added success, failure, etc.</p>
 <div id="footer">
 <div id="footer-text">
 Version 1.4.6-SNAPSHOT<br>
-Last updated 2018-01-16 05:03:05 UTC
+Last updated 2018-01-22 05:01:25 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
