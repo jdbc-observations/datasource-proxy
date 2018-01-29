@@ -196,7 +196,7 @@ executeBatch or executeLargeBatch methods.
 
 
 In datasource-proxy, whether to auto-retrieve batch execution is configurable by
-`ProxyDataSourceBuilder#retrieveGeneratedKeysForBatch`.
+`ProxyDataSourceBuilder#retrieveGeneratedKeysForBatch()`.
 
 ```java
 builder

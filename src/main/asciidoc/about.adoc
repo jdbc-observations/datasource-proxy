@@ -5,13 +5,14 @@
 === What is datasource-proxy?
 
 datasource-proxy provides simple API to intercept JDBC interactions and allows user to perform own logic
-before/after query or method executions. +
-With built-in interceptors, it supports query logging, slow query detection, query
-statistics, interaction tracing, and more out of the box, as well as adding your own interceptors.
+before/after query or method executions.  +
+The proxy works as a `javax.sql.DataSource` and takes listeners.
+Pre-defined listeners support query logging, slow query detection, query execution statistics, interaction
+tracing, etc. Also, custom listeners can easily be added to the listener chain.
 
 
-[[feature]]
-=== Feature
+[[built-in-support]]
+=== Built-in Support
 
 Query and Parameter Logging::
 +
@@ -25,19 +26,24 @@ Slow Query Detector and Loggers::
 You can add callbacks for slow queries that take longer than threshold time you specified.
 Slow query loggers are available out of the box.
 
+
 Connection ID::
 +
 Each connection is assigned unique ID that is a sequentially increasing number in default implementation.
 The connection ID is included in logging entry.
+
 
 Query Metrics::
 +
 You can collect statistics of executed query such as total time, number of select, insert, update, delete queries, etc.
 Output can be formatted as JSON.
 
-Custom Logic Injection for Query Execution::
+
+Custom Logic Injection for Query Execution and Method Execution::
 +
 You can write own `QueryExecutionListener` and they can get called before/after query execution.
+Also, `MethodExecutionListener` is invoked every interaction with JDBC API internaction.
+
 
 Web Application Support::
 +
@@ -45,13 +51,21 @@ Web Application Support::
 Query metrics information are available per web request basis(request-response lifecycle).
 For UI with JSP, custom tag to access metrics(`<dsp:metrics/>`) is available as well.
 
+
 Query and parameter replacement::
 +
 `QueryTransformer` and `ParameterTransformer` allows you to modify executing query and parameters right before
 calling the database.
 
 
-=== Example Log
+Method Tracing::
++
+Intercept JDBC API interactions such as getting connection, creating prepared statement, setting parameters,
+executing query, etc.
+
+
+
+=== Sample Log Output
 
 
 Query execution (single line):
@@ -87,3 +101,21 @@ Name:"MyProxy", Time:6, Total:1, Success:1, Failure:0, Select:1, Insert:0, Updat
 // JSON output
 {"name":"MyProxy", "time":10, "total":3, "success":3, "failure":0, "select":1, "insert":2, "update":0, "delete":0, "other":0}
 ```
+
+Method Tracing:
+
+.Output:
+```
+[1][success][0ms][conn=1] ProxyDataSource#getConnection()
+[2][success][1ms][conn=1] JDBCConnection#prepareStatement("INSERT INTO users (id, name) VALUES (?, ?)")
+[3][success][0ms][conn=1] JDBCPreparedStatement#setString(2,"FOO")
+[4][success][0ms][conn=1] JDBCPreparedStatement#setInt(1,100)
+[5][success][0ms][conn=1] JDBCPreparedStatement#addBatch()
+[6][success][0ms][conn=1] JDBCPreparedStatement#setInt(1,200)
+[7][success][0ms][conn=1] JDBCPreparedStatement#setString(2,"BAR")
+[8][success][0ms][conn=1] JDBCPreparedStatement#addBatch()
+[9][success][1ms][conn=1] JDBCPreparedStatement#executeBatch()
+[10][success][0ms][conn=1] JDBCPreparedStatement#close()
+[11][success][0ms][conn=1] JDBCConnection#close()
+```
+

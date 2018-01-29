@@ -343,7 +343,7 @@ builder
 [[custom-listeners]]
 === Custom Listeners
 
-When you create a custom listener, you can register it via `listener()` or `methodListener` methods.
+When you create a custom listener, you can register it via `listener()` or `methodListener()` methods.
 
 ```java
   builder
