@@ -13,6 +13,7 @@ Provide proxy classes for JDBC API to intercept executing queries and methods.
 
 - [Current Release Version][user-guide-current]
 - [Snapshot Version][user-guide-snapshot]
+- [Older Version](https://github.com/ttddyy/datasource-proxy/wiki/User-Guide)
 
 ## Maven
 
