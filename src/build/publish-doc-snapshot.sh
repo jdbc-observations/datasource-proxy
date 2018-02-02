@@ -1,8 +1,14 @@
 #!/bin/bash
+#
+#  Publish snapshot version document
+#
+
 set -e # exit with nonzero exit code if anything fails
 
+echo "Branch=\"${TRAVIS_BRANCH}\" Tag=\"${TRAVIS_TAG}\" PR=\"${TRAVIS_PULL_REQUEST}\""
+
 if [ "$TRAVIS_BRANCH" != 'master' ] || [ "$TRAVIS_PULL_REQUEST" == 'true' ]; then
-    echo "Not publishing documents. branch=\"${TRAVIS_BRANCH}\" PR=\"${TRAVIS_PULL_REQUEST}\""
+    echo "Not publishing snapshot version documents."
     exit 0
 fi
 

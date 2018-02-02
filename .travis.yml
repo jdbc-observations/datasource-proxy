@@ -22,4 +22,5 @@ env:
 
 after_success:
   - bash ./src/build/publish-jar.sh
-  - bash ./src/build/publish-doc.sh
+  - bash ./src/build/publish-doc-snapshot.sh
+  - bash ./src/build/publish-doc-release.sh
