@@ -1,7 +1,7 @@
 # datasource-proxy
 
 [![Build Status](https://travis-ci.org/ttddyy/datasource-proxy.svg?branch=master)](https://travis-ci.org/ttddyy/datasource-proxy)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.ttddyy/datasource-proxy/badge.svg)]([maven-central_badge])
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.ttddyy/datasource-proxy/badge.svg)][maven-central_badge]
 [![Download](https://api.bintray.com/packages/ttddyy/maven/datasource-proxy/images/download.svg) ](https://bintray.com/ttddyy/maven/datasource-proxy/_latestVersion)
 
 
@@ -25,7 +25,7 @@ Provide proxy classes for JDBC API to intercept executing queries and methods.
 </dependency>
 ```
 
-- latest version is: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.ttddyy/datasource-proxy/badge.svg)]([maven-central_badge])
+- latest version is: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.ttddyy/datasource-proxy/badge.svg)][maven-central_badge]
 - No dependencies to other libraries, everything is optional.
     - For example, if you want to use slf4j logger with `SLF4JQueryLoggingListener`, then you need slf4j library.
 - requires jdk1.6+
