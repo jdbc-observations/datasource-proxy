@@ -2068,16 +2068,14 @@ public class MyController {
 <div class="ulist">
 <ul>
 <li>
-<p>Executing target method and parameter replacement in <code>MethodExecutionListener</code>.
+<p>Method and parameter replacement in <code>MethodExecutionListener</code>. <br>
 See details on <a href="#replace-invoking-method-and-parameters">Replace invoking method and parameters</a>.</p>
 </li>
 <li>
-<p>Update <a href="#auto-retrieve-generated-keys">Auto retrieve generated keys</a> to be called only when key-generation is specified.</p>
+<p>Updated <a href="#auto-retrieve-generated-keys">Auto retrieve generated keys</a> feature. Auto-retrieval is now only called when key-generation is specified. <br>
+Following methods specify key-generation:</p>
 <div class="ulist">
 <ul>
-<li>
-<p><code>Connection#prepareStatement(String)</code></p>
-</li>
 <li>
 <p><code>Connection#prepareStatement(String, int[])</code></p>
 </li>
@@ -2085,16 +2083,10 @@ See details on <a href="#replace-invoking-method-and-parameters">Replace invokin
 <p><code>Connection#prepareStatement(String, String[])</code></p>
 </li>
 <li>
-<p><code>Statement#execute(String)</code></p>
-</li>
-<li>
 <p><code>Statement#execute(String, int[])</code></p>
 </li>
 <li>
 <p><code>Statement#execute(String, String[])</code></p>
-</li>
-<li>
-<p><code>Statement#executeUpdate(String)</code></p>
 </li>
 <li>
 <p><code>Statement#executeUpdate(String, int[])</code></p>
@@ -2115,7 +2107,7 @@ See details on <a href="#replace-invoking-method-and-parameters">Replace invokin
 </div>
 </li>
 <li>
-<p>Make <a href="#auto-retrieve-generated-keys-for-batch">generated-keys auto-retrieval for batch execution configurable</a>.</p>
+<p>Make <a href="#auto-retrieve-generated-keys-for-batch">generated-keys auto-retrieval for batch execution</a> configurable.</p>
 <div class="ulist">
 <ul>
 <li>
@@ -2697,7 +2689,7 @@ call &#8658; total, elapsedTime &#8658; time, added success, failure, etc.</p>
 <div id="footer">
 <div id="footer-text">
 Version 1.5.0-SNAPSHOT<br>
-Last updated 2018-02-01 07:07:26 UTC
+Last updated 2018-02-02 06:41:16 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
