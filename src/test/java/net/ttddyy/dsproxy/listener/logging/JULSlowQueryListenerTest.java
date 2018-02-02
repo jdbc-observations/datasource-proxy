@@ -38,7 +38,7 @@ public class JULSlowQueryListenerTest {
         queryInfos.add(queryInfo);
 
         this.listener.beforeQuery(executionInfo, queryInfos);
-        TimeUnit.MILLISECONDS.sleep(100);
+        TimeUnit.MILLISECONDS.sleep(300);
         this.listener.afterQuery(executionInfo, queryInfos);
 
         InMemoryJULLogger logger = (InMemoryJULLogger) this.listener.getLogger();
