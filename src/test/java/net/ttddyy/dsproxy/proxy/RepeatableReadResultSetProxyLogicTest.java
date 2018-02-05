@@ -192,6 +192,25 @@ public class RepeatableReadResultSetProxyLogicTest {
     }
 
     @Test
+    public void getColumnByNotExplicitelyConsumedIndexOnConsumedResultSetThatHasMoreResultsReturnsTheResultThatTheTargetDidTheFirstTime() throws Throwable {
+        ResultSet resultSet = exampleResultSet();
+        RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
+
+        when(resultSet.next()).thenReturn(true, true, false);
+
+        when(resultSet.getObject(1)).thenReturn(COLUMN_1_VALUE);
+
+        assertThat(invokeNext(resultSetProxyLogic)).isTrue();
+
+        invokeBeforeFirst(resultSetProxyLogic);
+        invokeNext(resultSetProxyLogic);
+
+        String result = invokeGetString(resultSetProxyLogic, 1);
+
+        assertThat(result).isEqualTo(COLUMN_1_VALUE);
+    }
+
+    @Test
     public void getColumnByLabelOnConsumedResultSetThatHasMoreResultsReturnsTheResultThatTheTargetDidTheFirstTime() throws Throwable {
         ResultSet resultSet = exampleResultSet();
         RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
@@ -236,10 +255,16 @@ public class RepeatableReadResultSetProxyLogicTest {
         when(resultSet.getString(1)).thenReturn(COLUMN_1_VALUE);
         when(resultSet.getInt(2)).thenReturn(COLUMN_2_VALUE);
         when(resultSet.getTimestamp(3)).thenReturn(COLUMN_3_VALUE);
+        when(resultSet.getObject(1)).thenReturn(COLUMN_1_VALUE);
+        when(resultSet.getObject(2)).thenReturn(COLUMN_2_VALUE);
+        when(resultSet.getObject(3)).thenReturn(COLUMN_3_VALUE);
 
         when(resultSet.getString(COLUMN_1_LABEL)).thenReturn(COLUMN_1_VALUE);
         when(resultSet.getInt(COLUMN_2_LABEL)).thenReturn(COLUMN_2_VALUE);
         when(resultSet.getTimestamp(COLUMN_3_LABEL)).thenReturn(COLUMN_3_VALUE);
+        when(resultSet.getObject(COLUMN_1_LABEL)).thenReturn(COLUMN_1_VALUE);
+        when(resultSet.getObject(COLUMN_2_LABEL)).thenReturn(COLUMN_2_VALUE);
+        when(resultSet.getObject(COLUMN_3_LABEL)).thenReturn(COLUMN_3_VALUE);
 
         assertThat(invokeNext(resultSetProxyLogic)).isTrue();
         assertThat(invokeGetString(resultSetProxyLogic, COLUMN_1_LABEL)).isEqualTo(COLUMN_1_VALUE);
