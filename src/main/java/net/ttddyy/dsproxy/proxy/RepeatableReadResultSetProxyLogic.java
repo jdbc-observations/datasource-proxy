@@ -7,12 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static java.lang.Boolean.TRUE;
 import static java.lang.String.format;
@@ -96,6 +91,7 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
     private boolean resultSetConsumed;
     private boolean closed;
     private Object[] currentResult;
+    private final Object unconsumedResultColumn = new Object();
     private final List<Object[]> cachedResults = new ArrayList<Object[]>();
 
 
@@ -155,6 +151,9 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
             if (isGetMethod(method)) {
                 return handleGetMethodByDelegating(method, args);
             }
+            if (isNextMethod(method) || isBeforeFirstMethod(method)) {
+                beforeNextOrBeforeFirst();
+            }
             if (isNextMethod(method)) {
                 return handleNextMethodByDelegating(method, args);
             }
@@ -167,10 +166,26 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
         throw new UnsupportedOperationException(format("Method '%s' is not supported by this proxy", method));
     }
 
+    private void beforeNextOrBeforeFirst() throws SQLException {
+        if (currentResult == null) {
+            return;
+        }
+        for (int i = 1; i < currentResult.length; i++) {
+            Object resultColumn = currentResult[i];
+            if (resultColumn != unconsumedResultColumn) {
+                continue;
+            }
+            currentResult[i] = resultSet.getObject(i);
+        }
+    }
+
     private Object handleNextMethodByDelegating(Method method, Object[] args) throws IllegalAccessException, InvocationTargetException {
         Object result = method.invoke(resultSet, args);
         if (TRUE.equals(result)) {
             currentResult = new Object[columnCount + 1];
+            for (int i = 1; i < currentResult.length; i++) {
+                currentResult[i] = unconsumedResultColumn;
+            }
             cachedResults.add(currentResult);
         }
         return result;
