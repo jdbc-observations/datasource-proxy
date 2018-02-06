@@ -5,6 +5,7 @@ import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -33,6 +34,8 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
                 }
             }
     );
+
+    private static final Object UNCONSUMED_RESULT_COLUMN = new Object();
 
     public static class Builder {
         private ResultSet resultSet;
@@ -91,7 +94,6 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
     private boolean resultSetConsumed;
     private boolean closed;
     private Object[] currentResult;
-    private final Object unconsumedResultColumn = new Object();
     private final List<Object[]> cachedResults = new ArrayList<Object[]>();
 
 
@@ -151,10 +153,13 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
             if (isGetMethod(method)) {
                 return handleGetMethodByDelegating(method, args);
             }
-            if (isNextMethod(method) || isBeforeFirstMethod(method)) {
+
+            boolean isNextMethod = isNextMethod(method);
+
+            if (isNextMethod || isBeforeFirstMethod(method)) {
                 beforeNextOrBeforeFirst();
             }
-            if (isNextMethod(method)) {
+            if (isNextMethod) {
                 return handleNextMethodByDelegating(method, args);
             }
             if (isBeforeFirstMethod(method)) {
@@ -172,7 +177,7 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
         }
         for (int i = 1; i < currentResult.length; i++) {
             Object resultColumn = currentResult[i];
-            if (resultColumn != unconsumedResultColumn) {
+            if (resultColumn != UNCONSUMED_RESULT_COLUMN) {
                 continue;
             }
             currentResult[i] = resultSet.getObject(i);
@@ -183,9 +188,7 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
         Object result = method.invoke(resultSet, args);
         if (TRUE.equals(result)) {
             currentResult = new Object[columnCount + 1];
-            for (int i = 1; i < currentResult.length; i++) {
-                currentResult[i] = unconsumedResultColumn;
-            }
+            Arrays.fill(this.currentResult, UNCONSUMED_RESULT_COLUMN);
             cachedResults.add(currentResult);
         }
         return result;
