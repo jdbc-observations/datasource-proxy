@@ -15,7 +15,7 @@ import java.sql.SQLException;
  * Provide a {@link ResultSet} proxy using {@link CachedRowSet} which provides disconnected scrollability.
  *
  * This class uses {@link RowSetFactory} that requires jdk1.7+ to create a {@link CachedRowSet}.
- * You could change the creation strategy either uses mechinism of {@link RowSetFactory} or simply extend this class
+ * You could change the creation strategy either uses mechanism of {@link RowSetFactory} or simply extend this class
  * or implement another {@link ResultSetProxyLogicFactory}.
  *
  * The default {@link CachedRowSet} implementation is {@code com.sun.rowset.CachedRowSetImpl}.
