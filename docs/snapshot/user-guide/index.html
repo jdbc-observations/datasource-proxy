@@ -492,6 +492,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#changelog">8. Changelog</a>
 <ul class="sectlevel2">
+<li><a href="#changelog-1.4.7">1.4.7</a></li>
 <li><a href="#changelog-1.4.6">1.4.6</a></li>
 <li><a href="#changelog-1.4.5">1.4.5</a></li>
 <li><a href="#changelog-1.4.4">1.4.4</a></li>
@@ -1149,7 +1150,7 @@ This proxying does NOT apply to the <code>ResultSet</code> from <code>getGenerat
 </table>
 </div>
 <div class="sect3">
-<h4 id="_repeatable_read_resultset"><a class="anchor" href="#_repeatable_read_resultset"></a>3.3.1. Repeatable Read ResultSet</h4>
+<h4 id="repeatable-read-resultset"><a class="anchor" href="#repeatable-read-resultset"></a>3.3.1. Repeatable Read ResultSet</h4>
 <div class="paragraph">
 <p><code>RepeatableReadResultSetProxyLogic</code> allows <code>ResultSet</code> to be consumed more than once.</p>
 </div>
@@ -1159,6 +1160,30 @@ This proxying does NOT apply to the <code>ResultSet</code> from <code>getGenerat
   // configure listeners
   .repeatableReadResultSet()
 //  .proxyResultSet(new RepeatableReadResultSetProxyLogicFactory())  // same as above
+  .build();</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="repeatable-read-resultset-with-cachedrowsetresultsetproxylogic"><a class="anchor" href="#repeatable-read-resultset-with-cachedrowsetresultsetproxylogic"></a>3.3.2. Repeatable Read ResultSet with CachedRowSetResultSetProxyLogic</h4>
+<div class="paragraph">
+<p>New result set proxy, <code>CachedRowSetResultSetProxyLogic</code> is introduced at version <code>1.4.7</code>.
+<code>CachedRowSetResultSetProxyLogic</code> uses <code>javax.sql.rowset.CachedRowSet</code> as underlying implementation, which is a
+sub-interface of <code>ResultSet</code> and provides cursor scrollability in disconnected fashion. <br>
+Default <code>CachedRowSet</code> implementation is <code>com.sun.rowset.CachedRowSetImpl</code> for oracle JDK (note for <code>com.sun</code> package),
+which you can change via <code>RowSetFactory</code> (please see details on JDK documentation).</p>
+</div>
+<div class="paragraph">
+<p>To use <code>CachedRowSetResultSetProxyLogic</code> for <code>ResultSet</code> proxy, simply supply its proxy-logic factory,
+<code>CachedRowSetResultSetProxyLogicFactory</code>, to <code>ProxyDataSourceBuilder</code> when enabling result set proxy.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">builder
+  // proxy for regular ResultSet
+  .proxyResultSet(new RepeatableReadResultSetProxyLogicFactory())
+   // proxy for generated-keys
+  .autoRetrieveGeneratedKeys(false, new RepeatableReadResultSetProxyLogicFactory());
   .build();</code></pre>
 </div>
 </div>
@@ -2064,6 +2089,18 @@ public class MyController {
 <h2 id="changelog"><a class="anchor" href="#changelog"></a>8. Changelog</h2>
 <div class="sectionbody">
 <div class="sect2">
+<h3 id="changelog-1.4.7"><a class="anchor" href="#changelog-1.4.7"></a>1.4.7</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Added <code>CachedRowSetResultSetProxyLogic</code> to provide repeatable read on <code>ResultSet</code> using
+<code>javax.sql.rowset.CachedRowSet</code> as its underlying implementation. <br>
+See details on <a href="#repeatable-read-resultset-with-cachedrowsetresultsetproxylogic">Repeatable Read ResultSet with CachedRowSetResultSetProxyLogic</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
 <h3 id="changelog-1.4.6"><a class="anchor" href="#changelog-1.4.6"></a>1.4.6</h3>
 <div class="ulist">
 <ul>
@@ -2689,7 +2726,7 @@ call &#8658; total, elapsedTime &#8658; time, added success, failure, etc.</p>
 <div id="footer">
 <div id="footer-text">
 Version 1.4.7-SNAPSHOT<br>
-Last updated 2018-02-11 08:14:11 UTC
+Last updated 2018-02-12 03:17:38 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
