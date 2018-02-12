@@ -292,6 +292,7 @@ interacting with `ResultSet`. Default logic is no-op.
 NOTE: This proxying does NOT apply to the `ResultSet` from `getGeneratedKeys()`. To proxy the result of
 `getGeneratedKeys()`, see <<proxying-generated-keys>>.
 
+[[repeatable-read-resultset]]
 ==== Repeatable Read ResultSet
 
 `RepeatableReadResultSetProxyLogic` allows `ResultSet` to be consumed more than once.
@@ -302,6 +303,28 @@ builder
   // configure listeners
   .repeatableReadResultSet()
 //  .proxyResultSet(new RepeatableReadResultSetProxyLogicFactory())  // same as above
+  .build();
+```
+
+[[repeatable-read-resultset-with-cachedrowsetresultsetproxylogic]]
+==== Repeatable Read ResultSet with CachedRowSetResultSetProxyLogic
+
+New result set proxy, `CachedRowSetResultSetProxyLogic` is introduced at version `1.4.7`.
+`CachedRowSetResultSetProxyLogic` uses `javax.sql.rowset.CachedRowSet` as underlying implementation, which is a
+sub-interface of `ResultSet` and provides cursor scrollability in disconnected fashion.  +
+Default `CachedRowSet` implementation is `com.sun.rowset.CachedRowSetImpl` for oracle JDK (note for `com.sun` package),
+which you can change via `RowSetFactory` (please see details on JDK documentation).
+
+To use `CachedRowSetResultSetProxyLogic` for `ResultSet` proxy, simply supply its proxy-logic factory,
+`CachedRowSetResultSetProxyLogicFactory`, to `ProxyDataSourceBuilder` when enabling result set proxy.
+
+
+```java
+builder
+  // proxy for regular ResultSet
+  .proxyResultSet(new RepeatableReadResultSetProxyLogicFactory())
+   // proxy for generated-keys
+  .autoRetrieveGeneratedKeys(false, new RepeatableReadResultSetProxyLogicFactory());
   .build();
 ```
 

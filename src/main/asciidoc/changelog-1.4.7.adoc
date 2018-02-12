@@ -1,0 +1,9 @@
+[[changelog-1.4.7]]
+=== 1.4.7
+
+* Added `CachedRowSetResultSetProxyLogic` to provide repeatable read on `ResultSet` using
+  `javax.sql.rowset.CachedRowSet` as its underlying implementation.  +
+  See details on <<repeatable-read-resultset-with-cachedrowsetresultsetproxylogic>>.
+
+
+
