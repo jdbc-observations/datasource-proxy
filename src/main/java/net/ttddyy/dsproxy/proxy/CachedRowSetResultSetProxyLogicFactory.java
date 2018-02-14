@@ -31,7 +31,7 @@ public class CachedRowSetResultSetProxyLogicFactory implements ResultSetProxyLog
     @Override
     public ResultSetProxyLogic create(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
         ResultSet cachedRowSet = getCachedRowSet(resultSet);
-        return new CachedRowSetResultSetProxyLogic(cachedRowSet, connectionInfo, proxyConfig);
+        return new CachedRowSetResultSetProxyLogic(resultSet, cachedRowSet, connectionInfo, proxyConfig);
     }
 
     protected ResultSet getCachedRowSet(ResultSet resultSet) {
