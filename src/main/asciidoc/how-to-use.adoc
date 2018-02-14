@@ -293,7 +293,7 @@ NOTE: This proxying does NOT apply to the `ResultSet` from `getGeneratedKeys()`.
 `getGeneratedKeys()`, see <<proxying-generated-keys>>.
 
 [[repeatable-read-resultset]]
-==== Repeatable Read ResultSet
+==== Repeatable read ResultSet
 
 `RepeatableReadResultSetProxyLogic` allows `ResultSet` to be consumed more than once.
 
@@ -307,7 +307,7 @@ builder
 ```
 
 [[repeatable-read-resultset-with-cachedrowsetresultsetproxylogic]]
-==== Repeatable Read ResultSet with CachedRowSetResultSetProxyLogic
+==== Repeatable read ResultSet with CachedRowSetResultSetProxyLogic
 
 New result set proxy, `CachedRowSetResultSetProxyLogic` is introduced at version `1.4.7`.
 `CachedRowSetResultSetProxyLogic` uses `javax.sql.rowset.CachedRowSet` as underlying implementation, which is a
