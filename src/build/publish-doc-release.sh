@@ -11,9 +11,8 @@ if [ "$TRAVIS_BRANCH" != "$TRAVIS_TAG" ]; then
     exit 0
 fi
 
-# tag is datasource-proxy-1.0
-# RELEASE_VERSION=`echo ${TRAVIS_TAG} | sed 's/.*-//'`
-RELEASE_VERSION=`./mvnw help:evaluate -Dexpression=project.version | grep -Ev '(^\[|Download\w+:)'`
+# tag example: datasource-proxy-1.0
+RELEASE_VERSION=`echo ${TRAVIS_TAG} | sed 's/.*-//'`
 echo "Release version=${RELEASE_VERSION}"
 
 if [ `echo ${RELEASE_VERSION} | grep 'SNAPSHOT'` ]; then
