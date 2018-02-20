@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<!DOCTYPE taglib
+        PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+        "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+<taglib>
+  <tlib-version>1.0</tlib-version>
+  <jsp-version>1.2</jsp-version>
+  <short-name>dsproxy</short-name>
+  <uri>http://www.ttddyy.net/dsproxy/tags</uri>
+  <description>
+    datasource-proxy tag library
+  </description>
+
+  <tag>
+    <name>metrics</name>
+    <tag-class>net.ttddyy.dsproxy.support.tags.MetricsTag</tag-class>
+    <body-content>empty</body-content>
+    <description>
+      Retrieve QueryCount values from QueryCountHolder. You need to register DataSourceQueryCountListener to use this tag.
+    </description>
+
+    <attribute>
+      <name>dataSource</name>
+      <required>false</required>
+      <description>
+        Specify a datasource name to display the metric.
+        If not specified, metric value will be summed up from all datasource.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>metric</name>
+      <required>true</required>
+      <description>
+        metric to display.
+        Needs to be one of the followings:
+          "select": num of select queries
+          "insert": num of insert queries
+          "update": num of update queries
+          "delete": num of delete queries
+          "other" : num of other queries
+          "statement" : total num of statements
+          "prepared"  : total num of prepared statements
+          "callable"  : total num of callable statements
+          "total"  : total num of queries
+          "success" : num of success queries
+          "failure" : num of failure queries
+          "time": query execution time
+      </description>
+    </attribute>
+
+  </tag>
+
+
+</taglib>

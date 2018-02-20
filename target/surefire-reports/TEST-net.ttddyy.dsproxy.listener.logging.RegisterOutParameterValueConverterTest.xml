@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0.021" tests="78" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/jre/lib"/>
+    <property name="java.vm.version" value="25.144-b01"/>
+    <property name="gopherProxySet" value="false"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="maven.multiModuleProjectDirectory" value="/Users/ttsuyukubo/repo/ttddyy/dsp-release"/>
+    <property name="java.vendor.url" value="http://java.oracle.com/"/>
+    <property name="path.separator" value=":"/>
+    <property name="guice.disable.misplaced.annotation.check" value="true"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.os.patch.level" value="unknown"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="/Users/ttsuyukubo/repo/ttddyy/dsp-release"/>
+    <property name="java.runtime.version" value="1.8.0_144-b01"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.CGraphicsEnvironment"/>
+    <property name="java.endorsed.dirs" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/jre/lib/endorsed"/>
+    <property name="os.arch" value="x86_64"/>
+    <property name="java.io.tmpdir" value="/var/folders/v3/pl2smgs93wb816vs5kdckxqc002k0s/T/"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="os.name" value="Mac OS X"/>
+    <property name="classworlds.conf" value="/Users/ttsuyukubo/.m2/wrapper/dists/apache-maven-3.5.2-bin/28qa8v9e2mq69covern8vmdkj0/apache-maven-3.5.2/bin/m2.conf"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/Users/ttsuyukubo/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="maven.conf" value="/Users/ttsuyukubo/.m2/wrapper/dists/apache-maven-3.5.2-bin/28qa8v9e2mq69covern8vmdkj0/apache-maven-3.5.2/conf"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.class.version" value="52.0"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="maven.repo.local" value="/Users/ttsuyukubo/.m2/repository"/>
+    <property name="os.version" value="10.12.6"/>
+    <property name="library.jansi.path" value="/Users/ttsuyukubo/.m2/wrapper/dists/apache-maven-3.5.2-bin/28qa8v9e2mq69covern8vmdkj0/apache-maven-3.5.2/lib/jansi-native"/>
+    <property name="user.home" value="/Users/ttsuyukubo"/>
+    <property name="user.timezone" value="America/Los_Angeles"/>
+    <property name="java.awt.printerjob" value="sun.lwawt.macosx.CPrinterJob"/>
+    <property name="java.specification.version" value="1.8"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="user.name" value="ttsuyukubo"/>
+    <property name="java.class.path" value="/Users/ttsuyukubo/.m2/wrapper/dists/apache-maven-3.5.2-bin/28qa8v9e2mq69covern8vmdkj0/apache-maven-3.5.2/boot/plexus-classworlds-2.5.2.jar"/>
+    <property name="java.vm.specification.version" value="1.8"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.home" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/jre"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -D maven.repo.local=/Users/ttsuyukubo/.m2/repository -s /private/var/folders/v3/pl2smgs93wb816vs5kdckxqc002k0s/T/release-settings8444609541053251357.xml clean verify"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="user.language" value="en"/>
+    <property name="awt.toolkit" value="sun.lwawt.macosx.LWCToolkit"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.version" value="1.8.0_144"/>
+    <property name="java.ext.dirs" value="/Users/ttsuyukubo/Library/Java/Extensions:/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/jre/lib/ext:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java"/>
+    <property name="sun.boot.class.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/jre/lib/sunrsasign.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/jre/classes"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="maven.home" value="/Users/ttsuyukubo/.m2/wrapper/dists/apache-maven-3.5.2-bin/28qa8v9e2mq69covern8vmdkj0/apache-maven-3.5.2"/>
+    <property name="file.separator" value="/"/>
+    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="sun.cpu.isalist" value=""/>
+  </properties>
+  <testcase name="displayValue[0]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[1]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[2]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[3]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[4]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[5]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[6]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[7]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[8]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[9]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[10]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[11]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[12]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[13]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[14]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[15]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0.001"/>
+  <testcase name="displayValue[16]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[17]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[18]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[19]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[20]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[21]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0.001"/>
+  <testcase name="displayValue[22]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[23]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[24]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[25]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[26]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[27]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[28]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[29]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[30]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[31]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[32]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[33]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[34]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[35]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[36]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[37]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[38]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[39]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[40]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[41]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[42]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[43]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[44]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[45]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[46]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[47]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[48]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[49]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[50]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0.001"/>
+  <testcase name="displayValue[51]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[52]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[53]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[54]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[55]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[56]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[57]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[58]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0.001"/>
+  <testcase name="displayValue[59]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[60]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[61]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[62]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[63]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[64]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[65]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[66]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[67]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[68]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[69]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[70]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[71]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[72]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[73]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[74]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[75]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[76]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+  <testcase name="displayValue[77]" classname="net.ttddyy.dsproxy.listener.logging.RegisterOutParameterValueConverterTest" time="0"/>
+</testsuite>
