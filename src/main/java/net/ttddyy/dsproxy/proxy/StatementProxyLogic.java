@@ -302,9 +302,10 @@ public class StatementProxyLogic {
 
         queryListener.beforeQuery(execInfo, queries);
 
+        final long beforeTime = System.currentTimeMillis();
+
         // Invoke method on original Statement.
         try {
-            final long beforeTime = System.currentTimeMillis();
 
             Object retVal = method.invoke(this.statement, args);
 
@@ -376,6 +377,9 @@ public class StatementProxyLogic {
 
             return retVal;
         } catch (InvocationTargetException ex) {
+            final long afterTime = System.currentTimeMillis();
+
+            execInfo.setElapsedTime(afterTime - beforeTime);
             execInfo.setThrowable(ex.getTargetException());
             execInfo.setSuccess(false);
             throw ex.getTargetException();

@@ -11,6 +11,8 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -20,6 +22,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -994,6 +998,43 @@ public class StatementProxyLogicMockTest {
         assertSame("executeUpdate", executionContext.getMethod().getName());
         assertSame(statement, executionContext.getTarget());
         assertSame(connectionInfo, executionContext.getConnectionInfo());
+    }
+
+    @Test
+    public void elapsedTimeForQueryFailure() throws Throwable {
+        final String query = "insert into emp (id, name) values (1, 'foo')";
+
+        Statement stat = mock(Statement.class);
+        when(stat.executeUpdate(query)).then(new Answer<Integer>() {
+            @Override
+            public Integer answer(InvocationOnMock invocation) throws Throwable {
+                TimeUnit.MILLISECONDS.sleep(3);  // sleep 3 msec to make sure some time elapse
+                throw new SQLException();
+            }
+        });
+
+        final AtomicLong elapsedTimeHolder = new AtomicLong(-1);
+
+        QueryExecutionListener listener = new QueryExecutionListener() {
+            @Override
+            public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            }
+
+            @Override
+            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                elapsedTimeHolder.set(execInfo.getElapsedTime());
+            }
+        };
+        StatementProxyLogic logic = getProxyLogic(stat, listener, null);
+
+        try {
+            Method method = Statement.class.getMethod("executeUpdate", String.class);
+            logic.invoke(method, new Object[]{query});
+            fail();
+        } catch (SQLException e) {
+        }
+
+        assertThat(elapsedTimeHolder).hasValueGreaterThanOrEqualTo(3);
     }
 
 }
