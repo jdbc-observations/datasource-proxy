@@ -15,23 +15,20 @@ public class SLF4JQueryLoggingListener extends AbstractQueryLoggingListener {
     protected SLF4JLogLevel logLevel = SLF4JLogLevel.DEBUG; // default DEBUG
 
     public SLF4JQueryLoggingListener() {
-        this.loggingCondition = new LoggingCondition() {
-            @Override
-            public boolean getAsBoolean() {
-                switch (logLevel) {
-                    case TRACE:
-                        return logger.isTraceEnabled();
-                    case DEBUG:
-                        return logger.isDebugEnabled();
-                    case INFO:
-                        return logger.isInfoEnabled();
-                    case WARN:
-                        return logger.isWarnEnabled();
-                    case ERROR:
-                        return logger.isErrorEnabled();
-                }
-                return false;
+        this.loggingCondition = () -> {
+            switch (logLevel) {
+                case TRACE:
+                    return logger.isTraceEnabled();
+                case DEBUG:
+                    return logger.isDebugEnabled();
+                case INFO:
+                    return logger.isInfoEnabled();
+                case WARN:
+                    return logger.isWarnEnabled();
+                case ERROR:
+                    return logger.isErrorEnabled();
             }
+            return false;
         };
     }
 

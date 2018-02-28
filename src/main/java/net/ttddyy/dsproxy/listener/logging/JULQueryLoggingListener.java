@@ -16,12 +16,7 @@ public class JULQueryLoggingListener extends AbstractQueryLoggingListener {
 
     public JULQueryLoggingListener() {
         // initialize condition that checks the current logger level
-        this.loggingCondition = new LoggingCondition() {
-            @Override
-            public boolean getAsBoolean() {
-                return logger.isLoggable(logLevel);
-            }
-        };
+        this.loggingCondition = () -> this.logger.isLoggable(logLevel);
     }
 
     @Override

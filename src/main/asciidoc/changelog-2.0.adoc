@@ -32,5 +32,9 @@
   - TracingMethodListener#TracingCondition => BooleanSupplier
   - TracingMethodListener#TracingMessageConsumer => Consumer<String>
 
+* Removed `LoggingCondition` in favor of `BooleanCondition`
+  - net.ttddyy.dsproxy.listener.LoggingCondition
+
+
 
 

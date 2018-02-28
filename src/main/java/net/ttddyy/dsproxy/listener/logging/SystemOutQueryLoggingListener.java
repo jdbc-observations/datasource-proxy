@@ -9,12 +9,7 @@ package net.ttddyy.dsproxy.listener.logging;
 public class SystemOutQueryLoggingListener extends AbstractQueryLoggingListener {
 
     public SystemOutQueryLoggingListener() {
-        this.loggingCondition = new LoggingCondition() {
-            @Override
-            public boolean getAsBoolean() {
-                return true;  // always perform logging
-            }
-        };
+        this.loggingCondition = () -> true; // always perform logging
     }
 
     @Override

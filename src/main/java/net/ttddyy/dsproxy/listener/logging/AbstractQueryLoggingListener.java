@@ -5,6 +5,7 @@ import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -15,7 +16,7 @@ public abstract class AbstractQueryLoggingListener implements ProxyDataSourceLis
     protected QueryLogEntryCreator queryLogEntryCreator = new DefaultQueryLogEntryCreator();
     protected boolean writeDataSourceName = true;
     protected boolean writeConnectionId = true;
-    protected LoggingCondition loggingCondition;
+    protected BooleanSupplier loggingCondition;
 
     @Override
     public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
@@ -84,7 +85,7 @@ public abstract class AbstractQueryLoggingListener implements ProxyDataSourceLis
      * @param loggingCondition boolean supplier
      * @since 1.4.3
      */
-    public void setLoggingCondition(LoggingCondition loggingCondition) {
+    public void setLoggingCondition(BooleanSupplier loggingCondition) {
         this.loggingCondition = loggingCondition;
     }
 }

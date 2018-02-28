@@ -18,25 +18,22 @@ public class CommonsQueryLoggingListener extends AbstractQueryLoggingListener {
     public CommonsQueryLoggingListener() {
 
         // initialize logging condition that checks current log level
-        this.loggingCondition = new LoggingCondition() {
-            @Override
-            public boolean getAsBoolean() {
-                switch (logLevel) {
-                    case DEBUG:
-                        return log.isDebugEnabled();
-                    case ERROR:
-                        return log.isErrorEnabled();
-                    case FATAL:
-                        return log.isFatalEnabled();
-                    case INFO:
-                        return log.isInfoEnabled();
-                    case TRACE:
-                        return log.isTraceEnabled();
-                    case WARN:
-                        return log.isWarnEnabled();
-                }
-                return false;
+        this.loggingCondition = () -> {
+            switch (logLevel) {
+                case DEBUG:
+                    return log.isDebugEnabled();
+                case ERROR:
+                    return log.isErrorEnabled();
+                case FATAL:
+                    return log.isFatalEnabled();
+                case INFO:
+                    return log.isInfoEnabled();
+                case TRACE:
+                    return log.isTraceEnabled();
+                case WARN:
+                    return log.isWarnEnabled();
             }
+            return false;
         };
 
     }
