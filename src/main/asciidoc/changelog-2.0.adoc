@@ -9,3 +9,7 @@
   - net.ttddyy.dsproxy.support.SystemOutQueryCountLoggingHandlerInterceptor
   - net.ttddyy.dsproxy.support.CommonsQueryCountLoggingHandlerInterceptor
 
+* Removed spring related classes
+  - net.ttddyy.dsproxy.support.BeanNameProxyDataSource
+  - net.ttddyy.dsproxy.support.DataSourceProxyNativeJdbcExtractor
+
