@@ -124,7 +124,7 @@ public class ProxyDataSourceBuilder {
 
     private boolean jsonFormat;
     private boolean multiline;
-    private List<ProxyDataSourceListener> queryExecutionListeners = new ArrayList<>();
+    private List<ProxyDataSourceListener> listeners = new ArrayList<>();
 
     private ParameterTransformer parameterTransformer;
     private QueryTransformer queryTransformer;
@@ -139,8 +139,6 @@ public class ProxyDataSourceBuilder {
     private Boolean retrieveGeneratedKeysForBatchPreparedOrCallable;
     private boolean autoCloseGeneratedKeys;
     private ResultSetProxyLogicFactory generatedKeysProxyLogicFactory;
-
-    private List<ProxyDataSourceListener> methodExecutionListeners = new ArrayList<>();
 
     public static ProxyDataSourceBuilder create() {
         return new ProxyDataSourceBuilder();
@@ -534,7 +532,7 @@ public class ProxyDataSourceBuilder {
      * @return builder
      */
     public ProxyDataSourceBuilder listener(ProxyDataSourceListener listener) {
-        this.queryExecutionListeners.add(listener);
+        this.listeners.add(listener);
         return this;
     }
 
@@ -552,7 +550,7 @@ public class ProxyDataSourceBuilder {
                 callback.execute(execInfo, queryInfoList);
             }
         };
-        this.queryExecutionListeners.add(listener);
+        this.listeners.add(listener);
         return this;
     }
 
@@ -570,7 +568,7 @@ public class ProxyDataSourceBuilder {
                 callback.execute(execInfo, queryInfoList);
             }
         };
-        this.queryExecutionListeners.add(listener);
+        this.listeners.add(listener);
         return this;
     }
 
@@ -814,7 +812,7 @@ public class ProxyDataSourceBuilder {
      * @since 1.4.3
      */
     public ProxyDataSourceBuilder methodListener(ProxyDataSourceListener listener) {
-        this.methodExecutionListeners.add(listener);
+        this.listeners.add(listener);
         return this;
     }
 
@@ -832,7 +830,7 @@ public class ProxyDataSourceBuilder {
                 callback.execute(executionContext);
             }
         };
-        this.methodExecutionListeners.add(listener);
+        this.listeners.add(listener);
         return this;
     }
 
@@ -850,7 +848,7 @@ public class ProxyDataSourceBuilder {
                 callback.execute(executionContext);
             }
         };
-        this.methodExecutionListeners.add(listener);
+        this.listeners.add(listener);
         return this;
     }
 
@@ -961,11 +959,11 @@ public class ProxyDataSourceBuilder {
 
         // tracing listener
         if (this.createTracingMethodListener) {
-            this.methodExecutionListeners.add(buildTracingMethodListenr());
+            this.listeners.add(buildTracingMethodListenr());
         }
 
         // explicitly added listeners
-        listeners.addAll(this.queryExecutionListeners);
+        listeners.addAll(this.listeners);
 
 
         // build proxy config
@@ -973,10 +971,6 @@ public class ProxyDataSourceBuilder {
 
         for (ProxyDataSourceListener listener : listeners) {
             proxyConfigBuilder.listener(listener);
-        }
-
-        for (ProxyDataSourceListener methodListener : this.methodExecutionListeners) {
-            proxyConfigBuilder.listener(methodListener);
         }
 
         if (this.queryTransformer != null) {
