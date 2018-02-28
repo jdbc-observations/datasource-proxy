@@ -44,23 +44,21 @@ public class ConnectionProxyLogic {
         final boolean isCommitMethod = "commit".equals(method.getName());
         final boolean isRollbackMethod = "rollback".equals(method.getName());
 
-        return MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
-            @Override
-            public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
-                Object result = performQueryExecutionListener(proxyConnection, method, args);
-                ConnectionInfo connectionInfo = ConnectionProxyLogic.this.connectionInfo;
-                if (isCommitMethod) {
-                    connectionInfo.incrementCommitCount();
-                } else if (isRollbackMethod) {
-                    connectionInfo.incrementRollbackCount();
-                } else if (isCloseMethod) {
-                    connectionInfo.setClosed(true);
-                    long connId = connectionInfo.getConnectionId();
-                    ConnectionProxyLogic.this.proxyConfig.getConnectionIdManager().addClosedId(connId);
-                }
-                return result;
-            }
-        }, this.proxyConfig, this.connection, this.connectionInfo, method, args);
+        return MethodExecutionListenerUtils.invoke(
+                (proxyTarget, targetMethod, targetArgs) -> {
+                    Object result = performQueryExecutionListener(proxyConnection, targetMethod, targetArgs);
+                    ConnectionInfo connectionInfo = ConnectionProxyLogic.this.connectionInfo;
+                    if (isCommitMethod) {
+                        connectionInfo.incrementCommitCount();
+                    } else if (isRollbackMethod) {
+                        connectionInfo.incrementRollbackCount();
+                    } else if (isCloseMethod) {
+                        connectionInfo.setClosed(true);
+                        long connId = connectionInfo.getConnectionId();
+                        ConnectionProxyLogic.this.proxyConfig.getConnectionIdManager().addClosedId(connId);
+                    }
+                    return result;
+                }, this.proxyConfig, this.connection, this.connectionInfo, method, args);
     }
 
     private Object performQueryExecutionListener(Object proxy, Method method, Object[] args) throws Throwable {

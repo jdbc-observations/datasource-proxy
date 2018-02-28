@@ -63,12 +63,9 @@ public class MethodExecutionListenerUtilsTest {
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
-        Object result = MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
-            @Override
-            public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
-                return returnObj;
-            }
-        }, proxyConfig, target, connectionInfo, method, methodArgs);
+        Object result = MethodExecutionListenerUtils.invoke(
+                (proxyTarget, targetMethod, targetArgs) -> returnObj,
+                proxyConfig, target, connectionInfo, method, methodArgs);
 
         assertSame(returnObj, result);
         assertTrue(listener.isBeforeMethodCalled());
@@ -113,12 +110,12 @@ public class MethodExecutionListenerUtilsTest {
         // when callback throws exception
         Throwable thrownException = null;
         try {
-            MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
-                @Override
-                public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
-                    throw exception;
-                }
-            }, proxyConfig, target, connectionInfo, method, methodArgs);
+            MethodExecutionListenerUtils.invoke(
+                    (proxyTarget, targetMethod, targetArgs) -> {
+                        throw exception;
+                    },
+                    proxyConfig, target, connectionInfo, method, methodArgs);
+
         } catch (Throwable throwable) {
             thrownException = throwable;
         }
@@ -161,17 +158,15 @@ public class MethodExecutionListenerUtilsTest {
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
-        final AtomicReference<Method> invokedMethod = new AtomicReference<Method>();
-        final AtomicReference<Object[]> invokedMethodArgs = new AtomicReference<Object[]>();
+        final AtomicReference<Method> invokedMethod = new AtomicReference<>();
+        final AtomicReference<Object[]> invokedMethodArgs = new AtomicReference<>();
 
-        MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
-            @Override
-            public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
-                invokedMethod.set(method);
-                invokedMethodArgs.set(args);
-                return null;
-            }
-        }, proxyConfig, target, connectionInfo, method, methodArgs);
+        MethodExecutionListenerUtils.invoke(
+                (proxyTarget, targetMethod, targetArgs) -> {
+                    invokedMethod.set(targetMethod);
+                    invokedMethodArgs.set(targetArgs);
+                    return null;
+                }, proxyConfig, target, connectionInfo, method, methodArgs);
 
         assertThat(invokedMethod.get()).isSameAs(replacedMethod);
         assertThat(invokedMethodArgs.get()).isSameAs(replacedMethodArgs);

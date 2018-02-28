@@ -82,12 +82,10 @@ public class ProxyDataSource implements DataSource, Closeable {
         connectionInfo.setDataSourceName(dataSourceName);
 
         try {
-            return (Connection) MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
-                @Override
-                public Object execute(Object proxy, Method method, Object[] args) throws Throwable {
-                    return jdbcProxyFactory.createConnection(conn, connectionInfo, ProxyDataSource.this.proxyConfig);
-                }
-            }, this.proxyConfig, this, connectionInfo, method, args);
+            return (Connection) MethodExecutionListenerUtils.invoke(
+                    (proxyTarget, targetMethod, targetArgs) ->
+                            jdbcProxyFactory.createConnection(conn, connectionInfo, ProxyDataSource.this.proxyConfig),
+                    this.proxyConfig, this, connectionInfo, method, args);
         } catch (Throwable throwable) {
             if (throwable instanceof SQLException) {
                 throw (SQLException) throwable;

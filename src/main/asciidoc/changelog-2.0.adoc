@@ -40,4 +40,5 @@
   - net.ttddyy.dsproxy.proxy.ParameterKeyUtils
   - net.ttddyy.dsproxy.proxy.ReflectionUtils
 
+* Make `MethodExecutionListenerUtils#MethodExecutionCallback` functional interface
 

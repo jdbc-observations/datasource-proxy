@@ -11,8 +11,9 @@ import java.lang.reflect.Method;
  */
 public class MethodExecutionListenerUtils {
 
+    @FunctionalInterface
     public interface MethodExecutionCallback {
-        Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable;
+        Object execute(Object proxyTarget, Method targetMethod, Object[] targetArgs) throws Throwable;
     }
 
     public static Object invoke(MethodExecutionCallback callback, ProxyConfig proxyConfig,

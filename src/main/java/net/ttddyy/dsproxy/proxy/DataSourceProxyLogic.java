@@ -35,12 +35,10 @@ public class DataSourceProxyLogic {
 
     public Object invoke(Method method, Object[] args) throws Throwable {
 
-        return MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
-            @Override
-            public Object execute(Object proxy, Method method, Object[] args) throws Throwable {
-                return performQueryExecutionListener(method, args);
-            }
-        }, this.proxyConfig, this.dataSource, null, method, args);
+        return MethodExecutionListenerUtils.invoke(
+                (proxyTarget, targetMethod, targetArgs) ->
+                        performQueryExecutionListener(targetMethod, targetArgs)
+                , this.proxyConfig, this.dataSource, null, method, args);
 
     }
 

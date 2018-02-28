@@ -99,12 +99,10 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
 
     @Override
     public Object invoke(Method method, Object[] args) throws Throwable {
-        return MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
-            @Override
-            public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
-                return performQueryExecutionListener(method, args);
-            }
-        }, this.proxyConfig, this.resultSet, this.connectionInfo, method, args);
+        return MethodExecutionListenerUtils.invoke(
+                (proxyTarget, targetMethod, targetArgs) ->
+                        performQueryExecutionListener(targetMethod, targetArgs),
+                this.proxyConfig, this.resultSet, this.connectionInfo, method, args);
     }
 
     private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {
