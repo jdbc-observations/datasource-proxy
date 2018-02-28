@@ -3,8 +3,7 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.listener.MethodExecutionListener;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.jdk.PreparedStatementInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler;
 import org.junit.Test;
@@ -77,7 +76,7 @@ public class ConnectionProxyLogicMockTest {
     }
 
     private ConnectionProxyLogic getProxyLogic(Connection mockConnection) {
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
@@ -330,7 +329,7 @@ public class ConnectionProxyLogicMockTest {
         final AtomicBoolean isClosedBeforeCalled = new AtomicBoolean();
         final AtomicBoolean isClosedAfterCalled = new AtomicBoolean();
 
-        MethodExecutionListener listener = new MethodExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {
                 isClosedBefore.set(executionContext.getConnectionInfo().isClosed());

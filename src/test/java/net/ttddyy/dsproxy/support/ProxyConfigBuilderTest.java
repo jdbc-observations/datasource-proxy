@@ -1,9 +1,8 @@
 package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.listener.ChainListener;
-import net.ttddyy.dsproxy.listener.CompositeMethodListener;
-import net.ttddyy.dsproxy.listener.MethodExecutionListener;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import org.junit.Test;
 
@@ -20,12 +19,12 @@ public class ProxyConfigBuilderTest {
     @Test
     public void multipleQueryListeners() {
         ProxyConfig proxyConfig;
-        List<QueryExecutionListener> listeners;
+        List<ProxyDataSourceListener> listeners;
         ChainListener chainListener;
 
-        QueryExecutionListener listener1 = mock(QueryExecutionListener.class);
-        QueryExecutionListener listener2 = mock(QueryExecutionListener.class);
-        QueryExecutionListener listener3 = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener1 = mock(ProxyDataSourceListener.class);
+        ProxyDataSourceListener listener2 = mock(ProxyDataSourceListener.class);
+        ProxyDataSourceListener listener3 = mock(ProxyDataSourceListener.class);
 
         // specify listeners directly one by one
         proxyConfig = ProxyConfig.Builder.create().queryListener(listener1).queryListener(listener2).build();
@@ -61,25 +60,25 @@ public class ProxyConfigBuilderTest {
     @Test
     public void multipleMethodListeners() {
         ProxyConfig proxyConfig;
-        List<MethodExecutionListener> listeners;
-        CompositeMethodListener compositeListener;
+        List<ProxyDataSourceListener> listeners;
+        CompositeProxyDataSourceListener compositeListener;
 
-        MethodExecutionListener listener1 = mock(MethodExecutionListener.class);
-        MethodExecutionListener listener2 = mock(MethodExecutionListener.class);
-        MethodExecutionListener listener3 = mock(MethodExecutionListener.class);
+        ProxyDataSourceListener listener1 = mock(ProxyDataSourceListener.class);
+        ProxyDataSourceListener listener2 = mock(ProxyDataSourceListener.class);
+        ProxyDataSourceListener listener3 = mock(ProxyDataSourceListener.class);
 
         // specify listeners directly one by one
         proxyConfig = ProxyConfig.Builder.create().methodListener(listener1).methodListener(listener2).build();
         listeners = proxyConfig.getMethodListener().getListeners();
         assertThat(listeners).hasSize(2).contains(listener1, listener2);
 
-        // with empty CompositeMethodListener
-        proxyConfig = ProxyConfig.Builder.create().methodListener(new CompositeMethodListener()).build();
+        // with empty CompositeProxyDataSourceListener
+        proxyConfig = ProxyConfig.Builder.create().methodListener(new CompositeProxyDataSourceListener()).build();
         listeners = proxyConfig.getMethodListener().getListeners();
         assertThat(listeners).isEmpty();
 
-        // with CompositeMethodListener containing some listeners
-        compositeListener = new CompositeMethodListener();
+        // with CompositeProxyDataSourceListener containing some listeners
+        compositeListener = new CompositeProxyDataSourceListener();
         compositeListener.addListener(listener1);
         compositeListener.addListener(listener2);
 
@@ -88,7 +87,7 @@ public class ProxyConfigBuilderTest {
         assertThat(listeners).hasSize(2).contains(listener1, listener2);
 
         // with adding a chain listener and a listener
-        compositeListener = new CompositeMethodListener();
+        compositeListener = new CompositeProxyDataSourceListener();
         compositeListener.addListener(listener1);
         compositeListener.addListener(listener2);
 

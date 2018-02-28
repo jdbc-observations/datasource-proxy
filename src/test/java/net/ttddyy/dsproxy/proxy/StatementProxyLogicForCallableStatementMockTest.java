@@ -6,7 +6,7 @@ import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -54,7 +54,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         when(stat.execute()).thenReturn(true);
 
@@ -72,7 +72,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         when(stat.execute()).thenReturn(true);
 
@@ -93,7 +93,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         when(stat.execute()).thenReturn(true);
 
@@ -114,7 +114,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         when(stat.executeUpdate()).thenReturn(100);
 
@@ -132,7 +132,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         when(stat.executeUpdate()).thenReturn(100);
 
@@ -153,7 +153,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         when(stat.executeUpdate()).thenReturn(100);
 
@@ -174,7 +174,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         ResultSet mockResultSet = mock(ResultSet.class);
         when(stat.executeQuery()).thenReturn(mockResultSet);
@@ -192,7 +192,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         ResultSet mockResultSet = mock(ResultSet.class);
         when(stat.executeQuery()).thenReturn(mockResultSet);
@@ -213,7 +213,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         ResultSet mockResultSet = mock(ResultSet.class);
         when(stat.executeQuery()).thenReturn(mockResultSet);
@@ -236,7 +236,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         final String query = "{call procedure_a}";
 
         CallableStatement stat = mock(CallableStatement.class);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
@@ -282,7 +282,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         final String query = "{call procedure_a}";
 
         CallableStatement stat = mock(CallableStatement.class);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
@@ -325,7 +325,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         final String query = "{call procedure_a}";
 
         CallableStatement stat = mock(CallableStatement.class);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
@@ -364,7 +364,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         final String query = "{call procedure_a}";
 
         CallableStatement stat = mock(CallableStatement.class);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
         Method setString = CallableStatement.class.getMethod("setString", int.class, String.class);
@@ -632,20 +632,20 @@ public class StatementProxyLogicForCallableStatementMockTest {
         NO_PARAM, BY_POSITION, BY_NAME
     }
 
-    private void verifyListenerWithNoParam(QueryExecutionListener listener, String methodName, String query) {
+    private void verifyListenerWithNoParam(ProxyDataSourceListener listener, String methodName, String query) {
         verifyListener(listener, methodName, query, ParamStatus.NO_PARAM);
     }
 
-    private void verifyListenerWithParamByPosition(QueryExecutionListener listener, String methodName, String query) {
+    private void verifyListenerWithParamByPosition(ProxyDataSourceListener listener, String methodName, String query) {
         verifyListener(listener, methodName, query, ParamStatus.BY_POSITION);
     }
 
-    private void verifyListenerWithParamByName(QueryExecutionListener listener, String methodName, String query) {
+    private void verifyListenerWithParamByName(ProxyDataSourceListener listener, String methodName, String query) {
         verifyListener(listener, methodName, query, ParamStatus.BY_NAME);
     }
 
     @SuppressWarnings("unchecked")
-    private void verifyListener(QueryExecutionListener listener, String methodName, String query, ParamStatus paramStatus) {
+    private void verifyListener(ProxyDataSourceListener listener, String methodName, String query, ParamStatus paramStatus) {
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
         ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
 
@@ -709,7 +709,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         }
     }
 
-    private StatementProxyLogic getProxyLogic(CallableStatement cs, String query, QueryExecutionListener listener, Connection proxyConnection) {
+    private StatementProxyLogic getProxyLogic(CallableStatement cs, String query, ProxyDataSourceListener listener, Connection proxyConnection) {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName(DS_NAME);
 

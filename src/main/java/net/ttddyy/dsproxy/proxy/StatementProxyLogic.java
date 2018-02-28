@@ -5,7 +5,7 @@ import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.transform.ParameterReplacer;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
@@ -135,7 +135,7 @@ public class StatementProxyLogic {
 
         QueryTransformer queryTransformer = this.proxyConfig.getQueryTransformer();
         ParameterTransformer parameterTransformer = this.proxyConfig.getParameterTransformer();
-        QueryExecutionListener queryListener = this.proxyConfig.getQueryListener();
+        ProxyDataSourceListener queryListener = this.proxyConfig.getQueryListener();
         JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
 

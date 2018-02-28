@@ -2,7 +2,7 @@ package net.ttddyy.dsproxy.transform;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.TestUtils;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.hsqldb.jdbc.JDBCDataSource;
@@ -73,7 +73,7 @@ public class CallableStatementParameterTransformTest {
     }
 
     private Connection getProxyConnection(ParameterTransformer paramTransformer) throws Exception {
-        QueryExecutionListener queryListener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener queryListener = mock(ProxyDataSourceListener.class);
         QueryTransformer queryTransformer = mock(QueryTransformer.class);
         when(queryTransformer.transformQuery(isA(TransformInfo.class))).thenAnswer(new Answer<String>() {
             public String answer(InvocationOnMock invocation) throws Throwable {

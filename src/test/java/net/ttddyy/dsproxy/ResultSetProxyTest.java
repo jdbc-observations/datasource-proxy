@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.hsqldb.jdbc.JDBCDataSource;
@@ -81,7 +81,7 @@ public class ResultSetProxyTest {
         assertThat(resultSet.isClosed()).isTrue();
     }
 
-    private static class LoggingExecutionListener implements QueryExecutionListener {
+    private static class LoggingExecutionListener implements ProxyDataSourceListener {
 
         private Table table;
 

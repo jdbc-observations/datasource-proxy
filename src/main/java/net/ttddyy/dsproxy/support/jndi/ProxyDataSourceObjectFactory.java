@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.support.jndi;
 
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
@@ -35,7 +35,7 @@ import java.util.Set;
  * <li> <b>dataSource <i>(required)</i></b>: Reference to actual datasource resource.  ex: java:jdbc/global/myDS
  * <li> <b>proxyName</b>:             ProxyDataSource name
  * <li> <b>logLevel</b>:              Loglevel for commons-logging or slf4j. ex: DEBUG, INFO, etc.
- * <li> <b>listeners</b>:             Fully qualified class name of `QueryExecutionListener` implementation class,or predefined values below. Can be comma delimited.
+ * <li> <b>listeners</b>:             Fully qualified class name of `ProxyDataSourceListener` implementation class,or predefined values below. Can be comma delimited.
  * <li> <b>queryTransformer</b>:      Fully qualified class name of `QueryTransformer` implementation class.
  * <li> <b>parameterTransformer</b>:  Fully qualified class name of `ParameterTransformer` implementation class.
  * </ul>
@@ -46,7 +46,7 @@ import java.util.Set;
  * <li> <b>commons</b>:  alias to `net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener`
  * <li> <b>slf4j</b>:    alias to `net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener`
  * <li> <b>count</b>:    alias to `net.ttddyy.dsproxy.listener.DataSourceQueryCountListener`
- * <li> <b>x.y.z.MyQueryExecutionListener</b>: Fully qualified class name of `QueryExecutionListener` implementation
+ * <li> <b>x.y.z.MyQueryExecutionListener</b>: Fully qualified class name of `ProxyDataSourceListener` implementation
  * </ul>
  *
  * <i>format</i> parameter:
@@ -123,7 +123,7 @@ public class ProxyDataSourceObjectFactory implements ObjectFactory {
                 } else if ("count".equalsIgnoreCase(listenerName)) {
                     builder.countQuery();
                 } else {
-                    QueryExecutionListener listener = createNewInstance(QueryExecutionListener.class, listenerName);
+                    ProxyDataSourceListener listener = createNewInstance(ProxyDataSourceListener.class, listenerName);
                     builder.listener(listener);
                 }
             }

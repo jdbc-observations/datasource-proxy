@@ -2,7 +2,7 @@ package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.listener.ChainListener;
-import net.ttddyy.dsproxy.listener.CompositeMethodListener;
+import net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
@@ -37,7 +37,7 @@ import net.ttddyy.dsproxy.transform.QueryTransformer;
  *   </property>
  * </bean>
  *
- * <bean id="myMethodListener" class="net.ttddyy.dsproxy.listener.CompositeMethodListener">
+ * <bean id="myMethodListener" class="net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener">
  *   <property name="listeners">
  *       <list>
  *       </list>
@@ -58,7 +58,7 @@ public class ProxyConfigSpringXmlSupport {
     private JdbcProxyFactory jdbcProxyFactory;
     private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
     private ConnectionIdManager connectionIdManager;
-    private CompositeMethodListener methodListener;
+    private CompositeProxyDataSourceListener methodListener;
 
     public ProxyConfig create() {
         ProxyConfig.Builder builder = ProxyConfig.Builder.create();
@@ -117,7 +117,7 @@ public class ProxyConfigSpringXmlSupport {
         this.connectionIdManager = connectionIdManager;
     }
 
-    public void setMethodListener(CompositeMethodListener methodListener) {
+    public void setMethodListener(CompositeProxyDataSourceListener methodListener) {
         this.methodListener = methodListener;
     }
 }

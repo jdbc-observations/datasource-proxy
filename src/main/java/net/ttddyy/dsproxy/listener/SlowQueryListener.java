@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit;
  * @see net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener
  * @since 1.4.1
  */
-public class SlowQueryListener implements QueryExecutionListener {
+public class SlowQueryListener implements ProxyDataSourceListener {
 
     protected boolean useDaemonThread = true;
 

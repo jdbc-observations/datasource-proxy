@@ -5,11 +5,8 @@ import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.listener.MethodExecutionListener;
-import net.ttddyy.dsproxy.listener.NoOpMethodExecutionListener;
-import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.QueryCountStrategy;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.listener.TracingMethodListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
 import net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener;
@@ -47,7 +44,7 @@ import java.util.logging.Level;
 public class ProxyDataSourceBuilder {
 
     /**
-     * Functional interface to simplify adding {@link MethodExecutionListener}.
+     * Functional interface to simplify adding {@link ProxyDataSourceListener}.
      *
      * @see #beforeMethod(SingleMethodExecution)
      * @see #afterMethod(SingleMethodExecution)
@@ -59,7 +56,7 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Functional interface to simplify adding {@link QueryExecutionListener}.
+     * Functional interface to simplify adding {@link ProxyDataSourceListener}.
      *
      * @see #beforeQuery(SingleQueryExecution)
      * @see #afterQuery(SingleQueryExecution)
@@ -127,7 +124,7 @@ public class ProxyDataSourceBuilder {
 
     private boolean jsonFormat;
     private boolean multiline;
-    private List<QueryExecutionListener> queryExecutionListeners = new ArrayList<QueryExecutionListener>();
+    private List<ProxyDataSourceListener> queryExecutionListeners = new ArrayList<>();
 
     private ParameterTransformer parameterTransformer;
     private QueryTransformer queryTransformer;
@@ -143,7 +140,7 @@ public class ProxyDataSourceBuilder {
     private boolean autoCloseGeneratedKeys;
     private ResultSetProxyLogicFactory generatedKeysProxyLogicFactory;
 
-    private List<MethodExecutionListener> methodExecutionListeners = new ArrayList<MethodExecutionListener>();
+    private List<ProxyDataSourceListener> methodExecutionListeners = new ArrayList<>();
 
     public static ProxyDataSourceBuilder create() {
         return new ProxyDataSourceBuilder();
@@ -536,20 +533,20 @@ public class ProxyDataSourceBuilder {
      * @param listener a listener to register
      * @return builder
      */
-    public ProxyDataSourceBuilder listener(QueryExecutionListener listener) {
+    public ProxyDataSourceBuilder listener(ProxyDataSourceListener listener) {
         this.queryExecutionListeners.add(listener);
         return this;
     }
 
     /**
-     * Add {@link QueryExecutionListener} that performs given lambda on {@link QueryExecutionListener#beforeQuery(ExecutionInfo, List)}.
+     * Add {@link ProxyDataSourceListener} that performs given lambda on {@link ProxyDataSourceListener#beforeQuery(ExecutionInfo, List)}.
      *
-     * @param callback a lambda function executed on {@link QueryExecutionListener#beforeQuery(ExecutionInfo, List)}
+     * @param callback a lambda function executed on {@link ProxyDataSourceListener#beforeQuery(ExecutionInfo, List)}
      * @return builder
      * @since 1.4.3
      */
     public ProxyDataSourceBuilder beforeQuery(final SingleQueryExecution callback) {
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
                 callback.execute(execInfo, queryInfoList);
@@ -560,14 +557,14 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Add {@link QueryExecutionListener} that performs given lambda on {@link QueryExecutionListener#afterQuery(ExecutionInfo, List)}.
+     * Add {@link ProxyDataSourceListener} that performs given lambda on {@link ProxyDataSourceListener#afterQuery(ExecutionInfo, List)}.
      *
-     * @param callback a lambda function executed on {@link QueryExecutionListener#afterQuery(ExecutionInfo, List)}
+     * @param callback a lambda function executed on {@link ProxyDataSourceListener#afterQuery(ExecutionInfo, List)}
      * @return builder
      * @since 1.4.3
      */
     public ProxyDataSourceBuilder afterQuery(final SingleQueryExecution callback) {
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
                 callback.execute(execInfo, queryInfoList);
@@ -722,12 +719,12 @@ public class ProxyDataSourceBuilder {
      * {@link java.sql.ResultSet} will be returned from {@link ExecutionInfo#getGeneratedKeys()}.
      *
      * When autoClose parameter is set to {@code true}, datasource-proxy will close the generated-keys {@link java.sql.ResultSet}
-     * after it called {@link QueryExecutionListener#afterQuery(ExecutionInfo, List)}.
+     * after it called {@link ProxyDataSourceListener#afterQuery(ExecutionInfo, List)}.
      * This behavior might not be ideal if above layer, such as OR Mapper or application code, need to access generated-keys
      * because when they access generated-keys, the resultset is already closed.
      *
      * To support such usecase, specify {@link RepeatableReadResultSetProxyLogicFactory} and set {@code autoClose=false}.
-     * This way, even though your {@link QueryExecutionListener} has accessed generated-keys, it is still readable at
+     * This way, even though your {@link ProxyDataSourceListener} has accessed generated-keys, it is still readable at
      * upper layer of the code, and they can close the generated-keys resultset.
      *
      * @param autoClose set {@code true} to close the generated-keys {@link java.sql.ResultSet} after query listener execution
@@ -810,26 +807,26 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Add {@link MethodExecutionListener}.
+     * Add {@link ProxyDataSourceListener}.
      *
      * @param listener a method execution listener
      * @return builder
      * @since 1.4.3
      */
-    public ProxyDataSourceBuilder methodListener(MethodExecutionListener listener) {
+    public ProxyDataSourceBuilder methodListener(ProxyDataSourceListener listener) {
         this.methodExecutionListeners.add(listener);
         return this;
     }
 
     /**
-     * Add {@link MethodExecutionListener} that performs given lambda on {@link MethodExecutionListener#beforeMethod(MethodExecutionContext)}.
+     * Add {@link ProxyDataSourceListener} that performs given lambda on {@link ProxyDataSourceListener#beforeMethod(MethodExecutionContext)}.
      *
-     * @param callback a lambda function executed on {@link MethodExecutionListener#beforeMethod(MethodExecutionContext)}
+     * @param callback a lambda function executed on {@link ProxyDataSourceListener#beforeMethod(MethodExecutionContext)}
      * @return builder
      * @since 1.4.3
      */
     public ProxyDataSourceBuilder beforeMethod(final SingleMethodExecution callback) {
-        MethodExecutionListener listener = new NoOpMethodExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {
                 callback.execute(executionContext);
@@ -840,14 +837,14 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Add {@link MethodExecutionListener} that performs given lambda on {@link MethodExecutionListener#afterMethod(MethodExecutionContext)}.
+     * Add {@link ProxyDataSourceListener} that performs given lambda on {@link ProxyDataSourceListener#afterMethod(MethodExecutionContext)}.
      *
-     * @param callback a lambda function executed on {@link MethodExecutionListener#afterMethod(MethodExecutionContext)}
+     * @param callback a lambda function executed on {@link ProxyDataSourceListener#afterMethod(MethodExecutionContext)}
      * @return builder
      * @since 1.4.3
      */
     public ProxyDataSourceBuilder afterMethod(final SingleMethodExecution callback) {
-        MethodExecutionListener listener = new NoOpMethodExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void afterMethod(MethodExecutionContext executionContext) {
                 callback.execute(executionContext);
@@ -920,7 +917,7 @@ public class ProxyDataSourceBuilder {
     public ProxyDataSource build() {
 
         // Query Logging Listeners
-        List<QueryExecutionListener> listeners = new ArrayList<QueryExecutionListener>();
+        List<ProxyDataSourceListener> listeners = new ArrayList<>();
 
         // query logging listeners
         if (this.createCommonsQueryListener) {
@@ -974,11 +971,11 @@ public class ProxyDataSourceBuilder {
         // build proxy config
         ProxyConfig.Builder proxyConfigBuilder = ProxyConfig.Builder.create();
 
-        for (QueryExecutionListener listener : listeners) {
+        for (ProxyDataSourceListener listener : listeners) {
             proxyConfigBuilder.queryListener(listener);
         }
 
-        for (MethodExecutionListener methodListener : this.methodExecutionListeners) {
+        for (ProxyDataSourceListener methodListener : this.methodExecutionListeners) {
             proxyConfigBuilder.methodListener(methodListener);
         }
 

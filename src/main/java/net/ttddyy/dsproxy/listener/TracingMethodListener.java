@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author Tadaya Tsuyukubo
  * @since 1.4.4
  */
-public class TracingMethodListener implements MethodExecutionListener {
+public class TracingMethodListener implements ProxyDataSourceListener {
 
     private static final int DEFAULT_DISPLAY_PARAM_LENGTH = 50;
 

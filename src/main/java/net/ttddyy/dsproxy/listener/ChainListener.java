@@ -11,32 +11,32 @@ import java.util.List;
  *
  * @author Tadaya Tsuyukubo
  */
-public class ChainListener implements QueryExecutionListener {
-    private List<QueryExecutionListener> listeners = new ArrayList<QueryExecutionListener>();
+public class ChainListener implements ProxyDataSourceListener {
+    private List<ProxyDataSourceListener> listeners = new ArrayList<>();
 
     @Override
     public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        for (QueryExecutionListener listener : listeners) {
+        for (ProxyDataSourceListener listener : listeners) {
             listener.beforeQuery(execInfo, queryInfoList);
         }
     }
 
     @Override
     public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        for (QueryExecutionListener listener : listeners) {
+        for (ProxyDataSourceListener listener : listeners) {
             listener.afterQuery(execInfo, queryInfoList);
         }
     }
 
-    public void addListener(QueryExecutionListener listener) {
+    public void addListener(ProxyDataSourceListener listener) {
         this.listeners.add(listener);
     }
 
-    public List<QueryExecutionListener> getListeners() {
+    public List<ProxyDataSourceListener> getListeners() {
         return listeners;
     }
 
-    public void setListeners(List<QueryExecutionListener> listeners) {
+    public void setListeners(List<ProxyDataSourceListener> listeners) {
         this.listeners = listeners;
     }
 }

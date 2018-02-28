@@ -4,12 +4,11 @@ import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.ChainListener;
-import net.ttddyy.dsproxy.listener.CompositeMethodListener;
+import net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.listener.MethodExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.QueryCountStrategy;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.listener.ThreadQueryCountHolder;
 import net.ttddyy.dsproxy.listener.TracingMethodListener;
 import net.ttddyy.dsproxy.listener.logging.AbstractQueryLoggingListener;
@@ -273,8 +272,8 @@ public class ProxyDataSourceBuilderTest {
         verifyMultiline(ds, SystemOutSlowQueryListener.class);
     }
 
-    private void verifyMultiline(ProxyDataSource ds, Class<? extends QueryExecutionListener> listenerClass) {
-        QueryExecutionListener listener = getAndVerifyListener(ds, listenerClass);
+    private void verifyMultiline(ProxyDataSource ds, Class<? extends ProxyDataSourceListener> listenerClass) {
+        ProxyDataSourceListener listener = getAndVerifyListener(ds, listenerClass);
 
         QueryLogEntryCreator entryCreator;
         if (listener instanceof AbstractQueryLoggingListener) {
@@ -288,13 +287,13 @@ public class ProxyDataSourceBuilderTest {
 
 
     @SuppressWarnings("unchecked")
-    private <T extends QueryExecutionListener> T getAndVerifyListener(ProxyDataSource ds, Class<T> listenerClass) {
-        QueryExecutionListener listener = ds.getProxyConfig().getQueryListener();
+    private <T extends ProxyDataSourceListener> T getAndVerifyListener(ProxyDataSource ds, Class<T> listenerClass) {
+        ProxyDataSourceListener listener = ds.getProxyConfig().getQueryListener();
         assertThat(listener).isInstanceOf(ChainListener.class);
-        List<QueryExecutionListener> listeners = ((ChainListener) listener).getListeners();
+        List<ProxyDataSourceListener> listeners = ((ChainListener) listener).getListeners();
         assertThat(listeners).hasSize(1);
 
-        QueryExecutionListener target = listeners.get(0);
+        ProxyDataSourceListener target = listeners.get(0);
         assertThat(target).isInstanceOf(listenerClass);
 
         return (T) target;
@@ -389,12 +388,12 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends MethodExecutionListener> T getAndVerifyMethodListener(ProxyDataSource ds, Class<T> listenerClass) {
-        CompositeMethodListener compositeListener = ds.getProxyConfig().getMethodListener();
-        List<MethodExecutionListener> listeners = compositeListener.getListeners();
+    private <T extends ProxyDataSourceListener> T getAndVerifyMethodListener(ProxyDataSource ds, Class<T> listenerClass) {
+        CompositeProxyDataSourceListener compositeListener = ds.getProxyConfig().getMethodListener();
+        List<ProxyDataSourceListener> listeners = compositeListener.getListeners();
         assertThat(listeners).hasSize(1);
 
-        MethodExecutionListener target = listeners.get(0);
+        ProxyDataSourceListener target = listeners.get(0);
         assertThat(target).isInstanceOf(listenerClass);
 
         return (T) target;
@@ -403,10 +402,10 @@ public class ProxyDataSourceBuilderTest {
     @Test
     public void buildMethodListener() {
         ProxyDataSource ds;
-        CompositeMethodListener methodListener;
+        CompositeProxyDataSourceListener methodListener;
 
-        MethodExecutionListener listener1 = mock(MethodExecutionListener.class);
-        MethodExecutionListener listener2 = mock(MethodExecutionListener.class);
+        ProxyDataSourceListener listener1 = mock(ProxyDataSourceListener.class);
+        ProxyDataSourceListener listener2 = mock(ProxyDataSourceListener.class);
 
         // single listener
         ds = ProxyDataSourceBuilder.create().methodListener(listener1).build();
@@ -422,8 +421,8 @@ public class ProxyDataSourceBuilderTest {
     @Test
     public void singleMethodExecutionWithBeforeMethodAndAfterMethod() {
         ProxyDataSource ds;
-        CompositeMethodListener compositeListener;
-        MethodExecutionListener listener;
+        CompositeProxyDataSourceListener compositeListener;
+        ProxyDataSourceListener listener;
 
         // check beforeMethod()
         final AtomicBoolean isBeforeInvoked = new AtomicBoolean();
@@ -467,7 +466,7 @@ public class ProxyDataSourceBuilderTest {
     public void singleQueryExecutionWithBeforeQueryAndAfterQuery() {
         ProxyDataSource ds;
         ChainListener chainListener;
-        QueryExecutionListener listener;
+        ProxyDataSourceListener listener;
 
         // check beforeMethod()
         final AtomicBoolean isBeforeInvoked = new AtomicBoolean();

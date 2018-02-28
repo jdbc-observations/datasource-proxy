@@ -4,7 +4,7 @@ import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.DataSourceProxyException;
 import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
@@ -20,7 +20,7 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
 /**
- * A proxy of {@link javax.sql.DataSource} with {@link net.ttddyy.dsproxy.listener.QueryExecutionListener}.
+ * A proxy of {@link javax.sql.DataSource} with {@link net.ttddyy.dsproxy.listener.ProxyDataSourceListener}.
  *
  * @author Tadaya Tsuyukubo
  */
@@ -139,13 +139,13 @@ public class ProxyDataSource implements DataSource, Closeable {
     /**
      * @deprecated
      */
-    public void setListener(QueryExecutionListener listener) {
+    public void setListener(ProxyDataSourceListener listener) {
         this.proxyConfig = ProxyConfig.Builder.from(this.proxyConfig)
                 .queryListener(listener)
                 .build();
     }
 
-    public void addListener(QueryExecutionListener listener) {
+    public void addListener(ProxyDataSourceListener listener) {
         this.proxyConfig.getQueryListener().addListener(listener);
     }
 

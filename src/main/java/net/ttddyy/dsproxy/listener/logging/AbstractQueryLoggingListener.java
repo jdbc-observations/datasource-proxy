@@ -2,7 +2,7 @@ package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import java.util.List;
  * @author Tadaya Tsuyukubo
  * @since 1.3
  */
-public abstract class AbstractQueryLoggingListener implements QueryExecutionListener {
+public abstract class AbstractQueryLoggingListener implements ProxyDataSourceListener {
 
     protected QueryLogEntryCreator queryLogEntryCreator = new DefaultQueryLogEntryCreator();
     protected boolean writeDataSourceName = true;

@@ -6,8 +6,7 @@ import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -54,7 +53,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         when(stat.executeUpdate(query)).thenReturn(100);
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("executeUpdate", String.class);
@@ -72,7 +71,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         when(stat.executeUpdate(query)).thenThrow(new SQLException());
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         try {
@@ -93,7 +92,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         when(stat.executeUpdate(query, Statement.RETURN_GENERATED_KEYS)).thenReturn(100);
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("executeUpdate", String.class, int.class);
@@ -111,7 +110,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         when(stat.executeUpdate(query, Statement.RETURN_GENERATED_KEYS)).thenThrow(new SQLException());
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         try {
@@ -133,7 +132,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         when(stat.executeUpdate(query, columnIndexes)).thenReturn(100);
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("executeUpdate", String.class, int[].class);
@@ -152,7 +151,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         when(stat.executeUpdate(query, columnIndexes)).thenThrow(new SQLException());
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         try {
@@ -175,7 +174,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         when(stat.executeUpdate(query, columnNames)).thenReturn(100);
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("executeUpdate", String.class, String[].class);
@@ -194,7 +193,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         when(stat.executeUpdate(query, columnNames)).thenThrow(new SQLException());
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         try {
@@ -215,7 +214,7 @@ public class StatementProxyLogicMockTest {
 
         Statement stat = mock(Statement.class);
         when(stat.execute(query)).thenReturn(true);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("execute", String.class);
@@ -232,7 +231,7 @@ public class StatementProxyLogicMockTest {
 
         Statement stat = mock(Statement.class);
         when(stat.execute(query)).thenThrow(new SQLException());
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         try {
@@ -253,7 +252,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         when(stat.execute(query, Statement.RETURN_GENERATED_KEYS)).thenReturn(true);
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("execute", String.class, int.class);
@@ -271,7 +270,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         when(stat.execute(query, Statement.RETURN_GENERATED_KEYS)).thenThrow(new SQLException());
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         try {
@@ -293,7 +292,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         when(stat.execute(query, columnIndexes)).thenReturn(true);
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("execute", String.class, int[].class);
@@ -312,7 +311,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         when(stat.execute(query, columnIndexes)).thenThrow(new SQLException());
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         try {
@@ -334,7 +333,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         when(stat.execute(query, columnNames)).thenReturn(true);
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("execute", String.class, String[].class);
@@ -354,7 +353,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         when(stat.execute(query, columnNames)).thenThrow(new SQLException());
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         try {
@@ -377,7 +376,7 @@ public class StatementProxyLogicMockTest {
         ResultSet rs = mock(ResultSet.class);
         when(stat.executeQuery(query)).thenReturn(rs);
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("executeQuery", String.class);
@@ -395,7 +394,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         when(stat.executeQuery(query)).thenThrow(new SQLException());
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         try {
@@ -416,7 +415,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         when(stat.executeLargeUpdate(query)).thenReturn(100L);
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("executeLargeUpdate", String.class);
@@ -428,11 +427,11 @@ public class StatementProxyLogicMockTest {
     }
 
 
-    private StatementProxyLogic getProxyLogic(Statement statement, QueryExecutionListener listener, Connection proxyConnection) {
+    private StatementProxyLogic getProxyLogic(Statement statement, ProxyDataSourceListener listener, Connection proxyConnection) {
         return getProxyLogic(statement, listener, proxyConnection, false, false);
     }
 
-    private StatementProxyLogic getProxyLogic(Statement statement, QueryExecutionListener listener, Connection proxyConnection,
+    private StatementProxyLogic getProxyLogic(Statement statement, ProxyDataSourceListener listener, Connection proxyConnection,
                                               boolean createResultSetProxy, boolean createGenerateKeysProxy) {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName(DS_NAME);
@@ -452,7 +451,7 @@ public class StatementProxyLogicMockTest {
     }
 
     @SuppressWarnings("unchecked")
-    private void verifyListener(QueryExecutionListener listener, String methodName, String query, Object... methodArgs) {
+    private void verifyListener(ProxyDataSourceListener listener, String methodName, String query, Object... methodArgs) {
 
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
         ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
@@ -477,7 +476,7 @@ public class StatementProxyLogicMockTest {
     }
 
     @SuppressWarnings("unchecked")
-    private void verifyListenerForException(QueryExecutionListener listener, String methodName,
+    private void verifyListenerForException(ProxyDataSourceListener listener, String methodName,
                                             String query, Object... methodArgs) {
 
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
@@ -509,7 +508,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         doThrow(new SQLException()).when(stat).addBatch(queryB);
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("addBatch", String.class);
@@ -532,7 +531,7 @@ public class StatementProxyLogicMockTest {
         final String queryC = "insert into emp (id, name) values (3, 'baz')";
 
         Statement stat = mock(Statement.class);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         // run
@@ -562,7 +561,7 @@ public class StatementProxyLogicMockTest {
         Statement stat = mock(Statement.class);
         when(stat.executeBatch()).thenThrow(new SQLException());
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         // run
@@ -593,7 +592,7 @@ public class StatementProxyLogicMockTest {
         final String queryC = "insert into emp (id, name) values (3, 'baz')";
 
         Statement stat = mock(Statement.class);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         // run
@@ -624,7 +623,7 @@ public class StatementProxyLogicMockTest {
         final String queryC = "insert into emp (id, name) values (3, 'baz')";
 
         Statement stat = mock(Statement.class);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         // run
@@ -645,7 +644,7 @@ public class StatementProxyLogicMockTest {
     }
 
     @SuppressWarnings("unchecked")
-    private void verifyListenerForBatchExecution(String batchMethod, QueryExecutionListener listener, String... queries) {
+    private void verifyListenerForBatchExecution(String batchMethod, ProxyDataSourceListener listener, String... queries) {
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
         ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
 
@@ -673,7 +672,7 @@ public class StatementProxyLogicMockTest {
     }
 
     @SuppressWarnings("unchecked")
-    private void verifyListenerForExecuteBatchForException(QueryExecutionListener listener, String... queries) {
+    private void verifyListenerForExecuteBatchForException(ProxyDataSourceListener listener, String... queries) {
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
         ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
 
@@ -808,7 +807,7 @@ public class StatementProxyLogicMockTest {
     public void proxyResultSet() throws Throwable {
 
         final AtomicReference<Object> listenerReceivedResult = new AtomicReference<Object>();
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
                 listenerReceivedResult.set(execInfo.getResult());
@@ -865,7 +864,7 @@ public class StatementProxyLogicMockTest {
     public void proxyGeneratedKeysResultSet() throws Throwable {
 
         final AtomicReference<Object> listenerReceivedResult = new AtomicReference<Object>();
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
                 listenerReceivedResult.set(execInfo.getResult());
@@ -1015,7 +1014,7 @@ public class StatementProxyLogicMockTest {
 
         final AtomicLong elapsedTimeHolder = new AtomicLong(-1);
 
-        QueryExecutionListener listener = new QueryExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
             }

@@ -2,7 +2,7 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import org.mockito.ArgumentCaptor;
 
 import java.util.HashMap;
@@ -20,7 +20,7 @@ public class MockTestUtils {
     // TODO: this needs clean up
 
     @SuppressWarnings("unchecked")
-    public static void verifyListenerForBatch(QueryExecutionListener listener, String dataSourceName, String query,
+    public static void verifyListenerForBatch(ProxyDataSourceListener listener, String dataSourceName, String query,
                                               Map<String, Object>... expectedQueryParamsArray) {
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
         ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);

@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
  * POJO to hold values for JDBC API invocations.
  *
  * @author Tadaya Tsuyukubo
- * @see MethodExecutionListener
+ * @see ProxyDataSourceListener
  * @since 1.4.3
  */
 public class MethodExecutionContext {
@@ -107,7 +107,7 @@ public class MethodExecutionContext {
     /**
      * Set a method to invoke.
      *
-     * If new method is set on {@link MethodExecutionListener#beforeMethod(MethodExecutionContext)}, the newly set
+     * If new method is set on {@link ProxyDataSourceListener#beforeMethod(MethodExecutionContext)}, the newly set
      * method will be invoked.
      *
      * @param method a method to invoke
@@ -123,7 +123,7 @@ public class MethodExecutionContext {
     /**
      * Set method parameters to invoke.
      *
-     * If new method parameters are set on {@link MethodExecutionListener#beforeMethod(MethodExecutionContext)},
+     * If new method parameters are set on {@link ProxyDataSourceListener#beforeMethod(MethodExecutionContext)},
      * newly set parameters will be invoked.
      *
      * @param methodArgs method parameters

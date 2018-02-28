@@ -2,7 +2,7 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
 import org.junit.Test;
 
@@ -41,7 +41,7 @@ public class DataSourceProxyLogicMockTest {
     }
 
     private DataSourceProxyLogic getProxyLogic(DataSource ds) {
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
                 .dataSourceName(DS_NAME)

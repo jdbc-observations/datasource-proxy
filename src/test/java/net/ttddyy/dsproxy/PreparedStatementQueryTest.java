@@ -1,7 +1,6 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -424,7 +423,7 @@ public class PreparedStatementQueryTest {
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
                 // since generatedKeys will NOT be closed, they can be read afterwards.
@@ -486,7 +485,7 @@ public class PreparedStatementQueryTest {
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         final AtomicReference<ResultSet> listenerReceivedGeneratedKeys = new AtomicReference<ResultSet>();
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
                 listenerReceivedGeneratedKeys.set(execInfo.getGeneratedKeys());
@@ -543,7 +542,7 @@ public class PreparedStatementQueryTest {
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         final AtomicReference<ResultSet> listenerReceivedGeneratedKeys = new AtomicReference<ResultSet>();
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
                 listenerReceivedGeneratedKeys.set(execInfo.getGeneratedKeys());
@@ -573,7 +572,7 @@ public class PreparedStatementQueryTest {
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         final AtomicReference<ResultSet> listenerReceivedGeneratedKeys = new AtomicReference<ResultSet>();
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
                 listenerReceivedGeneratedKeys.set(execInfo.getGeneratedKeys());
@@ -762,7 +761,7 @@ public class PreparedStatementQueryTest {
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
                 ResultSet generatedKeys = execInfo.getGeneratedKeys();
@@ -823,7 +822,7 @@ public class PreparedStatementQueryTest {
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
                 listenerReceivedExecutionInfo.set(execInfo);

@@ -3,7 +3,7 @@ package net.ttddyy.dsproxy.listener;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class CallCheckMethodExecutionListener implements MethodExecutionListener {
+public class CallCheckMethodExecutionListener implements ProxyDataSourceListener {
 
     boolean isBeforeMethodCalled;
     boolean isAfterMethodCalled;

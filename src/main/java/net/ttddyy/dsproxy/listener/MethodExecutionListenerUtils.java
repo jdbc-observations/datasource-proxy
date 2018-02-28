@@ -27,7 +27,7 @@ public class MethodExecutionListenerUtils {
                 .proxyConfig(proxyConfig)
                 .build();
 
-        MethodExecutionListener methodExecutionListener = proxyConfig.getMethodListener();
+        ProxyDataSourceListener methodExecutionListener = proxyConfig.getMethodListener();
         methodExecutionListener.beforeMethod(methodContext);
 
         // method and args may be replaced in MethodExecutionListener

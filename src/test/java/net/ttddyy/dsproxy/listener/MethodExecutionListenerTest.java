@@ -35,7 +35,7 @@ public class MethodExecutionListenerTest {
 
     @Test
     public void replaceMethodArgument() throws Throwable {
-        MethodExecutionListener methodListener = new MethodExecutionListener() {
+        ProxyDataSourceListener methodListener = new ProxyDataSourceListener() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {
 

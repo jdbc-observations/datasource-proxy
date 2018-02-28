@@ -13,3 +13,11 @@
   - net.ttddyy.dsproxy.support.BeanNameProxyDataSource
   - net.ttddyy.dsproxy.support.DataSourceProxyNativeJdbcExtractor
 
+* `ProxyDataSourceListener`
+  - `MethodExecutionListener` and `QueryExecutionListener` are combined to `ProxyDataSourceListener`
+  - `CompositeMethodListener` is changed to `CompositeProxyDataSourceListener`
+
+  Removed:
+  - net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener
+  - net.ttddyy.dsproxy.listener.NoOpMethodExecutionListener
+

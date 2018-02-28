@@ -36,9 +36,8 @@ import java.util.List;
  * @see net.ttddyy.dsproxy.listener.QueryCountStrategy
  * @see net.ttddyy.dsproxy.support.CommonsQueryCountLoggingServletFilter
  * @see net.ttddyy.dsproxy.support.CommonsQueryCountLoggingRequestListener
- * @see net.ttddyy.dsproxy.support.CommonsQueryCountLoggingHandlerInterceptor
  */
-public class DataSourceQueryCountListener implements QueryExecutionListener {
+public class DataSourceQueryCountListener implements ProxyDataSourceListener {
 
     // uses per thread implementation in default
     private QueryCountStrategy queryCountStrategy = new ThreadQueryCountHolder();

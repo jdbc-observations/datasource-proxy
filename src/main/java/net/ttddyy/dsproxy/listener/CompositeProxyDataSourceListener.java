@@ -4,37 +4,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Execute chain of {@link MethodExecutionListener}.
+ * Execute chain of {@link ProxyDataSourceListener}.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.4.3
  */
-public class CompositeMethodListener implements MethodExecutionListener {
-    private List<MethodExecutionListener> listeners = new ArrayList<MethodExecutionListener>();
+public class CompositeProxyDataSourceListener implements ProxyDataSourceListener {
+    private List<ProxyDataSourceListener> listeners = new ArrayList<>();
 
     @Override
     public void beforeMethod(MethodExecutionContext executionContext) {
-        for (MethodExecutionListener listener : this.listeners) {
+        for (ProxyDataSourceListener listener : this.listeners) {
             listener.beforeMethod(executionContext);
         }
     }
 
     @Override
     public void afterMethod(MethodExecutionContext executionContext) {
-        for (MethodExecutionListener listener : this.listeners) {
+        for (ProxyDataSourceListener listener : this.listeners) {
             listener.afterMethod(executionContext);
         }
     }
 
-    public boolean addListener(MethodExecutionListener listener) {
+    public boolean addListener(ProxyDataSourceListener listener) {
         return this.listeners.add(listener);
     }
 
-    public List<MethodExecutionListener> getListeners() {
+    public List<ProxyDataSourceListener> getListeners() {
         return listeners;
     }
 
-    public void setListeners(List<MethodExecutionListener> listeners) {
+    public void setListeners(List<ProxyDataSourceListener> listeners) {
         this.listeners = listeners;
     }
 }

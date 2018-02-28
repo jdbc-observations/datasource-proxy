@@ -81,7 +81,7 @@ build `ProxyConfig` aiming to support bean creation in XML based spring config f
   </property>
 </bean>
 
-<bean id="methodListener" class="net.ttddyy.dsproxy.listener.CompositeMethodListener">
+<bean id="methodListener" class="net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener">
   <property name="listeners">
     <list>
       <bean class="net.ttddyy.dsproxy.listener.TracingMethodListener"/>
