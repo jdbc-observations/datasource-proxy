@@ -44,11 +44,6 @@ public class MethodExecutionListenerTest {
                     executionContext.setMethodArgs(new Object[]{"select * from emp where id=2"});
                 }
             }
-
-            @Override
-            public void afterMethod(MethodExecutionContext executionContext) {
-
-            }
         };
 
         ProxyDataSource ds = ProxyDataSourceBuilder.create(this.jdbcDataSource).methodListener(methodListener).build();

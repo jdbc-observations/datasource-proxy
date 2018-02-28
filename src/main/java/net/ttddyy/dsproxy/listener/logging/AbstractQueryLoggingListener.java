@@ -18,10 +18,6 @@ public abstract class AbstractQueryLoggingListener implements ProxyDataSourceLis
     protected LoggingCondition loggingCondition;
 
     @Override
-    public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-    }
-
-    @Override
     public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
         // only perform logging logic when the condition returns true
         if (this.loggingCondition.getAsBoolean()) {

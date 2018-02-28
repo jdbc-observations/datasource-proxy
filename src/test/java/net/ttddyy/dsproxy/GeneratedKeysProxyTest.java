@@ -69,11 +69,6 @@ public class GeneratedKeysProxyTest {
         private List<Integer> generatedKeys = new ArrayList<Integer>();
 
         @Override
-        public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-
-        }
-
-        @Override
         public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
             try {
                 ResultSet resultSet = execInfo.getGeneratedKeys();

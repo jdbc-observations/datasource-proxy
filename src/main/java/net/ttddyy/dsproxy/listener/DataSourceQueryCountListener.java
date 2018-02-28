@@ -43,10 +43,6 @@ public class DataSourceQueryCountListener implements ProxyDataSourceListener {
     private QueryCountStrategy queryCountStrategy = new ThreadQueryCountHolder();
 
     @Override
-    public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-    }
-
-    @Override
     public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
         final String dataSourceName = execInfo.getDataSourceName();
 

@@ -1026,10 +1026,6 @@ public class StatementProxyLogicMockTest {
 
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-            }
-
-            @Override
             public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
                 elapsedTimeHolder.set(execInfo.getElapsedTime());
             }

@@ -86,11 +86,6 @@ public class ResultSetProxyTest {
         private Table table;
 
         @Override
-        public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-
-        }
-
-        @Override
         public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
             if (execInfo.getResult() instanceof ResultSet) {
                 table = extractTable((ResultSet) execInfo.getResult());

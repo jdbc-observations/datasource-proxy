@@ -54,11 +54,6 @@ public class TracingMethodListener implements ProxyDataSourceListener {
     };
 
     @Override
-    public void beforeMethod(MethodExecutionContext executionContext) {
-        // no-op
-    }
-
-    @Override
     public void afterMethod(MethodExecutionContext executionContext) {
 
         if (!this.tracingCondition.getAsBoolean()) {
