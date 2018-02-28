@@ -35,6 +35,9 @@
 * Removed `LoggingCondition` in favor of `BooleanCondition`
   - net.ttddyy.dsproxy.listener.LoggingCondition
 
-
+* Remove unused class
+  - net.ttddyy.dsproxy.proxy.DataSourceNameAware
+  - net.ttddyy.dsproxy.proxy.ParameterKeyUtils
+  - net.ttddyy.dsproxy.proxy.ReflectionUtils
 
 
