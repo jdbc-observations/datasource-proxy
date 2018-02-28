@@ -3,7 +3,6 @@ package net.ttddyy.dsproxy.support;
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
-import net.ttddyy.dsproxy.listener.ChainListener;
 import net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
@@ -289,8 +288,8 @@ public class ProxyDataSourceBuilderTest {
     @SuppressWarnings("unchecked")
     private <T extends ProxyDataSourceListener> T getAndVerifyListener(ProxyDataSource ds, Class<T> listenerClass) {
         ProxyDataSourceListener listener = ds.getProxyConfig().getQueryListener();
-        assertThat(listener).isInstanceOf(ChainListener.class);
-        List<ProxyDataSourceListener> listeners = ((ChainListener) listener).getListeners();
+        assertThat(listener).isInstanceOf(CompositeProxyDataSourceListener.class);
+        List<ProxyDataSourceListener> listeners = ((CompositeProxyDataSourceListener) listener).getListeners();
         assertThat(listeners).hasSize(1);
 
         ProxyDataSourceListener target = listeners.get(0);
@@ -465,7 +464,7 @@ public class ProxyDataSourceBuilderTest {
     @Test
     public void singleQueryExecutionWithBeforeQueryAndAfterQuery() {
         ProxyDataSource ds;
-        ChainListener chainListener;
+        CompositeProxyDataSourceListener CompositeProxyDataSourceListener;
         ProxyDataSourceListener listener;
 
         // check beforeMethod()
@@ -478,11 +477,11 @@ public class ProxyDataSourceBuilderTest {
                     }
                 })
                 .build();
-        chainListener = ds.getProxyConfig().getQueryListener();
-        assertThat(chainListener.getListeners()).hasSize(1);
+        CompositeProxyDataSourceListener = ds.getProxyConfig().getQueryListener();
+        assertThat(CompositeProxyDataSourceListener.getListeners()).hasSize(1);
 
         // invoke found listener and verify invocation
-        listener = chainListener.getListeners().get(0);
+        listener = CompositeProxyDataSourceListener.getListeners().get(0);
         listener.beforeQuery(null, null);  // invoke
         assertThat(isBeforeInvoked.get()).isTrue();
 
@@ -496,11 +495,11 @@ public class ProxyDataSourceBuilderTest {
                     }
                 })
                 .build();
-        chainListener = ds.getProxyConfig().getQueryListener();
-        assertThat(chainListener.getListeners()).hasSize(1);
+        CompositeProxyDataSourceListener = ds.getProxyConfig().getQueryListener();
+        assertThat(CompositeProxyDataSourceListener.getListeners()).hasSize(1);
 
         // invoke found listener and verify invocation
-        listener = chainListener.getListeners().get(0);
+        listener = CompositeProxyDataSourceListener.getListeners().get(0);
         listener.afterQuery(null, null);  // invoke
         assertThat(isAfterInvoked.get()).isTrue();
 

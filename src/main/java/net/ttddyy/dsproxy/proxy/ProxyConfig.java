@@ -2,7 +2,6 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.listener.ChainListener;
 import net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
@@ -30,7 +29,7 @@ public class ProxyConfig {
 
     public static class Builder {
         private String dataSourceName = "";
-        private ChainListener queryListener = new ChainListener();  // empty default
+        private CompositeProxyDataSourceListener queryListener = new CompositeProxyDataSourceListener();  // empty default
         private QueryTransformer queryTransformer = QueryTransformer.DEFAULT;
         private ParameterTransformer parameterTransformer = ParameterTransformer.DEFAULT;
         private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
@@ -88,8 +87,8 @@ public class ProxyConfig {
         }
 
         public Builder queryListener(ProxyDataSourceListener queryListener) {
-            if (queryListener instanceof ChainListener) {
-                for (ProxyDataSourceListener listener : ((ChainListener) queryListener).getListeners()) {
+            if (queryListener instanceof CompositeProxyDataSourceListener) {
+                for (ProxyDataSourceListener listener : ((CompositeProxyDataSourceListener) queryListener).getListeners()) {
                     this.queryListener.addListener(listener);
                 }
             } else {
@@ -161,7 +160,7 @@ public class ProxyConfig {
     }
 
     private String dataSourceName;
-    private ChainListener queryListener;
+    private CompositeProxyDataSourceListener queryListener;
     private QueryTransformer queryTransformer;
     private ParameterTransformer parameterTransformer;
     private JdbcProxyFactory jdbcProxyFactory;
@@ -174,7 +173,7 @@ public class ProxyConfig {
         return dataSourceName;
     }
 
-    public ChainListener getQueryListener() {
+    public CompositeProxyDataSourceListener getQueryListener() {
         return queryListener;
     }
 

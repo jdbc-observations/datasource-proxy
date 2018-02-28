@@ -1,6 +1,5 @@
 package net.ttddyy.dsproxy.support;
 
-import net.ttddyy.dsproxy.listener.ChainListener;
 import net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -20,7 +19,7 @@ public class ProxyConfigBuilderTest {
     public void multipleQueryListeners() {
         ProxyConfig proxyConfig;
         List<ProxyDataSourceListener> listeners;
-        ChainListener chainListener;
+        CompositeProxyDataSourceListener chainListener;
 
         ProxyDataSourceListener listener1 = mock(ProxyDataSourceListener.class);
         ProxyDataSourceListener listener2 = mock(ProxyDataSourceListener.class);
@@ -31,13 +30,13 @@ public class ProxyConfigBuilderTest {
         listeners = proxyConfig.getQueryListener().getListeners();
         assertThat(listeners).hasSize(2).contains(listener1, listener2);
 
-        // with empty ChainListener
-        proxyConfig = ProxyConfig.Builder.create().queryListener(new ChainListener()).build();
+        // with empty CompositeProxyDataSourceListener
+        proxyConfig = ProxyConfig.Builder.create().queryListener(new CompositeProxyDataSourceListener()).build();
         listeners = proxyConfig.getQueryListener().getListeners();
         assertThat(listeners).isEmpty();
 
-        // with ChainListener containing some listeners
-        chainListener = new ChainListener();
+        // with CompositeProxyDataSourceListener containing some listeners
+        chainListener = new CompositeProxyDataSourceListener();
         chainListener.addListener(listener1);
         chainListener.addListener(listener2);
 
@@ -46,7 +45,7 @@ public class ProxyConfigBuilderTest {
         assertThat(listeners).hasSize(2).contains(listener1, listener2);
 
         // with adding a chain listener and a listener
-        chainListener = new ChainListener();
+        chainListener = new CompositeProxyDataSourceListener();
         chainListener.addListener(listener1);
         chainListener.addListener(listener2);
 

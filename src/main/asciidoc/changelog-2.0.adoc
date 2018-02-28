@@ -15,9 +15,16 @@
 
 * `ProxyDataSourceListener`
   - `MethodExecutionListener` and `QueryExecutionListener` are combined to `ProxyDataSourceListener`
-  - `CompositeMethodListener` is changed to `CompositeProxyDataSourceListener`
+  - `ChainListener` and `CompositeMethodListener` are combined to `CompositeProxyDataSourceListener`
 
   Removed:
   - net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener
   - net.ttddyy.dsproxy.listener.NoOpMethodExecutionListener
+  - net.ttddyy.dsproxy.listener.ChainListener
+  - net.ttddyy.dsproxy.listener.CompositeMethodListener
+
+  TODO:
+  - Update documentation for `ChainListener`
+
+
 
