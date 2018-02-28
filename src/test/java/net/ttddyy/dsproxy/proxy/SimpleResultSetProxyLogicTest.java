@@ -63,7 +63,7 @@ public class SimpleResultSetProxyLogicTest {
     @Test
     public void methodExecutionListener() throws Throwable {
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
         ResultSet rs = mock(ResultSet.class);
         ConnectionInfo connectionInfo = new ConnectionInfo();
 

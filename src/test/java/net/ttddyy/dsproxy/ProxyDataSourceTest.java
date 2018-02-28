@@ -40,8 +40,8 @@ public class ProxyDataSourceTest {
         methodListener = new CallCheckMethodExecutionListener();
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(this.listener)
-                .methodListener(this.methodListener)
+                .listener(this.listener)
+                .listener(this.methodListener)
                 .build();
 
         proxyDataSource = new ProxyDataSource();

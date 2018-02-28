@@ -40,8 +40,8 @@ public class StatementInvocationHandlerTest {
         connectionInfo.setDataSourceName("myDS");
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(this.testListener)
-                .queryListener(this.lastQueryListener)
+                .listener(this.testListener)
+                .listener(this.lastQueryListener)
                 .build();
 
         statement = new JdkJdbcProxyFactory().createStatement(stmt, connectionInfo, null, proxyConfig);

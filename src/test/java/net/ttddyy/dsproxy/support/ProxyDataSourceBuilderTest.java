@@ -287,7 +287,7 @@ public class ProxyDataSourceBuilderTest {
 
     @SuppressWarnings("unchecked")
     private <T extends ProxyDataSourceListener> T getAndVerifyListener(ProxyDataSource ds, Class<T> listenerClass) {
-        ProxyDataSourceListener listener = ds.getProxyConfig().getQueryListener();
+        ProxyDataSourceListener listener = ds.getProxyConfig().getListeners();
         assertThat(listener).isInstanceOf(CompositeProxyDataSourceListener.class);
         List<ProxyDataSourceListener> listeners = ((CompositeProxyDataSourceListener) listener).getListeners();
         assertThat(listeners).hasSize(1);
@@ -388,7 +388,7 @@ public class ProxyDataSourceBuilderTest {
 
     @SuppressWarnings("unchecked")
     private <T extends ProxyDataSourceListener> T getAndVerifyMethodListener(ProxyDataSource ds, Class<T> listenerClass) {
-        CompositeProxyDataSourceListener compositeListener = ds.getProxyConfig().getMethodListener();
+        CompositeProxyDataSourceListener compositeListener = ds.getProxyConfig().getListeners();
         List<ProxyDataSourceListener> listeners = compositeListener.getListeners();
         assertThat(listeners).hasSize(1);
 
@@ -408,12 +408,12 @@ public class ProxyDataSourceBuilderTest {
 
         // single listener
         ds = ProxyDataSourceBuilder.create().methodListener(listener1).build();
-        methodListener = ds.getProxyConfig().getMethodListener();
+        methodListener = ds.getProxyConfig().getListeners();
         assertThat(methodListener.getListeners()).hasSize(1).contains(listener1);
 
         // multiple listeners
         ds = ProxyDataSourceBuilder.create().methodListener(listener1).methodListener(listener2).build();
-        methodListener = ds.getProxyConfig().getMethodListener();
+        methodListener = ds.getProxyConfig().getListeners();
         assertThat(methodListener.getListeners()).hasSize(2).contains(listener1, listener2);
     }
 
@@ -433,7 +433,7 @@ public class ProxyDataSourceBuilderTest {
                     }
                 })
                 .build();
-        compositeListener = ds.getProxyConfig().getMethodListener();
+        compositeListener = ds.getProxyConfig().getListeners();
         assertThat(compositeListener.getListeners()).hasSize(1);
 
         // invoke found listener and verify invocation
@@ -451,7 +451,7 @@ public class ProxyDataSourceBuilderTest {
                     }
                 })
                 .build();
-        compositeListener = ds.getProxyConfig().getMethodListener();
+        compositeListener = ds.getProxyConfig().getListeners();
         assertThat(compositeListener.getListeners()).hasSize(1);
 
         // invoke found listener and verify invocation
@@ -477,7 +477,7 @@ public class ProxyDataSourceBuilderTest {
                     }
                 })
                 .build();
-        CompositeProxyDataSourceListener = ds.getProxyConfig().getQueryListener();
+        CompositeProxyDataSourceListener = ds.getProxyConfig().getListeners();
         assertThat(CompositeProxyDataSourceListener.getListeners()).hasSize(1);
 
         // invoke found listener and verify invocation
@@ -495,7 +495,7 @@ public class ProxyDataSourceBuilderTest {
                     }
                 })
                 .build();
-        CompositeProxyDataSourceListener = ds.getProxyConfig().getQueryListener();
+        CompositeProxyDataSourceListener = ds.getProxyConfig().getListeners();
         assertThat(CompositeProxyDataSourceListener.getListeners()).hasSize(1);
 
         // invoke found listener and verify invocation

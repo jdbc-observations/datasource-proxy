@@ -24,7 +24,7 @@ import net.ttddyy.dsproxy.transform.QueryTransformer;
  *
  * <bean id="proxyConfigSupport" class="net.ttddyy.dsproxy.support.ProxyConfigSpringXmlSupport">
  *   <property name="dataSourceName" value="my-ds"/>
- *   <property name="queryListener" ref="myQueryListener"/>
+ *   <property name="listener" ref="myQueryListener"/>
  *   <property name="methodListener" ref="myMethodListener"/>
  * </bean>
  *
@@ -65,7 +65,7 @@ public class ProxyConfigSpringXmlSupport {
             builder.dataSourceName(this.dataSourceName);
         }
         if (this.queryListener != null) {
-            builder.queryListener(this.queryListener);
+            builder.listener(this.queryListener);
         }
         if (this.queryTransformer != null) {
             builder.queryTransformer(this.queryTransformer);
@@ -81,9 +81,6 @@ public class ProxyConfigSpringXmlSupport {
         }
         if (this.connectionIdManager != null) {
             builder.connectionIdManager(this.connectionIdManager);
-        }
-        if (this.methodListener != null) {
-            builder.methodListener(this.methodListener);
         }
         return builder.build();
     }

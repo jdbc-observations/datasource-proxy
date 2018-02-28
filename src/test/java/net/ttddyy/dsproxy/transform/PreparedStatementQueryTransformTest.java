@@ -71,7 +71,7 @@ public class PreparedStatementQueryTransformTest {
 
         ProxyDataSourceListener queryListener = mock(ProxyDataSourceListener.class);
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(queryListener)
+                .listener(queryListener)
                 .queryTransformer(transformer)
                 .build();
 

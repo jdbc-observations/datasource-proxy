@@ -29,13 +29,12 @@ public class ProxyConfig {
 
     public static class Builder {
         private String dataSourceName = "";
-        private CompositeProxyDataSourceListener queryListener = new CompositeProxyDataSourceListener();  // empty default
+        private CompositeProxyDataSourceListener listeners = new CompositeProxyDataSourceListener();  // empty default
         private QueryTransformer queryTransformer = QueryTransformer.DEFAULT;
         private ParameterTransformer parameterTransformer = ParameterTransformer.DEFAULT;
         private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
         private ResultSetProxyLogicFactory resultSetProxyLogicFactory;  // can be null if resultset proxy is disabled
         private ConnectionIdManager connectionIdManager = new DefaultConnectionIdManager();  // create instance every time
-        private CompositeProxyDataSourceListener methodListener = new CompositeProxyDataSourceListener();  // empty default
         private GeneratedKeysConfig generatedKeysConfig = new GeneratedKeysConfig();
 
         public static Builder create() {
@@ -45,13 +44,12 @@ public class ProxyConfig {
         public static Builder from(ProxyConfig proxyConfig) {
             return new Builder()
                     .dataSourceName(proxyConfig.dataSourceName)
-                    .queryListener(proxyConfig.queryListener)
+                    .listener(proxyConfig.listeners)
                     .queryTransformer(proxyConfig.queryTransformer)
                     .parameterTransformer(proxyConfig.parameterTransformer)
                     .jdbcProxyFactory(proxyConfig.jdbcProxyFactory)
                     .resultSetProxyLogicFactory(proxyConfig.resultSetProxyLogicFactory)
                     .connectionIdManager(proxyConfig.connectionIdManager)
-                    .methodListener(proxyConfig.methodListener)
                     .generatedKeysProxyLogicFactory(proxyConfig.generatedKeysConfig.proxyLogicFactory)
                     .autoRetrieveGeneratedKeys(proxyConfig.generatedKeysConfig.autoRetrieve)
                     .retrieveGeneratedKeysForBatchStatement(proxyConfig.generatedKeysConfig.retrieveForBatchStatement)
@@ -63,13 +61,12 @@ public class ProxyConfig {
         public ProxyConfig build() {
             ProxyConfig proxyConfig = new ProxyConfig();
             proxyConfig.dataSourceName = this.dataSourceName;
-            proxyConfig.queryListener = this.queryListener;
+            proxyConfig.listeners = this.listeners;
             proxyConfig.queryTransformer = this.queryTransformer;
             proxyConfig.parameterTransformer = this.parameterTransformer;
             proxyConfig.jdbcProxyFactory = this.jdbcProxyFactory;
             proxyConfig.resultSetProxyLogicFactory = this.resultSetProxyLogicFactory;
             proxyConfig.connectionIdManager = this.connectionIdManager;
-            proxyConfig.methodListener = this.methodListener;
 
             // generated keys
             proxyConfig.generatedKeysConfig.proxyLogicFactory = this.generatedKeysConfig.proxyLogicFactory;
@@ -86,13 +83,13 @@ public class ProxyConfig {
             return this;
         }
 
-        public Builder queryListener(ProxyDataSourceListener queryListener) {
+        public Builder listener(ProxyDataSourceListener queryListener) {
             if (queryListener instanceof CompositeProxyDataSourceListener) {
                 for (ProxyDataSourceListener listener : ((CompositeProxyDataSourceListener) queryListener).getListeners()) {
-                    this.queryListener.addListener(listener);
+                    this.listeners.addListener(listener);
                 }
             } else {
-                this.queryListener.addListener(queryListener);
+                this.listeners.addListener(queryListener);
             }
             return this;
         }
@@ -147,34 +144,23 @@ public class ProxyConfig {
             return this;
         }
 
-        public Builder methodListener(ProxyDataSourceListener methodListener) {
-            if (methodListener instanceof CompositeProxyDataSourceListener) {
-                for (ProxyDataSourceListener listener : ((CompositeProxyDataSourceListener) methodListener).getListeners()) {
-                    this.methodListener.addListener(listener);
-                }
-            } else {
-                this.methodListener.addListener(methodListener);
-            }
-            return this;
-        }
     }
 
     private String dataSourceName;
-    private CompositeProxyDataSourceListener queryListener;
+    private CompositeProxyDataSourceListener listeners;
     private QueryTransformer queryTransformer;
     private ParameterTransformer parameterTransformer;
     private JdbcProxyFactory jdbcProxyFactory;
     private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
     private ConnectionIdManager connectionIdManager;
-    private CompositeProxyDataSourceListener methodListener;
     private GeneratedKeysConfig generatedKeysConfig = new GeneratedKeysConfig();
 
     public String getDataSourceName() {
         return dataSourceName;
     }
 
-    public CompositeProxyDataSourceListener getQueryListener() {
-        return queryListener;
+    public CompositeProxyDataSourceListener getListeners() {
+        return listeners;
     }
 
     public QueryTransformer getQueryTransformer() {
@@ -277,8 +263,5 @@ public class ProxyConfig {
         return connectionIdManager;
     }
 
-    public CompositeProxyDataSourceListener getMethodListener() {
-        return methodListener;
-    }
 
 }

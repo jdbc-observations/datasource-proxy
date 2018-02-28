@@ -127,7 +127,7 @@ public class StatementQueryTest {
 
         // autoRetrieveGeneratedKeys=true
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -157,7 +157,7 @@ public class StatementQueryTest {
 
         // autoRetrieveGeneratedKeys=false
         proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(false)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -187,7 +187,7 @@ public class StatementQueryTest {
 
         // autoRetrieveGeneratedKeys=true
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -217,7 +217,7 @@ public class StatementQueryTest {
 
         // autoRetrieveGeneratedKeys=true
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -301,7 +301,7 @@ public class StatementQueryTest {
 
         // default value (expected to NOT auto-retrieve)
         proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -318,7 +318,7 @@ public class StatementQueryTest {
 
         // autoRetrieve for batch statement = true
         proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .retrieveGeneratedKeysForBatchStatement(true)  // set true
@@ -335,7 +335,7 @@ public class StatementQueryTest {
 
         // autoRetrieve for batch statement = false
         proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .retrieveGeneratedKeysForBatchStatement(false)  // set false
@@ -491,7 +491,7 @@ public class StatementQueryTest {
         // autoCloseGeneratedKeys=false
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -513,7 +513,7 @@ public class StatementQueryTest {
 
         // autoCloseGeneratedKeys=true
         proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(true)
                 .build();
@@ -543,7 +543,7 @@ public class StatementQueryTest {
         // specify autoRetrieveGeneratedKeys and proxy factory
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .generatedKeysProxyLogicFactory(new SimpleResultSetProxyLogicFactory())
                 .autoCloseGeneratedKeys(false)

@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.atIndex;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -35,7 +34,7 @@ public class LoggingListenerTest {
         this.loggingListener = new CommonsQueryLoggingListener();
         this.loggingListener.setLog(this.inMemoryLog);
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().queryListener(this.loggingListener).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(this.loggingListener).build();
 
         // real datasource
         this.jdbcDataSource = TestUtils.getDataSourceWithData();

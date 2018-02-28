@@ -972,11 +972,11 @@ public class ProxyDataSourceBuilder {
         ProxyConfig.Builder proxyConfigBuilder = ProxyConfig.Builder.create();
 
         for (ProxyDataSourceListener listener : listeners) {
-            proxyConfigBuilder.queryListener(listener);
+            proxyConfigBuilder.listener(listener);
         }
 
         for (ProxyDataSourceListener methodListener : this.methodExecutionListeners) {
-            proxyConfigBuilder.methodListener(methodListener);
+            proxyConfigBuilder.listener(methodListener);
         }
 
         if (this.queryTransformer != null) {

@@ -141,12 +141,12 @@ public class ProxyDataSource implements DataSource, Closeable {
      */
     public void setListener(ProxyDataSourceListener listener) {
         this.proxyConfig = ProxyConfig.Builder.from(this.proxyConfig)
-                .queryListener(listener)
+                .listener(listener)
                 .build();
     }
 
     public void addListener(ProxyDataSourceListener listener) {
-        this.proxyConfig.getQueryListener().addListener(listener);
+        this.proxyConfig.getListeners().addListener(listener);
     }
 
     public void setDataSourceName(String dataSourceName) {

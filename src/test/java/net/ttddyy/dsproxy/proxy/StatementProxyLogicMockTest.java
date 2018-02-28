@@ -437,7 +437,7 @@ public class StatementProxyLogicMockTest {
         connectionInfo.setDataSourceName(DS_NAME);
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(listener)
                 .resultSetProxyLogicFactory(createResultSetProxy ? new SimpleResultSetProxyLogicFactory() : null)
                 .generatedKeysProxyLogicFactory(createGenerateKeysProxy ? new SimpleResultSetProxyLogicFactory() : null)
                 .build();
@@ -704,7 +704,8 @@ public class StatementProxyLogicMockTest {
     @Test
     public void testGetTarget() throws Throwable {
         Statement stmt = mock(Statement.class);
-        StatementProxyLogic logic = getProxyLogic(stmt, null, null);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
+        StatementProxyLogic logic = getProxyLogic(stmt, listener, null);
 
         Method method = ProxyJdbcObject.class.getMethod("getTarget");
         Object result = logic.invoke(method, null);
@@ -721,8 +722,9 @@ public class StatementProxyLogicMockTest {
     public void testUnwrap() throws Throwable {
         Statement stmt = mock(Statement.class);
         when(stmt.unwrap(String.class)).thenReturn("called");
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
-        StatementProxyLogic logic = getProxyLogic(stmt, null, null);
+        StatementProxyLogic logic = getProxyLogic(stmt, listener, null);
 
         Method method = Statement.class.getMethod("unwrap", Class.class);
         Object result = logic.invoke(method, new Object[]{String.class});
@@ -737,7 +739,9 @@ public class StatementProxyLogicMockTest {
         Statement stmt = mock(Statement.class);
         when(stmt.isWrapperFor(String.class)).thenReturn(true);
 
-        StatementProxyLogic logic = getProxyLogic(stmt, null, null);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
+
+        StatementProxyLogic logic = getProxyLogic(stmt, listener, null);
 
         Method method = Statement.class.getMethod("isWrapperFor", Class.class);
         Object result = logic.invoke(method, new Object[]{String.class});
@@ -750,9 +754,10 @@ public class StatementProxyLogicMockTest {
     public void testGetConnection() throws Throwable {
         Connection conn = mock(Connection.class);
         Statement stmt = mock(Statement.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         when(stmt.getConnection()).thenReturn(conn);
-        StatementProxyLogic logic = getProxyLogic(stmt, null, conn);
+        StatementProxyLogic logic = getProxyLogic(stmt, listener, conn);
 
         Method method = Statement.class.getMethod("getConnection");
         Object result = logic.invoke(method, null);
@@ -764,9 +769,10 @@ public class StatementProxyLogicMockTest {
     @Test
     public void testToString() throws Throwable {
         Statement stmt = mock(Statement.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         when(stmt.toString()).thenReturn("my ds");
-        StatementProxyLogic logic = getProxyLogic(stmt, null, null);
+        StatementProxyLogic logic = getProxyLogic(stmt, listener, null);
 
         Method method = Object.class.getMethod("toString");
         Object result = logic.invoke(method, null);
@@ -778,7 +784,9 @@ public class StatementProxyLogicMockTest {
     @Test
     public void testHashCode() throws Throwable {
         Statement stmt = mock(Statement.class);
-        StatementProxyLogic logic = getProxyLogic(stmt, null, null);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
+
+        StatementProxyLogic logic = getProxyLogic(stmt, listener, null);
 
         Method method = Object.class.getMethod("hashCode");
         Object result = logic.invoke(method, null);
@@ -790,7 +798,9 @@ public class StatementProxyLogicMockTest {
     @Test
     public void testEquals() throws Throwable {
         Statement stmt = mock(Statement.class);
-        StatementProxyLogic logic = getProxyLogic(stmt, null, null);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
+
+        StatementProxyLogic logic = getProxyLogic(stmt, listener, null);
 
         Method method = Object.class.getMethod("equals", Object.class);
 
@@ -968,7 +978,7 @@ public class StatementProxyLogicMockTest {
     @Test
     public void methodExecutionListener() throws Throwable {
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
         final String query = "insert into emp (id, name) values (1, 'foo')";
 

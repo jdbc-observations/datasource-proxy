@@ -81,7 +81,7 @@ public class CallableStatementParameterTransformTest {
             }
         });
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(queryListener)
+                .listener(queryListener)
                 .queryTransformer(queryTransformer)
                 .parameterTransformer(paramTransformer)
                 .build();

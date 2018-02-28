@@ -135,7 +135,7 @@ public class StatementProxyLogic {
 
         QueryTransformer queryTransformer = this.proxyConfig.getQueryTransformer();
         ParameterTransformer parameterTransformer = this.proxyConfig.getParameterTransformer();
-        ProxyDataSourceListener queryListener = this.proxyConfig.getQueryListener();
+        ProxyDataSourceListener queryListener = this.proxyConfig.getListeners();
         JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
 

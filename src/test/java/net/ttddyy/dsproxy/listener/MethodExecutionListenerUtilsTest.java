@@ -61,7 +61,7 @@ public class MethodExecutionListenerUtilsTest {
         };
 
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
         Object result = MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
             @Override
@@ -108,7 +108,7 @@ public class MethodExecutionListenerUtilsTest {
         };
 
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
         // when callback throws exception
         Throwable thrownException = null;
@@ -159,7 +159,7 @@ public class MethodExecutionListenerUtilsTest {
         };
 
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
         final AtomicReference<Method> invokedMethod = new AtomicReference<Method>();
         final AtomicReference<Object[]> invokedMethodArgs = new AtomicReference<Object[]>();
