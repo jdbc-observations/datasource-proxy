@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BooleanSupplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,12 +19,7 @@ public class TracingMethodListenerTest {
     @Test
     public void tracingCondition() {
 
-        TracingMethodListener.TracingCondition falseCondition = new TracingMethodListener.TracingCondition() {
-            @Override
-            public boolean getAsBoolean() {
-                return false;
-            }
-        };
+        BooleanSupplier falseCondition = () -> false;
 
         final AtomicBoolean isCalled = new AtomicBoolean(false);
         TracingMethodListener listener = new TracingMethodListener() {
@@ -77,12 +73,7 @@ public class TracingMethodListenerTest {
         final AtomicReference<String> messageHolder = new AtomicReference<String>();
         TracingMethodListener listener = new TracingMethodListener();
 
-        listener.setTracingMessageConsumer(new TracingMethodListener.TracingMessageConsumer() {
-            @Override
-            public void accept(String logMessage) {
-                messageHolder.set(logMessage);
-            }
-        });
+        listener.setTracingMessageConsumer(messageHolder::set);
 
         class MyTarget {
         }

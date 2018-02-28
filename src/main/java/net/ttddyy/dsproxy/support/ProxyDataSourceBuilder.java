@@ -33,6 +33,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 /**
@@ -72,8 +74,8 @@ public class ProxyDataSourceBuilder {
 
     // For building TracingMethodListener
     private boolean createTracingMethodListener;
-    private TracingMethodListener.TracingCondition tracingCondition;
-    private TracingMethodListener.TracingMessageConsumer tracingMessageConsumer;
+    private BooleanSupplier tracingCondition;
+    private Consumer<String> tracingMessageConsumer;
 
     // For building QueryLoggingListeners
 
@@ -870,7 +872,7 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 1.4.4
      */
-    public ProxyDataSourceBuilder traceMethods(TracingMethodListener.TracingMessageConsumer messageConsumer) {
+    public ProxyDataSourceBuilder traceMethods(Consumer<String> messageConsumer) {
         this.createTracingMethodListener = true;
         this.tracingMessageConsumer = messageConsumer;
         return this;
@@ -886,7 +888,7 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 1.4.4
      */
-    public ProxyDataSourceBuilder traceMethodsWhen(TracingMethodListener.TracingCondition condition) {
+    public ProxyDataSourceBuilder traceMethodsWhen(BooleanSupplier condition) {
         this.createTracingMethodListener = true;
         this.tracingCondition = condition;
         return this;
@@ -904,7 +906,7 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 1.4.4
      */
-    public ProxyDataSourceBuilder traceMethodsWhen(TracingMethodListener.TracingCondition condition, TracingMethodListener.TracingMessageConsumer messageConsumer) {
+    public ProxyDataSourceBuilder traceMethodsWhen(BooleanSupplier condition, Consumer<String> messageConsumer) {
         this.createTracingMethodListener = true;
         this.tracingCondition = condition;
         this.tracingMessageConsumer = messageConsumer;

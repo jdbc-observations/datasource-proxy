@@ -32,6 +32,8 @@ import org.junit.Test;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -357,7 +359,8 @@ public class ProxyDataSourceBuilderTest {
         assertThat(listener).as("default tracing listener").isNotNull();
 
         // with message consumer
-        TracingMethodListener.TracingMessageConsumer consumer = mock(TracingMethodListener.TracingMessageConsumer.class);
+        Consumer<String> consumer = (str) -> {
+        };
 
         ds = ProxyDataSourceBuilder.create().traceMethods(consumer).build();
         listener = getAndVerifyMethodListener(ds, TracingMethodListener.class);
@@ -366,7 +369,7 @@ public class ProxyDataSourceBuilderTest {
                 .isSameAs(consumer);
 
         // with tracing condition
-        TracingMethodListener.TracingCondition condition = mock(TracingMethodListener.TracingCondition.class);
+        BooleanSupplier condition = mock(BooleanSupplier.class);
 
         ds = ProxyDataSourceBuilder.create().traceMethodsWhen(condition).build();
         listener = getAndVerifyMethodListener(ds, TracingMethodListener.class);

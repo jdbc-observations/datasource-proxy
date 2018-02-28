@@ -28,5 +28,9 @@
   TODO:
   - Update documentation for `ChainListener`
 
+* `TracingMethodListener`
+  - TracingMethodListener#TracingCondition => BooleanSupplier
+  - TracingMethodListener#TracingMessageConsumer => Consumer<String>
+
 
 

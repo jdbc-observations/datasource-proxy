@@ -4,6 +4,8 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 /**
  * Log all JDBC API interaction.
@@ -17,41 +19,15 @@ public class TracingMethodListener implements ProxyDataSourceListener {
 
     private static final int DEFAULT_DISPLAY_PARAM_LENGTH = 50;
 
-    /**
-     * Functional interface to decide whether to perform tracing.
-     *
-     * This will be updated to BooleanSupplier once it is updated to java8.
-     */
-    public interface TracingCondition {
-        boolean getAsBoolean();
-    }
-
-    /**
-     * Functional interface to consume log message.
-     *
-     * This will be updated to string consumer once it is updated to java8.
-     */
-    public interface TracingMessageConsumer {
-        void accept(String logMessage);
-    }
-
     private AtomicLong sequenceNumber = new AtomicLong(1);
 
     protected int parameterDisplayLength = DEFAULT_DISPLAY_PARAM_LENGTH;
 
-    protected TracingCondition tracingCondition = new TracingCondition() {
-        @Override
-        public boolean getAsBoolean() {
-            return true;  // enable tracing by default
-        }
+    protected BooleanSupplier tracingCondition = () -> {
+        return true;  // enable tracing by default
     };
 
-    protected TracingMessageConsumer tracingMessageConsumer = new TracingMessageConsumer() {
-        @Override
-        public void accept(String logMessage) {
-            System.out.println(logMessage);  // write to console by default
-        }
-    };
+    protected Consumer<String> tracingMessageConsumer = System.out::println;  // write to console by default
 
     @Override
     public void afterMethod(MethodExecutionContext executionContext) {
@@ -251,19 +227,19 @@ public class TracingMethodListener implements ProxyDataSourceListener {
         this.parameterDisplayLength = parameterDisplayLength;
     }
 
-    public TracingCondition getTracingCondition() {
+    public BooleanSupplier getTracingCondition() {
         return tracingCondition;
     }
 
-    public void setTracingCondition(TracingCondition tracingCondition) {
+    public void setTracingCondition(BooleanSupplier tracingCondition) {
         this.tracingCondition = tracingCondition;
     }
 
-    public TracingMessageConsumer getTracingMessageConsumer() {
+    public Consumer<String> getTracingMessageConsumer() {
         return tracingMessageConsumer;
     }
 
-    public void setTracingMessageConsumer(TracingMessageConsumer tracingMessageConsumer) {
+    public void setTracingMessageConsumer(Consumer<String> tracingMessageConsumer) {
         this.tracingMessageConsumer = tracingMessageConsumer;
     }
 
