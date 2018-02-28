@@ -8,7 +8,7 @@ import java.util.logging.Logger;
  * @since 1.4.1
  */
 public class JULQueryCountLoggingServletFilter extends AbstractQueryCountLoggingServletFilter {
-    protected Logger logger = Logger.getLogger(JULQueryCountLoggingHandlerInterceptor.class.getName());
+    protected Logger logger = Logger.getLogger(JULQueryCountLoggingServletFilter.class.getName());
 
     private Level logLevel = Level.FINE;  // default
 

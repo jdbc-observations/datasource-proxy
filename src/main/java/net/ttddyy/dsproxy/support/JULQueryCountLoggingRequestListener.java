@@ -14,7 +14,7 @@ public class JULQueryCountLoggingRequestListener extends AbstractQueryCountLoggi
     private static final String LOG_LEVEL_PARAM = "queryCountJULLogLevel";
     private static final Level DEFAULT_LOG_LEVEL = Level.FINE;
 
-    protected Logger logger = Logger.getLogger(JULQueryCountLoggingHandlerInterceptor.class.getName());
+    protected Logger logger = Logger.getLogger(JULQueryCountLoggingRequestListener.class.getName());
 
     @Override
     protected void writeLog(ServletRequestEvent servletRequestEvent, String logEntry) {
