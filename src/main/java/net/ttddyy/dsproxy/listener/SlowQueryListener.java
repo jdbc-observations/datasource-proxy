@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 
@@ -48,13 +47,10 @@ public class SlowQueryListener implements ProxyDataSourceListener {
 
     protected boolean useDaemonThread = true;
 
-    protected ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread thread = Executors.defaultThreadFactory().newThread(r);
-            thread.setDaemon(SlowQueryListener.this.useDaemonThread);
-            return thread;
-        }
+    protected ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor((r) -> {
+        Thread thread = Executors.defaultThreadFactory().newThread(r);
+        thread.setDaemon(SlowQueryListener.this.useDaemonThread);
+        return thread;
     });
 
     protected long threshold;
@@ -64,20 +60,17 @@ public class SlowQueryListener implements ProxyDataSourceListener {
     @Override
     public void beforeQuery(final ExecutionInfo execInfo, final List<QueryInfo> queryInfoList) {
 
-        Runnable check = new Runnable() {
-            @Override
-            public void run() {
-                // if it's still in map, that means it's still running
-                Long startTimeInMills = inExecution.get(execInfo);
-                if (startTimeInMills != null) {
-                    // populate elapsed time
-                    if (execInfo.getElapsedTime() == 0) {
-                        long elapsedTime = System.currentTimeMillis() - startTimeInMills;
-                        execInfo.setElapsedTime(elapsedTime);
-                    }
-
-                    onSlowQuery(execInfo, queryInfoList, startTimeInMills);
+        Runnable check = () -> {
+            // if it's still in map, that means it's still running
+            Long startTimeInMills = inExecution.get(execInfo);
+            if (startTimeInMills != null) {
+                // populate elapsed time
+                if (execInfo.getElapsedTime() == 0) {
+                    long elapsedTime = System.currentTimeMillis() - startTimeInMills;
+                    execInfo.setElapsedTime(elapsedTime);
                 }
+
+                onSlowQuery(execInfo, queryInfoList, startTimeInMills);
             }
         };
         this.executor.schedule(check, this.threshold, this.thresholdTimeUnit);

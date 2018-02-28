@@ -10,7 +10,11 @@ public class QueryUtils {
         if (query == null) {
             return null;
         }
-        return query.replaceAll("--.*\n", "").replaceAll("\n", "").replaceAll("/\\*.*\\*/", "").trim();
+        return query
+                .replaceAll("--.*\n", "")
+                .replaceAll("\n", "")
+                .replaceAll("/\\*.*\\*/", "")
+                .trim();
     }
 
     /**
