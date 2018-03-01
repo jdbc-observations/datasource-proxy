@@ -34,11 +34,11 @@ public class SimpleResultSetProxyLogic implements ResultSetProxyLogic {
 
     private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {
 
-        final String methodName = method.getName();
+        String methodName = method.getName();
 
         // special treat for toString method
         if ("toString".equals(methodName)) {
-            final StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.append(this.resultSet.getClass().getSimpleName());
             sb.append(" [");
             sb.append(this.resultSet.toString());

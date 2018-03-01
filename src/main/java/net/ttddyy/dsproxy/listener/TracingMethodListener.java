@@ -23,9 +23,7 @@ public class TracingMethodListener implements ProxyDataSourceListener {
 
     protected int parameterDisplayLength = DEFAULT_DISPLAY_PARAM_LENGTH;
 
-    protected BooleanSupplier tracingCondition = () -> {
-        return true;  // enable tracing by default
-    };
+    protected BooleanSupplier tracingCondition = () -> true;  // enable tracing by default
 
     protected Consumer<String> tracingMessageConsumer = System.out::println;  // write to console by default
 

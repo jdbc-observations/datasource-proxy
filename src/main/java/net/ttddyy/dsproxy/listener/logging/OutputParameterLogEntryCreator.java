@@ -19,7 +19,7 @@ public class OutputParameterLogEntryCreator extends DefaultQueryLogEntryCreator 
 
     @Override
     public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName, boolean writeConnectionId) {
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append(super.getLogEntry(execInfo, queryInfoList, writeDataSourceName, writeConnectionId));
 
         sb.append(", OutParams:[");

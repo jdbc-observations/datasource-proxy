@@ -16,13 +16,13 @@ import java.util.Set;
  */
 public interface StatementMethodNames {
 
-    static final String PARAMETER_METHOD_SET_NULL = "setNull";
-    static final String PARAMETER_METHOD_REGISTER_OUT_PARAMETER = "registerOutParameter";
-    static final String GET_GENERATED_KEYS_METHOD = "getGeneratedKeys";
-    static final String GET_CONNECTION_METHOD = "getConnection";
+    String PARAMETER_METHOD_SET_NULL = "setNull";
+    String PARAMETER_METHOD_REGISTER_OUT_PARAMETER = "registerOutParameter";
+    String GET_GENERATED_KEYS_METHOD = "getGeneratedKeys";
+    String GET_CONNECTION_METHOD = "getConnection";
 
-    static final Set<String> PARAMETER_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("setArray", "setAsciiStream", "setBigDecimal",
+    Set<String> PARAMETER_METHODS = Collections.unmodifiableSet(
+            new HashSet<>(Arrays.asList("setArray", "setAsciiStream", "setBigDecimal",
                     "setBinaryStream", "setBlob", "setBoolean", "setByte",
                     "setBytes", "setCharacterStream", "setClob", "setDate",
                     "setDouble", "setFloat", "setInt", "setLong",
@@ -35,23 +35,23 @@ public interface StatementMethodNames {
             ))
     );
 
-    static final Set<String> BATCH_PARAM_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("addBatch", "clearBatch"))
+    Set<String> BATCH_PARAM_METHODS = Collections.unmodifiableSet(
+            new HashSet<>(Arrays.asList("addBatch", "clearBatch"))
     );
 
-    static final Set<String> BATCH_EXEC_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList(
+    Set<String> BATCH_EXEC_METHODS = Collections.unmodifiableSet(
+            new HashSet<>(Arrays.asList(
                     "executeBatch",
                     "executeLargeBatch"  // JDBC 4.2 (Java1.8)
             ))
     );
-    static final Set<String> QUERY_EXEC_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList(
+    Set<String> QUERY_EXEC_METHODS = Collections.unmodifiableSet(
+            new HashSet<>(Arrays.asList(
                     "executeQuery", "executeUpdate", "execute",
                     "executeLargeUpdate"  // JDBC 4.2 (Java1.8)
             ))
     );
-    static final Set<String> EXEC_METHODS = Collections.unmodifiableSet(
+    Set<String> EXEC_METHODS = Collections.unmodifiableSet(
             new HashSet<String>() {
                 {
                     addAll(BATCH_EXEC_METHODS);
@@ -60,18 +60,18 @@ public interface StatementMethodNames {
             }
     );
 
-    static final Set<String> JDBC4_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("unwrap", "isWrapperFor"))
+    Set<String> JDBC4_METHODS = Collections.unmodifiableSet(
+            new HashSet<>(Arrays.asList("unwrap", "isWrapperFor"))
     );
 
-    static final Set<String> METHODS_TO_RETURN_RESULTSET = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList(
+    Set<String> METHODS_TO_RETURN_RESULTSET = Collections.unmodifiableSet(
+            new HashSet<>(Arrays.asList(
                     "executeQuery", GET_GENERATED_KEYS_METHOD, "getResultSet",  // from Statement
                     "executeQuery"  // from PreparedStatement
             ))
     );
 
-    static final Set<String> METHODS_TO_INTERCEPT = Collections.unmodifiableSet(
+    Set<String> METHODS_TO_INTERCEPT = Collections.unmodifiableSet(
             new HashSet<String>() {
                 {
                     addAll(PARAMETER_METHODS);
@@ -87,7 +87,7 @@ public interface StatementMethodNames {
             }
     );
 
-    static final Set<String> METHODS_TO_OPERATE_PARAMETER = Collections.unmodifiableSet(
+    Set<String> METHODS_TO_OPERATE_PARAMETER = Collections.unmodifiableSet(
             new HashSet<String>() {
                 {
                     addAll(PARAMETER_METHODS);

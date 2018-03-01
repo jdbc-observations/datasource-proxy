@@ -3,7 +3,7 @@ package net.ttddyy.dsproxy.transform;
 import java.sql.Statement;
 
 /**
- * Hold context information for {@link ParameterTransformer#transformParameters(ParameterReplacer, TransformInfo)}.
+ * Hold context information for {@link QueryTransformer#transformQuery(TransformInfo)}.
  *
  * <ul>
  * <li>clazz: calling class. {@link java.sql.PreparedStatement} or {@link java.sql.CallableStatement}
@@ -14,13 +14,10 @@ import java.sql.Statement;
  * </ul>
  *
  * <b>Semantics of {@link #isBatch()}:</b>
- * <p>For {@link QueryTransformer},  {@link #isBatch()} is only true when {@link Statement#addBatch(String)} is called.
+ * <p>For {@link QueryTransformer}, {@link #isBatch()} is only true when {@link Statement#addBatch(String)} is called.
  * {@link #isBatch()} is always false for {@link java.sql.PreparedStatement} and {@link java.sql.CallableStatement}.
- * For {@link ParameterTransformer}, {@link #isBatch()} returns true when
- * {@link java.sql.PreparedStatement#addBatch()} or {@link java.sql.CallableStatement#addBatch()} is called.
  *
  * @author Tadaya Tsuyukubo
- * @see net.ttddyy.dsproxy.transform.ParameterTransformer
  * @see net.ttddyy.dsproxy.transform.QueryTransformer
  * @since 1.2
  */

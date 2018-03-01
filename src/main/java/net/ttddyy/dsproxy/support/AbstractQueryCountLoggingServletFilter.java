@@ -84,7 +84,7 @@ public abstract class AbstractQueryCountLoggingServletFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         chain.doFilter(request, response);
 
-        final List<String> dsNames = QueryCountHolder.getDataSourceNamesAsList();
+        List<String> dsNames = QueryCountHolder.getDataSourceNamesAsList();
         Collections.sort(dsNames);
 
         for (String dsName : dsNames) {

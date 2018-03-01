@@ -101,10 +101,10 @@ public class StatementProxyLogic {
 
     // when same key(index/name) is used for parameter set operation, old value will be replaced. To implement that logic
     // using a map, so that putting same key will override the entry.
-    private Map<ParameterKey, ParameterSetOperation> parameters = new LinkedHashMap<ParameterKey, ParameterSetOperation>();
+    private Map<ParameterKey, ParameterSetOperation> parameters = new LinkedHashMap<>();
 
-    private List<String> batchQueries = new ArrayList<String>();  // used for batch statement
-    private List<Map<ParameterKey, ParameterSetOperation>> batchParameters = new ArrayList<Map<ParameterKey, ParameterSetOperation>>();
+    private List<String> batchQueries = new ArrayList<>();  // used for batch statement
+    private List<Map<ParameterKey, ParameterSetOperation>> batchParameters = new ArrayList<>();
 
     private Connection proxyConnection;
     private ProxyConfig proxyConfig;
@@ -122,7 +122,7 @@ public class StatementProxyLogic {
 
     private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {
 
-        final String methodName = method.getName();
+        String methodName = method.getName();
 
         if (!StatementMethodNames.METHODS_TO_INTERCEPT.contains(methodName)) {
             return MethodUtils.proceedExecution(method, statement, args);
@@ -135,7 +135,7 @@ public class StatementProxyLogic {
 
         // special treat for toString method
         if ("toString".equals(methodName)) {
-            final StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.append(statement.getClass().getSimpleName());   // Statement, PreparedStatement, or CallableStatement
             sb.append(" [");
             sb.append(statement.toString());
@@ -150,7 +150,7 @@ public class StatementProxyLogic {
 
         // "unwrap", "isWrapperFor"
         if (StatementMethodNames.JDBC4_METHODS.contains(methodName)) {
-            final Class<?> clazz = (Class<?>) args[0];
+            Class<?> clazz = (Class<?>) args[0];
             if ("unwrap".equals(methodName)) {
                 return statement.unwrap(clazz);
             } else if ("isWrapperFor".equals(methodName)) {
@@ -167,11 +167,11 @@ public class StatementProxyLogic {
         if (StatementType.STATEMENT == statementType) {
             if ("addBatch".equals(methodName) || "clearBatch".equals(methodName)) {
                 if ("addBatch".equals(methodName)) {
-                    final String query = (String) args[0];
-                    final Class<? extends Statement> clazz = Statement.class;
-                    final int batchCount = batchQueries.size();
-                    final TransformInfo transformInfo = new TransformInfo(clazz, this.connectionInfo.getDataSourceName(), query, true, batchCount);
-                    final String transformedQuery = queryTransformer.transformQuery(transformInfo);
+                    String query = (String) args[0];
+                    Class<? extends Statement> clazz = Statement.class;
+                    int batchCount = batchQueries.size();
+                    TransformInfo transformInfo = new TransformInfo(clazz, this.connectionInfo.getDataSourceName(), query, true, batchCount);
+                    String transformedQuery = queryTransformer.transformQuery(transformInfo);
                     args[0] = transformedQuery;  // replace to the new query
                     batchQueries.add(transformedQuery);
                 } else {  // for "clearBatch" method
@@ -214,7 +214,7 @@ public class StatementProxyLogic {
                     if ("addBatch".equals(methodName)) {
 
                         // copy values
-                        Map<ParameterKey, ParameterSetOperation> newParams = new LinkedHashMap<ParameterKey, ParameterSetOperation>(parameters);
+                        Map<ParameterKey, ParameterSetOperation> newParams = new LinkedHashMap<>(parameters);
                         batchParameters.add(newParams);
 
                         parameters.clear();
@@ -232,7 +232,7 @@ public class StatementProxyLogic {
 
         // query execution methods
 
-        final List<QueryInfo> queries = new ArrayList<QueryInfo>();
+        List<QueryInfo> queries = new ArrayList<>();
         boolean isBatchExecution = StatementMethodNames.BATCH_EXEC_METHODS.contains(methodName);
         int batchSize = 0;
 
@@ -249,7 +249,7 @@ public class StatementProxyLogic {
                 // one query with multiple parameters
                 QueryInfo queryInfo = new QueryInfo(this.query);
                 for (Map<ParameterKey, ParameterSetOperation> params : batchParameters) {
-                    queryInfo.getParametersList().add(new ArrayList<ParameterSetOperation>(params.values()));
+                    queryInfo.getParametersList().add(new ArrayList<>(params.values()));
                 }
                 queries.add(queryInfo);
 
@@ -261,20 +261,20 @@ public class StatementProxyLogic {
         } else if (StatementMethodNames.QUERY_EXEC_METHODS.contains(methodName)) {
             QueryInfo queryInfo;
             if (StatementType.STATEMENT == statementType) {
-                final String query = (String) args[0];
-                final TransformInfo transformInfo = new TransformInfo(Statement.class, this.connectionInfo.getDataSourceName(), query, false, 0);
-                final String transformedQuery = queryTransformer.transformQuery(transformInfo);
+                String query = (String) args[0];
+                TransformInfo transformInfo = new TransformInfo(Statement.class, this.connectionInfo.getDataSourceName(), query, false, 0);
+                String transformedQuery = queryTransformer.transformQuery(transformInfo);
                 args[0] = transformedQuery; // replace to the new query
 
                 queryInfo = new QueryInfo(transformedQuery);
             } else {
                 queryInfo = new QueryInfo(this.query);
-                queryInfo.getParametersList().add(new ArrayList<ParameterSetOperation>(parameters.values()));
+                queryInfo.getParametersList().add(new ArrayList<>(parameters.values()));
             }
             queries.add(queryInfo);
         }
 
-        final boolean isGetGeneratedKeysMethod = GET_GENERATED_KEYS_METHOD.equals(methodName);
+        boolean isGetGeneratedKeysMethod = GET_GENERATED_KEYS_METHOD.equals(methodName);
 
         // For "getGeneratedKeys()", if auto retrieval is enabled and retrieved resultset is still open, return it from
         // the cache. If it is already closed, then proceed to invoke the actual "getGeneratedKeys()" method.
@@ -286,25 +286,25 @@ public class StatementProxyLogic {
             }
         }
 
-        final ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo, this.statement, isBatchExecution, batchSize, method, args);
+        ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo, this.statement, isBatchExecution, batchSize, method, args);
 
         queryListener.beforeQuery(execInfo, queries);
 
-        final long beforeTime = System.currentTimeMillis();
+        long beforeTime = System.currentTimeMillis();
 
         // Invoke method on original Statement.
         try {
 
             Object retVal = method.invoke(this.statement, args);
 
-            final long afterTime = System.currentTimeMillis();
+            long afterTime = System.currentTimeMillis();
 
 
             // method that returns ResultSet but exclude "getGeneratedKeys()"
-            final boolean isResultSetReturningMethod = !isGetGeneratedKeysMethod && METHODS_TO_RETURN_RESULTSET.contains(methodName);
+            boolean isResultSetReturningMethod = !isGetGeneratedKeysMethod && METHODS_TO_RETURN_RESULTSET.contains(methodName);
 
-            final boolean isCreateGeneratedKeysProxy = isGetGeneratedKeysMethod && this.proxyConfig.isGeneratedKeysProxyEnabled();
-            final boolean isCreateResultSetProxy = isResultSetReturningMethod && this.proxyConfig.isResultSetProxyEnabled();
+            boolean isCreateGeneratedKeysProxy = isGetGeneratedKeysMethod && this.proxyConfig.isGeneratedKeysProxyEnabled();
+            boolean isCreateResultSetProxy = isResultSetReturningMethod && this.proxyConfig.isResultSetProxyEnabled();
 
             // create proxy for returned ResultSet
             if (isCreateGeneratedKeysProxy) {
@@ -365,7 +365,7 @@ public class StatementProxyLogic {
 
             return retVal;
         } catch (InvocationTargetException ex) {
-            final long afterTime = System.currentTimeMillis();
+            long afterTime = System.currentTimeMillis();
 
             execInfo.setElapsedTime(afterTime - beforeTime);
             execInfo.setThrowable(ex.getTargetException());

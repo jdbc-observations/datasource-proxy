@@ -48,7 +48,7 @@ public class DataSourceProxyLogic {
         JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
         ConnectionIdManager connectionIdManager = this.proxyConfig.getConnectionIdManager();
 
-        final String methodName = method.getName();
+        String methodName = method.getName();
 
         if ("toString".equals(methodName)) {
             StringBuilder sb = new StringBuilder();
@@ -65,7 +65,7 @@ public class DataSourceProxyLogic {
         }
 
         if (JDBC4_METHODS.contains(methodName)) {
-            final Class<?> clazz = (Class<?>) args[0];
+            Class<?> clazz = (Class<?>) args[0];
             if ("unwrap".equals(methodName)) {
                 return dataSource.unwrap(clazz);
             } else if ("isWrapperFor".equals(methodName)) {
@@ -75,7 +75,7 @@ public class DataSourceProxyLogic {
 
         // Invoke method on original datasource.
         try {
-            final Object retVal = method.invoke(dataSource, args);
+            Object retVal = method.invoke(dataSource, args);
 
             if ("getConnection".equals(methodName)) {
                 Connection conn = (Connection) retVal;

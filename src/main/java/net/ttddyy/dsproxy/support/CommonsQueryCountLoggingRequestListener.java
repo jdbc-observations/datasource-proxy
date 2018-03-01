@@ -13,7 +13,6 @@ import javax.servlet.ServletRequestEvent;
  *
  * @author Tadaya Tsuyukubo
  * @see CommonsQueryCountLoggingServletFilter
- * @see CommonsQueryCountLoggingHandlerInterceptor
  */
 public class CommonsQueryCountLoggingRequestListener extends AbstractQueryCountLoggingRequestListener {
 

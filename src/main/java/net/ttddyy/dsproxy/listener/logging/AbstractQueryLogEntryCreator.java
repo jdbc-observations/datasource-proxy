@@ -55,7 +55,7 @@ public abstract class AbstractQueryLogEntryCreator implements QueryLogEntryCreat
             try {
                 int leftInt = Integer.parseInt(left);
                 int rightInt = Integer.parseInt(right);
-                return (leftInt < rightInt) ? -1 : ((leftInt == rightInt) ? 0 : 1);
+                return Integer.compare(leftInt, rightInt);
             } catch (NumberFormatException e) {
                 return left.compareTo(right);  // use String comparison
             }
@@ -89,7 +89,7 @@ public abstract class AbstractQueryLogEntryCreator implements QueryLogEntryCreat
      */
     protected SortedMap<String, String> getParametersToDisplay(List<ParameterSetOperation> params) {
         // populate param map with sorted by key: key=index/name, value=first value
-        SortedMap<String, String> paramMap = new TreeMap<String, String>(new StringAsIntegerComparator());
+        SortedMap<String, String> paramMap = new TreeMap<>(new StringAsIntegerComparator());
         for (ParameterSetOperation param : params) {
             String key = getParameterKeyToDisplay(param);
             String value = getParameterValueToDisplay(param);

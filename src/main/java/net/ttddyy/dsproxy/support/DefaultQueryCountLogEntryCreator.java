@@ -10,7 +10,7 @@ import net.ttddyy.dsproxy.QueryCount;
 public class DefaultQueryCountLogEntryCreator implements QueryCountLogEntryCreator {
 
     public String getLogMessage(String datasourceName, QueryCount queryCount) {
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append("Name:");
         sb.append(datasourceName == null ? "" : datasourceName);
         sb.append(", ");
@@ -67,7 +67,7 @@ public class DefaultQueryCountLogEntryCreator implements QueryCountLogEntryCreat
 
     @Override
     public String getLogMessageAsJson(String datasourceName, QueryCount queryCount) {
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append("{");
         sb.append("\"name\":");
         if (datasourceName == null) {

@@ -17,7 +17,7 @@ import java.util.List;
 public class QueryInfo {
     private String query;
 
-    private List<List<ParameterSetOperation>> parametersList = new ArrayList<List<ParameterSetOperation>>();
+    private List<List<ParameterSetOperation>> parametersList = new ArrayList<>();
 
     public QueryInfo() {
     }

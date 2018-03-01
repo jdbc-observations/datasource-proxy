@@ -23,7 +23,9 @@ public class SetNullParameterValueConverter implements ParameterValueConverter {
         StringBuilder sb = new StringBuilder();
         sb.append("NULL");
         if (sqlTypeName != null) {
-            sb.append("(" + sqlTypeName + ")");
+            sb.append("(");
+            sb.append(sqlTypeName);
+            sb.append(")");
         }
         return sb.toString();
     }

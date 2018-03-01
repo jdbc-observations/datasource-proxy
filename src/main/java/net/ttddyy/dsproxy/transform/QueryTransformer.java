@@ -8,7 +8,7 @@ package net.ttddyy.dsproxy.transform;
  */
 public interface QueryTransformer {
 
-    static QueryTransformer DEFAULT = new NoOpQueryTransformer();
+    QueryTransformer DEFAULT = new NoOpQueryTransformer();
 
     String transformQuery(TransformInfo transformInfo);
 }

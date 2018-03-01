@@ -21,7 +21,7 @@ public abstract class AbstractQueryLoggingListener implements ProxyDataSourceLis
     public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
         // only perform logging logic when the condition returns true
         if (this.loggingCondition.getAsBoolean()) {
-            final String entry = getEntry(execInfo, queryInfoList);
+            String entry = getEntry(execInfo, queryInfoList);
             writeLog(entry);
         }
     }

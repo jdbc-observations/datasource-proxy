@@ -35,7 +35,7 @@ public class MethodExecutionListenerUtils {
         Method methodToInvoke = methodContext.getMethod();
         Object[] methodArgsToInvoke = methodContext.getMethodArgs();
 
-        final long beforeTime = System.currentTimeMillis();
+        long beforeTime = System.currentTimeMillis();
         Object result = null;
         Throwable thrown = null;
         try {
@@ -44,7 +44,7 @@ public class MethodExecutionListenerUtils {
             thrown = throwable;
             throw throwable;
         } finally {
-            final long afterTime = System.currentTimeMillis();
+            long afterTime = System.currentTimeMillis();
             long elapsedTime = afterTime - beforeTime;
 
             methodContext.setElapsedTime(elapsedTime);

@@ -16,7 +16,7 @@ public class GeneratedKeysUtils {
     private static final Set<String> METHOD_NAMES_TO_CHECK;
 
     static {
-        Set<String> methodNames = new HashSet<String>();
+        Set<String> methodNames = new HashSet<>();
         methodNames.add("prepareStatement");
         methodNames.add("execute");
         methodNames.add("executeUpdate");

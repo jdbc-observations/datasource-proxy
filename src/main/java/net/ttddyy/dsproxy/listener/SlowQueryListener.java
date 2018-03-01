@@ -55,10 +55,10 @@ public class SlowQueryListener implements ProxyDataSourceListener {
 
     protected long threshold;
     protected TimeUnit thresholdTimeUnit;
-    protected Map<ExecutionInfo, Long> inExecution = new ConcurrentHashMap<ExecutionInfo, Long>();
+    protected Map<ExecutionInfo, Long> inExecution = new ConcurrentHashMap<>();
 
     @Override
-    public void beforeQuery(final ExecutionInfo execInfo, final List<QueryInfo> queryInfoList) {
+    public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
 
         Runnable check = () -> {
             // if it's still in map, that means it's still running

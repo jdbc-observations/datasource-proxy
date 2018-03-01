@@ -34,7 +34,7 @@ public class RepeatableReadResultSetProxyLogicFactory implements ResultSetProxyL
         try {
             ResultSetMetaData metaData = resultSet.getMetaData();
             int columnCount = metaData.getColumnCount();
-            Map<String, Integer> columnNameToIndex = new HashMap<String, Integer>();
+            Map<String, Integer> columnNameToIndex = new HashMap<>();
             for (int i = 1; i <= columnCount; i++) {
                 columnNameToIndex.put(metaData.getColumnLabel(i).toUpperCase(), i);
             }

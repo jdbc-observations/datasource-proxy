@@ -15,21 +15,16 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class QueryCountHolder {
 
-    private static ThreadLocal<ConcurrentMap<String, QueryCount>> queryCountMapHolder = new ThreadLocal<ConcurrentMap<String, QueryCount>>() {
-        @Override
-        protected ConcurrentMap<String, QueryCount> initialValue() {
-            return new ConcurrentHashMap<String, QueryCount>();
-        }
-    };
+    private static ThreadLocal<ConcurrentMap<String, QueryCount>> queryCountMapHolder = ThreadLocal.withInitial(ConcurrentHashMap::new);
 
     public static QueryCount get(String dataSourceName) {
-        final Map<String, QueryCount> map = queryCountMapHolder.get();
+        Map<String, QueryCount> map = queryCountMapHolder.get();
         return map.get(dataSourceName);
     }
 
     public static QueryCount getGrandTotal() {
-        final QueryCount totalCount = new QueryCount();
-        final Map<String, QueryCount> map = queryCountMapHolder.get();
+        QueryCount totalCount = new QueryCount();
+        Map<String, QueryCount> map = queryCountMapHolder.get();
         for (QueryCount queryCount : map.values()) {
             totalCount.setSelect(totalCount.getSelect() + queryCount.getSelect());
             totalCount.setInsert(totalCount.getInsert() + queryCount.getInsert());

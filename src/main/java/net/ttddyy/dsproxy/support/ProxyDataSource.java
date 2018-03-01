@@ -60,24 +60,24 @@ public class ProxyDataSource implements DataSource, Closeable {
 
     @Override
     public Connection getConnection() throws SQLException {
-        final Connection conn = dataSource.getConnection();
+        Connection conn = dataSource.getConnection();
         return getConnectionProxy(conn, GET_CONNECTION_WITH_NO_ARGS, null);
     }
 
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
-        final Connection conn = dataSource.getConnection(username, password);
+        Connection conn = dataSource.getConnection(username, password);
         return getConnectionProxy(conn, GET_CONNECTION_WITH_USER_PASS, new Object[]{username, password});
     }
 
-    private Connection getConnectionProxy(final Connection conn, Method method, Object[] args) throws SQLException {
+    private Connection getConnectionProxy(Connection conn, Method method, Object[] args) throws SQLException {
         String dataSourceName = this.proxyConfig.getDataSourceName();
         ConnectionIdManager connectionIdManager = this.proxyConfig.getConnectionIdManager();
-        final JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
+        JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
         long connectionId = connectionIdManager.getId(conn);
 
-        final ConnectionInfo connectionInfo = new ConnectionInfo();
+        ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setConnectionId(connectionId);
         connectionInfo.setDataSourceName(dataSourceName);
 

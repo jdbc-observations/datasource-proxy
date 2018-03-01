@@ -26,13 +26,13 @@ public class QueryUtils {
      */
     public static QueryType getQueryType(String query) {
 
-        final String trimmedQuery = removeCommentAndWhiteSpace(query);
+        String trimmedQuery = removeCommentAndWhiteSpace(query);
         if (trimmedQuery == null || trimmedQuery.length() < 1) {
             return QueryType.OTHER;
         }
 
-        final char firstChar = trimmedQuery.charAt(0);
-        final QueryType type;
+        char firstChar = trimmedQuery.charAt(0);
+        QueryType type;
         switch (firstChar) {
             case 'S':
             case 's':

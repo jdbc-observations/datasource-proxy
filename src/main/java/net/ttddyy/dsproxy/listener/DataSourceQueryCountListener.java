@@ -44,7 +44,7 @@ public class DataSourceQueryCountListener implements ProxyDataSourceListener {
 
     @Override
     public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        final String dataSourceName = execInfo.getDataSourceName();
+        String dataSourceName = execInfo.getDataSourceName();
 
         QueryCount count = this.queryCountStrategy.getOrCreateQueryCount(dataSourceName);
 
@@ -57,7 +57,7 @@ public class DataSourceQueryCountListener implements ProxyDataSourceListener {
         }
 
         // increment elapsed time
-        final long elapsedTime = execInfo.getElapsedTime();
+        long elapsedTime = execInfo.getElapsedTime();
         count.incrementTime(elapsedTime);
 
         // increment statement type
@@ -65,8 +65,8 @@ public class DataSourceQueryCountListener implements ProxyDataSourceListener {
 
         // increment query count
         for (QueryInfo queryInfo : queryInfoList) {
-            final String query = queryInfo.getQuery();
-            final QueryType type = QueryUtils.getQueryType(query);
+            String query = queryInfo.getQuery();
+            QueryType type = QueryUtils.getQueryType(query);
             count.increment(type);
         }
 

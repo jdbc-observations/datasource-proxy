@@ -15,7 +15,7 @@ import java.util.SortedMap;
  */
 public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
 
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    private static final String LINE_SEPARATOR = System.lineSeparator();
 
     private boolean multiline = false;
 

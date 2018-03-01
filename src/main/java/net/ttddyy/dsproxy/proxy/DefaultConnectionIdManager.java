@@ -19,7 +19,7 @@ public class DefaultConnectionIdManager implements ConnectionIdManager {
 
     private AtomicLong idCounter = new AtomicLong(0);
 
-    private Set<Long> openIds = new HashSet<Long>();
+    private Set<Long> openIds = new HashSet<>();
 
     @Override
     public long getId(Connection connection) {

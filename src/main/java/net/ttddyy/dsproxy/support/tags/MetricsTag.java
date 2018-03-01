@@ -24,7 +24,7 @@ public class MetricsTag extends SimpleTagSupport {
             return;
         }
 
-        final QueryCount count;
+        QueryCount count;
         if (dataSource == null || "".equals(dataSource)) {
             count = QueryCountHolder.getGrandTotal();
         } else {
@@ -35,7 +35,7 @@ public class MetricsTag extends SimpleTagSupport {
             return;
         }
 
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         if ("select".equalsIgnoreCase(metric)) {
             sb.append(count.getSelect());
         } else if ("insert".equalsIgnoreCase(metric)) {
@@ -62,7 +62,7 @@ public class MetricsTag extends SimpleTagSupport {
             sb.append(count.getTime());
         }
 
-        final JspWriter writer = getJspContext().getOut();
+        JspWriter writer = getJspContext().getOut();
         writer.print(sb.toString());
     }
 

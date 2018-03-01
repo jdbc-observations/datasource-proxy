@@ -15,7 +15,6 @@ import java.io.IOException;
  * http servlet request lifecycle when {@link net.ttddyy.dsproxy.listener.DataSourceQueryCountListener} is used.
  *
  * @author Tadaya Tsuyukubo
- * @see QueryCounterClearHandlerInterceptor
  * @see QueryCounterClearServletRequestListener
  */
 public class QueryCounterClearFilter implements Filter {

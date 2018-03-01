@@ -14,7 +14,6 @@ import org.apache.commons.logging.LogFactory;
  * <p>Also, you can set a log level.
  *
  * @author Tadaya Tsuyukubo
- * @see CommonsQueryCountLoggingHandlerInterceptor
  * @see CommonsQueryCountLoggingRequestListener
  */
 public class CommonsQueryCountLoggingServletFilter extends AbstractQueryCountLoggingServletFilter {

@@ -19,7 +19,7 @@ import java.util.Map;
 public interface ParameterValueConverter {
 
     // key: int(code) specified in java.sql.Types, value: corresponding field name
-    static final Map<Integer, String> SQL_TYPENAME_BY_CODE = new HashMap<Integer, String>() {
+    Map<Integer, String> SQL_TYPENAME_BY_CODE = new HashMap<Integer, String>() {
         {
             try {
                 Class<?> clazz = java.sql.Types.class;

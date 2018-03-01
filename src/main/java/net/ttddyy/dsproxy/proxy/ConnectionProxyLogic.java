@@ -38,11 +38,11 @@ public class ConnectionProxyLogic {
         this.proxyConfig = proxyConfig;
     }
 
-    public Object invoke(final Object proxyConnection, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxyConnection, Method method, Object[] args) throws Throwable {
 
-        final boolean isCloseMethod = "close".equals(method.getName());
-        final boolean isCommitMethod = "commit".equals(method.getName());
-        final boolean isRollbackMethod = "rollback".equals(method.getName());
+        boolean isCloseMethod = "close".equals(method.getName());
+        boolean isCommitMethod = "commit".equals(method.getName());
+        boolean isRollbackMethod = "rollback".equals(method.getName());
 
         return MethodExecutionListenerUtils.invoke(
                 (proxyTarget, targetMethod, targetArgs) -> {

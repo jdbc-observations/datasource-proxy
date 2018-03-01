@@ -51,7 +51,7 @@ public class CachedRowSetResultSetProxyLogic implements ResultSetProxyLogic {
         String methodName = method.getName();
 
         if ("toString".equals(methodName)) {
-            final StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.append(this.resultSet.getClass().getSimpleName());
             sb.append(" [");
             sb.append(this.resultSet.toString());

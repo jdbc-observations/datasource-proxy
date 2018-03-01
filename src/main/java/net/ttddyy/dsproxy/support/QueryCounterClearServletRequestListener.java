@@ -11,7 +11,6 @@ import javax.servlet.ServletRequestListener;
  *
  * @author Tadaya Tsuyukubo
  * @see QueryCounterClearFilter
- * @see QueryCounterClearHandlerInterceptor
  */
 public class QueryCounterClearServletRequestListener implements ServletRequestListener {
 
