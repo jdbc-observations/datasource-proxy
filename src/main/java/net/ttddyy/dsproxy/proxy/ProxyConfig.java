@@ -4,7 +4,6 @@ import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
-import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 
 import java.sql.ResultSet;
@@ -31,7 +30,6 @@ public class ProxyConfig {
         private String dataSourceName = "";
         private CompositeProxyDataSourceListener listeners = new CompositeProxyDataSourceListener();  // empty default
         private QueryTransformer queryTransformer = QueryTransformer.DEFAULT;
-        private ParameterTransformer parameterTransformer = ParameterTransformer.DEFAULT;
         private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
         private ResultSetProxyLogicFactory resultSetProxyLogicFactory;  // can be null if resultset proxy is disabled
         private ConnectionIdManager connectionIdManager = new DefaultConnectionIdManager();  // create instance every time
@@ -46,7 +44,6 @@ public class ProxyConfig {
                     .dataSourceName(proxyConfig.dataSourceName)
                     .listener(proxyConfig.listeners)
                     .queryTransformer(proxyConfig.queryTransformer)
-                    .parameterTransformer(proxyConfig.parameterTransformer)
                     .jdbcProxyFactory(proxyConfig.jdbcProxyFactory)
                     .resultSetProxyLogicFactory(proxyConfig.resultSetProxyLogicFactory)
                     .connectionIdManager(proxyConfig.connectionIdManager)
@@ -63,7 +60,6 @@ public class ProxyConfig {
             proxyConfig.dataSourceName = this.dataSourceName;
             proxyConfig.listeners = this.listeners;
             proxyConfig.queryTransformer = this.queryTransformer;
-            proxyConfig.parameterTransformer = this.parameterTransformer;
             proxyConfig.jdbcProxyFactory = this.jdbcProxyFactory;
             proxyConfig.resultSetProxyLogicFactory = this.resultSetProxyLogicFactory;
             proxyConfig.connectionIdManager = this.connectionIdManager;
@@ -94,11 +90,6 @@ public class ProxyConfig {
 
         public Builder queryTransformer(QueryTransformer queryTransformer) {
             this.queryTransformer = queryTransformer;
-            return this;
-        }
-
-        public Builder parameterTransformer(ParameterTransformer parameterTransformer) {
-            this.parameterTransformer = parameterTransformer;
             return this;
         }
 
@@ -147,7 +138,6 @@ public class ProxyConfig {
     private String dataSourceName;
     private CompositeProxyDataSourceListener listeners;
     private QueryTransformer queryTransformer;
-    private ParameterTransformer parameterTransformer;
     private JdbcProxyFactory jdbcProxyFactory;
     private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
     private ConnectionIdManager connectionIdManager;
@@ -163,10 +153,6 @@ public class ProxyConfig {
 
     public QueryTransformer getQueryTransformer() {
         return queryTransformer;
-    }
-
-    public ParameterTransformer getParameterTransformer() {
-        return parameterTransformer;
     }
 
     public JdbcProxyFactory getJdbcProxyFactory() {

@@ -25,7 +25,6 @@ import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.RepeatableReadResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
-import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 
 import javax.sql.DataSource;
@@ -105,7 +104,6 @@ public class ProxyDataSourceBuilder {
     private boolean multiline;
     private List<ProxyDataSourceListener> listeners = new ArrayList<>();
 
-    private ParameterTransformer parameterTransformer;
     private QueryTransformer queryTransformer;
 
     private JdbcProxyFactory jdbcProxyFactory;
@@ -584,17 +582,6 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Register {@link net.ttddyy.dsproxy.transform.ParameterTransformer}.
-     *
-     * @param parameterTransformer a query-parameter-transformer to register
-     * @return builder
-     */
-    public ProxyDataSourceBuilder parameterTransformer(ParameterTransformer parameterTransformer) {
-        this.parameterTransformer = parameterTransformer;
-        return this;
-    }
-
-    /**
      * Use multiline output for logging query.
      *
      * @return builder
@@ -954,9 +941,6 @@ public class ProxyDataSourceBuilder {
 
         if (this.queryTransformer != null) {
             proxyConfigBuilder.queryTransformer(this.queryTransformer);
-        }
-        if (this.parameterTransformer != null) {
-            proxyConfigBuilder.parameterTransformer(this.parameterTransformer);
         }
 
 

@@ -5,7 +5,6 @@ import net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
-import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 
 /**
@@ -53,7 +52,6 @@ public class ProxyConfigSpringXmlSupport {
     private String dataSourceName;
     private CompositeProxyDataSourceListener queryListener;
     private QueryTransformer queryTransformer;
-    private ParameterTransformer parameterTransformer;
     private JdbcProxyFactory jdbcProxyFactory;
     private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
     private ConnectionIdManager connectionIdManager;
@@ -69,9 +67,6 @@ public class ProxyConfigSpringXmlSupport {
         }
         if (this.queryTransformer != null) {
             builder.queryTransformer(this.queryTransformer);
-        }
-        if (this.parameterTransformer != null) {
-            builder.parameterTransformer(this.parameterTransformer);
         }
         if (this.jdbcProxyFactory != null) {
             builder.jdbcProxyFactory(this.jdbcProxyFactory);
@@ -95,10 +90,6 @@ public class ProxyConfigSpringXmlSupport {
 
     public void setQueryTransformer(QueryTransformer queryTransformer) {
         this.queryTransformer = queryTransformer;
-    }
-
-    public void setParameterTransformer(ParameterTransformer parameterTransformer) {
-        this.parameterTransformer = parameterTransformer;
     }
 
     public void setJdbcProxyFactory(JdbcProxyFactory jdbcProxyFactory) {

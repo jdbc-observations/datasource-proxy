@@ -61,3 +61,11 @@
   - net.ttddyy.dsproxy.support.ProxyDataSource#setListener
   - net.ttddyy.dsproxy.QueryInfo#getQueryArgsList
 
+* Remove `ParameterTransformer` in favor of method interceptors
+  - net.ttddyy.dsproxy.transform.ParameterTransformer
+  - net.ttddyy.dsproxy.transform.NoOpParameterTransformer
+  - net.ttddyy.dsproxy.support.ProxyDataSourceBuilder#parameterTransformer
+  - net.ttddyy.dsproxy.support.ProxyConfigSpringXmlSupport#setParameterTransformer
+  - net.ttddyy.dsproxy.proxy.ProxyConfig#getParameterTransformer
+
+

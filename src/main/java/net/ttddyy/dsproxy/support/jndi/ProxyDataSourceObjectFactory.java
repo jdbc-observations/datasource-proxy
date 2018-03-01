@@ -4,10 +4,13 @@ import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
 import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
-import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 
-import javax.naming.*;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.Name;
+import javax.naming.RefAddr;
+import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
 import javax.sql.DataSource;
 import java.util.HashSet;
@@ -37,7 +40,6 @@ import java.util.Set;
  * <li> <b>logLevel</b>:              Loglevel for commons-logging or slf4j. ex: DEBUG, INFO, etc.
  * <li> <b>listeners</b>:             Fully qualified class name of `ProxyDataSourceListener` implementation class,or predefined values below. Can be comma delimited.
  * <li> <b>queryTransformer</b>:      Fully qualified class name of `QueryTransformer` implementation class.
- * <li> <b>parameterTransformer</b>:  Fully qualified class name of `ParameterTransformer` implementation class.
  * </ul>
  *
  * <i>listeners</i> parameter:
@@ -74,7 +76,6 @@ public class ProxyDataSourceObjectFactory implements ObjectFactory {
         String loggerName = getContentFromReference(reference, "loggerName");
         String format = getContentFromReference(reference, "format");
         String queryTransformer = getContentFromReference(reference, "queryTransformer");
-        String parameterTransformer = getContentFromReference(reference, "parameterTransformer");
 
         // retrieve datasource from JNDI
         Object dataSourceResource = new InitialContext().lookup(dataSourceJndiName);
@@ -136,10 +137,6 @@ public class ProxyDataSourceObjectFactory implements ObjectFactory {
         if (queryTransformer != null) {
             QueryTransformer transformer = createNewInstance(QueryTransformer.class, queryTransformer);
             builder.queryTransformer(transformer);
-        }
-        if (parameterTransformer != null) {
-            ParameterTransformer transformer = createNewInstance(ParameterTransformer.class, parameterTransformer);
-            builder.parameterTransformer(transformer);
         }
 
         return builder.build();

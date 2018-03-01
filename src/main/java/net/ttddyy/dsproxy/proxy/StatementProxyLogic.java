@@ -6,8 +6,6 @@ import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
-import net.ttddyy.dsproxy.transform.ParameterReplacer;
-import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import net.ttddyy.dsproxy.transform.TransformInfo;
 
@@ -17,7 +15,6 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -132,7 +129,6 @@ public class StatementProxyLogic {
         }
 
         QueryTransformer queryTransformer = this.proxyConfig.getQueryTransformer();
-        ParameterTransformer parameterTransformer = this.proxyConfig.getParameterTransformer();
         ProxyDataSourceListener queryListener = this.proxyConfig.getListeners();
         JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
@@ -217,9 +213,6 @@ public class StatementProxyLogic {
                     // Batch parameter operation
                     if ("addBatch".equals(methodName)) {
 
-                        // TODO: check
-                        transformParameters(parameterTransformer, ps, true, batchParameters.size());
-
                         // copy values
                         Map<ParameterKey, ParameterSetOperation> newParams = new LinkedHashMap<ParameterKey, ParameterSetOperation>(parameters);
                         batchParameters.add(newParams);
@@ -275,9 +268,6 @@ public class StatementProxyLogic {
 
                 queryInfo = new QueryInfo(transformedQuery);
             } else {
-                PreparedStatement ps = (PreparedStatement) this.statement;
-                transformParameters(parameterTransformer, ps, false, 0);
-
                 queryInfo = new QueryInfo(this.query);
                 queryInfo.getParametersList().add(new ArrayList<ParameterSetOperation>(parameters.values()));
             }
@@ -391,31 +381,6 @@ public class StatementProxyLogic {
                 this.generatedKeys = null;
             }
 
-        }
-    }
-
-
-    private void transformParameters(ParameterTransformer parameterTransformer, PreparedStatement ps, boolean isBatch, int count) throws SQLException, IllegalAccessException, InvocationTargetException {
-
-        // transform parameters
-        final ParameterReplacer parameterReplacer = new ParameterReplacer(this.parameters);
-        final TransformInfo transformInfo = new TransformInfo(ps.getClass(), this.connectionInfo.getDataSourceName(), query, isBatch, count);
-        parameterTransformer.transformParameters(parameterReplacer, transformInfo);
-
-        if (parameterReplacer.isModified()) {
-
-            ps.clearParameters();  // clear existing parameters
-
-            // re-set parameters
-            Map<ParameterKey, ParameterSetOperation> modifiedParameters = parameterReplacer.getModifiedParameters();
-            for (ParameterSetOperation operation : modifiedParameters.values()) {
-                final Method paramMethod = operation.getMethod();
-                final Object[] paramArgs = operation.getArgs();
-                paramMethod.invoke(ps, paramArgs);
-            }
-
-            // replace
-            this.parameters = modifiedParameters;
         }
     }
 
