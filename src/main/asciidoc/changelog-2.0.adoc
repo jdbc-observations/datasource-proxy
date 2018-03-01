@@ -42,3 +42,7 @@
 
 * Make `MethodExecutionListenerUtils#MethodExecutionCallback` functional interface
 
+* Update `ProxyDataSourceBuilder`
+  - Remove `SingleMethodExecution` in favor of `Consumer<MethodExecutionContext>`
+  - Remove `SingleQueryExecution` in favor of `BiConsumer<ExecutionInfo, List<QueryInfo>>`
+

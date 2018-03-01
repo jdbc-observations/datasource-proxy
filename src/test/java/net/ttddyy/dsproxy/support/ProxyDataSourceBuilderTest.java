@@ -429,11 +429,8 @@ public class ProxyDataSourceBuilderTest {
         // check beforeMethod()
         final AtomicBoolean isBeforeInvoked = new AtomicBoolean();
         ds = ProxyDataSourceBuilder.create()
-                .beforeMethod(new ProxyDataSourceBuilder.SingleMethodExecution() {
-                    @Override
-                    public void execute(MethodExecutionContext executionContext) {
-                        isBeforeInvoked.set(true);
-                    }
+                .beforeMethod(executionContext -> {
+                    isBeforeInvoked.set(true);
                 })
                 .build();
         compositeListener = ds.getProxyConfig().getListeners();
@@ -447,11 +444,8 @@ public class ProxyDataSourceBuilderTest {
         // check afterMethod()
         final AtomicBoolean isAfterInvoked = new AtomicBoolean();
         ds = ProxyDataSourceBuilder.create()
-                .afterMethod(new ProxyDataSourceBuilder.SingleMethodExecution() {
-                    @Override
-                    public void execute(MethodExecutionContext executionContext) {
-                        isAfterInvoked.set(true);
-                    }
+                .afterMethod(executionContext -> {
+                    isAfterInvoked.set(true);
                 })
                 .build();
         compositeListener = ds.getProxyConfig().getListeners();
@@ -473,11 +467,8 @@ public class ProxyDataSourceBuilderTest {
         // check beforeMethod()
         final AtomicBoolean isBeforeInvoked = new AtomicBoolean();
         ds = ProxyDataSourceBuilder.create()
-                .beforeQuery(new ProxyDataSourceBuilder.SingleQueryExecution() {
-                    @Override
-                    public void execute(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-                        isBeforeInvoked.set(true);
-                    }
+                .beforeQuery((execInfo, queryInfoList) -> {
+                    isBeforeInvoked.set(true);
                 })
                 .build();
         CompositeProxyDataSourceListener = ds.getProxyConfig().getListeners();
@@ -491,11 +482,8 @@ public class ProxyDataSourceBuilderTest {
         // check afterMethod()
         final AtomicBoolean isAfterInvoked = new AtomicBoolean();
         ds = ProxyDataSourceBuilder.create()
-                .afterQuery(new ProxyDataSourceBuilder.SingleQueryExecution() {
-                    @Override
-                    public void execute(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-                        isAfterInvoked.set(true);
-                    }
+                .afterQuery((execInfo, queryInfoList) -> {
+                    isAfterInvoked.set(true);
                 })
                 .build();
         CompositeProxyDataSourceListener = ds.getProxyConfig().getListeners();

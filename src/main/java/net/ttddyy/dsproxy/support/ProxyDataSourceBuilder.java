@@ -33,6 +33,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -44,30 +45,6 @@ import java.util.logging.Level;
  * @since 1.3
  */
 public class ProxyDataSourceBuilder {
-
-    /**
-     * Functional interface to simplify adding {@link ProxyDataSourceListener}.
-     *
-     * @see #beforeMethod(SingleMethodExecution)
-     * @see #afterMethod(SingleMethodExecution)
-     * @since 1.4.3
-     */
-    // TODO: add @FunctionalInterface once codebase is java8
-    public interface SingleMethodExecution {
-        void execute(MethodExecutionContext executionContext);
-    }
-
-    /**
-     * Functional interface to simplify adding {@link ProxyDataSourceListener}.
-     *
-     * @see #beforeQuery(SingleQueryExecution)
-     * @see #afterQuery(SingleQueryExecution)
-     * @since 1.4.3
-     */
-    // TODO: add @FunctionalInterface once codebase is java8
-    public interface SingleQueryExecution {
-        void execute(ExecutionInfo execInfo, List<QueryInfo> queryInfoList);
-    }
 
     private DataSource dataSource;
     private String dataSourceName;
@@ -545,11 +522,11 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 1.4.3
      */
-    public ProxyDataSourceBuilder beforeQuery(final SingleQueryExecution callback) {
+    public ProxyDataSourceBuilder beforeQuery(BiConsumer<ExecutionInfo, List<QueryInfo>> callback) {
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-                callback.execute(execInfo, queryInfoList);
+                callback.accept(execInfo, queryInfoList);
             }
         };
         this.listeners.add(listener);
@@ -563,11 +540,11 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 1.4.3
      */
-    public ProxyDataSourceBuilder afterQuery(final SingleQueryExecution callback) {
+    public ProxyDataSourceBuilder afterQuery(BiConsumer<ExecutionInfo, List<QueryInfo>> callback) {
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-                callback.execute(execInfo, queryInfoList);
+                callback.accept(execInfo, queryInfoList);
             }
         };
         this.listeners.add(listener);
@@ -825,11 +802,11 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 1.4.3
      */
-    public ProxyDataSourceBuilder beforeMethod(final SingleMethodExecution callback) {
+    public ProxyDataSourceBuilder beforeMethod(Consumer<MethodExecutionContext> callback) {
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {
-                callback.execute(executionContext);
+                callback.accept(executionContext);
             }
         };
         this.listeners.add(listener);
@@ -843,11 +820,11 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 1.4.3
      */
-    public ProxyDataSourceBuilder afterMethod(final SingleMethodExecution callback) {
+    public ProxyDataSourceBuilder afterMethod(Consumer<MethodExecutionContext> callback) {
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void afterMethod(MethodExecutionContext executionContext) {
-                callback.execute(executionContext);
+                callback.accept(executionContext);
             }
         };
         this.listeners.add(listener);
