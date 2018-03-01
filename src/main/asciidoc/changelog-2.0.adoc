@@ -52,4 +52,12 @@
 * Update datasource name in log to only appear when it is set.
   - Remove `net.ttddyy.dsproxy.listener.logging.AbstractQueryLoggingListener#setWriteDataSourceName()`
 
+* Remove deprecated methods
+  - net.ttddyy.dsproxy.listener.logging.AbstractQueryLoggingListener#resetLogger
+  - net.ttddyy.dsproxy.listener.logging.AbstractQueryLoggingListener#setLoggerName
+  - net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener#resetLogger
+  - net.ttddyy.dsproxy.listener.logging.JULQueryLoggingListener#resetLogger
+  - net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener#resetLogger
+  - net.ttddyy.dsproxy.support.ProxyDataSource#setListener
+  - net.ttddyy.dsproxy.QueryInfo#getQueryArgsList
 

@@ -134,15 +134,6 @@ public class ProxyDataSource implements DataSource, Closeable {
         }
     }
 
-    /**
-     * @deprecated
-     */
-    public void setListener(ProxyDataSourceListener listener) {
-        this.proxyConfig = ProxyConfig.Builder.from(this.proxyConfig)
-                .listener(listener)
-                .build();
-    }
-
     public void addListener(ProxyDataSourceListener listener) {
         this.proxyConfig.getListeners().addListener(listener);
     }

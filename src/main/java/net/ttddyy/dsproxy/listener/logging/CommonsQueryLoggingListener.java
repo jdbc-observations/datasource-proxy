@@ -47,14 +47,6 @@ public class CommonsQueryLoggingListener extends AbstractQueryLoggingListener {
         this.logLevel = logLevel;
     }
 
-    /**
-     * @deprecated use {{@link #setLog(String)}}
-     */
-    @Override
-    @Deprecated
-    protected void resetLogger(String loggerName) {
-        this.log = LogFactory.getLog(loggerName);
-    }
 
     /**
      * Override {@link Log} instance with specified log name.

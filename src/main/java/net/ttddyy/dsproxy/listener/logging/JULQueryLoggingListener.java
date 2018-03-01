@@ -29,15 +29,6 @@ public class JULQueryLoggingListener extends AbstractQueryLoggingListener {
     }
 
     /**
-     * @deprecated use {{@link #setLogger(String)}}
-     */
-    @Override
-    @Deprecated
-    protected void resetLogger(String loggerName) {
-        this.logger = Logger.getLogger(loggerName);
-    }
-
-    /**
      * Override {@link Logger} instance that has specified logger name
      *
      * @param loggerName new logger name

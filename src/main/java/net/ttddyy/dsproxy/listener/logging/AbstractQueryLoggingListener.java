@@ -33,29 +33,6 @@ public abstract class AbstractQueryLoggingListener implements ProxyDataSourceLis
 
     protected abstract void writeLog(String message);
 
-    /**
-     * Specify logger name.
-     *
-     * @param loggerName logger name
-     * @since 1.3.1
-     * @deprecated use <code>setLog(String)</code> or <code>setLogger(String)</code>
-     */
-    @Deprecated
-    public void setLoggerName(String loggerName) {
-        resetLogger(loggerName);
-    }
-
-    /**
-     * Callback method to reset the logger object in concrete class when log name is specified.
-     *
-     * @param loggerName logger name
-     * @since 1.3.1
-     * @deprecated use <code>setLog(String)</code> or <code>setLogger(String)</code>
-     */
-    @Deprecated
-    protected void resetLogger(String loggerName) {
-    }
-
     public void setQueryLogEntryCreator(QueryLogEntryCreator queryLogEntryCreator) {
         this.queryLogEntryCreator = queryLogEntryCreator;
     }

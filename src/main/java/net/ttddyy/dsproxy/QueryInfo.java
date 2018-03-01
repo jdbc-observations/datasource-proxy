@@ -3,9 +3,7 @@ package net.ttddyy.dsproxy;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Hold query and parameter information.
@@ -35,30 +33,6 @@ public class QueryInfo {
     public void setQuery(String query) {
         this.query = query;
     }
-
-    /**
-     * Deprecated: Since return doesn't contain method information, {@link #getParametersList()} is now used.
-     *
-     * @return list of parameter map, key is first arg as string, value is second arg.
-     * @deprecated use {@link #getParametersList()}
-     */
-    @Deprecated
-    public List<Map<String, Object>> getQueryArgsList() {
-        // simulate old implementation behavior
-        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-        for (List<ParameterSetOperation> paramsList : this.parametersList) {
-            Map<String, Object> map = new HashMap<String, Object>();
-
-            for (ParameterSetOperation param : paramsList) {
-                Object[] args = param.getArgs();
-                map.put(args[0].toString(), args[1]);
-            }
-
-            result.add(map);
-        }
-        return result;
-    }
-
 
     /**
      * List of parameter-operation-list.
