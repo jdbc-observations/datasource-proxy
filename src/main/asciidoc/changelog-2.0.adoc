@@ -13,6 +13,9 @@
   - net.ttddyy.dsproxy.support.BeanNameProxyDataSource
   - net.ttddyy.dsproxy.support.DataSourceProxyNativeJdbcExtractor
 
+* Removed AOP alliance related class
+  - net.ttddyy.dsproxy.support.ProxyConnectionAdvice
+
 * `ProxyDataSourceListener`
   - `MethodExecutionListener` and `QueryExecutionListener` are combined to `ProxyDataSourceListener`
   - `ChainListener` and `CompositeMethodListener` are combined to `CompositeProxyDataSourceListener`
