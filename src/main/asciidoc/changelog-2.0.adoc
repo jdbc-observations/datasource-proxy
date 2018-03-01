@@ -49,3 +49,7 @@
   - Remove `SingleMethodExecution` in favor of `Consumer<MethodExecutionContext>`
   - Remove `SingleQueryExecution` in favor of `BiConsumer<ExecutionInfo, List<QueryInfo>>`
 
+* Update datasource name in log to only appear when it is set.
+  - Remove `net.ttddyy.dsproxy.listener.logging.AbstractQueryLoggingListener#setWriteDataSourceName()`
+
+

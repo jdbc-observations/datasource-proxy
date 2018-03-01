@@ -14,7 +14,6 @@ import java.util.function.BooleanSupplier;
 public abstract class AbstractQueryLoggingListener implements ProxyDataSourceListener {
 
     protected QueryLogEntryCreator queryLogEntryCreator = new DefaultQueryLogEntryCreator();
-    protected boolean writeDataSourceName = true;
     protected boolean writeConnectionId = true;
     protected BooleanSupplier loggingCondition;
 
@@ -28,7 +27,8 @@ public abstract class AbstractQueryLoggingListener implements ProxyDataSourceLis
     }
 
     protected String getEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        return this.queryLogEntryCreator.getLogEntry(execInfo, queryInfoList, this.writeDataSourceName, this.writeConnectionId);
+        boolean writeDataSourceName = execInfo.getDataSourceName() != null && !execInfo.getDataSourceName().trim().equals("");
+        return this.queryLogEntryCreator.getLogEntry(execInfo, queryInfoList, writeDataSourceName, this.writeConnectionId);
     }
 
     protected abstract void writeLog(String message);
@@ -66,10 +66,6 @@ public abstract class AbstractQueryLoggingListener implements ProxyDataSourceLis
      */
     public QueryLogEntryCreator getQueryLogEntryCreator() {
         return queryLogEntryCreator;
-    }
-
-    public void setWriteDataSourceName(boolean writeDataSourceName) {
-        this.writeDataSourceName = writeDataSourceName;
     }
 
     /**
