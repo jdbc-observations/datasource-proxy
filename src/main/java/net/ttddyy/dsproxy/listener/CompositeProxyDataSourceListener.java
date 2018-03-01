@@ -4,6 +4,7 @@ import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -38,6 +39,10 @@ public class CompositeProxyDataSourceListener implements ProxyDataSourceListener
 
     public boolean addListener(ProxyDataSourceListener listener) {
         return this.listeners.add(listener);
+    }
+
+    public boolean addListeners(Collection<ProxyDataSourceListener> listeners) {
+        return this.listeners.addAll(listeners);
     }
 
     public List<ProxyDataSourceListener> getListeners() {

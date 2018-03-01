@@ -83,13 +83,11 @@ public class ProxyConfig {
             return this;
         }
 
-        public Builder listener(ProxyDataSourceListener queryListener) {
-            if (queryListener instanceof CompositeProxyDataSourceListener) {
-                for (ProxyDataSourceListener listener : ((CompositeProxyDataSourceListener) queryListener).getListeners()) {
-                    this.listeners.addListener(listener);
-                }
+        public Builder listener(ProxyDataSourceListener listener) {
+            if (listener instanceof CompositeProxyDataSourceListener) {
+                this.listeners.addListeners(((CompositeProxyDataSourceListener) listener).getListeners());
             } else {
-                this.listeners.addListener(queryListener);
+                this.listeners.addListener(listener);
             }
             return this;
         }
