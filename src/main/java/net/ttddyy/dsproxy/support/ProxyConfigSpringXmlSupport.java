@@ -23,11 +23,10 @@ import net.ttddyy.dsproxy.transform.QueryTransformer;
  *
  * <bean id="proxyConfigSupport" class="net.ttddyy.dsproxy.support.ProxyConfigSpringXmlSupport">
  *   <property name="dataSourceName" value="my-ds"/>
- *   <property name="listener" ref="myQueryListener"/>
- *   <property name="methodListener" ref="myMethodListener"/>
+ *   <property name="listener" ref="myListener"/>
  * </bean>
  *
- * <bean id="myQueryListener" class="net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener">
+ * <bean id="myListener" class="net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener">
  *   <property name="listeners">
  *     <list>
  *       <bean class="net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener"/>
@@ -35,12 +34,6 @@ import net.ttddyy.dsproxy.transform.QueryTransformer;
  *   </property>
  * </bean>
  *
- * <bean id="myMethodListener" class="net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener">
- *   <property name="listeners">
- *       <list>
- *       </list>
- *   </property>
- * </bean>
  * }
  * </pre>
  *
@@ -50,20 +43,19 @@ import net.ttddyy.dsproxy.transform.QueryTransformer;
 public class ProxyConfigSpringXmlSupport {
 
     private String dataSourceName;
-    private CompositeProxyDataSourceListener queryListener;
+    private CompositeProxyDataSourceListener listener;
     private QueryTransformer queryTransformer;
     private JdbcProxyFactory jdbcProxyFactory;
     private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
     private ConnectionIdManager connectionIdManager;
-    private CompositeProxyDataSourceListener methodListener;
 
     public ProxyConfig create() {
         ProxyConfig.Builder builder = ProxyConfig.Builder.create();
         if (this.dataSourceName != null) {
             builder.dataSourceName(this.dataSourceName);
         }
-        if (this.queryListener != null) {
-            builder.listener(this.queryListener);
+        if (this.listener != null) {
+            builder.listener(this.listener);
         }
         if (this.queryTransformer != null) {
             builder.queryTransformer(this.queryTransformer);
@@ -84,8 +76,8 @@ public class ProxyConfigSpringXmlSupport {
         this.dataSourceName = dataSourceName;
     }
 
-    public void setQueryListener(CompositeProxyDataSourceListener queryListener) {
-        this.queryListener = queryListener;
+    public void setListener(CompositeProxyDataSourceListener listener) {
+        this.listener = listener;
     }
 
     public void setQueryTransformer(QueryTransformer queryTransformer) {
@@ -104,7 +96,4 @@ public class ProxyConfigSpringXmlSupport {
         this.connectionIdManager = connectionIdManager;
     }
 
-    public void setMethodListener(CompositeProxyDataSourceListener methodListener) {
-        this.methodListener = methodListener;
-    }
 }
