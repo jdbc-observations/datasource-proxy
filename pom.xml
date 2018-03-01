@@ -59,7 +59,7 @@
     <assertj.version>3.9.1</assertj.version>
     <logback.versino>1.1.3</logback.versino>
     <asciidoctor.version>1.5.3</asciidoctor.version>
-    <animal-sniffer-maven-plugin.version>1.15</animal-sniffer-maven-plugin.version>
+    <animal-sniffer-maven-plugin.version>1.16</animal-sniffer-maven-plugin.version>
   </properties>
 
   <profiles>
