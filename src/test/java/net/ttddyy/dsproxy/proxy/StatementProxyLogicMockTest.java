@@ -8,7 +8,7 @@ import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -26,10 +26,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -77,7 +77,7 @@ public class StatementProxyLogicMockTest {
         try {
             Method method = Statement.class.getMethod("executeUpdate", String.class);
             logic.invoke(method, new Object[]{query});
-            fail();
+            fail("should not reach");
         } catch (SQLException e) {
         }
 
@@ -116,7 +116,7 @@ public class StatementProxyLogicMockTest {
         try {
             Method method = Statement.class.getMethod("executeUpdate", String.class, int.class);
             logic.invoke(method, new Object[]{query, Statement.RETURN_GENERATED_KEYS});
-            fail();
+            fail("should not reach");
         } catch (SQLException e) {
         }
 
@@ -157,7 +157,7 @@ public class StatementProxyLogicMockTest {
         try {
             Method method = Statement.class.getMethod("executeUpdate", String.class, int[].class);
             logic.invoke(method, new Object[]{query, columnIndexes});
-            fail();
+            fail("should not reach");
         } catch (SQLException e) {
 
         }
@@ -199,7 +199,7 @@ public class StatementProxyLogicMockTest {
         try {
             Method method = Statement.class.getMethod("executeUpdate", String.class, String[].class);
             logic.invoke(method, new Object[]{query, columnNames});
-            fail();
+            fail("should not reach");
         } catch (SQLException e) {
         }
 
@@ -237,7 +237,7 @@ public class StatementProxyLogicMockTest {
         try {
             Method method = Statement.class.getMethod("execute", String.class);
             logic.invoke(method, new Object[]{query});
-            fail();
+            fail("should not reach");
         } catch (SQLException e) {
         }
 
@@ -276,7 +276,7 @@ public class StatementProxyLogicMockTest {
         try {
             Method method = Statement.class.getMethod("execute", String.class, int.class);
             logic.invoke(method, new Object[]{query, Statement.RETURN_GENERATED_KEYS});
-            fail();
+            fail("should not reach");
         } catch (SQLException e) {
         }
 
@@ -317,7 +317,7 @@ public class StatementProxyLogicMockTest {
         try {
             Method method = Statement.class.getMethod("execute", String.class, int[].class);
             logic.invoke(method, new Object[]{query, columnIndexes});
-            fail();
+            fail("should not reach");
         } catch (SQLException e) {
         }
 
@@ -359,7 +359,7 @@ public class StatementProxyLogicMockTest {
         try {
             Method method = Statement.class.getMethod("execute", String.class, String[].class);
             logic.invoke(method, new Object[]{query, columnNames});
-            fail();
+            fail("should not reach");
         } catch (SQLException e) {
         }
 
@@ -400,7 +400,7 @@ public class StatementProxyLogicMockTest {
         try {
             Method method = Statement.class.getMethod("executeQuery", String.class);
             logic.invoke(method, new Object[]{query});
-            fail();
+            fail("should not reach");
         } catch (SQLException e) {
         }
 
@@ -516,7 +516,7 @@ public class StatementProxyLogicMockTest {
 
         try {
             logic.invoke(method, new Object[]{queryB});
-            fail();
+            fail("should not reach");
         } catch (SQLException e) {
         }
 
@@ -573,7 +573,7 @@ public class StatementProxyLogicMockTest {
         try {
             method = Statement.class.getMethod("executeBatch");
             logic.invoke(method, null);
-            fail();
+            fail("should not reach");
         } catch (SQLException e) {
         }
 
@@ -1002,8 +1002,7 @@ public class StatementProxyLogicMockTest {
 
 
         MethodExecutionContext executionContext = listener.getAfterMethodContext();
-        assertSame("method should come from interface",
-                Statement.class, executionContext.getMethod().getDeclaringClass());
+        assertSame(Statement.class, executionContext.getMethod().getDeclaringClass(), "method should come from interface");
         assertSame("executeUpdate", executionContext.getMethod().getName());
         assertSame(statement, executionContext.getTarget());
         assertSame(connectionInfo, executionContext.getConnectionInfo());
@@ -1035,7 +1034,7 @@ public class StatementProxyLogicMockTest {
         try {
             Method method = Statement.class.getMethod("executeUpdate", String.class);
             logic.invoke(method, new Object[]{query});
-            fail();
+            fail("should not reach");
         } catch (SQLException e) {
         }
 

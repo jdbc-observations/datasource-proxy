@@ -1,10 +1,8 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.listener.logging.SetNullParameterValueConverter;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.sql.Types;
 import java.util.Arrays;
@@ -16,13 +14,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-@RunWith(Parameterized.class)
 public class SetNullParameterValueConverterTest {
 
-    private int sqlType;
-    private String expected;
-
-    @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
                 {Types.BIT, "NULL(BIT)"},
@@ -67,20 +60,16 @@ public class SetNullParameterValueConverterTest {
         });
     }
 
-    public SetNullParameterValueConverterTest(int sqlType, String expected) {
-        this.sqlType = sqlType;
-        this.expected = expected;
-    }
-
-    @Test
-    public void displayValue() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void displayValue(Object sqlType, String expected) {
         ParameterSetOperation param = new ParameterSetOperation();
-        param.setArgs(new Object[]{null, this.sqlType});
+        param.setArgs(new Object[]{null, sqlType});
 
         SetNullParameterValueConverter converter = new SetNullParameterValueConverter();
         String value = converter.getValue(param);
 
-        assertThat(value).isEqualTo(this.expected);
+        assertThat(value).isEqualTo(expected);
     }
 
 }

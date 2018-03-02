@@ -69,4 +69,5 @@
   - net.ttddyy.dsproxy.support.ProxyConfigSpringXmlSupport#setParameterTransformer
   - net.ttddyy.dsproxy.proxy.ProxyConfig#getParameterTransformer
 
+* Upgrade to JUnit5
 

@@ -8,8 +8,8 @@ import net.ttddyy.dsproxy.listener.logging.QueryLogEntryCreator;
 import net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.sql.CallableStatement;
@@ -31,7 +31,7 @@ public class SlowQueryListenerTest {
 
     private DataSource jdbcDataSource;
 
-    @After
+    @AfterEach
     public void teardown() throws Exception {
         if (this.jdbcDataSource != null) {
             TestUtils.shutdown(this.jdbcDataSource);

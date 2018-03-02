@@ -3,7 +3,7 @@ package net.ttddyy.dsproxy.support;
 import net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 

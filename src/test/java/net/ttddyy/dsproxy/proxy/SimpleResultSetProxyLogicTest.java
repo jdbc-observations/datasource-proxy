@@ -3,14 +3,14 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -76,8 +76,7 @@ public class SimpleResultSetProxyLogicTest {
         assertTrue(listener.isAfterMethodCalled());
 
         MethodExecutionContext executionContext = listener.getAfterMethodContext();
-        assertSame("method should come from interface",
-                ResultSet.class, executionContext.getMethod().getDeclaringClass());
+        assertSame(ResultSet.class, executionContext.getMethod().getDeclaringClass(), "method should come from interface");
         assertSame("close", executionContext.getMethod().getName());
         assertSame(rs, executionContext.getTarget());
         assertSame(connectionInfo, executionContext.getConnectionInfo());

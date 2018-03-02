@@ -6,9 +6,9 @@ import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.hsqldb.jdbc.JDBCDataSource;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -28,7 +28,7 @@ public class PreparedStatementQueryTransformTest {
     private DataSource rawDatasource;
     private List<String> interceptedQueries = new ArrayList<String>();
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         // real datasource
         JDBCDataSource rawDataSource = new JDBCDataSource();
@@ -46,7 +46,7 @@ public class PreparedStatementQueryTransformTest {
     }
 
 
-    @After
+    @AfterEach
     public void teardown() throws Exception {
         interceptedQueries.clear();
         TestUtils.shutdown(rawDatasource);

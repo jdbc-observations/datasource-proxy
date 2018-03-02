@@ -8,7 +8,7 @@ import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.io.InputStream;
@@ -37,9 +37,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -719,8 +719,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         assertTrue(listener.isAfterMethodCalled());
 
         MethodExecutionContext executionContext = listener.getAfterMethodContext();
-        assertSame("method should come from interface",
-                PreparedStatement.class, executionContext.getMethod().getDeclaringClass());
+        assertSame(PreparedStatement.class, executionContext.getMethod().getDeclaringClass(), "method should come from interface");
         assertSame("executeQuery", executionContext.getMethod().getName());
         assertSame(ps, executionContext.getTarget());
         assertSame(connectionInfo, executionContext.getConnectionInfo());

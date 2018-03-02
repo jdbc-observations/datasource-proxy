@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -103,6 +103,7 @@ public class ParameterKeyTest {
         assertThat(strOne).isNotEqualTo(numOne);
 
     }
+
     @Test
     public void equalComparison() {
         ParameterKey numOne = new ParameterKey(1);

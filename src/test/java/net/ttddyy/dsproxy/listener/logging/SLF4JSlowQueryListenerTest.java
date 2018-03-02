@@ -2,8 +2,8 @@ package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class SLF4JSlowQueryListenerTest {
 
     private SLF4JSlowQueryListener listener;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         this.listener = new SLF4JSlowQueryListener();
         this.listener.setLogger(new InMemorySLF4JLogger());

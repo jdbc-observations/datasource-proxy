@@ -2,8 +2,8 @@ package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.QueryCount;
 import net.ttddyy.dsproxy.QueryCountHolder;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class ThreadQueryCountHolderTest {
 
-    @After
+    @AfterEach
     public void tearDown() {
         QueryCountHolder.clear();
     }

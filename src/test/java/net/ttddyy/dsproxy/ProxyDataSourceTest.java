@@ -4,9 +4,9 @@ import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
@@ -17,8 +17,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -32,7 +32,7 @@ public class ProxyDataSourceTest {
     private TestListener listener;
     private CallCheckMethodExecutionListener methodListener;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         DataSource dataSource = TestUtils.getDataSourceWithData();
 
@@ -49,7 +49,7 @@ public class ProxyDataSourceTest {
         proxyDataSource.setProxyConfig(proxyConfig);
     }
 
-    @After
+    @AfterEach
     public void teardown() throws Exception {
         TestUtils.shutdown(proxyDataSource);
     }
@@ -146,8 +146,8 @@ public class ProxyDataSourceTest {
 
         Connection connection = proxyDataSource.getConnection();
 
-        assertTrue("methodListener should be called for getConnection", this.methodListener.isBeforeMethodCalled());
-        assertTrue("methodListener should be called for getConnection", this.methodListener.isAfterMethodCalled());
+        assertTrue(this.methodListener.isBeforeMethodCalled(), "methodListener should be called for getConnection");
+        assertTrue(this.methodListener.isAfterMethodCalled(), "methodListener should be called for getConnection");
 
         MethodExecutionContext context = this.methodListener.getAfterMethodContext();
         assertThat(context.getTarget()).isSameAs(proxyDataSource);
@@ -160,38 +160,38 @@ public class ProxyDataSourceTest {
 
         proxyDataSource.getConnection("sa", "");
 
-        assertTrue("methodListener should be called for getConnection", this.methodListener.isBeforeMethodCalled());
-        assertTrue("methodListener should be called for getConnection", this.methodListener.isAfterMethodCalled());
+        assertTrue(this.methodListener.isBeforeMethodCalled(), "methodListener should be called for getConnection");
+        assertTrue(this.methodListener.isAfterMethodCalled(), "methodListener should be called for getConnection");
 
         this.methodListener.reset();
 
         // for now, only getConnection is supported for method execution listener
 
         proxyDataSource.close();
-        assertFalse("methodListener should NOT be called for close", this.methodListener.isBeforeMethodCalled());
-        assertFalse("methodListener should NOT be called for close", this.methodListener.isAfterMethodCalled());
+        assertFalse(this.methodListener.isBeforeMethodCalled(), "methodListener should NOT be called for close");
+        assertFalse(this.methodListener.isAfterMethodCalled(), "methodListener should NOT be called for close");
 
         this.methodListener.reset();
 
         proxyDataSource.getLoginTimeout();
-        assertFalse("methodListener should NOT be called for getLoginTimeout", this.methodListener.isBeforeMethodCalled());
-        assertFalse("methodListener should NOT be called for getLoginTimeout", this.methodListener.isAfterMethodCalled());
+        assertFalse(this.methodListener.isBeforeMethodCalled(), "methodListener should NOT be called for getLoginTimeout");
+        assertFalse(this.methodListener.isAfterMethodCalled(), "methodListener should NOT be called for getLoginTimeout");
 
         this.methodListener.reset();
 
         proxyDataSource.setLoginTimeout(100);
-        assertFalse("methodListener should NOT be called for setLoginTimeout", this.methodListener.isBeforeMethodCalled());
-        assertFalse("methodListener should NOT be called for setLoginTimeout", this.methodListener.isAfterMethodCalled());
+        assertFalse(this.methodListener.isBeforeMethodCalled(), "methodListener should NOT be called for setLoginTimeout");
+        assertFalse(this.methodListener.isAfterMethodCalled(), "methodListener should NOT be called for setLoginTimeout");
 
         this.methodListener.reset();
 
         PrintWriter writer = proxyDataSource.getLogWriter();
-        assertFalse("methodListener should NOT be called for getLogWriter", this.methodListener.isBeforeMethodCalled());
-        assertFalse("methodListener should NOT be called for getLogWriter", this.methodListener.isAfterMethodCalled());
+        assertFalse(this.methodListener.isBeforeMethodCalled(), "methodListener should NOT be called for getLogWriter");
+        assertFalse(this.methodListener.isAfterMethodCalled(), "methodListener should NOT be called for getLogWriter");
 
         proxyDataSource.setLogWriter(writer);
-        assertFalse("methodListener should NOT be called for setLogWriter", this.methodListener.isBeforeMethodCalled());
-        assertFalse("methodListener should NOT be called for setLogWriter", this.methodListener.isAfterMethodCalled());
+        assertFalse(this.methodListener.isBeforeMethodCalled(), "methodListener should NOT be called for setLogWriter");
+        assertFalse(this.methodListener.isAfterMethodCalled(), "methodListener should NOT be called for setLogWriter");
     }
 
     @Test

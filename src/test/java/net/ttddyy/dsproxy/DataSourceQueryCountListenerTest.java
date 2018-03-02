@@ -2,9 +2,9 @@ package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.SingleQueryCountHolder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +26,7 @@ public class DataSourceQueryCountListenerTest {
     private ExecutionInfo executionInfo;
     private DataSourceQueryCountListener listener;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         queryInfo = mock(QueryInfo.class);
 
@@ -38,11 +38,10 @@ public class DataSourceQueryCountListenerTest {
         given(executionInfo.getElapsedTime()).willReturn(123L);
         given(executionInfo.getStatementType()).willReturn(StatementType.STATEMENT);
 
-
         listener = new DataSourceQueryCountListener();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         QueryCountHolder.clear();
     }

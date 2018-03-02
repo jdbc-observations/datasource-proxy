@@ -2,9 +2,9 @@ package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import java.sql.Statement;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
@@ -25,7 +25,7 @@ public class StatementInvocationHandlerTest {
     private LastQueryListener lastQueryListener;
     private Statement statement;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         testListener = new TestListener();
         lastQueryListener = new LastQueryListener();
@@ -47,7 +47,7 @@ public class StatementInvocationHandlerTest {
         statement = new JdkJdbcProxyFactory().createStatement(stmt, connectionInfo, null, proxyConfig);
     }
 
-    @After
+    @AfterEach
     public void teardown() throws Exception {
         TestUtils.shutdown(jdbcDataSource);
     }

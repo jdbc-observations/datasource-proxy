@@ -5,9 +5,9 @@ import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import org.assertj.core.api.ThrowableAssert;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Method;
@@ -19,8 +19,8 @@ import java.sql.Statement;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -36,12 +36,12 @@ public class CachedRowSetResultSetProxyLogicTest {
 
     private DataSource jdbcDataSource;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         this.jdbcDataSource = TestUtils.getDataSourceWithData();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         TestUtils.shutdown(this.jdbcDataSource);
     }
@@ -367,8 +367,7 @@ public class CachedRowSetResultSetProxyLogicTest {
         assertTrue(listener.isAfterMethodCalled());
 
         MethodExecutionContext executionContext = listener.getAfterMethodContext();
-        assertSame("method should come from interface",
-                ResultSet.class, executionContext.getMethod().getDeclaringClass());
+        assertSame(ResultSet.class, executionContext.getMethod().getDeclaringClass(), "method should come from interface");
         assertSame("close", executionContext.getMethod().getName());
         assertSame(rs, executionContext.getTarget());
         assertSame(connectionInfo, executionContext.getConnectionInfo());

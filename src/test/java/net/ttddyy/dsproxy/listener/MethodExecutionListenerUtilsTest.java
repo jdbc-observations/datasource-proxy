@@ -2,15 +2,15 @@ package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.sql.Statement;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -74,7 +74,7 @@ public class MethodExecutionListenerUtilsTest {
         MethodExecutionContext beforeMethodContext = listener.getBeforeMethodContext();
         MethodExecutionContext afterMethodContext = listener.getAfterMethodContext();
 
-        assertSame("each method should be passed same context object", beforeMethodContext, afterMethodContext);
+        assertSame(beforeMethodContext, afterMethodContext, "each method should be passed same context object");
         assertThat(beforeMethodContext.getProxyConfig()).isSameAs(proxyConfig);
     }
 

@@ -4,7 +4,7 @@ import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
@@ -13,9 +13,9 @@ import java.lang.reflect.Proxy;
 import java.sql.Connection;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -161,8 +161,7 @@ public class DataSourceProxyLogicMockTest {
         assertTrue(listener.isAfterMethodCalled());
 
         MethodExecutionContext executionContext = listener.getAfterMethodContext();
-        assertSame("method should come from interface",
-                DataSource.class, executionContext.getMethod().getDeclaringClass());
+        assertSame(DataSource.class, executionContext.getMethod().getDeclaringClass(), "method should come from interface");
         assertSame("getConnection", executionContext.getMethod().getName());
         assertSame(ds, executionContext.getTarget());
         assertNull(executionContext.getConnectionInfo());

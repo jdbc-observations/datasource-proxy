@@ -7,9 +7,9 @@ import net.ttddyy.dsproxy.QueryInfoBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.NoOpLog;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class CommonsQueryLoggingListenerTest {
     }
 
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         LogFactory.releaseAll();
         // see configuration for logger resolution order
@@ -39,7 +39,7 @@ public class CommonsQueryLoggingListenerTest {
         LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", NameAwareLog.class.getName());
     }
 
-    @After
+    @AfterEach
     public void teardown() throws Exception {
         LogFactory.getFactory().removeAttribute("org.apache.commons.logging.Log");
     }

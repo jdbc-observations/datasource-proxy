@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 

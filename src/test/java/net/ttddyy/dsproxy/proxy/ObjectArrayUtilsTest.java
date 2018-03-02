@@ -1,18 +1,15 @@
 package net.ttddyy.dsproxy.proxy;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Tadaya Tsuyukubo
  */
-@RunWith(Parameterized.class)
 public class ObjectArrayUtilsTest {
 
-    @Parameterized.Parameters
     public static Object[][] getIsFirstArgStringData() {
         return new Object[][]{
                 // expected, input string
@@ -29,17 +26,10 @@ public class ObjectArrayUtilsTest {
         };
     }
 
-    private boolean expected;
-    private Object[] inputArray;
-
-    public ObjectArrayUtilsTest(boolean expected, Object[] inputArray) {
-        this.expected = expected;
-        this.inputArray = inputArray;
-    }
-
-    @Test
-    public void testIsFirstArgString() {
-        boolean actual = ObjectArrayUtils.isFirstArgString(this.inputArray);
-        assertThat(actual).isEqualTo(this.expected);
+    @ParameterizedTest
+    @MethodSource("getIsFirstArgStringData")
+    public void testIsFirstArgString(boolean expected, Object[] inputArray) {
+        boolean actual = ObjectArrayUtils.isFirstArgString(inputArray);
+        assertThat(actual).isEqualTo(expected);
     }
 }

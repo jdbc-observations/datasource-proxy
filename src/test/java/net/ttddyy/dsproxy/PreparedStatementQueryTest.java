@@ -7,9 +7,9 @@ import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.SimpleResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Proxy;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -35,7 +35,7 @@ public class PreparedStatementQueryTest {
     private Connection connection;
 
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         testListener = new TestListener();
         lastQueryListener = new LastQueryListener();
@@ -55,7 +55,7 @@ public class PreparedStatementQueryTest {
         connection = new JdkJdbcProxyFactory().createConnection(conn, connectionInfo, proxyConfig);
     }
 
-    @After
+    @AfterEach
     public void teardown() throws Exception {
         TestUtils.shutdown(jdbcDataSource);
     }
