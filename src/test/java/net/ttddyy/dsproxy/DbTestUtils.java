@@ -164,6 +164,7 @@ public class DbTestUtils {
         for (String query : queries) {
             stmt.execute(query);
         }
+        stmt.close();
         conn.close();
     }
 
@@ -179,7 +180,13 @@ public class DbTestUtils {
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery("select count(*) from " + tableName);
         rs.next();
+
+        int count = rs.getInt(1);
+
+        rs.close();
+        stmt.close();
         conn.close();
-        return rs.getInt(1);
+
+        return count;
     }
 }
