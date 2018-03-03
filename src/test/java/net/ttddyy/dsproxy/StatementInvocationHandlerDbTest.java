@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class StatementInvocationHandlerTest {
+public class StatementInvocationHandlerDbTest {
 
     private DataSource jdbcDataSource;
     private TestListener testListener;
@@ -31,7 +31,7 @@ public class StatementInvocationHandlerTest {
         lastQueryListener = new LastQueryListener();
 
         // real datasource
-        jdbcDataSource = TestUtils.getDataSourceWithData();
+        jdbcDataSource = DbTestUtils.getDataSourceWithData();
 
         Connection connection = jdbcDataSource.getConnection();
         Statement stmt = connection.createStatement();
@@ -49,7 +49,7 @@ public class StatementInvocationHandlerTest {
 
     @AfterEach
     public void teardown() throws Exception {
-        TestUtils.shutdown(jdbcDataSource);
+        DbTestUtils.shutdown(jdbcDataSource);
     }
 
 
@@ -196,7 +196,7 @@ public class StatementInvocationHandlerTest {
         assertThat(afterQueries).as("should pass one QueryInfo (BAZ)").hasSize(1);
 
         // verify actual data. 3 rows must be inserted, in addition to original data(2rows)
-        int count = TestUtils.countTable(jdbcDataSource, "emp");
+        int count = DbTestUtils.countTable(jdbcDataSource, "emp");
         assertThat(count).as("2 existing data(foo,bar) and 3 insert(FOO,BAR,BAZ).").isEqualTo(5);
 
     }

@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.TestUtils;
+import net.ttddyy.dsproxy.DbTestUtils;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import org.assertj.core.api.ThrowableAssert;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 // TODO: currently this is copy of RepeatableReadResultSetProxyLogicTest. Need refactoring.
-public class CachedRowSetResultSetProxyLogicTest {
+public class CachedRowSetResultSetProxyLogicDbTest {
 
     private static final String COLUMN_1_LABEL = "id";
     private static final String COLUMN_2_LABEL = "name";
@@ -38,12 +38,12 @@ public class CachedRowSetResultSetProxyLogicTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        this.jdbcDataSource = TestUtils.getDataSourceWithData();
+        this.jdbcDataSource = DbTestUtils.getDataSourceWithData();
     }
 
     @AfterEach
     public void tearDown() throws Exception {
-        TestUtils.shutdown(this.jdbcDataSource);
+        DbTestUtils.shutdown(this.jdbcDataSource);
     }
 
     @Test
@@ -106,7 +106,7 @@ public class CachedRowSetResultSetProxyLogicTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                CachedRowSetResultSetProxyLogicTest.this.invokeGetString(resultSetProxyLogic, 1);
+                CachedRowSetResultSetProxyLogicDbTest.this.invokeGetString(resultSetProxyLogic, 1);
             }
         }).isInstanceOf(SQLException.class);
     }
@@ -122,7 +122,7 @@ public class CachedRowSetResultSetProxyLogicTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                CachedRowSetResultSetProxyLogicTest.this.invokeGetString(resultSetProxyLogic, 1);
+                CachedRowSetResultSetProxyLogicDbTest.this.invokeGetString(resultSetProxyLogic, 1);
             }
         }).isInstanceOf(SQLException.class);
     }
@@ -182,7 +182,7 @@ public class CachedRowSetResultSetProxyLogicTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                CachedRowSetResultSetProxyLogicTest.this.invokeGetString(resultSetProxyLogic, 1);
+                CachedRowSetResultSetProxyLogicDbTest.this.invokeGetString(resultSetProxyLogic, 1);
             }
         }).isInstanceOf(SQLException.class);
     }

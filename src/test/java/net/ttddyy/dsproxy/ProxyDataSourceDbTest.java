@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author Tadaya Tsuyukubo
  */
-public class ProxyDataSourceTest {
+public class ProxyDataSourceDbTest {
 
     private ProxyDataSource proxyDataSource;
     private TestListener listener;
@@ -33,7 +33,7 @@ public class ProxyDataSourceTest {
 
     @BeforeEach
     public void setup() throws Exception {
-        DataSource dataSource = TestUtils.getDataSourceWithData();
+        DataSource dataSource = DbTestUtils.getDataSourceWithData();
 
         listener = new TestListener();
         methodListener = new CallCheckMethodExecutionListener();
@@ -50,7 +50,7 @@ public class ProxyDataSourceTest {
 
     @AfterEach
     public void teardown() throws Exception {
-        TestUtils.shutdown(proxyDataSource);
+        DbTestUtils.shutdown(proxyDataSource);
     }
 
     @Test
@@ -146,8 +146,8 @@ public class ProxyDataSourceTest {
 
         this.methodListener.reset();
 
-        String username = TestUtils.getUsername();
-        String password = TestUtils.getPassword();
+        String username = DbTestUtils.getUsername();
+        String password = DbTestUtils.getPassword();
         proxyDataSource.getConnection(username, password);
 
         assertTrue(this.methodListener.isBeforeMethodCalled(), "methodListener should be called for getConnection");

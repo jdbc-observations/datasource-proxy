@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.TestUtils;
+import net.ttddyy.dsproxy.DbTestUtils;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.junit.jupiter.api.AfterEach;
@@ -19,19 +19,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class LoggingListenerLogLevelTest {
+public class LoggingListenerLogLevelDbTest {
 
     private DataSource jdbcDataSource;
 
     @BeforeEach
     public void setup() throws Exception {
         // real datasource
-        jdbcDataSource = TestUtils.getDataSourceWithData();
+        jdbcDataSource = DbTestUtils.getDataSourceWithData();
     }
 
     @AfterEach
     public void teardown() throws Exception {
-        TestUtils.shutdown(jdbcDataSource);
+        DbTestUtils.shutdown(jdbcDataSource);
     }
 
     @ParameterizedTest

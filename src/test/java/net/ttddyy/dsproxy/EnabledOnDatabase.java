@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * Enable test when given database type is used.
  *
  * @author Tadaya Tsuyukubo
- * @see TestUtils
+ * @see DbTestUtils
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

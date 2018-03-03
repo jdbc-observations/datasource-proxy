@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class PreparedStatementQueryTest {
+public class PreparedStatementDbTest {
 
     private DataSource jdbcDataSource;
     private TestListener testListener;
@@ -41,7 +41,7 @@ public class PreparedStatementQueryTest {
         lastQueryListener = new LastQueryListener();
 
         // real datasource
-        jdbcDataSource = TestUtils.getDataSourceWithData();
+        jdbcDataSource = DbTestUtils.getDataSourceWithData();
 
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
@@ -57,7 +57,7 @@ public class PreparedStatementQueryTest {
 
     @AfterEach
     public void teardown() throws Exception {
-        TestUtils.shutdown(jdbcDataSource);
+        DbTestUtils.shutdown(jdbcDataSource);
     }
 
     @Test
@@ -341,7 +341,7 @@ public class PreparedStatementQueryTest {
         assertThat(queryInfo.getParametersList()).as("should have one batch params").hasSize(1);
 
         // verify actual data. 3 rows must be inserted, in addition to original data(2rows)
-        int count = TestUtils.countTable(jdbcDataSource, "emp");
+        int count = DbTestUtils.countTable(jdbcDataSource, "emp");
         assertThat(count).isEqualTo(5).as("2 existing data(foo,bar) and 3 insert(FOO,BAR,BAZ).");
 
     }
@@ -512,7 +512,7 @@ public class PreparedStatementQueryTest {
         assertThat(listenerReceivedGeneratedKeys.get()).isNotNull();
 
         // for Postgres, executeLargeUpdate is not yet implemented.
-        if (!TestUtils.isPostgres()) {
+        if (!DbTestUtils.isPostgres()) {
 
             // for executeLargeUpdate() method
             proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, true);
@@ -534,7 +534,7 @@ public class PreparedStatementQueryTest {
         assertThat(listenerReceivedGeneratedKeys.get()).isNull();
 
         // for Postgres, executeLargeUpdate is not yet implemented.
-        if (!TestUtils.isPostgres()) {
+        if (!DbTestUtils.isPostgres()) {
             // for executeLargeUpdate() method
             proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, false);
             proxyPs.executeLargeUpdate();
@@ -662,7 +662,7 @@ public class PreparedStatementQueryTest {
         ResultSet generatedKeys2 = proxyPs.getGeneratedKeys();
         assertThat(generatedKeys2.isClosed()).isFalse();
 
-        if (TestUtils.isHsql()) {
+        if (DbTestUtils.isHsql()) {
             // everytime it should return a new generatedKeys
             assertThat(generatedKeys2).isNotSameAs(generatedKeys1);
         } else {
@@ -689,7 +689,7 @@ public class PreparedStatementQueryTest {
 
         // From here, it is specific to HSQL
         // TODO: Add tests for other DB
-        if (!TestUtils.isHsql()) {
+        if (!DbTestUtils.isHsql()) {
             return;
         }
 
@@ -732,7 +732,7 @@ public class PreparedStatementQueryTest {
 
         // From here, it is HSQL specific
         // TODO: test with other DB
-        if (!TestUtils.isHsql()) {
+        if (!DbTestUtils.isHsql()) {
             return;
         }
 

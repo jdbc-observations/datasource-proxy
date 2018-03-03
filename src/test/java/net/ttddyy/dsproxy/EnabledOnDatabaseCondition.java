@@ -21,9 +21,9 @@ public class EnabledOnDatabaseCondition implements ExecutionCondition {
 
     private static final ConditionEvaluationResult ENABLED_BY_DEFAULT = enabled("@EnabledOnDatabase is not present");
 
-    private static final ConditionEvaluationResult ENABLED = enabled("Enabled on database: " + TestUtils.dbType);
+    private static final ConditionEvaluationResult ENABLED = enabled("Enabled on database: " + DbTestUtils.dbType);
 
-    private static final ConditionEvaluationResult DISABLED = disabled("Disabled on database: " + TestUtils.dbType);
+    private static final ConditionEvaluationResult DISABLED = disabled("Disabled on database: " + DbTestUtils.dbType);
 
     @Override
     public ConditionEvaluationResult evaluateExecutionCondition(ExtensionContext context) {
@@ -32,7 +32,7 @@ public class EnabledOnDatabaseCondition implements ExecutionCondition {
         if (annotation.isPresent()) {
             DatabaseType[] types = annotation.get().value();
             Preconditions.condition(types.length > 0, "value must be specified");
-            return (Arrays.stream(types).anyMatch(TestUtils::isCurrentDbType)) ? ENABLED : DISABLED;
+            return (Arrays.stream(types).anyMatch(DbTestUtils::isCurrentDbType)) ? ENABLED : DISABLED;
         }
 
         return ENABLED_BY_DEFAULT;

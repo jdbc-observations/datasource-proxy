@@ -12,8 +12,7 @@ import java.sql.Statement;
 /**
  * @author Tadaya Tsuyukubo
  */
-// TODO: rename to DbTestUtils
-public class TestUtils {
+public class DbTestUtils {
 
     public static final String SYSTEM_PROPERTY_DB_TYPE = "dsproxy.dbtype";
     public static DatabaseType dbType;
