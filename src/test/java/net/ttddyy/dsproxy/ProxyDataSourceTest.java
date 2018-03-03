@@ -13,7 +13,6 @@ import java.io.PrintWriter;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.Statement;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,17 +51,6 @@ public class ProxyDataSourceTest {
     @AfterEach
     public void teardown() throws Exception {
         TestUtils.shutdown(proxyDataSource);
-    }
-
-    public void example() throws Exception {
-        Connection conn = proxyDataSource.getConnection();
-        Statement st = conn.createStatement();
-        st.executeUpdate("create table aa ( a varchar(5) primary key );");
-        st.executeUpdate("insert into aa ( a )values ('abc');");
-        ResultSet rs = st.executeQuery("select a from aa;");
-        rs.next();
-        String val = rs.getString("a");
-        System.out.println(val);
     }
 
     @Test
@@ -158,7 +146,9 @@ public class ProxyDataSourceTest {
 
         this.methodListener.reset();
 
-        proxyDataSource.getConnection("sa", "");
+        String username = TestUtils.getUsername();
+        String password = TestUtils.getPassword();
+        proxyDataSource.getConnection(username, password);
 
         assertTrue(this.methodListener.isBeforeMethodCalled(), "methodListener should be called for getConnection");
         assertTrue(this.methodListener.isAfterMethodCalled(), "methodListener should be called for getConnection");
@@ -216,6 +206,7 @@ public class ProxyDataSourceTest {
     @Test
     public void commitAndRollbackCount() throws Exception {
         Connection conn = proxyDataSource.getConnection();
+        conn.setAutoCommit(false);
         Statement st = conn.createStatement();
 
         ConnectionInfo connInfo = this.methodListener.getBeforeMethodContext().getConnectionInfo();

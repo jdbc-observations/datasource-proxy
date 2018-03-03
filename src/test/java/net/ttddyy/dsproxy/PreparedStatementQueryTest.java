@@ -456,7 +456,7 @@ public class PreparedStatementQueryTest {
         // verify generated keys ResultSet
         generatedKeys.next();
         int generatedId = generatedKeys.getInt(1);
-        assertThat(generatedId).as("generated ID").isEqualTo(2);
+        assertThat(generatedId).as("generated ID").isEqualTo(3); // sequence starts from 1 and 2 rows are inserted as init data
 
         // reset
         listenerReceivedExecutionInfo.set(null);
@@ -511,10 +511,14 @@ public class PreparedStatementQueryTest {
         proxyPs.executeUpdate();
         assertThat(listenerReceivedGeneratedKeys.get()).isNotNull();
 
-        // for executeLargeUpdate() method
-        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, true);
-        proxyPs.executeLargeUpdate();
-        assertThat(listenerReceivedGeneratedKeys.get()).isNotNull();
+        // for Postgres, executeLargeUpdate is not yet implemented.
+        if (!TestUtils.isPostgres()) {
+
+            // for executeLargeUpdate() method
+            proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, true);
+            proxyPs.executeLargeUpdate();
+            assertThat(listenerReceivedGeneratedKeys.get()).isNotNull();
+        }
 
 
         // When generateKey=false is specified
@@ -529,10 +533,14 @@ public class PreparedStatementQueryTest {
         proxyPs.executeUpdate();
         assertThat(listenerReceivedGeneratedKeys.get()).isNull();
 
-        // for executeLargeUpdate() method
-        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, false);
-        proxyPs.executeLargeUpdate();
-        assertThat(listenerReceivedGeneratedKeys.get()).isNull();
+        // for Postgres, executeLargeUpdate is not yet implemented.
+        if (!TestUtils.isPostgres()) {
+            // for executeLargeUpdate() method
+            proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, false);
+            proxyPs.executeLargeUpdate();
+            assertThat(listenerReceivedGeneratedKeys.get()).isNull();
+        }
+
     }
 
     @Test
@@ -654,8 +662,12 @@ public class PreparedStatementQueryTest {
         ResultSet generatedKeys2 = proxyPs.getGeneratedKeys();
         assertThat(generatedKeys2.isClosed()).isFalse();
 
-        // everytime it should return a new generatedKeys
-        assertThat(generatedKeys2).isNotSameAs(generatedKeys1);
+        if (TestUtils.isHsql()) {
+            // everytime it should return a new generatedKeys
+            assertThat(generatedKeys2).isNotSameAs(generatedKeys1);
+        } else {
+            assertThat(generatedKeys2).isSameAs(generatedKeys1);
+        }
 
 
         // only specify autoRetrieveGeneratedKeys=true
@@ -674,6 +686,12 @@ public class PreparedStatementQueryTest {
 
         // since first generated-keys is open, second call should return the same one
         assertThat(generatedKeys4).isSameAs(generatedKeys3);
+
+        // From here, it is specific to HSQL
+        // TODO: Add tests for other DB
+        if (!TestUtils.isHsql()) {
+            return;
+        }
 
         generatedKeys4.close();
         ResultSet generatedKeys5 = proxyPs.getGeneratedKeys();
@@ -711,6 +729,12 @@ public class PreparedStatementQueryTest {
         ResultSet generatedKeys2 = proxyPs.getGeneratedKeys();
 
         assertThat(generatedKeys2).isSameAs(generatedKeys1);
+
+        // From here, it is HSQL specific
+        // TODO: test with other DB
+        if (!TestUtils.isHsql()) {
+            return;
+        }
 
         // when generatedKeys is closed, getGeneratedKeys() should return new ResultSet
         generatedKeys1.close();
@@ -851,7 +875,7 @@ public class PreparedStatementQueryTest {
 
         generatedKeys.next();
         int generatedId = generatedKeys.getInt(1);
-        assertThat(generatedId).as("generated ID").isEqualTo(2);
+        assertThat(generatedId).as("generated ID").isEqualTo(3);  // sequence starts from 1 and 2 rows are inserted as init data
 
     }
 

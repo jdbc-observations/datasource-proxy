@@ -5,7 +5,6 @@ import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
-import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,30 +24,29 @@ import static org.mockito.Mockito.mock;
  */
 public class StatementQueryTransformTest {
 
-    private DataSource rawDatasource;
+    private DataSource rawDataSource;
     private List<String> interceptedQueries = new ArrayList<String>();
 
     @BeforeEach
     public void setup() throws Exception {
         // real datasource
-        JDBCDataSource rawDataSource = new JDBCDataSource();
-        rawDataSource.setDatabase("jdbc:hsqldb:mem:aname");
-        rawDataSource.setUser("sa");
-        this.rawDatasource = rawDataSource;
+        this.rawDataSource = TestUtils.createDataSource();
 
         // populate datasource
-        Statement stat = rawDataSource.getConnection().createStatement();
+        Statement stat = this.rawDataSource.getConnection().createStatement();
+        stat.addBatch("drop table if exists foo;");
+        stat.addBatch("drop table if exists bar;");
         stat.addBatch("create table foo ( id integer primary key, name varchar(10) );");
         stat.addBatch("create table bar ( id integer primary key, name varchar(10) );");
-        stat.addBatch("insert into foo ( id, name )values (1, 'foo');");
-        stat.addBatch("insert into bar ( id, name )values (100, 'bar');");
+        stat.addBatch("insert into foo ( id, name ) values (1, 'foo');");
+        stat.addBatch("insert into bar ( id, name ) values (100, 'bar');");
         stat.executeBatch();
     }
 
 
     @AfterEach
     public void teardown() throws Exception {
-        TestUtils.shutdown(rawDatasource);
+        TestUtils.shutdown(rawDataSource);
         interceptedQueries.clear();
     }
 
@@ -79,7 +77,7 @@ public class StatementQueryTransformTest {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
 
-        return new JdkJdbcProxyFactory().createConnection(rawDatasource.getConnection(), connectionInfo, proxyConfig);
+        return new JdkJdbcProxyFactory().createConnection(rawDataSource.getConnection(), connectionInfo, proxyConfig);
     }
 
 
@@ -104,10 +102,10 @@ public class StatementQueryTransformTest {
         assertThat(interceptedQueries).hasSize(1).contains("UPDATE foo SET name = 'FOO'");
 
         // verify bar is updated instead of foo
-        ResultSet rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
+        ResultSet rs = rawDataSource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
         assertThat(rs.next()).isTrue();
         assertThat(rs.getString("name")).isEqualTo("foo");
-        rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM bar");
+        rs = rawDataSource.getConnection().createStatement().executeQuery("SELECT name FROM bar");
         assertThat(rs.next()).isTrue();
         assertThat(rs.getString("name")).isEqualTo("BAR");
     }
@@ -132,10 +130,10 @@ public class StatementQueryTransformTest {
         assertThat(interceptedQueries).hasSize(1).contains("UPDATE foo SET name = 'FOO'");
 
         // verify bar is updated instead of foo
-        ResultSet rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
+        ResultSet rs = rawDataSource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
         assertThat(rs.next()).isTrue();
         assertThat(rs.getString("name")).isEqualTo("foo");
-        rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM bar");
+        rs = rawDataSource.getConnection().createStatement().executeQuery("SELECT name FROM bar");
         assertThat(rs.next()).isTrue();
         assertThat(rs.getString("name")).isEqualTo("BAR");
     }
@@ -151,10 +149,10 @@ public class StatementQueryTransformTest {
         assertThat(interceptedQueries).hasSize(2).containsExactly("UPDATE foo SET name = 'FOO1'", "UPDATE foo SET name = 'FOO2'");
 
         // verify bar is updated instead of foo
-        ResultSet rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
+        ResultSet rs = rawDataSource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
         assertThat(rs.next()).isTrue();
         assertThat(rs.getString("name")).isEqualTo("foo");
-        rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM bar");
+        rs = rawDataSource.getConnection().createStatement().executeQuery("SELECT name FROM bar");
         assertThat(rs.next()).isTrue();
         assertThat(rs.getString("name")).isEqualTo("BAR");
     }
@@ -172,10 +170,10 @@ public class StatementQueryTransformTest {
         assertThat(interceptedQueries).hasSize(2).containsExactly("UPDATE foo SET name = 'FOO1'", "UPDATE foo SET name = 'FOO2'");
 
         // verify data should not be changed
-        ResultSet rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
+        ResultSet rs = rawDataSource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
         assertThat(rs.next()).isTrue();
         assertThat(rs.getString("name")).isEqualTo("foo");
-        rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM bar");
+        rs = rawDataSource.getConnection().createStatement().executeQuery("SELECT name FROM bar");
         assertThat(rs.next()).isTrue();
         assertThat(rs.getString("name")).isEqualTo("bar");
     }

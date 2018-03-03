@@ -176,15 +176,15 @@ public class StatementInvocationHandlerTest {
     @Test
     public void testExecuteBatchShouldClearQueries() throws Exception {
 
-        statement.addBatch("insert into emp ( id, name )values (100, 'FOO');");
-        statement.addBatch("insert into emp ( id, name )values (200, 'BAR');");
+        statement.addBatch("insert into emp ( id, name ) values (100, 'FOO');");
+        statement.addBatch("insert into emp ( id, name ) values (200, 'BAR');");
         statement.executeBatch();  // 1st execution
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
         assertThat(afterQueries).isNotNull();
         assertThat(afterQueries).as("should pass two QueryInfo (FOO,BAR)").hasSize(2);
 
-        statement.addBatch("insert into emp ( id, name )values (300, 'BAZ');");
+        statement.addBatch("insert into emp ( id, name ) values (300, 'BAZ');");
 
         int[] updateCount = statement.executeBatch();  // 2nd execution
         assertThat(updateCount).isNotNull();

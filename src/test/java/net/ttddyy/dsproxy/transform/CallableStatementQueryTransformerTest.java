@@ -1,6 +1,8 @@
 package net.ttddyy.dsproxy.transform;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.DatabaseType;
+import net.ttddyy.dsproxy.EnabledOnDatabase;
 import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -25,6 +27,7 @@ import static org.mockito.Mockito.mock;
 /**
  * @author Tadaya Tsuyukubo
  */
+@EnabledOnDatabase(DatabaseType.HSQL)
 public class CallableStatementQueryTransformerTest {
 
     // hsqldb stored procedure. insert to table foo.
@@ -67,18 +70,26 @@ public class CallableStatementQueryTransformerTest {
         JDBCDataSource rawDataSource = new JDBCDataSource();
         rawDataSource.setDatabase("jdbc:hsqldb:mem:aname");
         rawDataSource.setUser("sa");
-        this.rawDatasource = rawDataSource;
+        this.rawDatasource = TestUtils.createDataSource();
 
         // create stored procedure
+        String dropFuncFoo = "DROP FUNCTION IF EXISTS prof_foo";
+        String dropFuncBar = "DROP FUNCTION IF EXISTS prof_bar";
         String procFoo = "CREATE FUNCTION proc_foo(s VARCHAR(50)) RETURNS VARCHAR(50) LANGUAGE JAVA DETERMINISTIC NO SQL EXTERNAL NAME 'CLASSPATH:net.ttddyy.dsproxy.transform.CallableStatementQueryTransformerTest.procFoo'";
         String procBar = "CREATE FUNCTION proc_bar(s VARCHAR(50)) RETURNS VARCHAR(50) LANGUAGE JAVA DETERMINISTIC NO SQL EXTERNAL NAME 'CLASSPATH:net.ttddyy.dsproxy.transform.CallableStatementQueryTransformerTest.procBar'";
 
+        String dropTableFoo = "DROP TABLE IF EXISTS foo;";
+        String dropTableBar = "DROP TABLE IF EXISTS bar;";
         String tableFoo = "CREATE TABLE foo ( id INTEGER PRIMARY KEY, name VARCHAR(10) );";
         String tableBar = "CREATE TABLE bar ( id INTEGER PRIMARY KEY, name VARCHAR(10) );";
         String insertFoo = "CREATE PROCEDURE insert_foo(IN id INT, IN name VARCHAR(50)) LANGUAGE JAVA NOT DETERMINISTIC MODIFIES SQL DATA EXTERNAL NAME 'CLASSPATH:net.ttddyy.dsproxy.transform.CallableStatementQueryTransformerTest.insertFoo'";
         String insertBar = "CREATE PROCEDURE insert_bar(IN id INT, IN name VARCHAR(50)) LANGUAGE JAVA NOT DETERMINISTIC MODIFIES SQL DATA EXTERNAL NAME 'CLASSPATH:net.ttddyy.dsproxy.transform.CallableStatementQueryTransformerTest.insertBar'";
 
         Statement statement = rawDataSource.getConnection().createStatement();
+        statement.addBatch(dropFuncFoo);
+        statement.addBatch(dropFuncBar);
+        statement.addBatch(dropTableFoo);
+        statement.addBatch(dropTableBar);
         statement.addBatch(procFoo);
         statement.addBatch(procBar);
         statement.addBatch(tableFoo);

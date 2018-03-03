@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.listener;
 
+import net.ttddyy.dsproxy.DatabaseType;
+import net.ttddyy.dsproxy.EnabledOnDatabase;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.TestUtils;
@@ -87,6 +89,7 @@ public class SlowQueryListenerTest {
     }
 
 
+    @EnabledOnDatabase(DatabaseType.HSQL)
     @Test
     public void executionTime() throws Exception {
 
