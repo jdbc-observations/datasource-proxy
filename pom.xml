@@ -140,6 +140,37 @@
       </build>
     </profile>
 
+    <!--
+      This profile is used for running tests with all databases
+      How tests switch database is in DbTestUtils class.
+      This profile also runs regular tests which use HSQL.
+    -->
+    <profile>
+      <id>test-all-dbs</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>db-postgres</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <systemPropertyVariables>
+                    <dsproxy.dbtype>postgres</dsproxy.dbtype>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
   </profiles>
 
   <build>
