@@ -194,14 +194,8 @@ public class StatementQueryDbTest {
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
         Statement proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
 
-        // Currently it is for HSQL only
-        // TODO: need to add case for other DB
-        if (!DbTestUtils.isHsql()) {
-            return;
-        }
-
-        // it should NOT generate keys for executeQuery method
-        proxySt.executeQuery("insert into emp_with_auto_id ( name ) values ('BAZ');");
+        // it should NOT generate keys
+        proxySt.execute("insert into emp ( id, name ) values (3, 'baz');");
         assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
 
 
