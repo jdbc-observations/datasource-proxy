@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.annotation.Documented;
@@ -18,6 +19,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ExtendWith(EnabledOnDatabaseCondition.class)
+@Test
 public @interface EnabledOnDatabase {
 
     DatabaseType[] value();

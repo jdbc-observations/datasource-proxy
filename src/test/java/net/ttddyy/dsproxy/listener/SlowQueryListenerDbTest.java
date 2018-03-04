@@ -1,10 +1,10 @@
 package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.DatabaseType;
+import net.ttddyy.dsproxy.DbTestUtils;
 import net.ttddyy.dsproxy.EnabledOnDatabase;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
-import net.ttddyy.dsproxy.DbTestUtils;
 import net.ttddyy.dsproxy.listener.logging.DefaultQueryLogEntryCreator;
 import net.ttddyy.dsproxy.listener.logging.QueryLogEntryCreator;
 import net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener;
@@ -90,7 +90,6 @@ public class SlowQueryListenerDbTest {
 
 
     @EnabledOnDatabase(DatabaseType.HSQL)
-    @Test
     public void executionTime() throws Exception {
 
         final AtomicLong executionTime = new AtomicLong(0);
