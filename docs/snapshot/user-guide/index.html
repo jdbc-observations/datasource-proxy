@@ -492,6 +492,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#changelog">8. Changelog</a>
 <ul class="sectlevel2">
+<li><a href="#changelog-2.0">2.0</a></li>
 <li><a href="#changelog-1.4.8">1.4.8</a></li>
 <li><a href="#changelog-1.4.7">1.4.7</a></li>
 <li><a href="#changelog-1.4.6">1.4.6</a></li>
@@ -803,7 +804,7 @@ build <code>ProxyConfig</code> aiming to support bean creation in XML based spri
   &lt;/property&gt;
 &lt;/bean&gt;
 
-&lt;bean id="methodListener" class="net.ttddyy.dsproxy.listener.CompositeMethodListener"&gt;
+&lt;bean id="methodListener" class="net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener"&gt;
   &lt;property name="listeners"&gt;
     &lt;list&gt;
       &lt;bean class="net.ttddyy.dsproxy.listener.TracingMethodListener"/&gt;
@@ -2090,6 +2091,213 @@ public class MyController {
 <h2 id="changelog"><a class="anchor" href="#changelog"></a>8. Changelog</h2>
 <div class="sectionbody">
 <div class="sect2">
+<h3 id="changelog-2.0"><a class="anchor" href="#changelog-2.0"></a>2.0</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Removed query count logging support using spring <code>HandlerInterceptor</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>net.ttddyy.dsproxy.support.AbstractQueryCountLoggingHandlerInterceptor</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.QueryCounterClearHandlerInterceptor</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.JULQueryCountLoggingHandlerInterceptor</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.SLF4JQueryCountLoggingHandlerInterceptor</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.SystemOutQueryCountLoggingHandlerInterceptor</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.CommonsQueryCountLoggingHandlerInterceptor</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Removed spring related classes</p>
+<div class="ulist">
+<ul>
+<li>
+<p>net.ttddyy.dsproxy.support.BeanNameProxyDataSource</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.DataSourceProxyNativeJdbcExtractor</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Removed AOP alliance related class</p>
+<div class="ulist">
+<ul>
+<li>
+<p>net.ttddyy.dsproxy.support.ProxyConnectionAdvice</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>ProxyDataSourceListener</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>MethodExecutionListener</code> and <code>QueryExecutionListener</code> are combined to <code>ProxyDataSourceListener</code></p>
+</li>
+<li>
+<p><code>ChainListener</code> and <code>CompositeMethodListener</code> are combined to <code>CompositeProxyDataSourceListener</code></p>
+</li>
+<li>
+<p><code>ProxyConfig#getMethodListener</code> and <code>ProxyConfig#getQueryListener</code> are changed to <code>ProxyConfig#getListener</code></p>
+<div class="literalblock">
+<div class="content">
+<pre>Removed:
+- net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener
+- net.ttddyy.dsproxy.listener.NoOpMethodExecutionListener
+- net.ttddyy.dsproxy.listener.ChainListener
+- net.ttddyy.dsproxy.listener.CompositeMethodListener</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>TODO:
+- Update documentation for `ChainListener`</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>TracingMethodListener</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>TracingMethodListener#TracingCondition &#8658; BooleanSupplier</p>
+</li>
+<li>
+<p>TracingMethodListener#TracingMessageConsumer &#8658; Consumer&lt;String&gt;</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Removed <code>LoggingCondition</code> in favor of <code>BooleanCondition</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>net.ttddyy.dsproxy.listener.LoggingCondition</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Remove unused class</p>
+<div class="ulist">
+<ul>
+<li>
+<p>net.ttddyy.dsproxy.proxy.DataSourceNameAware</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.proxy.ParameterKeyUtils</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.proxy.ReflectionUtils</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Make <code>MethodExecutionListenerUtils#MethodExecutionCallback</code> functional interface</p>
+</li>
+<li>
+<p>Update <code>ProxyDataSourceBuilder</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Remove <code>SingleMethodExecution</code> in favor of <code>Consumer&lt;MethodExecutionContext&gt;</code></p>
+</li>
+<li>
+<p>Remove <code>SingleQueryExecution</code> in favor of <code>BiConsumer&lt;ExecutionInfo, List&lt;QueryInfo&gt;&gt;</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Update datasource name in log to only appear when it is set.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Remove <code>net.ttddyy.dsproxy.listener.logging.AbstractQueryLoggingListener#setWriteDataSourceName()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Remove deprecated methods</p>
+<div class="ulist">
+<ul>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.AbstractQueryLoggingListener#resetLogger</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.AbstractQueryLoggingListener#setLoggerName</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener#resetLogger</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.JULQueryLoggingListener#resetLogger</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener#resetLogger</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.ProxyDataSource#setListener</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.QueryInfo#getQueryArgsList</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Remove <code>ParameterTransformer</code> in favor of method interceptors</p>
+<div class="ulist">
+<ul>
+<li>
+<p>net.ttddyy.dsproxy.transform.ParameterTransformer</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.transform.NoOpParameterTransformer</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.transform.ParameterReplacer</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.ProxyDataSourceBuilder#parameterTransformer</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.ProxyConfigSpringXmlSupport#setParameterTransformer</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.proxy.ProxyConfig#getParameterTransformer</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Upgrade to JUnit5</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
 <h3 id="changelog-1.4.8"><a class="anchor" href="#changelog-1.4.8"></a>1.4.8</h3>
 <div class="ulist">
 <ul>
@@ -2737,7 +2945,7 @@ call &#8658; total, elapsedTime &#8658; time, added success, failure, etc.</p>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-SNAPSHOT<br>
-Last updated 2018-03-03 01:51:49 UTC
+Last updated 2018-03-04 16:34:32 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
