@@ -189,4 +189,23 @@ public class DbTestUtils {
 
         return count;
     }
+
+    public static int[] executeBatchStatements(DataSource dataSource, String... queries) throws Exception {
+        Connection conn = dataSource.getConnection();
+        Statement stmt = conn.createStatement();
+
+        try {
+            for (String query : queries) {
+                stmt.addBatch(query);
+            }
+            return stmt.executeBatch();
+        } finally {
+            try {
+                stmt.close();
+            } finally {
+                conn.close();
+            }
+        }
+    }
+
 }

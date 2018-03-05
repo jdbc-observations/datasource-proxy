@@ -13,9 +13,12 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -27,26 +30,37 @@ public class PreparedStatementQueryTransformDbTest {
     private DataSource rawDataSource;
     private List<String> interceptedQueries = new ArrayList<String>();
 
+    private Set<Connection> connectionToClose = new HashSet<>();
+    private Set<Statement> statementToClose = new HashSet<>();
+
+
     @BeforeEach
     public void setup() throws Exception {
         // real datasource
         this.rawDataSource = DbTestUtils.createDataSource();
 
         // populate datasource
-        Statement statement = this.rawDataSource.getConnection().createStatement();
-        statement.addBatch("drop table if exists foo;");
-        statement.addBatch("drop table if exists bar;");
-        statement.addBatch("create table foo ( id integer primary key, name varchar(10) );");
-        statement.addBatch("create table bar ( id integer primary key, name varchar(10) );");
-        statement.addBatch("insert into foo ( id, name ) values (1, 'foo');");
-        statement.addBatch("insert into bar ( id, name ) values (100, 'bar');");
-        statement.executeBatch();
+        DbTestUtils.executeBatchStatements(this.rawDataSource,
+                "drop table if exists foo;",
+                "drop table if exists bar;",
+                "create table foo ( id integer primary key, name varchar(10) );",
+                "create table bar ( id integer primary key, name varchar(10) );",
+                "insert into foo ( id, name ) values (1, 'foo');",
+                "insert into bar ( id, name ) values (100, 'bar');"
+        );
     }
 
 
     @AfterEach
     public void teardown() throws Exception {
         interceptedQueries.clear();
+
+        for (Statement statement : this.statementToClose) {
+            statement.close();
+        }
+        for (Connection connection : this.connectionToClose) {
+            connection.close();
+        }
         DbTestUtils.shutdown(rawDataSource);
     }
 
@@ -60,11 +74,9 @@ public class PreparedStatementQueryTransformDbTest {
 
     private Connection getProxyConnection(final boolean isSelect) throws Exception {
 
-        QueryTransformer transformer = new QueryTransformer() {
-            public String transformQuery(TransformInfo transformInfo) {
-                interceptedQueries.add(transformInfo.getQuery());
-                return isSelect ? "SELECT * FROM bar" : "UPDATE bar SET name = ?";
-            }
+        QueryTransformer transformer = transformInfo -> {
+            interceptedQueries.add(transformInfo.getQuery());
+            return isSelect ? "SELECT * FROM bar" : "UPDATE bar SET name = ?";
         };
 
         ProxyDataSourceListener queryListener = mock(ProxyDataSourceListener.class);
@@ -76,7 +88,10 @@ public class PreparedStatementQueryTransformDbTest {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
 
-        return new JdkJdbcProxyFactory().createConnection(rawDataSource.getConnection(), connectionInfo, proxyConfig);
+        Connection connection = rawDataSource.getConnection();
+        this.connectionToClose.add(connection);
+
+        return new JdkJdbcProxyFactory().createConnection(connection, connectionInfo, proxyConfig);
     }
 
     @Test
@@ -90,6 +105,8 @@ public class PreparedStatementQueryTransformDbTest {
     @Test
     public void testExecuteWithSelect() throws Exception {
         PreparedStatement ps = getProxyConnectionForSelect().prepareStatement("SELECT name FROM foo");
+        this.statementToClose.add(ps);
+
         boolean result = ps.execute();
         assertThat(result).isTrue();
 
@@ -100,6 +117,8 @@ public class PreparedStatementQueryTransformDbTest {
     @Test
     public void testExecuteWithUpdate() throws Exception {
         PreparedStatement ps = getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
+        this.statementToClose.add(ps);
+
         ps.setString(1, "FOO");
         boolean result = ps.execute();
         assertThat(result).isFalse();
@@ -108,10 +127,10 @@ public class PreparedStatementQueryTransformDbTest {
         assertThat(interceptedQueries).hasSize(1).containsExactly("UPDATE foo SET name = ?");
 
         // verify bar is updated instead of foo
-        ResultSet rs = rawDataSource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
+        ResultSet rs = executeQuery("SELECT name FROM foo");
         assertThat(rs.next()).isTrue();
         assertThat(rs.getString("name")).isEqualTo("foo");
-        rs = rawDataSource.getConnection().createStatement().executeQuery("SELECT name FROM bar");
+        rs = executeQuery("SELECT name FROM bar");
         assertThat(rs.next()).isTrue();
         assertThat(rs.getString("name")).isEqualTo("FOO");
     }
@@ -119,6 +138,8 @@ public class PreparedStatementQueryTransformDbTest {
     @Test
     public void testExecuteQuery() throws Exception {
         PreparedStatement ps = getProxyConnectionForSelect().prepareStatement("SELECT name FROM foo");
+        this.statementToClose.add(ps);
+
         ResultSet resultSet = ps.executeQuery();
         assertThat(resultSet.next()).isTrue();
         assertThat(resultSet.getInt("id")).isEqualTo(100);
@@ -131,6 +152,8 @@ public class PreparedStatementQueryTransformDbTest {
     @Test
     public void testExecuteUpdate() throws Exception {
         PreparedStatement ps = getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
+        this.statementToClose.add(ps);
+
         ps.setString(1, "FOO");
         int count = ps.executeUpdate();
         assertThat(count).isEqualTo(1);
@@ -139,10 +162,10 @@ public class PreparedStatementQueryTransformDbTest {
         assertThat(interceptedQueries).hasSize(1).containsExactly("UPDATE foo SET name = ?");
 
         // verify bar is updated instead of foo
-        ResultSet rs = rawDataSource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
+        ResultSet rs = executeQuery("SELECT name FROM foo");
         assertThat(rs.next()).isTrue();
         assertThat(rs.getString("name")).isEqualTo("foo");
-        rs = rawDataSource.getConnection().createStatement().executeQuery("SELECT name FROM bar");
+        rs = executeQuery("SELECT name FROM bar");
         assertThat(rs.next()).isTrue();
         assertThat(rs.getString("name")).isEqualTo("FOO");
     }
@@ -150,6 +173,8 @@ public class PreparedStatementQueryTransformDbTest {
     @Test
     public void testExecuteBatch() throws Exception {
         PreparedStatement ps = getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
+        this.statementToClose.add(ps);
+
         ps.setString(1, "FOO1");
         ps.addBatch();
         ps.setString(1, "FOO2");
@@ -161,10 +186,10 @@ public class PreparedStatementQueryTransformDbTest {
         assertThat(interceptedQueries).hasSize(1).containsExactly("UPDATE foo SET name = ?");
 
         // verify bar is updated instead of foo
-        ResultSet rs = rawDataSource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
+        ResultSet rs = executeQuery("SELECT name FROM foo");
         assertThat(rs.next()).isTrue();
         assertThat(rs.getString("name")).isEqualTo("foo");
-        rs = rawDataSource.getConnection().createStatement().executeQuery("SELECT name FROM bar");
+        rs = executeQuery("SELECT name FROM bar");
         assertThat(rs.next()).isTrue();
         assertThat(rs.getString("name")).isEqualTo("FOO2");
     }
@@ -172,10 +197,22 @@ public class PreparedStatementQueryTransformDbTest {
     @Test
     public void testClearBatch() throws Exception {
         PreparedStatement ps = getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
+        this.statementToClose.add(ps);
+
         ps.clearBatch();
 
         // even though batch is canceled, interceptor was called once.
         assertThat(interceptedQueries).hasSize(1).containsExactly("UPDATE foo SET name = ?");
+    }
+
+    private ResultSet executeQuery(String query) throws SQLException {
+        // verify bar is updated instead of foo
+        Connection connection = this.rawDataSource.getConnection();
+        Statement statement = connection.createStatement();
+        this.connectionToClose.add(connection);
+        this.statementToClose.add(statement);
+
+        return statement.executeQuery(query);
     }
 
 }

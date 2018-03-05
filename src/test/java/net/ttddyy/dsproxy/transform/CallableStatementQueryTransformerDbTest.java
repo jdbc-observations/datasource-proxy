@@ -19,7 +19,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -54,8 +56,11 @@ public class CallableStatementQueryTransformerDbTest {
         return "bar=" + s;
     }
 
-    private DataSource rawDatasource;
+    private DataSource rawDataSource;
     private List<String> interceptedQueries = new ArrayList<String>();
+
+    private Set<Connection> connectionToClose = new HashSet<>();
+    private Set<Statement> statementToClose = new HashSet<>();
 
     private QueryTransformer transformer = new QueryTransformer() {
         public String transformQuery(TransformInfo transformInfo) {
@@ -70,7 +75,7 @@ public class CallableStatementQueryTransformerDbTest {
         JDBCDataSource rawDataSource = new JDBCDataSource();
         rawDataSource.setDatabase("jdbc:hsqldb:mem:aname");
         rawDataSource.setUser("sa");
-        this.rawDatasource = DbTestUtils.createDataSource();
+        this.rawDataSource = DbTestUtils.createDataSource();
 
         // create stored procedure
         String dropFuncFoo = "DROP FUNCTION IF EXISTS prof_foo";
@@ -85,34 +90,39 @@ public class CallableStatementQueryTransformerDbTest {
         String insertFoo = "CREATE PROCEDURE insert_foo(IN id INT, IN name VARCHAR(50)) LANGUAGE JAVA NOT DETERMINISTIC MODIFIES SQL DATA EXTERNAL NAME 'CLASSPATH:net.ttddyy.dsproxy.transform.CallableStatementQueryTransformerDbTest.insertFoo'";
         String insertBar = "CREATE PROCEDURE insert_bar(IN id INT, IN name VARCHAR(50)) LANGUAGE JAVA NOT DETERMINISTIC MODIFIES SQL DATA EXTERNAL NAME 'CLASSPATH:net.ttddyy.dsproxy.transform.CallableStatementQueryTransformerDbTest.insertBar'";
 
-        Statement statement = rawDataSource.getConnection().createStatement();
-        statement.addBatch(dropFuncFoo);
-        statement.addBatch(dropFuncBar);
-        statement.addBatch(dropTableFoo);
-        statement.addBatch(dropTableBar);
-        statement.addBatch(procFoo);
-        statement.addBatch(procBar);
-        statement.addBatch(tableFoo);
-        statement.addBatch(tableBar);
-        statement.addBatch(insertFoo);
-        statement.addBatch(insertBar);
-        statement.executeBatch();
+        DbTestUtils.executeBatchStatements(this.rawDataSource,
+                dropFuncFoo,
+                dropFuncBar,
+                dropTableFoo,
+                dropTableBar,
+                procFoo,
+                procBar,
+                tableFoo,
+                tableBar,
+                insertFoo,
+                insertBar
+        );
     }
 
 
     @AfterEach
     public void teardown() throws Exception {
         interceptedQueries.clear();
-        DbTestUtils.shutdown(rawDatasource);
+
+        for (Statement statement : this.statementToClose) {
+            statement.close();
+        }
+        for (Connection connection : this.connectionToClose) {
+            connection.close();
+        }
+        DbTestUtils.shutdown(rawDataSource);
     }
 
     private Connection getProxyConnection(final String replacedQuery) throws Exception {
 
-        QueryTransformer transformer = new QueryTransformer() {
-            public String transformQuery(TransformInfo transformInfo) {
-                interceptedQueries.add(transformInfo.getQuery());
-                return replacedQuery;
-            }
+        QueryTransformer transformer = transformInfo -> {
+            interceptedQueries.add(transformInfo.getQuery());
+            return replacedQuery;
         };
 
         ProxyDataSourceListener queryListener = mock(ProxyDataSourceListener.class);
@@ -124,13 +134,18 @@ public class CallableStatementQueryTransformerDbTest {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
 
-        return new JdkJdbcProxyFactory().createConnection(rawDatasource.getConnection(), connectionInfo, proxyConfig);
+        Connection connection = rawDataSource.getConnection();
+        this.connectionToClose.add(connection);
+
+        return new JdkJdbcProxyFactory().createConnection(connection, connectionInfo, proxyConfig);
     }
 
     @Test
     public void testExecute() throws Exception {
         String queryToReplace = "CALL proc_bar(?)";
         CallableStatement cs = getProxyConnection(queryToReplace).prepareCall("CALL proc_foo(?)");
+        this.statementToClose.add(cs);
+
         cs.setString(1, "FOO");
         boolean result = cs.execute();
         assertThat(result).isTrue();
@@ -148,6 +163,8 @@ public class CallableStatementQueryTransformerDbTest {
     public void testBatch() throws Exception {
         String queryToReplace = "CALL insert_bar(?, ?)";
         CallableStatement cs = getProxyConnection(queryToReplace).prepareCall("CALL insert_foo(?, ?)");
+        this.statementToClose.add(cs);
+
         cs.setInt(1, 100);
         cs.setString(2, "FOO1");
         cs.addBatch();
@@ -162,16 +179,15 @@ public class CallableStatementQueryTransformerDbTest {
         assertThat(interceptedQueries).hasSize(1).contains("CALL insert_foo(?, ?)");
 
 
-        Statement statement = rawDatasource.getConnection().createStatement();
-        ResultSet rs = statement.executeQuery("SELECT COUNT(*) FROM foo");
+        ResultSet rs = executeQuery("SELECT COUNT(*) FROM foo");
         assertThat(rs.next()).isTrue();
         assertThat(rs.getInt(1)).as("table foo has no records").isEqualTo(0);
 
-        rs = statement.executeQuery("SELECT COUNT(*) FROM bar");
+        rs = executeQuery("SELECT COUNT(*) FROM bar");
         assertThat(rs.next()).isTrue();
         assertThat(rs.getInt(1)).as("table foo has 2 records").isEqualTo(2);
 
-        rs = statement.executeQuery("SELECT id, name FROM bar ORDER BY id ASC");
+        rs = executeQuery("SELECT id, name FROM bar ORDER BY id ASC");
         assertThat(rs.next()).isTrue();
         assertThat(rs.getInt("id")).isEqualTo(100);
         assertThat(rs.getString("name")).isEqualTo("FOO1");
@@ -179,6 +195,16 @@ public class CallableStatementQueryTransformerDbTest {
         assertThat(rs.next()).isTrue();
         assertThat(rs.getInt("id")).isEqualTo(200);
         assertThat(rs.getString("name")).isEqualTo("FOO2");
+    }
+
+    private ResultSet executeQuery(String query) throws SQLException {
+        // verify bar is updated instead of foo
+        Connection connection = this.rawDataSource.getConnection();
+        Statement statement = connection.createStatement();
+        this.connectionToClose.add(connection);
+        this.statementToClose.add(statement);
+
+        return statement.executeQuery(query);
     }
 
 }
