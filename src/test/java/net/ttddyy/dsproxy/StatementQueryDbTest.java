@@ -25,10 +25,16 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * @author Tadaya Tsuyukubo
  */
+@DatabaseTest
 public class StatementQueryDbTest {
 
     private DataSource jdbcDataSource;
 
+    private DbResourceCleaner cleaner;
+
+    public StatementQueryDbTest(DbResourceCleaner cleaner) {
+        this.cleaner = cleaner;
+    }
 
     @BeforeEach
     public void setup() throws Exception {
@@ -45,6 +51,8 @@ public class StatementQueryDbTest {
     public void resultSetProxy() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().resultSetProxyLogicFactory(new SimpleResultSetProxyLogicFactory()).build();
@@ -74,6 +82,8 @@ public class StatementQueryDbTest {
     public void generatedKeysProxy() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().generatedKeysProxyLogicFactory(new SimpleResultSetProxyLogicFactory()).build();
@@ -115,6 +125,8 @@ public class StatementQueryDbTest {
     public void autoRetrieveGeneratedKeys() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
@@ -175,6 +187,8 @@ public class StatementQueryDbTest {
     public void autoRetrieveGeneratedKeysWithExecuteQueryMethod() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
@@ -205,6 +219,8 @@ public class StatementQueryDbTest {
     public void autoRetrieveGeneratedKeysWithQueryExecutionMethods() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
@@ -290,6 +306,8 @@ public class StatementQueryDbTest {
     public void autoRetrieveGeneratedKeysWithBatchStatement() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
@@ -359,6 +377,8 @@ public class StatementQueryDbTest {
     public void getGeneratedKeys() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         // when no configuration is specified for generated keys (disabling generated keys related feature)
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
@@ -427,6 +447,8 @@ public class StatementQueryDbTest {
     public void getGeneratedKeysWithAutoRetrievalAndAutoCloseFalse() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         // autoCloseGeneratedKeys=false
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
@@ -469,6 +491,8 @@ public class StatementQueryDbTest {
     public void getGeneratedKeysWithAutoRetrievalAndAutoCloseTrue() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         // autoCloseGeneratedKeys=true
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
@@ -510,6 +534,8 @@ public class StatementQueryDbTest {
     public void autoCloseGeneratedKeysProxy() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
@@ -570,6 +596,8 @@ public class StatementQueryDbTest {
     public void autoRetrieveGeneratedKeysWithGeneratedKeysProxy() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {

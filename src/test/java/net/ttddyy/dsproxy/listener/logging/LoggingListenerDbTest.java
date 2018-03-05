@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.listener.logging;
 
+import net.ttddyy.dsproxy.DbResourceCleaner;
+import net.ttddyy.dsproxy.DatabaseTest;
 import net.ttddyy.dsproxy.DbTestUtils;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
@@ -20,11 +22,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Tadaya Tsuyukubo
  */
+@DatabaseTest
 public class LoggingListenerDbTest {
     private DataSource jdbcDataSource;
     private ProxyDataSource proxyDataSource;
     private CommonsQueryLoggingListener loggingListener;
     private InMemoryCommonsLog inMemoryLog;
+
+    private DbResourceCleaner cleaner;
+
+    public LoggingListenerDbTest(DbResourceCleaner cleaner) {
+        this.cleaner = cleaner;
+    }
 
     @BeforeEach
     public void setup() throws Exception {
@@ -54,6 +63,10 @@ public class LoggingListenerDbTest {
     public void testStatement() throws Exception {
         Connection connection = this.proxyDataSource.getConnection();
         Statement statement = connection.createStatement();
+
+        this.cleaner.add(connection);
+        this.cleaner.add(statement);
+
         statement.executeQuery("select * from emp");
 
         verifyMessage(CommonsLogLevel.DEBUG, this.inMemoryLog, "select * from emp");
@@ -63,6 +76,9 @@ public class LoggingListenerDbTest {
     public void testStatementWithBatch() throws Exception {
         Connection connection = this.proxyDataSource.getConnection();
         Statement statement = connection.createStatement();
+        this.cleaner.add(connection);
+        this.cleaner.add(statement);
+
         statement.addBatch("select * from emp where id = 1");
         statement.addBatch("select * from emp where id = 2");
         statement.executeBatch();
@@ -76,6 +92,9 @@ public class LoggingListenerDbTest {
     public void testPreparedStatement() throws Exception {
         Connection connection = this.proxyDataSource.getConnection();
         PreparedStatement statement = connection.prepareStatement("select * from emp where id = ?");
+        this.cleaner.add(connection);
+        this.cleaner.add(statement);
+
         statement.setInt(1, 2);
         statement.executeQuery();
 
@@ -87,6 +106,9 @@ public class LoggingListenerDbTest {
     public void testPreparedStatementWithNullParam() throws Exception {
         Connection connection = this.proxyDataSource.getConnection();
         PreparedStatement statement = connection.prepareStatement("select ? as nullCol, name from emp where id = ?");
+        this.cleaner.add(connection);
+        this.cleaner.add(statement);
+
         statement.setString(1, null);
         statement.setInt(2, 2);
         statement.executeQuery();
@@ -98,6 +120,9 @@ public class LoggingListenerDbTest {
     public void testPreparedStatementWithBatch() throws Exception {
         Connection connection = this.proxyDataSource.getConnection();
         PreparedStatement statement = connection.prepareStatement("update emp set name = ? where id = ?");
+        this.cleaner.add(connection);
+        this.cleaner.add(statement);
+
         statement.setString(1, "BAZ");
         statement.setInt(2, 3);
         statement.addBatch();

@@ -18,12 +18,19 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * @author Tadaya Tsuyukubo
  */
+@DatabaseTest
 public class StatementInvocationHandlerDbTest {
 
     private DataSource jdbcDataSource;
     private TestListener testListener;
     private LastQueryListener lastQueryListener;
     private Statement statement;
+
+    private DbResourceCleaner cleaner;
+
+    public StatementInvocationHandlerDbTest(DbResourceCleaner cleaner) {
+        this.cleaner = cleaner;
+    }
 
     @BeforeEach
     public void setup() throws Exception {
@@ -35,6 +42,8 @@ public class StatementInvocationHandlerDbTest {
 
         Connection connection = jdbcDataSource.getConnection();
         Statement stmt = connection.createStatement();
+        this.cleaner.add(connection);
+        this.cleaner.add(stmt);
 
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");

@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.listener;
 
+import net.ttddyy.dsproxy.DbResourceCleaner;
+import net.ttddyy.dsproxy.DatabaseTest;
 import net.ttddyy.dsproxy.DbTestUtils;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
@@ -17,9 +19,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Tadaya Tsuyukubo
  */
+@DatabaseTest
 public class MethodExecutionListenerDbTest {
 
     private DataSource jdbcDataSource;
+
+    private DbResourceCleaner cleaner;
+
+    public MethodExecutionListenerDbTest(DbResourceCleaner cleaner) {
+        this.cleaner = cleaner;
+    }
 
     @BeforeEach
     public void setup() throws Exception {
@@ -49,6 +58,9 @@ public class MethodExecutionListenerDbTest {
         ProxyDataSource ds = ProxyDataSourceBuilder.create(this.jdbcDataSource).methodListener(methodListener).build();
         Connection conn = ds.getConnection();
         Statement statement = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(statement);
+
         ResultSet rs = statement.executeQuery("select * from emp where id=1");
         rs.next();
         assertThat(rs.getInt("id")).isEqualTo(2);

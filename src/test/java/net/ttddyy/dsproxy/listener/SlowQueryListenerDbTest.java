@@ -1,6 +1,8 @@
 package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.DatabaseType;
+import net.ttddyy.dsproxy.DbResourceCleaner;
+import net.ttddyy.dsproxy.DatabaseTest;
 import net.ttddyy.dsproxy.DbTestUtils;
 import net.ttddyy.dsproxy.EnabledOnDatabase;
 import net.ttddyy.dsproxy.ExecutionInfo;
@@ -29,9 +31,16 @@ import static org.assertj.core.api.Assertions.fail;
 /**
  * @author Tadaya Tsuyukubo
  */
+@DatabaseTest
 public class SlowQueryListenerDbTest {
 
     private DataSource jdbcDataSource;
+
+    private DbResourceCleaner cleaner;
+
+    public SlowQueryListenerDbTest(DbResourceCleaner cleaner) {
+        this.cleaner = cleaner;
+    }
 
     @AfterEach
     public void teardown() throws Exception {
@@ -115,9 +124,12 @@ public class SlowQueryListenerDbTest {
 
         Connection conn = pds.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
         st.execute(funcSleep);
 
         CallableStatement cs = conn.prepareCall("CALL funcSleep()");
+        this.cleaner.add(cs);
         cs.execute();
 
         assertThat(executionTime.get()).as("execInfo.elapsedTime should be populated").isGreaterThanOrEqualTo(100).isLessThan(300);

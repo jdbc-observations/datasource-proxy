@@ -2,6 +2,8 @@ package net.ttddyy.dsproxy.transform;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.DatabaseType;
+import net.ttddyy.dsproxy.DbResourceCleaner;
+import net.ttddyy.dsproxy.DatabaseTest;
 import net.ttddyy.dsproxy.EnabledOnDatabase;
 import net.ttddyy.dsproxy.DbTestUtils;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
@@ -19,9 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -30,6 +30,7 @@ import static org.mockito.Mockito.mock;
  * @author Tadaya Tsuyukubo
  */
 @EnabledOnDatabase(DatabaseType.HSQL)
+@DatabaseTest
 public class CallableStatementQueryTransformerDbTest {
 
     // hsqldb stored procedure. insert to table foo.
@@ -59,15 +60,11 @@ public class CallableStatementQueryTransformerDbTest {
     private DataSource rawDataSource;
     private List<String> interceptedQueries = new ArrayList<String>();
 
-    private Set<Connection> connectionToClose = new HashSet<>();
-    private Set<Statement> statementToClose = new HashSet<>();
+    private DbResourceCleaner cleaner;
 
-    private QueryTransformer transformer = new QueryTransformer() {
-        public String transformQuery(TransformInfo transformInfo) {
-            interceptedQueries.add(transformInfo.getQuery());
-            return "call proc_bar('BAR')";
-        }
-    };
+    public CallableStatementQueryTransformerDbTest(DbResourceCleaner cleaner) {
+        this.cleaner = cleaner;
+    }
 
     @BeforeEach
     public void setup() throws Exception {
@@ -108,13 +105,6 @@ public class CallableStatementQueryTransformerDbTest {
     @AfterEach
     public void teardown() throws Exception {
         interceptedQueries.clear();
-
-        for (Statement statement : this.statementToClose) {
-            statement.close();
-        }
-        for (Connection connection : this.connectionToClose) {
-            connection.close();
-        }
         DbTestUtils.shutdown(rawDataSource);
     }
 
@@ -135,7 +125,7 @@ public class CallableStatementQueryTransformerDbTest {
         connectionInfo.setDataSourceName("myDS");
 
         Connection connection = rawDataSource.getConnection();
-        this.connectionToClose.add(connection);
+        this.cleaner.add(connection);
 
         return new JdkJdbcProxyFactory().createConnection(connection, connectionInfo, proxyConfig);
     }
@@ -144,7 +134,7 @@ public class CallableStatementQueryTransformerDbTest {
     public void testExecute() throws Exception {
         String queryToReplace = "CALL proc_bar(?)";
         CallableStatement cs = getProxyConnection(queryToReplace).prepareCall("CALL proc_foo(?)");
-        this.statementToClose.add(cs);
+        this.cleaner.add(cs);
 
         cs.setString(1, "FOO");
         boolean result = cs.execute();
@@ -163,7 +153,7 @@ public class CallableStatementQueryTransformerDbTest {
     public void testBatch() throws Exception {
         String queryToReplace = "CALL insert_bar(?, ?)";
         CallableStatement cs = getProxyConnection(queryToReplace).prepareCall("CALL insert_foo(?, ?)");
-        this.statementToClose.add(cs);
+        this.cleaner.add(cs);
 
         cs.setInt(1, 100);
         cs.setString(2, "FOO1");
@@ -201,8 +191,8 @@ public class CallableStatementQueryTransformerDbTest {
         // verify bar is updated instead of foo
         Connection connection = this.rawDataSource.getConnection();
         Statement statement = connection.createStatement();
-        this.connectionToClose.add(connection);
-        this.statementToClose.add(statement);
+        this.cleaner.add(connection);
+        this.cleaner.add(statement);
 
         return statement.executeQuery(query);
     }

@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.listener.logging;
 
+import net.ttddyy.dsproxy.DbResourceCleaner;
+import net.ttddyy.dsproxy.DatabaseTest;
 import net.ttddyy.dsproxy.DbTestUtils;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
@@ -19,9 +21,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Tadaya Tsuyukubo
  */
+@DatabaseTest
 public class LoggingListenerLogLevelDbTest {
 
     private DataSource jdbcDataSource;
+
+    private DbResourceCleaner cleaner;
+
+    public LoggingListenerLogLevelDbTest(DbResourceCleaner cleaner) {
+        this.cleaner = cleaner;
+    }
 
     @BeforeEach
     public void setup() throws Exception {
@@ -50,6 +59,10 @@ public class LoggingListenerLogLevelDbTest {
 
         Connection connection = proxyDataSource.getConnection();
         Statement statement = connection.createStatement();
+
+        this.cleaner.add(connection);
+        this.cleaner.add(statement);
+
         statement.executeQuery("select * from emp where id=1");
         statement.executeQuery("select * from emp where id=2");
 

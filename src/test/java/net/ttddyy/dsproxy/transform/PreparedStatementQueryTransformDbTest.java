@@ -1,6 +1,8 @@
 package net.ttddyy.dsproxy.transform;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.DbResourceCleaner;
+import net.ttddyy.dsproxy.DatabaseTest;
 import net.ttddyy.dsproxy.DbTestUtils;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -16,9 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -26,13 +26,16 @@ import static org.mockito.Mockito.mock;
 /**
  * @author Tadaya Tsuyukubo
  */
+@DatabaseTest
 public class PreparedStatementQueryTransformDbTest {
     private DataSource rawDataSource;
     private List<String> interceptedQueries = new ArrayList<String>();
 
-    private Set<Connection> connectionToClose = new HashSet<>();
-    private Set<Statement> statementToClose = new HashSet<>();
+    private DbResourceCleaner cleaner;
 
+    public PreparedStatementQueryTransformDbTest(DbResourceCleaner cleaner) {
+        this.cleaner = cleaner;
+    }
 
     @BeforeEach
     public void setup() throws Exception {
@@ -54,13 +57,6 @@ public class PreparedStatementQueryTransformDbTest {
     @AfterEach
     public void teardown() throws Exception {
         interceptedQueries.clear();
-
-        for (Statement statement : this.statementToClose) {
-            statement.close();
-        }
-        for (Connection connection : this.connectionToClose) {
-            connection.close();
-        }
         DbTestUtils.shutdown(rawDataSource);
     }
 
@@ -89,7 +85,7 @@ public class PreparedStatementQueryTransformDbTest {
         connectionInfo.setDataSourceName("myDS");
 
         Connection connection = rawDataSource.getConnection();
-        this.connectionToClose.add(connection);
+        this.cleaner.add(connection);
 
         return new JdkJdbcProxyFactory().createConnection(connection, connectionInfo, proxyConfig);
     }
@@ -105,7 +101,7 @@ public class PreparedStatementQueryTransformDbTest {
     @Test
     public void testExecuteWithSelect() throws Exception {
         PreparedStatement ps = getProxyConnectionForSelect().prepareStatement("SELECT name FROM foo");
-        this.statementToClose.add(ps);
+        this.cleaner.add(ps);
 
         boolean result = ps.execute();
         assertThat(result).isTrue();
@@ -117,7 +113,7 @@ public class PreparedStatementQueryTransformDbTest {
     @Test
     public void testExecuteWithUpdate() throws Exception {
         PreparedStatement ps = getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
-        this.statementToClose.add(ps);
+        this.cleaner.add(ps);
 
         ps.setString(1, "FOO");
         boolean result = ps.execute();
@@ -138,7 +134,7 @@ public class PreparedStatementQueryTransformDbTest {
     @Test
     public void testExecuteQuery() throws Exception {
         PreparedStatement ps = getProxyConnectionForSelect().prepareStatement("SELECT name FROM foo");
-        this.statementToClose.add(ps);
+        this.cleaner.add(ps);
 
         ResultSet resultSet = ps.executeQuery();
         assertThat(resultSet.next()).isTrue();
@@ -152,7 +148,7 @@ public class PreparedStatementQueryTransformDbTest {
     @Test
     public void testExecuteUpdate() throws Exception {
         PreparedStatement ps = getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
-        this.statementToClose.add(ps);
+        this.cleaner.add(ps);
 
         ps.setString(1, "FOO");
         int count = ps.executeUpdate();
@@ -173,7 +169,7 @@ public class PreparedStatementQueryTransformDbTest {
     @Test
     public void testExecuteBatch() throws Exception {
         PreparedStatement ps = getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
-        this.statementToClose.add(ps);
+        this.cleaner.add(ps);
 
         ps.setString(1, "FOO1");
         ps.addBatch();
@@ -197,7 +193,7 @@ public class PreparedStatementQueryTransformDbTest {
     @Test
     public void testClearBatch() throws Exception {
         PreparedStatement ps = getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
-        this.statementToClose.add(ps);
+        this.cleaner.add(ps);
 
         ps.clearBatch();
 
@@ -209,8 +205,8 @@ public class PreparedStatementQueryTransformDbTest {
         // verify bar is updated instead of foo
         Connection connection = this.rawDataSource.getConnection();
         Statement statement = connection.createStatement();
-        this.connectionToClose.add(connection);
-        this.statementToClose.add(statement);
+        this.cleaner.add(connection);
+        this.cleaner.add(statement);
 
         return statement.executeQuery(query);
     }
