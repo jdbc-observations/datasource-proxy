@@ -6,8 +6,6 @@ import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.SimpleResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
@@ -32,19 +30,9 @@ public class StatementQueryDbTest {
 
     private DbResourceCleaner cleaner;
 
-    public StatementQueryDbTest(DbResourceCleaner cleaner) {
+    public StatementQueryDbTest(DataSource jdbcDataSource, DbResourceCleaner cleaner) {
+        this.jdbcDataSource = jdbcDataSource;
         this.cleaner = cleaner;
-    }
-
-    @BeforeEach
-    public void setup() throws Exception {
-        // real datasource
-        jdbcDataSource = DbTestUtils.getDataSourceWithData();
-    }
-
-    @AfterEach
-    public void teardown() throws Exception {
-        DbTestUtils.shutdown(jdbcDataSource);
     }
 
     @Test

@@ -1,11 +1,9 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.DbResourceCleaner;
 import net.ttddyy.dsproxy.DatabaseTest;
-import net.ttddyy.dsproxy.DbTestUtils;
+import net.ttddyy.dsproxy.DbResourceCleaner;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +29,8 @@ public class LoggingListenerDbTest {
 
     private DbResourceCleaner cleaner;
 
-    public LoggingListenerDbTest(DbResourceCleaner cleaner) {
+    public LoggingListenerDbTest(DataSource jdbcDataSource, DbResourceCleaner cleaner) {
+        this.jdbcDataSource = jdbcDataSource;
         this.cleaner = cleaner;
     }
 
@@ -46,18 +45,10 @@ public class LoggingListenerDbTest {
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(this.loggingListener).build();
 
         // real datasource
-        this.jdbcDataSource = DbTestUtils.getDataSourceWithData();
-
         this.proxyDataSource = new ProxyDataSource();
         this.proxyDataSource.setDataSource(this.jdbcDataSource);
         this.proxyDataSource.setProxyConfig(proxyConfig);
     }
-
-    @AfterEach
-    public void teardown() throws Exception {
-        DbTestUtils.shutdown(this.jdbcDataSource);
-    }
-
 
     @Test
     public void testStatement() throws Exception {

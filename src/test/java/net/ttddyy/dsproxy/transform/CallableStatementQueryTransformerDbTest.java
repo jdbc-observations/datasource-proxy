@@ -62,17 +62,13 @@ public class CallableStatementQueryTransformerDbTest {
 
     private DbResourceCleaner cleaner;
 
-    public CallableStatementQueryTransformerDbTest(DbResourceCleaner cleaner) {
+    public CallableStatementQueryTransformerDbTest(DataSource rawDataSource, DbResourceCleaner cleaner) {
+        this.rawDataSource = rawDataSource;
         this.cleaner = cleaner;
     }
 
     @BeforeEach
     public void setup() throws Exception {
-        // real datasource
-        JDBCDataSource rawDataSource = new JDBCDataSource();
-        rawDataSource.setDatabase("jdbc:hsqldb:mem:aname");
-        rawDataSource.setUser("sa");
-        this.rawDataSource = DbTestUtils.createDataSource();
 
         // create stored procedure
         String dropFuncFoo = "DROP FUNCTION IF EXISTS prof_foo";
@@ -105,7 +101,6 @@ public class CallableStatementQueryTransformerDbTest {
     @AfterEach
     public void teardown() throws Exception {
         interceptedQueries.clear();
-        DbTestUtils.shutdown(rawDataSource);
     }
 
     private Connection getProxyConnection(final String replacedQuery) throws Exception {

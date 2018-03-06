@@ -28,20 +28,18 @@ import static org.mockito.Mockito.mock;
  */
 @DatabaseTest
 public class PreparedStatementQueryTransformDbTest {
-    private DataSource rawDataSource;
-    private List<String> interceptedQueries = new ArrayList<String>();
 
+    private List<String> interceptedQueries = new ArrayList<String>();
+    private DataSource rawDataSource;
     private DbResourceCleaner cleaner;
 
-    public PreparedStatementQueryTransformDbTest(DbResourceCleaner cleaner) {
+    public PreparedStatementQueryTransformDbTest(DataSource rawDataSource, DbResourceCleaner cleaner) {
+        this.rawDataSource = rawDataSource;
         this.cleaner = cleaner;
     }
 
     @BeforeEach
     public void setup() throws Exception {
-        // real datasource
-        this.rawDataSource = DbTestUtils.createDataSource();
-
         // populate datasource
         DbTestUtils.executeBatchStatements(this.rawDataSource,
                 "drop table if exists foo;",
@@ -57,7 +55,6 @@ public class PreparedStatementQueryTransformDbTest {
     @AfterEach
     public void teardown() throws Exception {
         interceptedQueries.clear();
-        DbTestUtils.shutdown(rawDataSource);
     }
 
     private Connection getProxyConnectionForSelect() throws Exception {

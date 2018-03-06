@@ -1,8 +1,8 @@
 package net.ttddyy.dsproxy.transform;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.DbResourceCleaner;
 import net.ttddyy.dsproxy.DatabaseTest;
+import net.ttddyy.dsproxy.DbResourceCleaner;
 import net.ttddyy.dsproxy.DbTestUtils;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -28,20 +28,17 @@ import static org.mockito.Mockito.mock;
 @DatabaseTest
 public class StatementQueryTransformDbTest {
 
-    private DataSource rawDataSource;
     private List<String> interceptedQueries = new ArrayList<String>();
-
+    private DataSource rawDataSource;
     private DbResourceCleaner cleaner;
 
-    public StatementQueryTransformDbTest(DbResourceCleaner cleaner) {
+    public StatementQueryTransformDbTest(DataSource rawDataSource, DbResourceCleaner cleaner) {
+        this.rawDataSource = rawDataSource;
         this.cleaner = cleaner;
     }
 
     @BeforeEach
     public void setup() throws Exception {
-        // real datasource
-        this.rawDataSource = DbTestUtils.createDataSource();
-
         // populate datasource
         DbTestUtils.executeBatchStatements(this.rawDataSource,
                 "drop table if exists foo;",
@@ -58,7 +55,6 @@ public class StatementQueryTransformDbTest {
     @AfterEach
     public void teardown() throws Exception {
         interceptedQueries.clear();
-        DbTestUtils.shutdown(rawDataSource);
     }
 
 

@@ -7,7 +7,6 @@ import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.SimpleResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,14 +29,15 @@ import static org.junit.jupiter.api.Assertions.fail;
 @DatabaseTest
 public class PreparedStatementDbTest {
 
-    private DataSource jdbcDataSource;
     private TestListener testListener;
     private LastQueryListener lastQueryListener;
     private Connection connection;
 
+    private DataSource jdbcDataSource;
     private DbResourceCleaner cleaner;
 
-    public PreparedStatementDbTest(DbResourceCleaner cleaner) {
+    public PreparedStatementDbTest(DataSource jdbcDataSource, DbResourceCleaner cleaner) {
+        this.jdbcDataSource = jdbcDataSource;
         this.cleaner = cleaner;
     }
 
@@ -45,9 +45,6 @@ public class PreparedStatementDbTest {
     public void setup() throws Exception {
         testListener = new TestListener();
         lastQueryListener = new LastQueryListener();
-
-        // real datasource
-        jdbcDataSource = DbTestUtils.getDataSourceWithData();
 
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
@@ -60,11 +57,6 @@ public class PreparedStatementDbTest {
         final Connection conn = jdbcDataSource.getConnection();
         this.cleaner.add(conn);
         connection = new JdkJdbcProxyFactory().createConnection(conn, connectionInfo, proxyConfig);
-    }
-
-    @AfterEach
-    public void teardown() throws Exception {
-        DbTestUtils.shutdown(jdbcDataSource);
     }
 
     @Test

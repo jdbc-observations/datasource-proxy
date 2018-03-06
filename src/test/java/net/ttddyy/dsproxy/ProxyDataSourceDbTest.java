@@ -4,7 +4,6 @@ import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,16 +31,16 @@ public class ProxyDataSourceDbTest {
     private TestListener listener;
     private CallCheckMethodExecutionListener methodListener;
 
+    private DataSource jdbcDataSource;
     private DbResourceCleaner cleaner;
 
-    public ProxyDataSourceDbTest(DbResourceCleaner cleaner) {
+    public ProxyDataSourceDbTest(DataSource jdbcDataSource, DbResourceCleaner cleaner) {
+        this.jdbcDataSource = jdbcDataSource;
         this.cleaner = cleaner;
     }
 
     @BeforeEach
     public void setup() throws Exception {
-        DataSource dataSource = DbTestUtils.getDataSourceWithData();
-
         listener = new TestListener();
         methodListener = new CallCheckMethodExecutionListener();
 
@@ -51,13 +50,8 @@ public class ProxyDataSourceDbTest {
                 .build();
 
         proxyDataSource = new ProxyDataSource();
-        proxyDataSource.setDataSource(dataSource);
+        proxyDataSource.setDataSource(this.jdbcDataSource);
         proxyDataSource.setProxyConfig(proxyConfig);
-    }
-
-    @AfterEach
-    public void teardown() throws Exception {
-        DbTestUtils.shutdown(proxyDataSource);
     }
 
     @Test

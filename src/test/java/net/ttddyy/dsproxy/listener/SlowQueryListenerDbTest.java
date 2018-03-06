@@ -35,20 +35,12 @@ import static org.assertj.core.api.Assertions.fail;
 public class SlowQueryListenerDbTest {
 
     private DataSource jdbcDataSource;
-
     private DbResourceCleaner cleaner;
 
-    public SlowQueryListenerDbTest(DbResourceCleaner cleaner) {
+    public SlowQueryListenerDbTest(DataSource jdbcDataSource, DbResourceCleaner cleaner) {
+        this.jdbcDataSource = jdbcDataSource;
         this.cleaner = cleaner;
     }
-
-    @AfterEach
-    public void teardown() throws Exception {
-        if (this.jdbcDataSource != null) {
-            DbTestUtils.shutdown(this.jdbcDataSource);
-        }
-    }
-
 
     @Test
     public void onSlowQuery() throws Exception {
@@ -114,7 +106,6 @@ public class SlowQueryListenerDbTest {
         listener.setQueryLogEntryCreator(queryLogEntryCreator);
 
 
-        this.jdbcDataSource = DbTestUtils.getDataSourceWithData();
         ProxyDataSource pds = ProxyDataSourceBuilder.create(jdbcDataSource).listener(listener).build();
 
         String funcSleep = "CREATE FUNCTION funcSleep()" +

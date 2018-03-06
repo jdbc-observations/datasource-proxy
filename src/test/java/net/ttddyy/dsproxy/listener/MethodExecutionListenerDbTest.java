@@ -1,12 +1,9 @@
 package net.ttddyy.dsproxy.listener;
 
-import net.ttddyy.dsproxy.DbResourceCleaner;
 import net.ttddyy.dsproxy.DatabaseTest;
-import net.ttddyy.dsproxy.DbTestUtils;
+import net.ttddyy.dsproxy.DbResourceCleaner;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
@@ -26,21 +23,10 @@ public class MethodExecutionListenerDbTest {
 
     private DbResourceCleaner cleaner;
 
-    public MethodExecutionListenerDbTest(DbResourceCleaner cleaner) {
+    public MethodExecutionListenerDbTest(DataSource jdbcDataSource, DbResourceCleaner cleaner) {
+        this.jdbcDataSource = jdbcDataSource;
         this.cleaner = cleaner;
     }
-
-    @BeforeEach
-    public void setup() throws Exception {
-        // real datasource
-        jdbcDataSource = DbTestUtils.getDataSourceWithData();
-    }
-
-    @AfterEach
-    public void teardown() throws Exception {
-        DbTestUtils.shutdown(jdbcDataSource);
-    }
-
 
     @Test
     public void replaceMethodArgument() throws Throwable {

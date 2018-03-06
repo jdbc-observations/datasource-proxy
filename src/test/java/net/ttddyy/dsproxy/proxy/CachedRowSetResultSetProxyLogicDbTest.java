@@ -1,14 +1,11 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.DbResourceCleaner;
 import net.ttddyy.dsproxy.DatabaseTest;
-import net.ttddyy.dsproxy.DbTestUtils;
+import net.ttddyy.dsproxy.DbResourceCleaner;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import org.assertj.core.api.ThrowableAssert;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
@@ -38,21 +35,11 @@ public class CachedRowSetResultSetProxyLogicDbTest {
     private static final String COLUMN_2_ROW_2_VALUE = "bar";
 
     private DataSource jdbcDataSource;
-
     private DbResourceCleaner cleaner;
 
-    public CachedRowSetResultSetProxyLogicDbTest(DbResourceCleaner cleaner) {
+    public CachedRowSetResultSetProxyLogicDbTest(DataSource jdbcDataSource, DbResourceCleaner cleaner) {
+        this.jdbcDataSource = jdbcDataSource;
         this.cleaner = cleaner;
-    }
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        this.jdbcDataSource = DbTestUtils.getDataSourceWithData();
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        DbTestUtils.shutdown(this.jdbcDataSource);
     }
 
     @Test

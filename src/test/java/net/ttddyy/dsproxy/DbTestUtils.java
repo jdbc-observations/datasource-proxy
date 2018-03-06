@@ -7,6 +7,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
@@ -79,7 +80,7 @@ public class DbTestUtils {
         return null;
     }
 
-    public static DataSource getDataSourceWithData() throws Exception {
+    public static DataSource getDataSourceWithData() {
         DataSource dataSource = createDataSource();
         switch (dbType) {
             case MYSQL:
@@ -94,7 +95,7 @@ public class DbTestUtils {
         return dataSource;
     }
 
-    public static DataSource createDataSource() throws Exception {
+    public static DataSource createDataSource() {
         DataSource dataSource = null;
         switch (dbType) {
             case MYSQL:
@@ -109,14 +110,14 @@ public class DbTestUtils {
         return dataSource;
     }
 
-    private static DataSource createDataSourceForHSQL() throws Exception {
+    private static DataSource createDataSourceForHSQL() {
         JDBCDataSource dataSource = new JDBCDataSource();
         dataSource.setDatabase("jdbc:hsqldb:mem:aname");
         dataSource.setUser("sa");
         return dataSource;
     }
 
-    private static DataSource createDataSourceForPostgres() throws Exception {
+    private static DataSource createDataSourceForPostgres() {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
         dataSource.setUrl(POSTGRES_CONTAINER.getJdbcUrl());
         dataSource.setUser(POSTGRES_CONTAINER.getUsername());
@@ -124,7 +125,7 @@ public class DbTestUtils {
         return dataSource;
     }
 
-    private static void populateInitialDataForHsql(DataSource dataSource) throws Exception {
+    private static void populateInitialDataForHsql(DataSource dataSource) {
         executeQuery(dataSource,
                 "drop table if exists emp;",
                 "create table emp ( id integer primary key, name varchar(10) );",
@@ -141,7 +142,7 @@ public class DbTestUtils {
         );
     }
 
-    private static void populateInitialDataForPostgres(DataSource dataSource) throws Exception {
+    private static void populateInitialDataForPostgres(DataSource dataSource) {
         executeQuery(dataSource,
                 "drop table if exists emp;",
                 "create table emp ( id integer primary key, name varchar(10) );",
@@ -158,14 +159,33 @@ public class DbTestUtils {
         );
     }
 
-    private static void executeQuery(DataSource dataSource, String... queries) throws Exception {
-        Connection conn = dataSource.getConnection();
-        Statement stmt = conn.createStatement();
-        for (String query : queries) {
-            stmt.execute(query);
+    private static void executeQuery(DataSource dataSource, String... queries) {
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            conn = dataSource.getConnection();
+            stmt = conn.createStatement();
+            for (String query : queries) {
+                stmt.execute(query);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
-        stmt.close();
-        conn.close();
     }
 
     public static void shutdown(DataSource dataSource) throws Exception {

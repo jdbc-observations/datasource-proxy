@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
+import javax.sql.DataSource;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,10 +23,11 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@ExtendWith(DatabaseTest.DatabaseTestExtension.class)
+@ExtendWith(DatabaseTest.DbResourceCleanerExtension.class)
+@ExtendWith(DatabaseTest.DataSourceExtension.class)
 public @interface DatabaseTest {
 
-    class DatabaseTestExtension implements ParameterResolver, AfterEachCallback {
+    class DbResourceCleanerExtension implements ParameterResolver, AfterEachCallback {
 
         private DbResourceCleaner cleaner = new DbResourceCleaner();
 
@@ -46,4 +48,26 @@ public @interface DatabaseTest {
 
     }
 
+    class DataSourceExtension implements ParameterResolver, AfterEachCallback {
+
+        private DataSource dataSource;
+
+        @Override
+        public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+            return parameterContext.getParameter().getType() == DataSource.class;
+        }
+
+        @Override
+        public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+            this.dataSource = DbTestUtils.getDataSourceWithData();
+            return this.dataSource;
+        }
+
+        @Override
+        public void afterEach(ExtensionContext context) throws Exception {
+            DbTestUtils.shutdown(this.dataSource);
+            this.dataSource = null;
+        }
+
+    }
 }
