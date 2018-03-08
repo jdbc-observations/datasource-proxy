@@ -53,7 +53,7 @@ public class StatementQueryDbTest {
         assertThat(Proxy.getInvocationHandler(result)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
 
         // verify getResultSet
-        proxySt.execute("select * from emp;");
+        proxySt.execute("select * from emp;", Statement.RETURN_GENERATED_KEYS);
         result = proxySt.getResultSet();
         assertThat(result).isInstanceOf(ResultSet.class);
         assertThat(Proxy.isProxyClass(result.getClass())).isTrue();
@@ -77,27 +77,35 @@ public class StatementQueryDbTest {
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().generatedKeysProxyLogicFactory(new SimpleResultSetProxyLogicFactory()).build();
         Statement proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
 
-        // verify getGeneratedKeys
-        ResultSet generatedKeys = proxySt.getGeneratedKeys();
-        assertThat(generatedKeys).isInstanceOf(ResultSet.class);
-        assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
-        assertThat(Proxy.getInvocationHandler(generatedKeys)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
+        ResultSet generatedKeys;
+        ResultSet result;
 
-        // other ResultSet returning methods should not return proxy
+        // just calling getGeneratedKeys is not allowed in MySQL
+        // TODO: cleanup
+        if (!DbTestUtils.isMysql()) {
 
-        // verify executeQuery
-        ResultSet result = proxySt.executeQuery("select * from emp;");
-        assertThat(result).isInstanceOf(ResultSet.class);
-        assertThat(Proxy.isProxyClass(result.getClass())).isFalse();
+            // verify getGeneratedKeys
+            generatedKeys = proxySt.getGeneratedKeys();
+            assertThat(generatedKeys).isInstanceOf(ResultSet.class);
+            assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
+            assertThat(Proxy.getInvocationHandler(generatedKeys)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
 
-        // generated keys should have empty proxied result set
-        generatedKeys = proxySt.getGeneratedKeys();
-        assertThat(generatedKeys).isInstanceOf(ResultSet.class);
-        assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
-        assertThat(generatedKeys.next()).isFalse();
+            // other ResultSet returning methods should not return proxy
+
+            // verify executeQuery
+            result = proxySt.executeQuery("select * from emp;");
+            assertThat(result).isInstanceOf(ResultSet.class);
+            assertThat(Proxy.isProxyClass(result.getClass())).isFalse();
+
+            // generated keys should have empty proxied result set
+            generatedKeys = proxySt.getGeneratedKeys();
+            assertThat(generatedKeys).isInstanceOf(ResultSet.class);
+            assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
+            assertThat(generatedKeys.next()).isFalse();
+        }
 
         // verify getResultSet
-        proxySt.execute("select * from emp;");
+        proxySt.execute("select * from emp;", Statement.RETURN_GENERATED_KEYS);
         result = proxySt.getResultSet();
         assertThat(result).isInstanceOf(ResultSet.class);
         assertThat(Proxy.isProxyClass(result.getClass())).isFalse();

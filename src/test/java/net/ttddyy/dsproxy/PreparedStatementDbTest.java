@@ -686,7 +686,7 @@ public class PreparedStatementDbTest {
         ResultSet generatedKeys2 = proxyPs.getGeneratedKeys();
         assertThat(generatedKeys2.isClosed()).isFalse();
 
-        if (DbTestUtils.isHsql()) {
+        if (DbTestUtils.isHsql() || DbTestUtils.isMysql()) {
             // everytime it should return a new generatedKeys
             assertThat(generatedKeys2).isNotSameAs(generatedKeys1);
         } else {

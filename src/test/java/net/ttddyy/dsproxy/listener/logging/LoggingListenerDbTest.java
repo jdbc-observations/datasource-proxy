@@ -70,13 +70,13 @@ public class LoggingListenerDbTest {
         this.cleaner.add(connection);
         this.cleaner.add(statement);
 
-        statement.addBatch("select * from emp where id = 1");
-        statement.addBatch("select * from emp where id = 2");
+        statement.addBatch("DELETE FROM emp WHERE id = 1;");
+        statement.addBatch("DELETE FROM emp WHERE id = 2;");
         statement.executeBatch();
 
         // this is batch execution, so query call will be just one time
-        verifyMessage(CommonsLogLevel.DEBUG, this.inMemoryLog, "select * from emp where id = 1");
-        verifyMessage(CommonsLogLevel.DEBUG, this.inMemoryLog, "select * from emp where id = 2");
+        verifyMessage(CommonsLogLevel.DEBUG, this.inMemoryLog, "DELETE FROM emp WHERE id = 1;");
+        verifyMessage(CommonsLogLevel.DEBUG, this.inMemoryLog, "DELETE FROM emp WHERE id = 2;");
     }
 
     @Test
