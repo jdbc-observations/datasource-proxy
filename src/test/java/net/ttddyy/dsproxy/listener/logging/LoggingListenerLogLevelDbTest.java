@@ -1,10 +1,9 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.TestUtils;
+import net.ttddyy.dsproxy.DatabaseTest;
+import net.ttddyy.dsproxy.DbResourceCleaner;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -19,19 +18,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class LoggingListenerLogLevelTest {
+@DatabaseTest
+public class LoggingListenerLogLevelDbTest {
 
     private DataSource jdbcDataSource;
 
-    @BeforeEach
-    public void setup() throws Exception {
-        // real datasource
-        jdbcDataSource = TestUtils.getDataSourceWithData();
-    }
+    private DbResourceCleaner cleaner;
 
-    @AfterEach
-    public void teardown() throws Exception {
-        TestUtils.shutdown(jdbcDataSource);
+    public LoggingListenerLogLevelDbTest(DataSource jdbcDataSource, DbResourceCleaner cleaner) {
+        this.jdbcDataSource = jdbcDataSource;
+        this.cleaner = cleaner;
     }
 
     @ParameterizedTest
@@ -50,6 +46,10 @@ public class LoggingListenerLogLevelTest {
 
         Connection connection = proxyDataSource.getConnection();
         Statement statement = connection.createStatement();
+
+        this.cleaner.add(connection);
+        this.cleaner.add(statement);
+
         statement.executeQuery("select * from emp where id=1");
         statement.executeQuery("select * from emp where id=2");
 

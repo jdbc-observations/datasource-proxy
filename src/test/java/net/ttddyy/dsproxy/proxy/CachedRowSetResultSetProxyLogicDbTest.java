@@ -1,12 +1,11 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.TestUtils;
+import net.ttddyy.dsproxy.DatabaseTest;
+import net.ttddyy.dsproxy.DbResourceCleaner;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import org.assertj.core.api.ThrowableAssert;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
@@ -25,7 +24,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 // TODO: currently this is copy of RepeatableReadResultSetProxyLogicTest. Need refactoring.
-public class CachedRowSetResultSetProxyLogicTest {
+@DatabaseTest
+public class CachedRowSetResultSetProxyLogicDbTest {
 
     private static final String COLUMN_1_LABEL = "id";
     private static final String COLUMN_2_LABEL = "name";
@@ -35,15 +35,11 @@ public class CachedRowSetResultSetProxyLogicTest {
     private static final String COLUMN_2_ROW_2_VALUE = "bar";
 
     private DataSource jdbcDataSource;
+    private DbResourceCleaner cleaner;
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        this.jdbcDataSource = TestUtils.getDataSourceWithData();
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        TestUtils.shutdown(this.jdbcDataSource);
+    public CachedRowSetResultSetProxyLogicDbTest(DataSource jdbcDataSource, DbResourceCleaner cleaner) {
+        this.jdbcDataSource = jdbcDataSource;
+        this.cleaner = cleaner;
     }
 
     @Test
@@ -53,11 +49,8 @@ public class CachedRowSetResultSetProxyLogicTest {
 
         final Method getCursorName = ResultSet.class.getMethod("getCursorName");
 
-        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
-            @Override
-            public void call() throws Throwable {
-                resultSetProxyLogic.invoke(getCursorName, null);
-            }
+        assertThatThrownBy(() -> {
+            resultSetProxyLogic.invoke(getCursorName, null);
         }).isInstanceOf(SQLException.class);
     }
 
@@ -106,7 +99,7 @@ public class CachedRowSetResultSetProxyLogicTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                CachedRowSetResultSetProxyLogicTest.this.invokeGetString(resultSetProxyLogic, 1);
+                CachedRowSetResultSetProxyLogicDbTest.this.invokeGetString(resultSetProxyLogic, 1);
             }
         }).isInstanceOf(SQLException.class);
     }
@@ -119,11 +112,8 @@ public class CachedRowSetResultSetProxyLogicTest {
         consumeResultSetAndCallBeforeFirst(resultSetProxyLogic);
         invokeClose(resultSetProxyLogic);
 
-        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
-            @Override
-            public void call() throws Throwable {
-                CachedRowSetResultSetProxyLogicTest.this.invokeGetString(resultSetProxyLogic, 1);
-            }
+        assertThatThrownBy(() -> {
+            CachedRowSetResultSetProxyLogicDbTest.this.invokeGetString(resultSetProxyLogic, 1);
         }).isInstanceOf(SQLException.class);
     }
 
@@ -141,6 +131,9 @@ public class CachedRowSetResultSetProxyLogicTest {
     public void nextOnUnconsumedResultThatHasNoMoreResultsSetDelegatesToTheTarget() throws Throwable {
         Connection connection = this.jdbcDataSource.getConnection();
         Statement statement = connection.createStatement();
+        this.cleaner.add(connection);
+        this.cleaner.add(statement);
+
         ResultSet resultSet = statement.executeQuery("select * from emp where id = 1000");
 
         CachedRowSetResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
@@ -179,11 +172,8 @@ public class CachedRowSetResultSetProxyLogicTest {
 
         consumeResultSetAndCallBeforeFirst(resultSetProxyLogic);
 
-        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
-            @Override
-            public void call() throws Throwable {
-                CachedRowSetResultSetProxyLogicTest.this.invokeGetString(resultSetProxyLogic, 1);
-            }
+        assertThatThrownBy(() -> {
+            CachedRowSetResultSetProxyLogicDbTest.this.invokeGetString(resultSetProxyLogic, 1);
         }).isInstanceOf(SQLException.class);
     }
 
@@ -236,11 +226,8 @@ public class CachedRowSetResultSetProxyLogicTest {
         consumeResultSetAndCallBeforeFirst(resultSetProxyLogic);
         invokeNext(resultSetProxyLogic);
 
-        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
-            @Override
-            public void call() throws Throwable {
-                invokeGetString(resultSetProxyLogic, "bad");
-            }
+        assertThatThrownBy(() -> {
+            invokeGetString(resultSetProxyLogic, "bad");
         }).isInstanceOf(SQLException.class);
     }
 
@@ -304,6 +291,8 @@ public class CachedRowSetResultSetProxyLogicTest {
     private ResultSet exampleResultSet() throws SQLException {
         Connection connection = this.jdbcDataSource.getConnection();
         Statement statement = connection.createStatement();
+        this.cleaner.add(connection);
+        this.cleaner.add(statement);
         return statement.executeQuery("select * from emp");
     }
 

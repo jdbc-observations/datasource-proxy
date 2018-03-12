@@ -7,7 +7,6 @@ import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.SimpleResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,21 +26,25 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class PreparedStatementQueryTest {
+@DatabaseTest
+public class PreparedStatementDbTest {
 
-    private DataSource jdbcDataSource;
     private TestListener testListener;
     private LastQueryListener lastQueryListener;
     private Connection connection;
 
+    private DataSource jdbcDataSource;
+    private DbResourceCleaner cleaner;
+
+    public PreparedStatementDbTest(DataSource jdbcDataSource, DbResourceCleaner cleaner) {
+        this.jdbcDataSource = jdbcDataSource;
+        this.cleaner = cleaner;
+    }
 
     @BeforeEach
     public void setup() throws Exception {
         testListener = new TestListener();
         lastQueryListener = new LastQueryListener();
-
-        // real datasource
-        jdbcDataSource = TestUtils.getDataSourceWithData();
 
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
@@ -52,18 +55,15 @@ public class PreparedStatementQueryTest {
                 .build();
 
         final Connection conn = jdbcDataSource.getConnection();
+        this.cleaner.add(conn);
         connection = new JdkJdbcProxyFactory().createConnection(conn, connectionInfo, proxyConfig);
-    }
-
-    @AfterEach
-    public void teardown() throws Exception {
-        TestUtils.shutdown(jdbcDataSource);
     }
 
     @Test
     public void testException() throws Exception {
         final String query = "select * from emp;";
         PreparedStatement stat = connection.prepareStatement(query);
+        this.cleaner.add(stat);
 
         Exception ex = null;
         try {
@@ -99,6 +99,7 @@ public class PreparedStatementQueryTest {
     public void testExecuteQueryWithNoParam() throws Exception {
         final String query = "select * from emp;";
         PreparedStatement stat = connection.prepareStatement(query);
+        this.cleaner.add(stat);
         stat.executeQuery();
 
         assertThat(testListener.beforeCount).isEqualTo(1);
@@ -123,6 +124,7 @@ public class PreparedStatementQueryTest {
     public void testExecuteQueryWithParam() throws Exception {
         final String query = "select * from emp where id = ?;";
         PreparedStatement stat = connection.prepareStatement(query);
+        this.cleaner.add(stat);
         stat.setInt(1, 1);
         stat.executeQuery();
 
@@ -151,6 +153,7 @@ public class PreparedStatementQueryTest {
     public void testExecuteUpdate() throws Exception {
         final String query = "update emp set name = ? where id = ?;";
         PreparedStatement stat = connection.prepareStatement(query);
+        this.cleaner.add(stat);
         stat.setString(1, "BAZ");
         stat.setInt(2, 1);
         stat.executeUpdate();
@@ -173,6 +176,7 @@ public class PreparedStatementQueryTest {
     public void testExecuteUpdateWithParamReuse() throws Exception {
         final String query = "update emp set name = ? where id = ?;";
         PreparedStatement stat = connection.prepareStatement(query);
+        this.cleaner.add(stat);
         stat.setString(1, "BAZ");
         stat.setInt(2, 1);
         stat.executeUpdate();
@@ -213,6 +217,7 @@ public class PreparedStatementQueryTest {
     public void testClearParameters() throws Exception {
         final String query = "update emp set name = ? where id = ?;";
         PreparedStatement stat = connection.prepareStatement(query);
+        this.cleaner.add(stat);
         stat.setString(1, "baz");
         stat.setInt(2, 1);
 
@@ -254,6 +259,7 @@ public class PreparedStatementQueryTest {
     public void testExecuteBatch() throws Exception {
         final String query = "update emp set name = ? where id = ?;";
         PreparedStatement stat = connection.prepareStatement(query);
+        this.cleaner.add(stat);
         stat.setString(1, "FOO");
         stat.setInt(2, 1);
         stat.addBatch();
@@ -311,6 +317,7 @@ public class PreparedStatementQueryTest {
 
         final String query = "insert into emp ( id, name )values (?, ?);";
         PreparedStatement stat = connection.prepareStatement(query);
+        this.cleaner.add(stat);
         stat.setInt(1, 100);
         stat.setString(2, "FOO");
         stat.addBatch();
@@ -341,7 +348,7 @@ public class PreparedStatementQueryTest {
         assertThat(queryInfo.getParametersList()).as("should have one batch params").hasSize(1);
 
         // verify actual data. 3 rows must be inserted, in addition to original data(2rows)
-        int count = TestUtils.countTable(jdbcDataSource, "emp");
+        int count = DbTestUtils.countTable(jdbcDataSource, "emp");
         assertThat(count).isEqualTo(5).as("2 existing data(foo,bar) and 3 insert(FOO,BAR,BAZ).");
 
     }
@@ -350,6 +357,7 @@ public class PreparedStatementQueryTest {
     public void sameInstanceOfExecutionInfo() throws Exception {
         final String query = "select * from emp;";
         PreparedStatement stat = connection.prepareStatement(query);
+        this.cleaner.add(stat);
         stat.executeQuery();
 
         ExecutionInfo before = lastQueryListener.getBeforeExecInfo();
@@ -363,6 +371,8 @@ public class PreparedStatementQueryTest {
         String sql = "select * from emp;";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql);
+        this.cleaner.add(conn);
+        this.cleaner.add(ps);
 
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().resultSetProxyLogicFactory(new SimpleResultSetProxyLogicFactory()).build();
@@ -381,6 +391,8 @@ public class PreparedStatementQueryTest {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        this.cleaner.add(conn);
+        this.cleaner.add(ps);
 
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().generatedKeysProxyLogicFactory(new SimpleResultSetProxyLogicFactory()).build();
@@ -401,6 +413,8 @@ public class PreparedStatementQueryTest {
         sql = "select * from emp;";
         conn = this.jdbcDataSource.getConnection();
         ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        this.cleaner.add(conn);
+        this.cleaner.add(ps);
         proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, false);
 
         // verify executeQuery
@@ -421,6 +435,8 @@ public class PreparedStatementQueryTest {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        this.cleaner.add(conn);
+        this.cleaner.add(ps);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
@@ -456,7 +472,7 @@ public class PreparedStatementQueryTest {
         // verify generated keys ResultSet
         generatedKeys.next();
         int generatedId = generatedKeys.getInt(1);
-        assertThat(generatedId).as("generated ID").isEqualTo(2);
+        assertThat(generatedId).as("generated ID").isEqualTo(3); // sequence starts from 1 and 2 rows are inserted as init data
 
         // reset
         listenerReceivedExecutionInfo.set(null);
@@ -483,6 +499,8 @@ public class PreparedStatementQueryTest {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        this.cleaner.add(conn);
+        this.cleaner.add(ps);
 
         final AtomicReference<ResultSet> listenerReceivedGeneratedKeys = new AtomicReference<ResultSet>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
@@ -511,10 +529,14 @@ public class PreparedStatementQueryTest {
         proxyPs.executeUpdate();
         assertThat(listenerReceivedGeneratedKeys.get()).isNotNull();
 
-        // for executeLargeUpdate() method
-        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, true);
-        proxyPs.executeLargeUpdate();
-        assertThat(listenerReceivedGeneratedKeys.get()).isNotNull();
+        // for Postgres, executeLargeUpdate is not yet implemented.
+        if (!DbTestUtils.isPostgres()) {
+
+            // for executeLargeUpdate() method
+            proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, true);
+            proxyPs.executeLargeUpdate();
+            assertThat(listenerReceivedGeneratedKeys.get()).isNotNull();
+        }
 
 
         // When generateKey=false is specified
@@ -529,10 +551,14 @@ public class PreparedStatementQueryTest {
         proxyPs.executeUpdate();
         assertThat(listenerReceivedGeneratedKeys.get()).isNull();
 
-        // for executeLargeUpdate() method
-        proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, false);
-        proxyPs.executeLargeUpdate();
-        assertThat(listenerReceivedGeneratedKeys.get()).isNull();
+        // for Postgres, executeLargeUpdate is not yet implemented.
+        if (!DbTestUtils.isPostgres()) {
+            // for executeLargeUpdate() method
+            proxyPs = proxyFactory.createPreparedStatement(ps, sql, new ConnectionInfo(), conn, proxyConfig, false);
+            proxyPs.executeLargeUpdate();
+            assertThat(listenerReceivedGeneratedKeys.get()).isNull();
+        }
+
     }
 
     @Test
@@ -540,6 +566,8 @@ public class PreparedStatementQueryTest {
         String sql = "select * from emp;";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        this.cleaner.add(conn);
+        this.cleaner.add(ps);
 
         final AtomicReference<ResultSet> listenerReceivedGeneratedKeys = new AtomicReference<ResultSet>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
@@ -570,6 +598,8 @@ public class PreparedStatementQueryTest {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        this.cleaner.add(conn);
+        this.cleaner.add(ps);
 
         final AtomicReference<ResultSet> listenerReceivedGeneratedKeys = new AtomicReference<ResultSet>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
@@ -638,6 +668,8 @@ public class PreparedStatementQueryTest {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        this.cleaner.add(conn);
+        this.cleaner.add(ps);
 
         // when no configuration is specified for generated keys (disabling generated keys related feature)
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
@@ -654,8 +686,12 @@ public class PreparedStatementQueryTest {
         ResultSet generatedKeys2 = proxyPs.getGeneratedKeys();
         assertThat(generatedKeys2.isClosed()).isFalse();
 
-        // everytime it should return a new generatedKeys
-        assertThat(generatedKeys2).isNotSameAs(generatedKeys1);
+        if (DbTestUtils.isHsql() || DbTestUtils.isMysql()) {
+            // everytime it should return a new generatedKeys
+            assertThat(generatedKeys2).isNotSameAs(generatedKeys1);
+        } else {
+            assertThat(generatedKeys2).isSameAs(generatedKeys1);
+        }
 
 
         // only specify autoRetrieveGeneratedKeys=true
@@ -674,6 +710,12 @@ public class PreparedStatementQueryTest {
 
         // since first generated-keys is open, second call should return the same one
         assertThat(generatedKeys4).isSameAs(generatedKeys3);
+
+        // From here, it is specific to HSQL
+        // TODO: Add tests for other DB
+        if (!DbTestUtils.isHsql()) {
+            return;
+        }
 
         generatedKeys4.close();
         ResultSet generatedKeys5 = proxyPs.getGeneratedKeys();
@@ -695,6 +737,8 @@ public class PreparedStatementQueryTest {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        this.cleaner.add(conn);
+        this.cleaner.add(ps);
 
         // autoCloseGeneratedKeys=false
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
@@ -711,6 +755,12 @@ public class PreparedStatementQueryTest {
         ResultSet generatedKeys2 = proxyPs.getGeneratedKeys();
 
         assertThat(generatedKeys2).isSameAs(generatedKeys1);
+
+        // From here, it is HSQL specific
+        // TODO: test with other DB
+        if (!DbTestUtils.isHsql()) {
+            return;
+        }
 
         // when generatedKeys is closed, getGeneratedKeys() should return new ResultSet
         generatedKeys1.close();
@@ -730,6 +780,8 @@ public class PreparedStatementQueryTest {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        this.cleaner.add(conn);
+        this.cleaner.add(ps);
 
         // autoCloseGeneratedKeys=true
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
@@ -759,6 +811,8 @@ public class PreparedStatementQueryTest {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        this.cleaner.add(conn);
+        this.cleaner.add(ps);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
@@ -820,6 +874,8 @@ public class PreparedStatementQueryTest {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        this.cleaner.add(conn);
+        this.cleaner.add(ps);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
@@ -851,7 +907,7 @@ public class PreparedStatementQueryTest {
 
         generatedKeys.next();
         int generatedId = generatedKeys.getInt(1);
-        assertThat(generatedId).as("generated ID").isEqualTo(2);
+        assertThat(generatedId).as("generated ID").isEqualTo(3);  // sequence starts from 1 and 2 rows are inserted as init data
 
     }
 

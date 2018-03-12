@@ -2,7 +2,6 @@ package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,23 +17,30 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class StatementInvocationHandlerTest {
+@DatabaseTest
+public class StatementInvocationHandlerDbTest {
 
     private DataSource jdbcDataSource;
     private TestListener testListener;
     private LastQueryListener lastQueryListener;
     private Statement statement;
 
+    private DbResourceCleaner cleaner;
+
+    public StatementInvocationHandlerDbTest(DataSource jdbcDataSource, DbResourceCleaner cleaner) {
+        this.jdbcDataSource = jdbcDataSource;
+        this.cleaner = cleaner;
+    }
+
     @BeforeEach
     public void setup() throws Exception {
         testListener = new TestListener();
         lastQueryListener = new LastQueryListener();
 
-        // real datasource
-        jdbcDataSource = TestUtils.getDataSourceWithData();
-
         Connection connection = jdbcDataSource.getConnection();
         Statement stmt = connection.createStatement();
+        this.cleaner.add(connection);
+        this.cleaner.add(stmt);
 
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
@@ -45,11 +51,6 @@ public class StatementInvocationHandlerTest {
                 .build();
 
         statement = new JdkJdbcProxyFactory().createStatement(stmt, connectionInfo, null, proxyConfig);
-    }
-
-    @AfterEach
-    public void teardown() throws Exception {
-        TestUtils.shutdown(jdbcDataSource);
     }
 
 
@@ -176,15 +177,15 @@ public class StatementInvocationHandlerTest {
     @Test
     public void testExecuteBatchShouldClearQueries() throws Exception {
 
-        statement.addBatch("insert into emp ( id, name )values (100, 'FOO');");
-        statement.addBatch("insert into emp ( id, name )values (200, 'BAR');");
+        statement.addBatch("insert into emp ( id, name ) values (100, 'FOO');");
+        statement.addBatch("insert into emp ( id, name ) values (200, 'BAR');");
         statement.executeBatch();  // 1st execution
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
         assertThat(afterQueries).isNotNull();
         assertThat(afterQueries).as("should pass two QueryInfo (FOO,BAR)").hasSize(2);
 
-        statement.addBatch("insert into emp ( id, name )values (300, 'BAZ');");
+        statement.addBatch("insert into emp ( id, name ) values (300, 'BAZ');");
 
         int[] updateCount = statement.executeBatch();  // 2nd execution
         assertThat(updateCount).isNotNull();
@@ -196,7 +197,7 @@ public class StatementInvocationHandlerTest {
         assertThat(afterQueries).as("should pass one QueryInfo (BAZ)").hasSize(1);
 
         // verify actual data. 3 rows must be inserted, in addition to original data(2rows)
-        int count = TestUtils.countTable(jdbcDataSource, "emp");
+        int count = DbTestUtils.countTable(jdbcDataSource, "emp");
         assertThat(count).as("2 existing data(foo,bar) and 3 insert(FOO,BAR,BAZ).").isEqualTo(5);
 
     }

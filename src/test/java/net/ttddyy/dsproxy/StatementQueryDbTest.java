@@ -6,8 +6,6 @@ import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.SimpleResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
@@ -25,26 +23,24 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class StatementQueryTest {
+@DatabaseTest
+public class StatementQueryDbTest {
 
     private DataSource jdbcDataSource;
 
+    private DbResourceCleaner cleaner;
 
-    @BeforeEach
-    public void setup() throws Exception {
-        // real datasource
-        jdbcDataSource = TestUtils.getDataSourceWithData();
-    }
-
-    @AfterEach
-    public void teardown() throws Exception {
-        TestUtils.shutdown(jdbcDataSource);
+    public StatementQueryDbTest(DataSource jdbcDataSource, DbResourceCleaner cleaner) {
+        this.jdbcDataSource = jdbcDataSource;
+        this.cleaner = cleaner;
     }
 
     @Test
     public void resultSetProxy() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().resultSetProxyLogicFactory(new SimpleResultSetProxyLogicFactory()).build();
@@ -57,7 +53,7 @@ public class StatementQueryTest {
         assertThat(Proxy.getInvocationHandler(result)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
 
         // verify getResultSet
-        proxySt.execute("select * from emp;");
+        proxySt.execute("select * from emp;", Statement.RETURN_GENERATED_KEYS);
         result = proxySt.getResultSet();
         assertThat(result).isInstanceOf(ResultSet.class);
         assertThat(Proxy.isProxyClass(result.getClass())).isTrue();
@@ -74,32 +70,42 @@ public class StatementQueryTest {
     public void generatedKeysProxy() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().generatedKeysProxyLogicFactory(new SimpleResultSetProxyLogicFactory()).build();
         Statement proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
 
-        // verify getGeneratedKeys
-        ResultSet generatedKeys = proxySt.getGeneratedKeys();
-        assertThat(generatedKeys).isInstanceOf(ResultSet.class);
-        assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
-        assertThat(Proxy.getInvocationHandler(generatedKeys)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
+        ResultSet generatedKeys;
+        ResultSet result;
 
-        // other ResultSet returning methods should not return proxy
+        // just calling getGeneratedKeys is not allowed in MySQL
+        // TODO: cleanup
+        if (!DbTestUtils.isMysql()) {
 
-        // verify executeQuery
-        ResultSet result = proxySt.executeQuery("select * from emp;");
-        assertThat(result).isInstanceOf(ResultSet.class);
-        assertThat(Proxy.isProxyClass(result.getClass())).isFalse();
+            // verify getGeneratedKeys
+            generatedKeys = proxySt.getGeneratedKeys();
+            assertThat(generatedKeys).isInstanceOf(ResultSet.class);
+            assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
+            assertThat(Proxy.getInvocationHandler(generatedKeys)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
 
-        // generated keys should have empty proxied result set
-        generatedKeys = proxySt.getGeneratedKeys();
-        assertThat(generatedKeys).isInstanceOf(ResultSet.class);
-        assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
-        assertThat(generatedKeys.next()).isFalse();
+            // other ResultSet returning methods should not return proxy
+
+            // verify executeQuery
+            result = proxySt.executeQuery("select * from emp;");
+            assertThat(result).isInstanceOf(ResultSet.class);
+            assertThat(Proxy.isProxyClass(result.getClass())).isFalse();
+
+            // generated keys should have empty proxied result set
+            generatedKeys = proxySt.getGeneratedKeys();
+            assertThat(generatedKeys).isInstanceOf(ResultSet.class);
+            assertThat(Proxy.isProxyClass(generatedKeys.getClass())).isTrue();
+            assertThat(generatedKeys.next()).isFalse();
+        }
 
         // verify getResultSet
-        proxySt.execute("select * from emp;");
+        proxySt.execute("select * from emp;", Statement.RETURN_GENERATED_KEYS);
         result = proxySt.getResultSet();
         assertThat(result).isInstanceOf(ResultSet.class);
         assertThat(Proxy.isProxyClass(result.getClass())).isFalse();
@@ -115,6 +121,8 @@ public class StatementQueryTest {
     public void autoRetrieveGeneratedKeys() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
@@ -150,7 +158,7 @@ public class StatementQueryTest {
         // verify generated keys ResultSet
         generatedKeys.next();
         int generatedId = generatedKeys.getInt(1);
-        assertThat(generatedId).as("generated ID").isEqualTo(2);
+        assertThat(generatedId).as("generated ID").isEqualTo(3);  // sequence starts from 1. (two rows are inserted as initial data)
 
         // reset
         listenerReceivedExecutionInfo.set(null);
@@ -175,6 +183,8 @@ public class StatementQueryTest {
     public void autoRetrieveGeneratedKeysWithExecuteQueryMethod() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
@@ -194,8 +204,8 @@ public class StatementQueryTest {
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
         Statement proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
 
-        // it should NOT generate keys for executeQuery method
-        proxySt.executeQuery("insert into emp_with_auto_id ( name ) values ('BAZ');");
+        // it should NOT generate keys
+        proxySt.execute("insert into emp ( id, name ) values (3, 'baz');");
         assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
 
 
@@ -205,6 +215,8 @@ public class StatementQueryTest {
     public void autoRetrieveGeneratedKeysWithQueryExecutionMethods() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
@@ -257,16 +269,21 @@ public class StatementQueryTest {
         assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
         listenerReceivedExecutionInfo.set(null);
 
-        // with int[]
-        proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
-        proxySt.execute("insert into emp_with_auto_id ( name ) values ('BAZ');", new int[]{1});
-        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
-        listenerReceivedExecutionInfo.set(null);
 
-        proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
-        proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", new int[]{1});
-        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
-        listenerReceivedExecutionInfo.set(null);
+        if (!DbTestUtils.isPostgres()) {
+            // for Postgres, returning autogenerated keys by column index is not supported
+
+            // with int[]
+            proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+            proxySt.execute("insert into emp_with_auto_id ( name ) values ('BAZ');", new int[]{1});
+            assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
+            listenerReceivedExecutionInfo.set(null);
+
+            proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
+            proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", new int[]{1});
+            assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
+            listenerReceivedExecutionInfo.set(null);
+        }
 
         // with String[]
         proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
@@ -285,6 +302,8 @@ public class StatementQueryTest {
     public void autoRetrieveGeneratedKeysWithBatchStatement() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
@@ -354,6 +373,8 @@ public class StatementQueryTest {
     public void getGeneratedKeys() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         // when no configuration is specified for generated keys (disabling generated keys related feature)
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
@@ -370,8 +391,13 @@ public class StatementQueryTest {
         ResultSet generatedKeys2 = proxySt.getGeneratedKeys();
         assertThat(generatedKeys2.isClosed()).isFalse();
 
-        // everytime it should return a new generatedKeys
-        assertThat(generatedKeys2).isNotSameAs(generatedKeys1);
+        if (DbTestUtils.isHsql()) {
+            // everytime it should return a new generatedKeys
+            assertThat(generatedKeys2).isNotSameAs(generatedKeys1);
+        } else if (DbTestUtils.isPostgres()) {
+            // postgres returns same ResultSet
+            assertThat(generatedKeys2).isSameAs(generatedKeys1);
+        }
 
 
         // only specify autoRetrieveGeneratedKeys=true
@@ -387,6 +413,13 @@ public class StatementQueryTest {
 
         ResultSet generatedKeys4 = proxySt.getGeneratedKeys();
         assertThat(generatedKeys4.isClosed()).isFalse();
+
+        // From here, currently testing only HSQL specific behavior
+        // TODO: check behavior for other database
+        if (!DbTestUtils.isHsql()) {
+            return;
+        }
+
 
         // since first generated-keys is open, second call should return the same one
         assertThat(generatedKeys4).isSameAs(generatedKeys3);
@@ -410,6 +443,8 @@ public class StatementQueryTest {
     public void getGeneratedKeysWithAutoRetrievalAndAutoCloseFalse() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         // autoCloseGeneratedKeys=false
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
@@ -426,6 +461,14 @@ public class StatementQueryTest {
         ResultSet generatedKeys2 = proxySt.getGeneratedKeys();
 
         assertThat(generatedKeys2).isSameAs(generatedKeys1);
+
+        // From here, it checks HSQL specific behavior
+        //  - HSQL: everytime returns new ResultSet
+        //  - POSTGRES: it returns same ResultSet.
+        // TODO: may check behavior for other DB
+        if (!DbTestUtils.isHsql()) {
+            return;
+        }
 
         // when generatedKeys is closed, getGeneratedKeys() should return new ResultSet
         generatedKeys1.close();
@@ -444,6 +487,8 @@ public class StatementQueryTest {
     public void getGeneratedKeysWithAutoRetrievalAndAutoCloseTrue() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         // autoCloseGeneratedKeys=true
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
@@ -455,22 +500,38 @@ public class StatementQueryTest {
 
         proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", Statement.RETURN_GENERATED_KEYS);
 
-        // auto close should not affect the result of "getGeneratedKeys" method.
         ResultSet generatedKeys1 = proxySt.getGeneratedKeys();
-        assertThat(generatedKeys1.isClosed()).isFalse();
 
-        ResultSet generatedKeys2 = proxySt.getGeneratedKeys();
-        assertThat(generatedKeys2.isClosed()).isFalse();
+        if (DbTestUtils.isPostgres()) {
+            // For Postgres, since it returns same ResultSet, it has already auto-closed
+            assertThat(generatedKeys1.isClosed()).isTrue();
 
-        // result of "getGeneratedKeys" is still open, thus second call of "getGeneratedKeys" should return the same one
-        assertThat(generatedKeys2).isSameAs(generatedKeys1);
-        assertThat(generatedKeys1.isClosed()).isFalse();
+            // same closed ResultSet will be returned
+            ResultSet generatedKeys2 = proxySt.getGeneratedKeys();
+            assertThat(generatedKeys2.isClosed()).isTrue();
+            assertThat(generatedKeys2).isSameAs(generatedKeys1);
+        } else {
+            // case for HSQL for now
+
+            // auto close should not affect the result of "getGeneratedKeys" method.
+            assertThat(generatedKeys1.isClosed()).isFalse();
+
+            ResultSet generatedKeys2 = proxySt.getGeneratedKeys();
+            assertThat(generatedKeys2.isClosed()).isFalse();
+
+            // result of "getGeneratedKeys" is still open, thus second call of "getGeneratedKeys" should return the same one
+            assertThat(generatedKeys2).isSameAs(generatedKeys1);
+            assertThat(generatedKeys1.isClosed()).isFalse();
+        }
+
     }
 
     @Test
     public void autoCloseGeneratedKeysProxy() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
@@ -531,6 +592,8 @@ public class StatementQueryTest {
     public void autoRetrieveGeneratedKeysWithGeneratedKeysProxy() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
@@ -563,7 +626,7 @@ public class StatementQueryTest {
 
         generatedKeys.next();
         int generatedId = generatedKeys.getInt(1);
-        assertThat(generatedId).as("generated ID").isEqualTo(2);
+        assertThat(generatedId).as("generated ID").isEqualTo(3);  // sequence starts from 1. (two data rows inserted as initial data)
 
     }
 

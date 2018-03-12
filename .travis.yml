@@ -3,6 +3,11 @@ language: java
 jdk:
   - oraclejdk8
 
+sudo: required
+
+services:
+  - docker
+
 cache:
   directories:
     - ~/.m2/repository
@@ -19,6 +24,9 @@ env:
   - secure: "N1TK5gAnL8WWWflDSNrwghfwaN/FjqyO1DX7vCwg5sl3DpAT70E6Ju9PJ1+FXb7wF95xMzSiHVk5haOR1FxIEX2l8aP//xHtpRcAz+RM143nDs6EhmMqmD9KlimLcApkjPupn4mx8e4BFOTGqkvK7eBoIm8jWt3zKXnz4Gwy1Ko="
   # GPG_PASSPHRASE
   - secure: "gRUj21Z0K8gOGrHXj2WuH4bww3XcRZk1iScRbVdQhhTw8SFlcVhOpXoUiM68YYZABeGNJJ9XxP8QBoKKEKV5rkxAUG5+huPTdu4bwbQgHoz71awuWsrSVWXodzbT+lBxYjXkKD/AckM69olV9ZYZ5IgsFAka3geA2tPjLCO3YjE="
+
+script:
+  - ./mvnw test -P test-all-dbs -B
 
 after_success:
   - bash ./src/build/publish-jar.sh

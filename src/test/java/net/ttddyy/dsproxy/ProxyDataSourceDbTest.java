@@ -4,7 +4,6 @@ import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +12,6 @@ import java.io.PrintWriter;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.Statement;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,16 +24,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author Tadaya Tsuyukubo
  */
-public class ProxyDataSourceTest {
+@DatabaseTest
+public class ProxyDataSourceDbTest {
 
     private ProxyDataSource proxyDataSource;
     private TestListener listener;
     private CallCheckMethodExecutionListener methodListener;
 
+    private DataSource jdbcDataSource;
+    private DbResourceCleaner cleaner;
+
+    public ProxyDataSourceDbTest(DataSource jdbcDataSource, DbResourceCleaner cleaner) {
+        this.jdbcDataSource = jdbcDataSource;
+        this.cleaner = cleaner;
+    }
+
     @BeforeEach
     public void setup() throws Exception {
-        DataSource dataSource = TestUtils.getDataSourceWithData();
-
         listener = new TestListener();
         methodListener = new CallCheckMethodExecutionListener();
 
@@ -45,30 +50,16 @@ public class ProxyDataSourceTest {
                 .build();
 
         proxyDataSource = new ProxyDataSource();
-        proxyDataSource.setDataSource(dataSource);
+        proxyDataSource.setDataSource(this.jdbcDataSource);
         proxyDataSource.setProxyConfig(proxyConfig);
-    }
-
-    @AfterEach
-    public void teardown() throws Exception {
-        TestUtils.shutdown(proxyDataSource);
-    }
-
-    public void example() throws Exception {
-        Connection conn = proxyDataSource.getConnection();
-        Statement st = conn.createStatement();
-        st.executeUpdate("create table aa ( a varchar(5) primary key );");
-        st.executeUpdate("insert into aa ( a )values ('abc');");
-        ResultSet rs = st.executeQuery("select a from aa;");
-        rs.next();
-        String val = rs.getString("a");
-        System.out.println(val);
     }
 
     @Test
     public void testStatementWithExecuteUpdateQuery() throws Exception {
         Connection conn = proxyDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
         st.executeUpdate("create table aa ( a varchar(5) primary key );");
 
         assertThat(listener.getBeforeCount()).isEqualTo(1);
@@ -79,6 +70,8 @@ public class ProxyDataSourceTest {
     public void testStatementWithExecuteQuery() throws Exception {
         Connection conn = proxyDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
         st.executeQuery("SELECT * FROM INFORMATION_SCHEMA.TABLES;");  // hsqldb system table
 
         assertThat(listener.getBeforeCount()).isEqualTo(1);
@@ -89,6 +82,8 @@ public class ProxyDataSourceTest {
     public void testUseStatement() throws Exception {
         Connection conn = proxyDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
         st.executeQuery("select * from emp;");
 
         assertThat(listener.getBeforeCount()).isEqualTo(1);
@@ -99,6 +94,8 @@ public class ProxyDataSourceTest {
     public void testUsePreparedStatement() throws Exception {
         Connection conn = proxyDataSource.getConnection();
         PreparedStatement st = conn.prepareStatement("select * from emp");
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
         st.executeQuery();
 
         assertThat(listener.getBeforeCount()).isEqualTo(1);
@@ -106,9 +103,11 @@ public class ProxyDataSourceTest {
     }
 
     @Test
-    public void testUsePreapareCall() throws Exception {
+    public void testUsePrepareCall() throws Exception {
         Connection conn = proxyDataSource.getConnection();
         CallableStatement st = conn.prepareCall("select * from emp");
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
         st.execute();
     }
 
@@ -117,6 +116,9 @@ public class ProxyDataSourceTest {
         Connection proxyConn = proxyDataSource.getConnection();
         Statement st = proxyConn.createStatement();
         Connection conn = st.getConnection();
+        this.cleaner.add(proxyConn);
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         assertThat(conn).isSameAs(proxyConn);
     }
@@ -126,6 +128,9 @@ public class ProxyDataSourceTest {
         Connection proxyConn = proxyDataSource.getConnection();
         PreparedStatement ps = proxyConn.prepareStatement("select * from emp");
         Connection conn = ps.getConnection();
+        this.cleaner.add(proxyConn);
+        this.cleaner.add(conn);
+        this.cleaner.add(ps);
 
         assertThat(conn).isSameAs(proxyConn);
     }
@@ -135,6 +140,9 @@ public class ProxyDataSourceTest {
         Connection proxyConn = proxyDataSource.getConnection();
         CallableStatement cs = proxyConn.prepareCall("select * from emp");
         Connection conn = cs.getConnection();
+        this.cleaner.add(proxyConn);
+        this.cleaner.add(conn);
+        this.cleaner.add(cs);
 
         assertThat(conn).isSameAs(proxyConn);
     }
@@ -156,13 +164,19 @@ public class ProxyDataSourceTest {
         assertThat(context.getMethod().getName()).isEqualTo("getConnection");
         assertThat(context.getConnectionInfo()).isNotNull();
 
+        // adding connection set in cleaner calls hashCode() method on connection, thus call it after verification
+        this.cleaner.add(connection);
+
         this.methodListener.reset();
 
-        proxyDataSource.getConnection("sa", "");
+        String username = DbTestUtils.getUsername();
+        String password = DbTestUtils.getPassword();
+        connection = proxyDataSource.getConnection(username, password);
 
         assertTrue(this.methodListener.isBeforeMethodCalled(), "methodListener should be called for getConnection");
         assertTrue(this.methodListener.isAfterMethodCalled(), "methodListener should be called for getConnection");
 
+        this.cleaner.add(connection);
         this.methodListener.reset();
 
         // for now, only getConnection is supported for method execution listener
@@ -199,6 +213,8 @@ public class ProxyDataSourceTest {
         ConnectionIdManager connIdManager = proxyDataSource.getConnectionIdManager();
         Connection conn = proxyDataSource.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         ConnectionInfo connInfo = this.methodListener.getBeforeMethodContext().getConnectionInfo();
         assertThat(connInfo.isClosed()).isFalse();
@@ -216,7 +232,10 @@ public class ProxyDataSourceTest {
     @Test
     public void commitAndRollbackCount() throws Exception {
         Connection conn = proxyDataSource.getConnection();
+        conn.setAutoCommit(false);
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
 
         ConnectionInfo connInfo = this.methodListener.getBeforeMethodContext().getConnectionInfo();
 

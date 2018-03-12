@@ -1,8 +1,12 @@
 package net.ttddyy.dsproxy.listener;
 
+import net.ttddyy.dsproxy.DatabaseType;
+import net.ttddyy.dsproxy.DbResourceCleaner;
+import net.ttddyy.dsproxy.DatabaseTest;
+import net.ttddyy.dsproxy.DbTestUtils;
+import net.ttddyy.dsproxy.EnabledOnDatabase;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
-import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.listener.logging.DefaultQueryLogEntryCreator;
 import net.ttddyy.dsproxy.listener.logging.QueryLogEntryCreator;
 import net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener;
@@ -27,17 +31,16 @@ import static org.assertj.core.api.Assertions.fail;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class SlowQueryListenerTest {
+@DatabaseTest
+public class SlowQueryListenerDbTest {
 
     private DataSource jdbcDataSource;
+    private DbResourceCleaner cleaner;
 
-    @AfterEach
-    public void teardown() throws Exception {
-        if (this.jdbcDataSource != null) {
-            TestUtils.shutdown(this.jdbcDataSource);
-        }
+    public SlowQueryListenerDbTest(DataSource jdbcDataSource, DbResourceCleaner cleaner) {
+        this.jdbcDataSource = jdbcDataSource;
+        this.cleaner = cleaner;
     }
-
 
     @Test
     public void onSlowQuery() throws Exception {
@@ -87,7 +90,7 @@ public class SlowQueryListenerTest {
     }
 
 
-    @Test
+    @EnabledOnDatabase(DatabaseType.HSQL)
     public void executionTime() throws Exception {
 
         final AtomicLong executionTime = new AtomicLong(0);
@@ -103,19 +106,21 @@ public class SlowQueryListenerTest {
         listener.setQueryLogEntryCreator(queryLogEntryCreator);
 
 
-        this.jdbcDataSource = TestUtils.getDataSourceWithData();
         ProxyDataSource pds = ProxyDataSourceBuilder.create(jdbcDataSource).listener(listener).build();
 
         String funcSleep = "CREATE FUNCTION funcSleep()" +
                 " RETURNS INTEGER" +
                 " LANGUAGE JAVA DETERMINISTIC NO SQL" +
-                " EXTERNAL NAME 'CLASSPATH:net.ttddyy.dsproxy.listener.SlowQueryListenerTest.funcSleep'";
+                " EXTERNAL NAME 'CLASSPATH:net.ttddyy.dsproxy.listener.SlowQueryListenerDbTest.funcSleep'";
 
         Connection conn = pds.getConnection();
         Statement st = conn.createStatement();
+        this.cleaner.add(conn);
+        this.cleaner.add(st);
         st.execute(funcSleep);
 
         CallableStatement cs = conn.prepareCall("CALL funcSleep()");
+        this.cleaner.add(cs);
         cs.execute();
 
         assertThat(executionTime.get()).as("execInfo.elapsedTime should be populated").isGreaterThanOrEqualTo(100).isLessThan(300);
