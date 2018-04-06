@@ -27,7 +27,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
-                .connectionId(10)
+                .connectionId("10")
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -65,7 +65,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
-                .connectionId(10)
+                .connectionId("10")
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -92,7 +92,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
-                .connectionId(10)
+                .connectionId("10")
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -123,7 +123,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
-                .connectionId(10)
+                .connectionId("10")
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -155,7 +155,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
-                .connectionId(10)
+                .connectionId("10")
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -185,7 +185,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
-                .connectionId(10)
+                .connectionId("10")
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -217,7 +217,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
-                .connectionId(10)
+                .connectionId("10")
                 .elapsedTime(100)
                 .method(method)
                 .result(result)
@@ -251,7 +251,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
         ExecutionInfo executionInfo = ExecutionInfoBuilder
                 .create()
                 .dataSourceName("foo")
-                .connectionId(10)
+                .connectionId("10")
                 .elapsedTime(100)
                 .method(method)
                 .result(result)

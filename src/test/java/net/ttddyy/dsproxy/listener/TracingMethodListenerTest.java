@@ -53,7 +53,7 @@ public class TracingMethodListenerTest {
 
         Method method = PreparedStatement.class.getMethod("setString", int.class, String.class);
         ConnectionInfo connectionInfo = new ConnectionInfo();
-        connectionInfo.setConnectionId(100);
+        connectionInfo.setConnectionId("100");
 
         MethodExecutionContext context = MethodExecutionContext.Builder.create()
                 .target(target)
@@ -82,7 +82,7 @@ public class TracingMethodListenerTest {
 
         Method method = PreparedStatement.class.getMethod("setString", int.class, String.class);
         ConnectionInfo connectionInfo = new ConnectionInfo();
-        connectionInfo.setConnectionId(100);
+        connectionInfo.setConnectionId("100");
 
         MethodExecutionContext context = MethodExecutionContext.Builder.create()
                 .target(target)

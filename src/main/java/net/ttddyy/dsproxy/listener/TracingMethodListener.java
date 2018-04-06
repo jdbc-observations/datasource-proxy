@@ -41,7 +41,7 @@ public class TracingMethodListener implements ProxyDataSourceListener {
         long execTime = executionContext.getElapsedTime();
 
         ConnectionInfo connectionInfo = executionContext.getConnectionInfo();
-        long connectionId = -1;
+        String connectionId = "-1";
         if (connectionInfo != null) {
             connectionId = connectionInfo.getConnectionId();
         }
@@ -175,7 +175,7 @@ public class TracingMethodListener implements ProxyDataSourceListener {
      * @return message to log
      */
     protected String constructMessage(long seq, Throwable thrown, long execTime,
-                                      long connectionId, Class<?> targetClass, Method method, String args) {
+                                      String connectionId, Class<?> targetClass, Method method, String args) {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         sb.append(seq);

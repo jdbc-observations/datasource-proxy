@@ -17,16 +17,16 @@ public class DefaultConnectionIdManagerTest {
     public void getId() {
         DefaultConnectionIdManager idManager = new DefaultConnectionIdManager();
 
-        assertThat(idManager.getId(null)).isEqualTo(1L);
-        assertThat(idManager.getId(null)).isEqualTo(2L);
-        assertThat(idManager.getId(null)).isEqualTo(3L);
+        assertThat(idManager.getId(null)).isEqualTo("1");
+        assertThat(idManager.getId(null)).isEqualTo("2");
+        assertThat(idManager.getId(null)).isEqualTo("3");
 
         Connection conn = mock(Connection.class);
         idManager = new DefaultConnectionIdManager();
 
-        assertThat(idManager.getId(conn)).isEqualTo(1L);
-        assertThat(idManager.getId(conn)).isEqualTo(2L);
-        assertThat(idManager.getId(conn)).isEqualTo(3L);
+        assertThat(idManager.getId(conn)).isEqualTo("1");
+        assertThat(idManager.getId(conn)).isEqualTo("2");
+        assertThat(idManager.getId(conn)).isEqualTo("3");
     }
 
     @Test
@@ -35,10 +35,10 @@ public class DefaultConnectionIdManagerTest {
 
         assertThat(idManager.getOpenConnectionIds()).isEmpty();
 
-        long id1 = idManager.getId(null);
+        String id1 = idManager.getId(null);
         assertThat(idManager.getOpenConnectionIds()).containsExactly(id1);
 
-        long id2 = idManager.getId(null);
+        String id2 = idManager.getId(null);
         assertThat(idManager.getOpenConnectionIds()).containsExactly(id1, id2);
 
         idManager.addClosedId(id2);

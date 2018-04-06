@@ -9,7 +9,7 @@ import java.sql.Connection;
 public class ConnectionInfo {
 
     private String dataSourceName;
-    private long connectionId;
+    private String connectionId;
     private boolean isClosed;
     private int commitCount;
     private int rollbackCount;
@@ -22,11 +22,11 @@ public class ConnectionInfo {
         this.dataSourceName = dataSourceName;
     }
 
-    public long getConnectionId() {
+    public String getConnectionId() {
         return connectionId;
     }
 
-    public void setConnectionId(long connectionId) {
+    public void setConnectionId(String connectionId) {
         this.connectionId = connectionId;
     }
 

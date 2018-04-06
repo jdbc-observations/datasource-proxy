@@ -19,11 +19,11 @@ public class DefaultConnectionIdManager implements ConnectionIdManager {
 
     private AtomicLong idCounter = new AtomicLong(0);
 
-    private Set<Long> openIds = new HashSet<>();
+    private Set<String> openIds = new HashSet<>();
 
     @Override
-    public long getId(Connection connection) {
-        long id = this.idCounter.incrementAndGet();
+    public String getId(Connection connection) {
+        String id = String.valueOf(this.idCounter.incrementAndGet());
         synchronized (this) {
             this.openIds.add(id);
         }
@@ -31,15 +31,15 @@ public class DefaultConnectionIdManager implements ConnectionIdManager {
     }
 
     @Override
-    public void addClosedId(long closedId) {
+    public void addClosedId(String closedId) {
         synchronized (this) {
             this.openIds.remove(closedId);
         }
     }
 
     @Override
-    public Set<Long> getOpenConnectionIds() {
-        return new HashSet<Long>(this.openIds);
+    public Set<String> getOpenConnectionIds() {
+        return new HashSet<>(this.openIds);
     }
 
 }
