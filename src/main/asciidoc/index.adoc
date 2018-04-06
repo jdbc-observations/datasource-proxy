@@ -6,6 +6,9 @@ Tadaya Tsuyukubo
 //
 :docinfodir: docinfos
 //
+// do not populate last updated time
+:last-update-label!:
+//
 // add analytics only when publishing docs to github
 ifdef::insert-analytics[]
 :docinfo: private-head
