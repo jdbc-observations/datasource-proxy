@@ -55,7 +55,7 @@ public class ConnectionProxyLogic {
                     connectionInfo.incrementRollbackCount();
                 } else if (isCloseMethod) {
                     connectionInfo.setClosed(true);
-                    long connId = connectionInfo.getConnectionId();
+                    String connId = connectionInfo.getConnectionId();
                     ConnectionProxyLogic.this.proxyConfig.getConnectionIdManager().addClosedId(connId);
                 }
                 return result;

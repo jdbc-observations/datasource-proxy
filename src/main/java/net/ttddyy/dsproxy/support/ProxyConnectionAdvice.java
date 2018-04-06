@@ -28,7 +28,7 @@ public class ProxyConnectionAdvice implements MethodInterceptor {
         }
 
         Connection conn = (Connection) retVal;
-        long connId = this.proxyConfig.getConnectionIdManager().getId(conn);
+        String connId = this.proxyConfig.getConnectionIdManager().getId(conn);
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setConnectionId(connId);
         connectionInfo.setDataSourceName("");

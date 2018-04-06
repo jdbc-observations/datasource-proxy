@@ -81,7 +81,7 @@ public class DataSourceProxyLogic {
 
             if ("getConnection".equals(methodName)) {
                 Connection conn = (Connection) retVal;
-                long connId = connectionIdManager.getId(conn);
+                String connId = connectionIdManager.getId(conn);
                 ConnectionInfo connectionInfo = new ConnectionInfo();
                 connectionInfo.setConnectionId(connId);
                 connectionInfo.setDataSourceName(dataSourceName);

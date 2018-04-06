@@ -11,7 +11,7 @@ import java.sql.Statement;
  */
 public class ExecutionInfo {
     private String dataSourceName;
-    private long connectionId;
+    private String connectionId;
     private Method method;
     private Object[] methodArgs;
     private Object result;
@@ -66,14 +66,14 @@ public class ExecutionInfo {
     /**
      * @since 1.4.2
      */
-    public long getConnectionId() {
+    public String getConnectionId() {
         return connectionId;
     }
 
     /**
      * @since 1.4.2
      */
-    public void setConnectionId(long connectionId) {
+    public void setConnectionId(String connectionId) {
         this.connectionId = connectionId;
     }
 

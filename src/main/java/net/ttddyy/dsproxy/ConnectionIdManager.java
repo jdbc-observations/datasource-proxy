@@ -9,7 +9,7 @@ import java.util.Set;
  */
 public interface ConnectionIdManager {
 
-    long getId(Connection connection);
+    String getId(Connection connection);
 
     /**
      * Notify this manager that id of corresponding connection has addClosedId.
@@ -17,7 +17,7 @@ public interface ConnectionIdManager {
      * @param closedId addClosedId connection id
      * @since 1.4.5
      */
-    void addClosedId(long closedId);
+    void addClosedId(String closedId);
 
     /**
      * Return set of connection ids that have not yet addClosedId.
@@ -25,6 +25,6 @@ public interface ConnectionIdManager {
      * @return set of open connection ids
      * @since 1.4.5
      */
-    Set<Long> getOpenConnectionIds();
+    Set<String> getOpenConnectionIds();
 
 }

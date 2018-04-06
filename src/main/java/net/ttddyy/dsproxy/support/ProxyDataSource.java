@@ -75,7 +75,7 @@ public class ProxyDataSource implements DataSource, Closeable {
         ConnectionIdManager connectionIdManager = this.proxyConfig.getConnectionIdManager();
         final JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
-        long connectionId = connectionIdManager.getId(conn);
+        String connectionId = connectionIdManager.getId(conn);
 
         final ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setConnectionId(connectionId);
