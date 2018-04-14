@@ -59,36 +59,44 @@ public class SlowQueryListener implements QueryExecutionListener {
 
     protected long threshold;
     protected TimeUnit thresholdTimeUnit;
-    protected Map<ExecutionInfo, Long> inExecution = new ConcurrentHashMap<ExecutionInfo, Long>();
+    protected Map<Integer, ExecutionInfo> inExecution = new ConcurrentHashMap<Integer, ExecutionInfo>();
+    protected Map<Integer, Long> inExecutionTime = new ConcurrentHashMap<Integer, Long>();
 
     @Override
-    public void beforeQuery(final ExecutionInfo execInfo, final List<QueryInfo> queryInfoList) {
+    public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+
+        final int execInfoKey = System.identityHashCode(execInfo);
+        execInfo.setQueryInfoList(queryInfoList);
 
         Runnable check = new Runnable() {
             @Override
             public void run() {
                 // if it's still in map, that means it's still running
-                Long startTimeInMills = inExecution.get(execInfo);
-                if (startTimeInMills != null) {
+                Long startTimeInMills = inExecutionTime.get(execInfoKey);
+                ExecutionInfo inExecInfo = inExecution.get(execInfoKey);
+                if (startTimeInMills != null && inExecInfo != null) {
                     // populate elapsed time
-                    if (execInfo.getElapsedTime() == 0) {
+                    if (inExecInfo.getElapsedTime() == 0) {
                         long elapsedTime = System.currentTimeMillis() - startTimeInMills;
-                        execInfo.setElapsedTime(elapsedTime);
+                        inExecInfo.setElapsedTime(elapsedTime);
                     }
 
-                    onSlowQuery(execInfo, queryInfoList, startTimeInMills);
+                    onSlowQuery(inExecInfo, inExecInfo.getQueryInfoList(), startTimeInMills);
                 }
             }
         };
         this.executor.schedule(check, this.threshold, this.thresholdTimeUnit);
 
         long now = System.currentTimeMillis();
-        this.inExecution.put(execInfo, now);
+        this.inExecution.put(execInfoKey, execInfo);
+        this.inExecutionTime.put(execInfoKey, now);
     }
 
     @Override
     public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        this.inExecution.remove(execInfo);
+        int exeInfoKey = System.identityHashCode(execInfo);
+        this.inExecution.remove(exeInfoKey);
+        this.inExecutionTime.remove(exeInfoKey);
     }
 
 
