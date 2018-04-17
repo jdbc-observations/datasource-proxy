@@ -45,6 +45,23 @@ import java.util.concurrent.TimeUnit;
  */
 public class SlowQueryListener implements ProxyDataSourceListener {
 
+    /**
+     * Data holder for currently running query.
+     *
+     * This structure is used to avoid hard reference from scheduled {@link Runnable} to {@link ExecutionInfo} and etc.
+     */
+    protected static class RunningQueryContext {
+        protected ExecutionInfo executionInfo;
+        protected List<QueryInfo> queryInfoList;
+        protected long startTimeInMills;
+
+        public RunningQueryContext(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList, long nowInMills) {
+            this.executionInfo = executionInfo;
+            this.queryInfoList = queryInfoList;
+            this.startTimeInMills = nowInMills;
+        }
+    }
+
     protected boolean useDaemonThread = true;
 
     protected ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor((r) -> {
@@ -52,46 +69,62 @@ public class SlowQueryListener implements ProxyDataSourceListener {
         thread.setDaemon(SlowQueryListener.this.useDaemonThread);
         return thread;
     });
-
     protected long threshold;
     protected TimeUnit thresholdTimeUnit;
-    protected Map<Integer, ExecutionInfo> inExecution = new ConcurrentHashMap<>();
-    protected Map<Integer, Long> inExecutionTime = new ConcurrentHashMap<>();
+
+    protected Map<String, RunningQueryContext> inExecution = new ConcurrentHashMap<>();
 
     @Override
     public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
 
-        int execInfoKey = System.identityHashCode(execInfo);
-        execInfo.setQueryInfoList(queryInfoList);
+        String execInfoKey = getExecutionInfoKey(execInfo);
 
+        // only pass the key to prevent hard reference from Runnable to ExecutionInfo. (Issue-53)
         Runnable check = () -> {
             // if it's still in map, that means it's still running
-            Long startTimeInMills = inExecutionTime.get(execInfoKey);
-            ExecutionInfo inExecInfo = inExecution.get(execInfoKey);
-            if (startTimeInMills != null && inExecInfo != null) {
+            RunningQueryContext context = this.inExecution.get(execInfoKey);
+
+            if (context != null) {
                 // populate elapsed time
-                if (inExecInfo.getElapsedTime() == 0) {
-                    long elapsedTime = System.currentTimeMillis() - startTimeInMills;
-                    inExecInfo.setElapsedTime(elapsedTime);
+                if (context.executionInfo.getElapsedTime() == 0) {
+                    long elapsedTime = System.currentTimeMillis() - context.startTimeInMills;
+                    context.executionInfo.setElapsedTime(elapsedTime);
                 }
 
-                onSlowQuery(inExecInfo, inExecInfo.getQueryInfoList(), startTimeInMills);
+                onSlowQuery(context.executionInfo, context.queryInfoList, context.startTimeInMills);
             }
         };
         this.executor.schedule(check, this.threshold, this.thresholdTimeUnit);
 
         long now = System.currentTimeMillis();
-        this.inExecution.put(execInfoKey, execInfo);
-        this.inExecutionTime.put(execInfoKey, now);
+        RunningQueryContext context = new RunningQueryContext(execInfo, queryInfoList, now);
+        this.inExecution.put(execInfoKey, context);
+
     }
 
     @Override
     public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        int exeInfoKey = System.identityHashCode(execInfo);
-        this.inExecution.remove(exeInfoKey);
-        this.inExecutionTime.remove(exeInfoKey);
+        String executionInfoKey = getExecutionInfoKey(execInfo);
+        this.inExecution.remove(executionInfoKey);
     }
 
+
+    /**
+     * Calculate a key for given {@link ExecutionInfo}.
+     *
+     * <p>This key is passed to the slow query check {@link Runnable} as well as for removal in {@link #afterQuery(ExecutionInfo, List)}.
+     *
+     * <p>Default implementation uses {@link System#identityHashCode(Object)}. This does NOT guarantee 100% of uniqueness; however, since
+     * the current usage of the key is short lived and good enough for this use case.
+     * <p>Subclass can override this method to provide different implementation to uniquely represent {@link ExecutionInfo}.
+     *
+     * @param executionInfo execution info
+     * @return key
+     */
+    protected String getExecutionInfoKey(ExecutionInfo executionInfo) {
+        int exeInfoKey = System.identityHashCode(executionInfo);
+        return String.valueOf(exeInfoKey);
+    }
 
     /**
      * Callback when query execution time exceeds the threshold.
