@@ -3,7 +3,6 @@ package net.ttddyy.dsproxy;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.List;
 
 /**
  * Contains query execution information.
@@ -24,8 +23,6 @@ public class ExecutionInfo {
     private int batchSize;
     private Statement statement;
     private ResultSet generatedKeys;
-
-    private List<QueryInfo> queryInfoList;
 
     public ExecutionInfo() {
     }
@@ -187,11 +184,4 @@ public class ExecutionInfo {
         this.generatedKeys = generatedKeys;
     }
 
-    public List<QueryInfo> getQueryInfoList() {
-        return queryInfoList;
-    }
-
-    public void setQueryInfoList(List<QueryInfo> queryInfoList) {
-        this.queryInfoList = queryInfoList;
-    }
 }
