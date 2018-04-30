@@ -78,11 +78,11 @@ public class PreparedStatementDbTest {
         assertThat(testListener.beforeCount).isEqualTo(1);
         assertThat(testListener.afterCount).isEqualTo(1);
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
         assertThat(beforeQueries).hasSize(1);
         assertThat(beforeQueries.get(0).getQuery()).isEqualTo(query);
 
-        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
         assertThat(afterQueries).hasSize(1);
         assertThat(afterQueries.get(0).getQuery()).isEqualTo(query);
 
@@ -105,14 +105,14 @@ public class PreparedStatementDbTest {
         assertThat(testListener.beforeCount).isEqualTo(1);
         assertThat(testListener.afterCount).isEqualTo(1);
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
         assertThat(beforeQueries).hasSize(1);
         assertThat(beforeQueries.get(0).getQuery()).isEqualTo(query);
         assertThat(beforeQueries.get(0).getParametersList()).hasSize(1);
         assertThat(beforeQueries.get(0).getParametersList().get(0))
                 .extracting("args", Object[].class).isEmpty();
 
-        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
         assertThat(afterQueries).hasSize(1);
         assertThat(afterQueries.get(0).getQuery()).isEqualTo(query);
         assertThat(afterQueries.get(0).getParametersList()).hasSize(1);
@@ -131,7 +131,7 @@ public class PreparedStatementDbTest {
         assertThat(testListener.beforeCount).isEqualTo(1);
         assertThat(testListener.afterCount).isEqualTo(1);
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
         assertThat(beforeQueries).hasSize(1);
         final QueryInfo beforeInfo = beforeQueries.get(0);
         assertThat(beforeInfo.getQuery()).isEqualTo(query);
@@ -139,7 +139,7 @@ public class PreparedStatementDbTest {
         assertThat(beforeInfo.getParametersList().get(0))
                 .extracting("args", Object[].class).containsExactly(new Object[]{1, 1});
 
-        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
         assertThat(afterQueries).hasSize(1);
         final QueryInfo afterInfo = afterQueries.get(0);
         assertThat(afterInfo.getQuery()).isEqualTo(query);
@@ -161,7 +161,7 @@ public class PreparedStatementDbTest {
         assertThat(testListener.beforeCount).isEqualTo(1);
         assertThat(testListener.afterCount).isEqualTo(1);
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
         assertThat(beforeQueries).hasSize(1);
 
         Object[][] expectedQueryArgs = new Object[][]{
@@ -184,7 +184,7 @@ public class PreparedStatementDbTest {
         assertThat(testListener.beforeCount).isEqualTo(1);
         assertThat(testListener.afterCount).isEqualTo(1);
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
         assertThat(beforeQueries).hasSize(1);
 
         Object[][] expectedQueryArgs = new Object[][]{
@@ -202,7 +202,7 @@ public class PreparedStatementDbTest {
         assertThat(testListener.beforeCount).isEqualTo(2);
         assertThat(testListener.afterCount).isEqualTo(2);
 
-        beforeQueries = lastQueryListener.getBeforeQueries();
+        beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
         assertThat(beforeQueries).hasSize(1);
 
         expectedQueryArgs = new Object[][]{
@@ -231,7 +231,7 @@ public class PreparedStatementDbTest {
         assertThat(testListener.beforeCount).isEqualTo(1);
         assertThat(testListener.afterCount).isEqualTo(1);
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
         assertThat(beforeQueries).hasSize(1);
 
         Object[][] expectedQueryArgs = new Object[][]{
@@ -282,7 +282,7 @@ public class PreparedStatementDbTest {
         assertThat(updateCount).containsSequence(1, 1);
 
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
         assertThat(beforeQueries).as("PreparedStatement batch execution will have always one query").hasSize(1);
         QueryInfo queryInfo = beforeQueries.get(0);
 
@@ -293,7 +293,7 @@ public class PreparedStatementDbTest {
         assertThat(queryInfo.getParametersList().get(1))
                 .extracting("args", Object[].class).containsExactly(new Object[]{1, "BAR"}, new Object[]{2, 2});
 
-        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
         assertThat(afterQueries).as("PreparedStatement batch execution will have always one query").hasSize(1);
         queryInfo = afterQueries.get(0);
         assertThat(queryInfo.getQuery()).isEqualTo(query);
@@ -328,7 +328,7 @@ public class PreparedStatementDbTest {
 
         stat.executeBatch();  // 1st execution
 
-        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueries();
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
         assertThat(afterQueries).as("should has one query").hasSize(1);
         QueryInfo queryInfo = afterQueries.get(0);
         assertThat(queryInfo.getParametersList()).as("should have two batch params").hasSize(2);
@@ -341,7 +341,7 @@ public class PreparedStatementDbTest {
         assertThat(updateCount).hasSize(1);
 
         // second execution should pass only one QueryInfo to listener
-        afterQueries = lastQueryListener.getAfterQueries();
+        afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
         assertThat(afterQueries).isNotNull();
         assertThat(afterQueries).as("should pass one QueryInfo (BAZ)").hasSize(1);
         queryInfo = afterQueries.get(0);
@@ -441,7 +441,7 @@ public class PreparedStatementDbTest {
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(ExecutionInfo execInfo) {
                 // since generatedKeys will NOT be closed, they can be read afterwards.
                 listenerReceivedExecutionInfo.set(execInfo);
             }
@@ -505,7 +505,7 @@ public class PreparedStatementDbTest {
         final AtomicReference<ResultSet> listenerReceivedGeneratedKeys = new AtomicReference<ResultSet>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(ExecutionInfo execInfo) {
                 listenerReceivedGeneratedKeys.set(execInfo.getGeneratedKeys());
             }
         };
@@ -572,7 +572,7 @@ public class PreparedStatementDbTest {
         final AtomicReference<ResultSet> listenerReceivedGeneratedKeys = new AtomicReference<ResultSet>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(ExecutionInfo execInfo) {
                 listenerReceivedGeneratedKeys.set(execInfo.getGeneratedKeys());
             }
         };
@@ -604,7 +604,7 @@ public class PreparedStatementDbTest {
         final AtomicReference<ResultSet> listenerReceivedGeneratedKeys = new AtomicReference<ResultSet>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(ExecutionInfo execInfo) {
                 listenerReceivedGeneratedKeys.set(execInfo.getGeneratedKeys());
             }
         };
@@ -817,7 +817,7 @@ public class PreparedStatementDbTest {
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(ExecutionInfo execInfo) {
                 ResultSet generatedKeys = execInfo.getGeneratedKeys();
                 boolean isClosed = true;
                 try {
@@ -880,7 +880,7 @@ public class PreparedStatementDbTest {
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(ExecutionInfo execInfo) {
                 listenerReceivedExecutionInfo.set(execInfo);
             }
         };

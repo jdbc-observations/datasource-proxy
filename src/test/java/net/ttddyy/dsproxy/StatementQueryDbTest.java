@@ -14,7 +14,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -127,7 +126,7 @@ public class StatementQueryDbTest {
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(ExecutionInfo execInfo) {
                 // since generatedKeys will NOT be closed, they can be read afterwards.
                 listenerReceivedExecutionInfo.set(execInfo);
             }
@@ -189,7 +188,7 @@ public class StatementQueryDbTest {
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(ExecutionInfo execInfo) {
                 // since generatedKeys will NOT be closed, they can be read afterwards.
                 listenerReceivedExecutionInfo.set(execInfo);
             }
@@ -221,7 +220,7 @@ public class StatementQueryDbTest {
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(ExecutionInfo execInfo) {
                 // since generatedKeys will NOT be closed, they can be read afterwards.
                 listenerReceivedExecutionInfo.set(execInfo);
             }
@@ -308,7 +307,7 @@ public class StatementQueryDbTest {
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(ExecutionInfo execInfo) {
                 // since generatedKeys will NOT be closed, they can be read afterwards.
                 listenerReceivedExecutionInfo.set(execInfo);
             }
@@ -536,7 +535,7 @@ public class StatementQueryDbTest {
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(ExecutionInfo execInfo) {
                 ResultSet generatedKeys = execInfo.getGeneratedKeys();
                 boolean isClosed = true;
                 try {
@@ -598,7 +597,7 @@ public class StatementQueryDbTest {
         final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(ExecutionInfo execInfo) {
                 listenerReceivedExecutionInfo.set(execInfo);
             }
         };

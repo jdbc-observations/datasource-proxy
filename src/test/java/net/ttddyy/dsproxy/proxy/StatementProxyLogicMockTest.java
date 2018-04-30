@@ -454,9 +454,8 @@ public class StatementProxyLogicMockTest {
     private void verifyListener(ProxyDataSourceListener listener, String methodName, String query, Object... methodArgs) {
 
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
-        ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
 
-        verify(listener).afterQuery(executionInfoCaptor.capture(), queryInfoListCaptor.capture());
+        verify(listener).afterQuery(executionInfoCaptor.capture());
 
         ExecutionInfo execInfo = executionInfoCaptor.getValue();
         assertThat(execInfo.getMethod()).isNotNull();
@@ -469,7 +468,7 @@ public class StatementProxyLogicMockTest {
         assertThat(execInfo.isBatch()).isFalse();
         assertThat(execInfo.getBatchSize()).isEqualTo(0);
 
-        List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
+        List<QueryInfo> queryInfoList = execInfo.getQueries();
         assertThat(queryInfoList).hasSize(1);
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery()).isEqualTo(query);
@@ -480,9 +479,8 @@ public class StatementProxyLogicMockTest {
                                             String query, Object... methodArgs) {
 
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
-        ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
 
-        verify(listener).afterQuery(executionInfoCaptor.capture(), queryInfoListCaptor.capture());
+        verify(listener).afterQuery(executionInfoCaptor.capture());
 
         ExecutionInfo execInfo = executionInfoCaptor.getValue();
         assertThat(execInfo.getMethod()).isNotNull();
@@ -493,7 +491,7 @@ public class StatementProxyLogicMockTest {
         assertThat(execInfo.getDataSourceName()).isEqualTo(DS_NAME);
         assertThat(execInfo.getThrowable()).isInstanceOf(SQLException.class);
 
-        List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
+        List<QueryInfo> queryInfoList = execInfo.getQueries();
         assertThat(queryInfoList).hasSize(1);
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery()).isEqualTo(query);
@@ -646,9 +644,8 @@ public class StatementProxyLogicMockTest {
     @SuppressWarnings("unchecked")
     private void verifyListenerForBatchExecution(String batchMethod, ProxyDataSourceListener listener, String... queries) {
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
-        ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
 
-        verify(listener).afterQuery(executionInfoCaptor.capture(), queryInfoListCaptor.capture());
+        verify(listener).afterQuery(executionInfoCaptor.capture());
 
         ExecutionInfo execInfo = executionInfoCaptor.getValue();
         assertThat(execInfo.getMethod()).isNotNull();
@@ -658,7 +655,7 @@ public class StatementProxyLogicMockTest {
         assertThat(execInfo.isBatch()).isTrue();
         assertThat(execInfo.getBatchSize()).isEqualTo(queries.length);
 
-        List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
+        List<QueryInfo> queryInfoList = execInfo.getQueries();
 
         assertThat(queryInfoList).isNotNull();
         assertThat(queryInfoList).hasSize(queries.length);
@@ -674,9 +671,8 @@ public class StatementProxyLogicMockTest {
     @SuppressWarnings("unchecked")
     private void verifyListenerForExecuteBatchForException(ProxyDataSourceListener listener, String... queries) {
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
-        ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
 
-        verify(listener).afterQuery(executionInfoCaptor.capture(), queryInfoListCaptor.capture());
+        verify(listener).afterQuery(executionInfoCaptor.capture());
 
         ExecutionInfo execInfo = executionInfoCaptor.getValue();
         assertThat(execInfo.getMethod()).isNotNull();
@@ -688,7 +684,7 @@ public class StatementProxyLogicMockTest {
         assertThat(execInfo.getBatchSize()).isEqualTo(queries.length);
 
 
-        List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
+        List<QueryInfo> queryInfoList = execInfo.getQueries();
 
         assertThat(queryInfoList).hasSize(queries.length);
 
@@ -819,7 +815,7 @@ public class StatementProxyLogicMockTest {
         final AtomicReference<Object> listenerReceivedResult = new AtomicReference<Object>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(ExecutionInfo execInfo) {
                 listenerReceivedResult.set(execInfo.getResult());
             }
         };
@@ -876,7 +872,7 @@ public class StatementProxyLogicMockTest {
         final AtomicReference<Object> listenerReceivedResult = new AtomicReference<Object>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(ExecutionInfo execInfo) {
                 listenerReceivedResult.set(execInfo.getResult());
             }
         };
@@ -1025,7 +1021,7 @@ public class StatementProxyLogicMockTest {
 
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(ExecutionInfo execInfo) {
                 elapsedTimeHolder.set(execInfo.getElapsedTime());
             }
         };

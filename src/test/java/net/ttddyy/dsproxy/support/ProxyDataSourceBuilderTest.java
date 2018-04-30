@@ -464,7 +464,7 @@ public class ProxyDataSourceBuilderTest {
         // check beforeMethod()
         final AtomicBoolean isBeforeInvoked = new AtomicBoolean();
         ds = ProxyDataSourceBuilder.create()
-                .beforeQuery((execInfo, queryInfoList) -> {
+                .beforeQuery((execInfo) -> {
                     isBeforeInvoked.set(true);
                 })
                 .build();
@@ -473,13 +473,13 @@ public class ProxyDataSourceBuilderTest {
 
         // invoke found listener and verify invocation
         listener = CompositeProxyDataSourceListener.getListeners().get(0);
-        listener.beforeQuery(null, null);  // invoke
+        listener.beforeQuery(null);  // invoke
         assertThat(isBeforeInvoked.get()).isTrue();
 
         // check afterMethod()
         final AtomicBoolean isAfterInvoked = new AtomicBoolean();
         ds = ProxyDataSourceBuilder.create()
-                .afterQuery((execInfo, queryInfoList) -> {
+                .afterQuery((execInfo) -> {
                     isAfterInvoked.set(true);
                 })
                 .build();
@@ -488,7 +488,7 @@ public class ProxyDataSourceBuilderTest {
 
         // invoke found listener and verify invocation
         listener = CompositeProxyDataSourceListener.getListeners().get(0);
-        listener.afterQuery(null, null);  // invoke
+        listener.afterQuery(null);  // invoke
         assertThat(isAfterInvoked.get()).isTrue();
 
     }

@@ -31,15 +31,16 @@ public class SLF4JSlowQueryListenerTest {
         this.listener.setThreshold(50);
         this.listener.setThresholdTimeUnit(TimeUnit.MILLISECONDS);
 
-        ExecutionInfo executionInfo = new ExecutionInfo();
         QueryInfo queryInfo = new QueryInfo();
         queryInfo.setQuery("SELECT 1");
-        List<QueryInfo> queryInfos = new ArrayList<QueryInfo>();
+        List<QueryInfo> queryInfos = new ArrayList<>();
         queryInfos.add(queryInfo);
+        ExecutionInfo executionInfo = new ExecutionInfo();
+        executionInfo.setQueries(queryInfos);
 
-        this.listener.beforeQuery(executionInfo, queryInfos);
+        this.listener.beforeQuery(executionInfo);
         TimeUnit.MILLISECONDS.sleep(100);
-        this.listener.afterQuery(executionInfo, queryInfos);
+        this.listener.afterQuery(executionInfo);
 
         InMemorySLF4JLogger logger = (InMemorySLF4JLogger) this.listener.getLogger();
         List<String> messages = logger.getWarnMessages();

@@ -38,15 +38,15 @@ public class JULQueryLoggingListenerTest {
         InMemoryJULLogger logger = new InMemoryJULLogger();
         listener.setLogger(logger);
 
-        ExecutionInfo execInfo = ExecutionInfoBuilder.create().build();
-        List<QueryInfo> queryInfoList = new ArrayList<QueryInfo>();
+        List<QueryInfo> queryInfoList = new ArrayList<>();
         queryInfoList.add(QueryInfoBuilder.create().query("select * ").build());
+        ExecutionInfo execInfo = ExecutionInfoBuilder.create().queries(queryInfoList).build();
 
         // listener writes to more serious level
         listener.setLogLevel(Level.WARNING);
         logger.setLoggerLevel(Level.INFO);
 
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(execInfo);
 
         assertThat(logger.getSevereMessages()).isEmpty();
         assertThat(logger.getWarningMessages()).hasSize(1);
@@ -61,7 +61,7 @@ public class JULQueryLoggingListenerTest {
         listener.setLogLevel(Level.FINE);
         logger.setLoggerLevel(Level.WARNING);
 
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(execInfo);
 
         assertThat(logger.getSevereMessages()).isEmpty();
         assertThat(logger.getWarningMessages()).isEmpty();
@@ -76,7 +76,7 @@ public class JULQueryLoggingListenerTest {
         listener.setLogLevel(Level.WARNING);
         logger.setLoggerLevel(Level.WARNING);
 
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(execInfo);
 
         assertThat(logger.getSevereMessages()).isEmpty();
         assertThat(logger.getWarningMessages()).hasSize(1);

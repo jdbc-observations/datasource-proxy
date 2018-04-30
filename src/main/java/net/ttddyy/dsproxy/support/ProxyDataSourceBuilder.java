@@ -2,7 +2,6 @@ package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
@@ -32,7 +31,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -514,17 +512,17 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Add {@link ProxyDataSourceListener} that performs given lambda on {@link ProxyDataSourceListener#beforeQuery(ExecutionInfo, List)}.
+     * Add {@link ProxyDataSourceListener} that performs given lambda on {@link ProxyDataSourceListener#beforeQuery(ExecutionInfo)}.
      *
-     * @param callback a lambda function executed on {@link ProxyDataSourceListener#beforeQuery(ExecutionInfo, List)}
+     * @param callback a lambda function executed on {@link ProxyDataSourceListener#beforeQuery(ExecutionInfo)}
      * @return builder
      * @since 1.4.3
      */
-    public ProxyDataSourceBuilder beforeQuery(BiConsumer<ExecutionInfo, List<QueryInfo>> callback) {
+    public ProxyDataSourceBuilder beforeQuery(Consumer<ExecutionInfo> callback) {
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-                callback.accept(execInfo, queryInfoList);
+            public void beforeQuery(ExecutionInfo execInfo) {
+                callback.accept(execInfo);
             }
         };
         this.listeners.add(listener);
@@ -532,17 +530,17 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Add {@link ProxyDataSourceListener} that performs given lambda on {@link ProxyDataSourceListener#afterQuery(ExecutionInfo, List)}.
+     * Add {@link ProxyDataSourceListener} that performs given lambda on {@link ProxyDataSourceListener#afterQuery(ExecutionInfo)}.
      *
-     * @param callback a lambda function executed on {@link ProxyDataSourceListener#afterQuery(ExecutionInfo, List)}
+     * @param callback a lambda function executed on {@link ProxyDataSourceListener#afterQuery(ExecutionInfo)}
      * @return builder
      * @since 1.4.3
      */
-    public ProxyDataSourceBuilder afterQuery(BiConsumer<ExecutionInfo, List<QueryInfo>> callback) {
+    public ProxyDataSourceBuilder afterQuery(Consumer<ExecutionInfo> callback) {
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-                callback.accept(execInfo, queryInfoList);
+            public void afterQuery(ExecutionInfo execInfo) {
+                callback.accept(execInfo);
             }
         };
         this.listeners.add(listener);
@@ -683,7 +681,7 @@ public class ProxyDataSourceBuilder {
      * {@link java.sql.ResultSet} will be returned from {@link ExecutionInfo#getGeneratedKeys()}.
      *
      * When autoClose parameter is set to {@code true}, datasource-proxy will close the generated-keys {@link java.sql.ResultSet}
-     * after it called {@link ProxyDataSourceListener#afterQuery(ExecutionInfo, List)}.
+     * after it called {@link ProxyDataSourceListener#afterQuery(ExecutionInfo)}.
      * This behavior might not be ideal if above layer, such as OR Mapper or application code, need to access generated-keys
      * because when they access generated-keys, the resultset is already closed.
      *

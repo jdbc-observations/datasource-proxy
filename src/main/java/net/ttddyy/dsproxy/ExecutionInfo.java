@@ -3,6 +3,8 @@ package net.ttddyy.dsproxy;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Contains query execution information.
@@ -23,11 +25,12 @@ public class ExecutionInfo {
     private int batchSize;
     private Statement statement;
     private ResultSet generatedKeys;
+    private List<QueryInfo> queries = new ArrayList<>();
 
     public ExecutionInfo() {
     }
 
-    public ExecutionInfo(ConnectionInfo connectionInfo, Statement statement, boolean isBatch, int batchSize, Method method, Object[] methodArgs) {
+    public ExecutionInfo(ConnectionInfo connectionInfo, Statement statement, boolean isBatch, int batchSize, Method method, Object[] methodArgs, List<QueryInfo> queries) {
         this.dataSourceName = connectionInfo.getDataSourceName();
         this.connectionId = connectionInfo.getConnectionId();
         this.statement = statement;
@@ -35,6 +38,7 @@ public class ExecutionInfo {
         this.batchSize = batchSize;
         this.method = method;
         this.methodArgs = methodArgs;
+        this.queries = queries;
 
         this.statementType = StatementType.valueOf(statement);
     }
@@ -184,4 +188,20 @@ public class ExecutionInfo {
         this.generatedKeys = generatedKeys;
     }
 
+    /**
+     * Returns list of {@link QueryInfo}.
+     *
+     * @return list of queries. This will NOT return null.
+     * @since 2.0
+     */
+    public List<QueryInfo> getQueries() {
+        return this.queries;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public void setQueries(List<QueryInfo> queries) {
+        this.queries = queries;
+    }
 }

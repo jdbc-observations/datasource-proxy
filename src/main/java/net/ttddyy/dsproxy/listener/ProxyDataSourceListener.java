@@ -17,10 +17,10 @@ public interface ProxyDataSourceListener {
     default void afterMethod(MethodExecutionContext executionContext) {
     }
 
-    default void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    default void beforeQuery(ExecutionInfo execInfo) {
     }
 
-    default void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    default void afterQuery(ExecutionInfo execInfo) {
     }
 
 }

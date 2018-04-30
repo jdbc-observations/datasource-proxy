@@ -40,7 +40,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -211,10 +210,8 @@ public class StatementProxyLogicForPreparedStatementMockTest {
     @SuppressWarnings("unchecked")
     private void verifyListener(ProxyDataSourceListener listener, String methodName, String query, Map<String, Object> expectedQueryArgs) {
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
-        ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
 
-
-        verify(listener).afterQuery(executionInfoCaptor.capture(), queryInfoListCaptor.capture());
+        verify(listener).afterQuery(executionInfoCaptor.capture());
 
         ExecutionInfo execInfo = executionInfoCaptor.getValue();
         assertThat(execInfo.getMethod()).isNotNull();
@@ -226,7 +223,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         assertThat(execInfo.isBatch()).isFalse();
         assertThat(execInfo.getBatchSize()).isEqualTo(0);
 
-        List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
+        List<QueryInfo> queryInfoList = execInfo.getQueries();
         assertThat(queryInfoList).hasSize(1);
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery()).isEqualTo(query);
@@ -431,11 +428,12 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         verify(stat).clearParameters();
         verify(stat).addBatch();
 
-        ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
 
-        verify(listener).afterQuery(any(ExecutionInfo.class), queryInfoListCaptor.capture());
+        verify(listener).afterQuery(executionInfoCaptor.capture());
 
-        List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
+        ExecutionInfo execInfo = executionInfoCaptor.getValue();
+        List<QueryInfo> queryInfoList = execInfo.getQueries();
         assertThat(queryInfoList).hasSize(1);
 
         assertThat(queryInfoList.get(0).getParametersList()).hasSize(1);
@@ -549,10 +547,10 @@ public class StatementProxyLogicForPreparedStatementMockTest {
     @Test
     public void proxyResultSet() throws Throwable {
 
-        final AtomicReference<Object> listenerReceivedResult = new AtomicReference<Object>();
+        final AtomicReference<Object> listenerReceivedResult = new AtomicReference<>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(ExecutionInfo execInfo) {
                 listenerReceivedResult.set(execInfo.getResult());
             }
         };
@@ -593,10 +591,10 @@ public class StatementProxyLogicForPreparedStatementMockTest {
     @Test
     public void proxyGeneratedKeysResultSet() throws Throwable {
 
-        final AtomicReference<Object> listenerReceivedResult = new AtomicReference<Object>();
+        final AtomicReference<Object> listenerReceivedResult = new AtomicReference<>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(ExecutionInfo execInfo) {
                 listenerReceivedResult.set(execInfo.getResult());
             }
         };

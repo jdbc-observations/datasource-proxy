@@ -43,7 +43,7 @@ public class DataSourceQueryCountListener implements ProxyDataSourceListener {
     private QueryCountStrategy queryCountStrategy = new ThreadQueryCountHolder();
 
     @Override
-    public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    public void afterQuery(ExecutionInfo execInfo) {
         String dataSourceName = execInfo.getDataSourceName();
 
         QueryCount count = this.queryCountStrategy.getOrCreateQueryCount(dataSourceName);
@@ -64,7 +64,7 @@ public class DataSourceQueryCountListener implements ProxyDataSourceListener {
         count.increment(execInfo.getStatementType());
 
         // increment query count
-        for (QueryInfo queryInfo : queryInfoList) {
+        for (QueryInfo queryInfo : execInfo.getQueries()) {
             String query = queryInfo.getQuery();
             QueryType type = QueryUtils.getQueryType(query);
             count.increment(type);

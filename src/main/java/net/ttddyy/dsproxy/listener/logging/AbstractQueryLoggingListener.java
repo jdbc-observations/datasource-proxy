@@ -1,10 +1,8 @@
 package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 
-import java.util.List;
 import java.util.function.BooleanSupplier;
 
 /**
@@ -18,17 +16,17 @@ public abstract class AbstractQueryLoggingListener implements ProxyDataSourceLis
     protected BooleanSupplier loggingCondition;
 
     @Override
-    public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    public void afterQuery(ExecutionInfo execInfo) {
         // only perform logging logic when the condition returns true
         if (this.loggingCondition.getAsBoolean()) {
-            String entry = getEntry(execInfo, queryInfoList);
+            String entry = getEntry(execInfo);
             writeLog(entry);
         }
     }
 
-    protected String getEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    protected String getEntry(ExecutionInfo execInfo) {
         boolean writeDataSourceName = execInfo.getDataSourceName() != null && !execInfo.getDataSourceName().trim().equals("");
-        return this.queryLogEntryCreator.getLogEntry(execInfo, queryInfoList, writeDataSourceName, this.writeConnectionId);
+        return this.queryLogEntryCreator.getLogEntry(execInfo, writeDataSourceName, this.writeConnectionId);
     }
 
     protected abstract void writeLog(String message);

@@ -1,9 +1,7 @@
 package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryInfo;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -14,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Slow query detection listener.
  *
- * When query takes more than specified threshold, {@link #onSlowQuery(ExecutionInfo, List, long)} callback method
+ * When query takes more than specified threshold, {@link #onSlowQuery(ExecutionInfo, long)} callback method
  * is called. The callback is called only once for the target query if it exceeds the threshold time.
  *
  * NOTE:
@@ -52,12 +50,10 @@ public class SlowQueryListener implements ProxyDataSourceListener {
      */
     protected static class RunningQueryContext {
         protected ExecutionInfo executionInfo;
-        protected List<QueryInfo> queryInfoList;
         protected long startTimeInMills;
 
-        public RunningQueryContext(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList, long nowInMills) {
+        public RunningQueryContext(ExecutionInfo executionInfo, long nowInMills) {
             this.executionInfo = executionInfo;
-            this.queryInfoList = queryInfoList;
             this.startTimeInMills = nowInMills;
         }
     }
@@ -75,7 +71,7 @@ public class SlowQueryListener implements ProxyDataSourceListener {
     protected Map<String, RunningQueryContext> inExecution = new ConcurrentHashMap<>();
 
     @Override
-    public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    public void beforeQuery(ExecutionInfo execInfo) {
 
         String execInfoKey = getExecutionInfoKey(execInfo);
 
@@ -91,19 +87,19 @@ public class SlowQueryListener implements ProxyDataSourceListener {
                     context.executionInfo.setElapsedTime(elapsedTime);
                 }
 
-                onSlowQuery(context.executionInfo, context.queryInfoList, context.startTimeInMills);
+                onSlowQuery(context.executionInfo, context.startTimeInMills);
             }
         };
         this.executor.schedule(check, this.threshold, this.thresholdTimeUnit);
 
         long now = System.currentTimeMillis();
-        RunningQueryContext context = new RunningQueryContext(execInfo, queryInfoList, now);
+        RunningQueryContext context = new RunningQueryContext(execInfo, now);
         this.inExecution.put(execInfoKey, context);
 
     }
 
     @Override
-    public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    public void afterQuery(ExecutionInfo execInfo) {
         String executionInfoKey = getExecutionInfoKey(execInfo);
         this.inExecution.remove(executionInfoKey);
     }
@@ -112,7 +108,7 @@ public class SlowQueryListener implements ProxyDataSourceListener {
     /**
      * Calculate a key for given {@link ExecutionInfo}.
      *
-     * <p>This key is passed to the slow query check {@link Runnable} as well as for removal in {@link #afterQuery(ExecutionInfo, List)}.
+     * <p>This key is passed to the slow query check {@link Runnable} as well as for removal in {@link #afterQuery(ExecutionInfo)}.
      *
      * <p>Default implementation uses {@link System#identityHashCode(Object)}. This does NOT guarantee 100% of uniqueness; however, since
      * the current usage of the key is short lived and good enough for this use case.
@@ -132,10 +128,9 @@ public class SlowQueryListener implements ProxyDataSourceListener {
      * This callback is called only once per query if it exceeds the threshold time.
      *
      * @param execInfo         query execution info
-     * @param queryInfoList    query parameter info
      * @param startTimeInMills time in mills when the query started
      */
-    protected void onSlowQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, long startTimeInMills) {
+    protected void onSlowQuery(ExecutionInfo execInfo, long startTimeInMills) {
     }
 
     public void setThreshold(long threshHold) {

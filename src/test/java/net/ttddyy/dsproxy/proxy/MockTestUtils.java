@@ -23,9 +23,9 @@ public class MockTestUtils {
     public static void verifyListenerForBatch(ProxyDataSourceListener listener, String dataSourceName, String query,
                                               Map<String, Object>... expectedQueryParamsArray) {
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
-        ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
 
-        verify(listener).afterQuery(executionInfoCaptor.capture(), queryInfoListCaptor.capture());
+        verify(listener).afterQuery(executionInfoCaptor.capture());
+
 
 
         final int expectedBatchSize = expectedQueryParamsArray.length;
@@ -40,7 +40,7 @@ public class MockTestUtils {
         assertThat(execInfo.isBatch()).isTrue();
         assertThat(execInfo.getBatchSize()).isEqualTo(expectedBatchSize);
 
-        List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
+        List<QueryInfo> queryInfoList = execInfo.getQueries();
         assertThat(queryInfoList).hasSize(1).as("for prepared/callable statement, batch query size is always 1");
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery()).isEqualTo(query);

@@ -18,13 +18,13 @@ import java.util.List;
 public class OutputParameterLogEntryCreator extends DefaultQueryLogEntryCreator {
 
     @Override
-    public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName, boolean writeConnectionId) {
+    public String getLogEntry(ExecutionInfo execInfo, boolean writeDataSourceName, boolean writeConnectionId) {
         StringBuilder sb = new StringBuilder();
-        sb.append(super.getLogEntry(execInfo, queryInfoList, writeDataSourceName, writeConnectionId));
+        sb.append(super.getLogEntry(execInfo, writeDataSourceName, writeConnectionId));
 
         sb.append(", OutParams:[");
 
-        for (QueryInfo queryInfo : queryInfoList) {
+        for (QueryInfo queryInfo : execInfo.getQueries()) {
             for (List<ParameterSetOperation> parameters : queryInfo.getParametersList()) {
                 sb.append("(");
                 if (hasOutputParameters(parameters)) {

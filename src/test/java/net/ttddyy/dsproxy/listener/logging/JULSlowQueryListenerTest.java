@@ -31,15 +31,16 @@ public class JULSlowQueryListenerTest {
         this.listener.setThreshold(50);
         this.listener.setThresholdTimeUnit(TimeUnit.MILLISECONDS);
 
-        ExecutionInfo executionInfo = new ExecutionInfo();
         QueryInfo queryInfo = new QueryInfo();
         queryInfo.setQuery("SELECT 1");
         List<QueryInfo> queryInfos = new ArrayList<QueryInfo>();
         queryInfos.add(queryInfo);
+        ExecutionInfo executionInfo = new ExecutionInfo();
+        executionInfo.setQueries(queryInfos);
 
-        this.listener.beforeQuery(executionInfo, queryInfos);
+        this.listener.beforeQuery(executionInfo);
         TimeUnit.MILLISECONDS.sleep(300);
-        this.listener.afterQuery(executionInfo, queryInfos);
+        this.listener.afterQuery(executionInfo);
 
         InMemoryJULLogger logger = (InMemoryJULLogger) this.listener.getLogger();
         List<String> messages = logger.getWarningMessages();

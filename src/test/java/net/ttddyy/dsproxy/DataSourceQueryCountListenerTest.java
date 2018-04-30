@@ -30,13 +30,14 @@ public class DataSourceQueryCountListenerTest {
     public void setUp() {
         queryInfo = mock(QueryInfo.class);
 
-        queryInfoList = new ArrayList<QueryInfo>();
+        queryInfoList = new ArrayList<>();
         queryInfoList.add(queryInfo);
 
         executionInfo = mock(ExecutionInfo.class);
         given(executionInfo.getDataSourceName()).willReturn("testDS");
         given(executionInfo.getElapsedTime()).willReturn(123L);
         given(executionInfo.getStatementType()).willReturn(StatementType.STATEMENT);
+        given(executionInfo.getQueries()).willReturn(this.queryInfoList);
 
         listener = new DataSourceQueryCountListener();
     }
@@ -50,35 +51,35 @@ public class DataSourceQueryCountListenerTest {
     @Test
     public void testSelect() {
         given(queryInfo.getQuery()).willReturn("select * from emp");
-        listener.afterQuery(executionInfo, queryInfoList);
+        listener.afterQuery(executionInfo);
         verifyQueryCount(1, 0, 0, 0, 0);
     }
 
     @Test
     public void testInsert() {
         given(queryInfo.getQuery()).willReturn("insert into emp (id) values (1)");
-        listener.afterQuery(executionInfo, queryInfoList);
+        listener.afterQuery(executionInfo);
         verifyQueryCount(0, 1, 0, 0, 0);
     }
 
     @Test
     public void testUpdate() {
         given(queryInfo.getQuery()).willReturn("update emp set id = 1");
-        listener.afterQuery(executionInfo, queryInfoList);
+        listener.afterQuery(executionInfo);
         verifyQueryCount(0, 0, 1, 0, 0);
     }
 
     @Test
     public void testDelete() {
         given(queryInfo.getQuery()).willReturn("delete * from emp");
-        listener.afterQuery(executionInfo, queryInfoList);
+        listener.afterQuery(executionInfo);
         verifyQueryCount(0, 0, 0, 1, 0);
     }
 
     @Test
     public void testOther() {
         given(queryInfo.getQuery()).willReturn("create table aa(...)");
-        listener.afterQuery(executionInfo, queryInfoList);
+        listener.afterQuery(executionInfo);
         verifyQueryCount(0, 0, 0, 0, 1);
     }
 
@@ -97,7 +98,7 @@ public class DataSourceQueryCountListenerTest {
     public void statement() {
         given(queryInfo.getQuery()).willReturn("foo");
         given(executionInfo.getStatementType()).willReturn(StatementType.STATEMENT);
-        listener.afterQuery(executionInfo, queryInfoList);
+        listener.afterQuery(executionInfo);
 
         verifyStatementTypeCount(1, 0, 0);
     }
@@ -106,7 +107,7 @@ public class DataSourceQueryCountListenerTest {
     public void prepared() {
         given(queryInfo.getQuery()).willReturn("foo");
         given(executionInfo.getStatementType()).willReturn(StatementType.PREPARED);
-        listener.afterQuery(executionInfo, queryInfoList);
+        listener.afterQuery(executionInfo);
         verifyStatementTypeCount(0, 1, 0);
     }
 
@@ -114,7 +115,7 @@ public class DataSourceQueryCountListenerTest {
     public void callable() {
         given(queryInfo.getQuery()).willReturn("foo");
         given(executionInfo.getStatementType()).willReturn(StatementType.CALLABLE);
-        listener.afterQuery(executionInfo, queryInfoList);
+        listener.afterQuery(executionInfo);
         verifyStatementTypeCount(0, 0, 1);
     }
 
@@ -132,8 +133,9 @@ public class DataSourceQueryCountListenerTest {
         // perform on main thread
         QueryInfo queryInfo = mock(QueryInfo.class);
         given(queryInfo.getQuery()).willReturn("insert into emp (id) values (1)");
+        given(this.executionInfo.getQueries()).willReturn(Collections.singletonList(queryInfo));
         // use default strategy
-        listener.afterQuery(executionInfo, Collections.singletonList(queryInfo));
+        listener.afterQuery(executionInfo);
 
         // perform on separate thread
         final CountDownLatch latch = new CountDownLatch(1);
@@ -144,7 +146,8 @@ public class DataSourceQueryCountListenerTest {
             public void run() {
                 QueryInfo queryInfo = mock(QueryInfo.class);
                 given(queryInfo.getQuery()).willReturn("select * from emp");
-                listener.afterQuery(executionInfo, Collections.singletonList(queryInfo));
+                given(executionInfo.getQueries()).willReturn(Collections.singletonList(queryInfo));
+                listener.afterQuery(executionInfo);
 
                 // verify count within thread
                 try {
@@ -184,7 +187,9 @@ public class DataSourceQueryCountListenerTest {
         // perform on main thread
         QueryInfo queryInfo = mock(QueryInfo.class);
         given(queryInfo.getQuery()).willReturn("insert into emp (id) values (1)");
-        listener.afterQuery(executionInfo, Collections.singletonList(queryInfo));
+        given(this.executionInfo.getQueries()).willReturn(Collections.singletonList(queryInfo));
+
+        listener.afterQuery(executionInfo);
 
         // perform on separate thread
         final CountDownLatch latch = new CountDownLatch(1);
@@ -196,7 +201,9 @@ public class DataSourceQueryCountListenerTest {
             public void run() {
                 QueryInfo queryInfo = mock(QueryInfo.class);
                 given(queryInfo.getQuery()).willReturn("select * from emp");
-                listener.afterQuery(executionInfo, Collections.singletonList(queryInfo));
+                given(executionInfo.getQueries()).willReturn(Collections.singletonList(queryInfo));
+
+                listener.afterQuery(executionInfo);
 
                 // verify count within thread
                 try {

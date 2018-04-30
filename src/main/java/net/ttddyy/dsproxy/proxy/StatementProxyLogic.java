@@ -286,9 +286,9 @@ public class StatementProxyLogic {
             }
         }
 
-        ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo, this.statement, isBatchExecution, batchSize, method, args);
+        ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo, this.statement, isBatchExecution, batchSize, method, args, queries);
 
-        queryListener.beforeQuery(execInfo, queries);
+        queryListener.beforeQuery(execInfo);
 
         long beforeTime = System.currentTimeMillis();
 
@@ -372,7 +372,7 @@ public class StatementProxyLogic {
             execInfo.setSuccess(false);
             throw ex.getTargetException();
         } finally {
-            queryListener.afterQuery(execInfo, queries);
+            queryListener.afterQuery(execInfo);
 
             // auto-close the auto-retrieved generated keys. result of "getGeneratedKeys()" should not be affected.
             if (!isGetGeneratedKeysMethod && this.proxyConfig.isAutoCloseGeneratedKeys()

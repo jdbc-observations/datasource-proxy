@@ -18,42 +18,42 @@ import java.util.SortedMap;
 public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
 
     @Override
-    public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName, boolean writeConnectionId) {
+    public String getLogEntry(ExecutionInfo execInfo, boolean writeDataSourceName, boolean writeConnectionId) {
         StringBuilder sb = new StringBuilder();
 
         sb.append("{");
         if (writeDataSourceName) {
-            writeDataSourceNameEntry(sb, execInfo, queryInfoList);
+            writeDataSourceNameEntry(sb, execInfo);
         }
 
         if (writeConnectionId) {
-            writeConnectionIdEntry(sb, execInfo, queryInfoList);
+            writeConnectionIdEntry(sb, execInfo);
         }
 
 
         // Time
-        writeTimeEntry(sb, execInfo, queryInfoList);
+        writeTimeEntry(sb, execInfo);
 
         // Success
-        writeResultEntry(sb, execInfo, queryInfoList);
+        writeResultEntry(sb, execInfo);
 
         // Type
-        writeTypeEntry(sb, execInfo, queryInfoList);
+        writeTypeEntry(sb, execInfo);
 
         // Batch
-        writeBatchEntry(sb, execInfo, queryInfoList);
+        writeBatchEntry(sb, execInfo);
 
         // QuerySize
-        writeQuerySizeEntry(sb, execInfo, queryInfoList);
+        writeQuerySizeEntry(sb, execInfo);
 
         // BatchSize
-        writeBatchSizeEntry(sb, execInfo, queryInfoList);
+        writeBatchSizeEntry(sb, execInfo);
 
         // Queries
-        writeQueriesEntry(sb, execInfo, queryInfoList);
+        writeQueriesEntry(sb, execInfo);
 
         // Params
-        writeParamsEntry(sb, execInfo, queryInfoList);
+        writeParamsEntry(sb, execInfo);
 
         return sb.toString();
     }
@@ -65,9 +65,8 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
      *
      * @param sb            StringBuilder to write
      * @param execInfo      execution info
-     * @param queryInfoList query info list
      */
-    protected void writeDataSourceNameEntry(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    protected void writeDataSourceNameEntry(StringBuilder sb, ExecutionInfo execInfo) {
         String name = execInfo.getDataSourceName();
         sb.append("\"name\":\"");
         sb.append(name == null ? "" : escapeSpecialCharacter(name));
@@ -81,10 +80,9 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
      *
      * @param sb            StringBuilder to write
      * @param execInfo      execution info
-     * @param queryInfoList query info list
      * @since 1.4.2
      */
-    protected void writeConnectionIdEntry(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    protected void writeConnectionIdEntry(StringBuilder sb, ExecutionInfo execInfo) {
         sb.append("\"connection\":");
         sb.append(execInfo.getConnectionId());
         sb.append(", ");
@@ -97,9 +95,8 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
      *
      * @param sb            StringBuilder to write
      * @param execInfo      execution info
-     * @param queryInfoList query info list
      */
-    protected void writeTimeEntry(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    protected void writeTimeEntry(StringBuilder sb, ExecutionInfo execInfo) {
         sb.append("\"time\":");
         sb.append(execInfo.getElapsedTime());
         sb.append(", ");
@@ -113,9 +110,8 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
      *
      * @param sb            StringBuilder to write
      * @param execInfo      execution info
-     * @param queryInfoList query info list
      */
-    protected void writeResultEntry(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    protected void writeResultEntry(StringBuilder sb, ExecutionInfo execInfo) {
         sb.append("\"success\":");
         sb.append(execInfo.isSuccess() ? "true" : "false");
         sb.append(", ");
@@ -129,9 +125,8 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
      *
      * @param sb            StringBuilder to write
      * @param execInfo      execution info
-     * @param queryInfoList query info list
      */
-    protected void writeTypeEntry(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    protected void writeTypeEntry(StringBuilder sb, ExecutionInfo execInfo) {
         sb.append("\"type\":\"");
         sb.append(getStatementType(execInfo.getStatementType()));
         sb.append("\", ");
@@ -144,9 +139,8 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
      *
      * @param sb            StringBuilder to write
      * @param execInfo      execution info
-     * @param queryInfoList query info list
      */
-    protected void writeBatchEntry(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    protected void writeBatchEntry(StringBuilder sb, ExecutionInfo execInfo) {
         sb.append("\"batch\":");
         sb.append(execInfo.isBatch() ? "true" : "false");
         sb.append(", ");
@@ -159,11 +153,10 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
      *
      * @param sb            StringBuilder to write
      * @param execInfo      execution info
-     * @param queryInfoList query info list
      */
-    protected void writeQuerySizeEntry(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    protected void writeQuerySizeEntry(StringBuilder sb, ExecutionInfo execInfo) {
         sb.append("\"querySize\":");
-        sb.append(queryInfoList.size());
+        sb.append(execInfo.getQueries().size());
         sb.append(", ");
     }
 
@@ -174,9 +167,8 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
      *
      * @param sb            StringBuilder to write
      * @param execInfo      execution info
-     * @param queryInfoList query info list
      */
-    protected void writeBatchSizeEntry(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    protected void writeBatchSizeEntry(StringBuilder sb, ExecutionInfo execInfo) {
         sb.append("\"batchSize\":");
         sb.append(execInfo.getBatchSize());
         sb.append(", ");
@@ -189,11 +181,10 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
      *
      * @param sb            StringBuilder to write
      * @param execInfo      execution info
-     * @param queryInfoList query info list
      */
-    protected void writeQueriesEntry(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    protected void writeQueriesEntry(StringBuilder sb, ExecutionInfo execInfo) {
         sb.append("\"query\":[");
-        for (QueryInfo queryInfo : queryInfoList) {
+        for (QueryInfo queryInfo : execInfo.getQueries()) {
             sb.append("\"");
             sb.append(escapeSpecialCharacter(queryInfo.getQuery()));
             sb.append("\",");
@@ -210,20 +201,19 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
      *
      * @param sb            StringBuilder to write
      * @param execInfo      execution info
-     * @param queryInfoList query info list
      */
-    protected void writeParamsEntry(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    protected void writeParamsEntry(StringBuilder sb, ExecutionInfo execInfo) {
         boolean isPrepared = execInfo.getStatementType() == StatementType.PREPARED;
         sb.append("\"params\":[");
-        for (QueryInfo queryInfo : queryInfoList) {
+        for (QueryInfo queryInfo : execInfo.getQueries()) {
 
             for (List<ParameterSetOperation> parameters : queryInfo.getParametersList()) {
                 SortedMap<String, String> paramMap = getParametersToDisplay(parameters);
                 // parameters per batch
                 if (isPrepared) {
-                    writeParamsForSinglePreparedEntry(sb, paramMap, execInfo, queryInfoList);
+                    writeParamsForSinglePreparedEntry(sb, paramMap, execInfo);
                 } else {
-                    writeParamsForSingleCallableEntry(sb, paramMap, execInfo, queryInfoList);
+                    writeParamsForSingleCallableEntry(sb, paramMap, execInfo);
                 }
             }
         }
@@ -240,9 +230,8 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
      * @param sb            StringBuilder to write
      * @param paramMap      sorted parameters map
      * @param execInfo      execution info
-     * @param queryInfoList query info list
      */
-    protected void writeParamsForSinglePreparedEntry(StringBuilder sb, SortedMap<String, String> paramMap, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    protected void writeParamsForSinglePreparedEntry(StringBuilder sb, SortedMap<String, String> paramMap, ExecutionInfo execInfo) {
         sb.append("[");
         for (Map.Entry<String, String> paramEntry : paramMap.entrySet()) {
             Object value = paramEntry.getValue();
@@ -267,9 +256,8 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
      * @param sb            StringBuilder to write
      * @param paramMap      sorted parameters map
      * @param execInfo      execution info
-     * @param queryInfoList query info list
      */
-    protected void writeParamsForSingleCallableEntry(StringBuilder sb, Map<String, String> paramMap, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    protected void writeParamsForSingleCallableEntry(StringBuilder sb, Map<String, String> paramMap, ExecutionInfo execInfo) {
         sb.append("{");
         for (Map.Entry<String, String> paramEntry : paramMap.entrySet()) {
             String key = paramEntry.getKey();

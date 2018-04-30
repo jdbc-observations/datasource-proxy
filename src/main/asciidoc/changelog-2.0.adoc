@@ -71,3 +71,9 @@
 
 * Upgrade to JUnit5
 
+* Move `List<QueryInfo>` into `ExecutionInfo` in query listener methods.
+  Changed query listener signature from `(ExecutionInfo execInfo, List<QueryInfo> queryInfo)` to
+  `(ExecutionInfo execInfo)` on `ProxyDataSourceListener#beforeQuery()` and `afterQuery()`.
+  `ExecutionInfo` class now has a list of `QueryInfo` and `ExecutionInfo#getQueries()` method is added.
+
+

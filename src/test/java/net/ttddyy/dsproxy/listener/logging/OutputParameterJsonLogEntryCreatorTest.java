@@ -77,13 +77,14 @@ public class OutputParameterJsonLogEntryCreatorTest {
                 .success(true)
                 .batch(false)
                 .batchSize(0)
+                .queries(Lists.newArrayList(queryInfo))
                 .build();
         executionInfo.setStatement(cs);   // add mock statement
 
 
         OutputParameterJsonLogEntryCreator creator = new OutputParameterJsonLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), false, true);
+        String jsonEntry = creator.getLogEntry(executionInfo, false, true);
         assertThat(jsonEntry).containsOnlyOnce("\"outParams\":[{\"1\":\"100\",\"foo\":\"101\"},{\"2\":\"200\",\"bar\":\"201\"}]");
 
 

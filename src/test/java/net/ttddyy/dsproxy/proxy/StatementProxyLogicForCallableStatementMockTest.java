@@ -385,11 +385,12 @@ public class StatementProxyLogicForCallableStatementMockTest {
         verify(stat).clearParameters();
         verify(stat).addBatch();
 
-        ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
 
-        verify(listener).afterQuery(any(ExecutionInfo.class), queryInfoListCaptor.capture());
+        verify(listener).afterQuery(executionInfoCaptor.capture());
 
-        List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
+        ExecutionInfo execInfo = executionInfoCaptor.getValue();
+        List<QueryInfo> queryInfoList = execInfo.getQueries();
         assertThat(queryInfoList).hasSize(1);
 
         assertThat(queryInfoList.get(0).getParametersList()).hasSize(1);
@@ -647,9 +648,8 @@ public class StatementProxyLogicForCallableStatementMockTest {
     @SuppressWarnings("unchecked")
     private void verifyListener(ProxyDataSourceListener listener, String methodName, String query, ParamStatus paramStatus) {
         ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
-        ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
 
-        verify(listener).afterQuery(executionInfoCaptor.capture(), queryInfoListCaptor.capture());
+        verify(listener).afterQuery(executionInfoCaptor.capture());
 
         ExecutionInfo execInfo = executionInfoCaptor.getValue();
         assertThat(execInfo.getMethod()).isNotNull();
@@ -659,7 +659,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         assertThat(execInfo.getDataSourceName()).isEqualTo(DS_NAME);
         assertThat(execInfo.getThrowable()).isNull();
 
-        List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
+        List<QueryInfo> queryInfoList = execInfo.getQueries();
         assertThat(queryInfoList).hasSize(1);
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery()).isEqualTo(query);
@@ -669,7 +669,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         List<List<ParameterSetOperation>> queryArgsList = queryInfo.getParametersList();
         assertThat(queryArgsList).as("non-batch exec should have only one params.").hasSize(1);
 
-        Map<String, Object> queryArgs = new HashMap<String, Object>();
+        Map<String, Object> queryArgs = new HashMap<>();
         for (ParameterSetOperation operation : queryArgsList.get(0)) {
             Object[] args = operation.getArgs();
             queryArgs.put(args[0].toString(), args[1]);

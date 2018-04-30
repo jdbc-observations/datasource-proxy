@@ -1,6 +1,8 @@
 package net.ttddyy.dsproxy;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -18,6 +20,7 @@ public class ExecutionInfoBuilder {
     private boolean batch;
     private int batchSize;
     private String connectionId;
+    private List<QueryInfo> queries = new ArrayList<>();
 
     public static ExecutionInfoBuilder create() {
         return new ExecutionInfoBuilder();
@@ -78,6 +81,11 @@ public class ExecutionInfoBuilder {
         return this;
     }
 
+    public ExecutionInfoBuilder queries(List<QueryInfo> queries) {
+        this.queries = queries;
+        return this;
+    }
+
     public ExecutionInfo build() {
         ExecutionInfo executionInfo = new ExecutionInfo();
         executionInfo.setDataSourceName(dataSourceName);
@@ -91,6 +99,7 @@ public class ExecutionInfoBuilder {
         executionInfo.setBatch(batch);
         executionInfo.setBatchSize(batchSize);
         executionInfo.setConnectionId(this.connectionId);
+        executionInfo.setQueries(this.queries);
         return executionInfo;
     }
 }

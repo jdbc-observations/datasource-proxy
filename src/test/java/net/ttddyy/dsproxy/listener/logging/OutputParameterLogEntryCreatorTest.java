@@ -77,13 +77,14 @@ public class OutputParameterLogEntryCreatorTest {
                 .success(true)
                 .batch(false)
                 .batchSize(0)
+                .queries(Lists.newArrayList(queryInfo))
                 .build();
         executionInfo.setStatement(cs);   // add mock statement
 
 
         OutputParameterLogEntryCreator creator = new OutputParameterLogEntryCreator();
 
-        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), false, true);
+        String entry = creator.getLogEntry(executionInfo, false, true);
         assertThat(entry).containsOnlyOnce("OutParams:[(1=100,foo=101),(2=200,bar=201)]");
 
     }

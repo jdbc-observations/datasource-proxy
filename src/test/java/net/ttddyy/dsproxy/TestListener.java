@@ -2,8 +2,6 @@ package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 
-import java.util.List;
-
 /**
  * @author Tadaya Tsuyukubo
  */
@@ -11,11 +9,13 @@ public class TestListener implements ProxyDataSourceListener {
     int beforeCount = 0;
     int afterCount = 0;
 
-    public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    @Override
+    public void beforeQuery(ExecutionInfo execInfo) {
         beforeCount++;
     }
 
-    public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    @Override
+    public void afterQuery(ExecutionInfo execInfo) {
         afterCount++;
     }
 

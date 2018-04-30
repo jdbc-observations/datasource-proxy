@@ -67,15 +67,15 @@ public class CommonsQueryLoggingListenerTest {
         InMemoryCommonsLog log = new InMemoryCommonsLog();
         listener.setLog(log);
 
-        ExecutionInfo execInfo = ExecutionInfoBuilder.create().build();
-        List<QueryInfo> queryInfoList = new ArrayList<QueryInfo>();
+        List<QueryInfo> queryInfoList = new ArrayList<>();
         queryInfoList.add(QueryInfoBuilder.create().query("select * ").build());
+        ExecutionInfo execInfo = ExecutionInfoBuilder.create().queries(queryInfoList).build();
 
         // listener writes to more serious level
         listener.setLogLevel(CommonsLogLevel.DEBUG);
         log.setEnabledLogLevel(CommonsLogLevel.TRACE);
 
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(execInfo);
 
         assertThat(log.getTraceMessages()).isEmpty();
         assertThat(log.getDebugMessages()).hasSize(1);
@@ -89,7 +89,7 @@ public class CommonsQueryLoggingListenerTest {
         listener.setLogLevel(CommonsLogLevel.TRACE);
         log.setEnabledLogLevel(CommonsLogLevel.DEBUG);
 
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(execInfo);
 
         assertThat(log.getTraceMessages()).isEmpty();
         assertThat(log.getDebugMessages()).isEmpty();
@@ -103,7 +103,7 @@ public class CommonsQueryLoggingListenerTest {
         listener.setLogLevel(CommonsLogLevel.DEBUG);
         log.setEnabledLogLevel(CommonsLogLevel.DEBUG);
 
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(execInfo);
 
         assertThat(log.getTraceMessages()).isEmpty();
         assertThat(log.getDebugMessages()).hasSize(1);

@@ -2,26 +2,21 @@ package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Tadaya Tsuyukubo
  */
 public class LastQueryListener implements ProxyDataSourceListener {
     private ExecutionInfo beforeExecInfo;
     private ExecutionInfo afterExecInfo;
-    private List<QueryInfo> beforeQueries = new ArrayList<QueryInfo>();
-    private List<QueryInfo> afterQueries = new ArrayList<QueryInfo>();
 
-    public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    @Override
+    public void beforeQuery(ExecutionInfo execInfo) {
         beforeExecInfo = execInfo;
-        beforeQueries = queryInfoList;
     }
 
-    public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    @Override
+    public void afterQuery(ExecutionInfo execInfo) {
         afterExecInfo = execInfo;
-        afterQueries = queryInfoList;
     }
 
     public ExecutionInfo getBeforeExecInfo() {
@@ -32,11 +27,4 @@ public class LastQueryListener implements ProxyDataSourceListener {
         return afterExecInfo;
     }
 
-    public List<QueryInfo> getBeforeQueries() {
-        return beforeQueries;
-    }
-
-    public List<QueryInfo> getAfterQueries() {
-        return afterQueries;
-    }
 }

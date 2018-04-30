@@ -66,10 +66,10 @@ public class GeneratedKeysProxyTest {
 
     private static class LoggingExecutionListener implements ProxyDataSourceListener {
 
-        private List<Integer> generatedKeys = new ArrayList<Integer>();
+        private List<Integer> generatedKeys = new ArrayList<>();
 
         @Override
-        public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+        public void afterQuery(ExecutionInfo execInfo) {
             try {
                 ResultSet resultSet = execInfo.getGeneratedKeys();
                 if (resultSet == null) {

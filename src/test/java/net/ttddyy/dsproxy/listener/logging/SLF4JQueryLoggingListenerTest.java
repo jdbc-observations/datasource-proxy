@@ -37,8 +37,8 @@ public class SLF4JQueryLoggingListenerTest {
         InMemorySLF4JLogger logger = new InMemorySLF4JLogger();
 
         List<QueryInfo> queryInfoList = new ArrayList<QueryInfo>();
-        ExecutionInfo execInfo = ExecutionInfoBuilder.create().build();
         queryInfoList.add(QueryInfoBuilder.create().query("select * ").build());
+        ExecutionInfo execInfo = ExecutionInfoBuilder.create().queries(queryInfoList).build();
 
 
         // listener writes to more serious level
@@ -46,7 +46,7 @@ public class SLF4JQueryLoggingListenerTest {
         logger.setEnabledLogLevel(SLF4JLogLevel.TRACE);
         listener.setLogger(logger);
 
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(execInfo);
 
         assertThat(logger.getTraceMessages()).isEmpty();
         assertThat(logger.getDebugMessages()).hasSize(1);
@@ -59,7 +59,7 @@ public class SLF4JQueryLoggingListenerTest {
         listener.setLogLevel(SLF4JLogLevel.TRACE);
         logger.setEnabledLogLevel(SLF4JLogLevel.DEBUG);
 
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(execInfo);
 
         assertThat(logger.getTraceMessages()).isEmpty();
         assertThat(logger.getDebugMessages()).isEmpty();
@@ -72,7 +72,7 @@ public class SLF4JQueryLoggingListenerTest {
         listener.setLogLevel(SLF4JLogLevel.DEBUG);
         logger.setEnabledLogLevel(SLF4JLogLevel.DEBUG);
 
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(execInfo);
 
         assertThat(logger.getTraceMessages()).isEmpty();
         assertThat(logger.getDebugMessages()).hasSize(1);

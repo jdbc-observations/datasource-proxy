@@ -86,7 +86,7 @@ public class ResultSetProxyTest {
         private Table table;
 
         @Override
-        public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+        public void afterQuery(ExecutionInfo execInfo) {
             if (execInfo.getResult() instanceof ResultSet) {
                 table = extractTable((ResultSet) execInfo.getResult());
             }
@@ -95,7 +95,7 @@ public class ResultSetProxyTest {
         private static Table extractTable(ResultSet resultSet) {
             try {
                 String[] columns = extractColumns(resultSet);
-                List<String[]> rows = new ArrayList<String[]>();
+                List<String[]> rows = new ArrayList<>();
                 while (resultSet.next()) {
                     rows.add(extractRow(resultSet));
                 }
