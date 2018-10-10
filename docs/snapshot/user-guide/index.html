@@ -493,6 +493,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#changelog">8. Changelog</a>
 <ul class="sectlevel2">
 <li><a href="#changelog-2.0">2.0</a></li>
+<li><a href="#changelog-1.4.9">1.4.9</a></li>
 <li><a href="#changelog-1.4.8">1.4.8</a></li>
 <li><a href="#changelog-1.4.7">1.4.7</a></li>
 <li><a href="#changelog-1.4.6">1.4.6</a></li>
@@ -2293,6 +2294,23 @@ public class MyController {
 </li>
 <li>
 <p>Upgrade to JUnit5</p>
+</li>
+<li>
+<p>Move <code>List&lt;QueryInfo&gt;</code> into <code>ExecutionInfo</code> in query listener methods.
+Changed query listener signature from <code>(ExecutionInfo execInfo, List&lt;QueryInfo&gt; queryInfo)</code> to
+<code>(ExecutionInfo execInfo)</code> on <code>ProxyDataSourceListener#beforeQuery()</code> and <code>afterQuery()</code>.
+<code>ExecutionInfo</code> class now has a list of <code>QueryInfo</code> and <code>ExecutionInfo#getQueries()</code> method is added.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="changelog-1.4.9"><a class="anchor" href="#changelog-1.4.9"></a>1.4.9</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Fix memory leak in slow query listener. (<a href="https://github.com/ttddyy/datasource-proxy/pull/53">Issue-53</a>) <br>
+Thanks <em>wuwen (<a href="https://github.com/wuwen5" class="bare">https://github.com/wuwen5</a>)</em> for this contribution!!</p>
 </li>
 </ul>
 </div>
