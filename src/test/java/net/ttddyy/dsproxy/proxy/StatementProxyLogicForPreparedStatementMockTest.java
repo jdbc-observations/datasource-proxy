@@ -625,7 +625,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         assertThat(result).isInstanceOf(ResultSet.class);
         assertTrue(Proxy.isProxyClass(result.getClass()));
         assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
-        assertThat(listenerReceivedResult.get()).as("listener should receive proxied resultset").isSameAs(result);
+        assertThat(listenerReceivedResult).as("listener should not be called").hasValue(null);
 
         listenerReceivedResult.set(null);
 

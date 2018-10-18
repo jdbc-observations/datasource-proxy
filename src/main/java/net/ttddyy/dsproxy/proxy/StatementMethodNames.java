@@ -20,6 +20,7 @@ public interface StatementMethodNames {
     String PARAMETER_METHOD_REGISTER_OUT_PARAMETER = "registerOutParameter";
     String GET_GENERATED_KEYS_METHOD = "getGeneratedKeys";
     String GET_CONNECTION_METHOD = "getConnection";
+    String GET_RESULTSET_METHOD = "getResultSet";
 
     Set<String> PARAMETER_METHODS = Collections.unmodifiableSet(
             new HashSet<>(Arrays.asList("setArray", "setAsciiStream", "setBigDecimal",
@@ -66,7 +67,7 @@ public interface StatementMethodNames {
 
     Set<String> METHODS_TO_RETURN_RESULTSET = Collections.unmodifiableSet(
             new HashSet<>(Arrays.asList(
-                    "executeQuery", GET_GENERATED_KEYS_METHOD, "getResultSet",  // from Statement
+                    "executeQuery", GET_GENERATED_KEYS_METHOD, GET_RESULTSET_METHOD,  // from Statement
                     "executeQuery"  // from PreparedStatement
             ))
     );

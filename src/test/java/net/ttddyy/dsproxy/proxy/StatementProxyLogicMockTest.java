@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -854,7 +855,7 @@ public class StatementProxyLogicMockTest {
         assertThat(result).isInstanceOf(ResultSet.class);
         assertTrue(Proxy.isProxyClass(result.getClass()));
         assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
-        assertThat(listenerReceivedResult.get()).as("listener should receive proxied resultset").isSameAs(result);
+        assertThat(listenerReceivedResult).as("listener should not be called").hasValue(null);
 
         listenerReceivedResult.set(null);
 
@@ -902,7 +903,7 @@ public class StatementProxyLogicMockTest {
         assertThat(result).isInstanceOf(ResultSet.class);
         assertTrue(Proxy.isProxyClass(result.getClass()));
         assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
-        assertThat(listenerReceivedResult.get()).as("listener should receive proxied resultset").isSameAs(result);
+        assertThat(listenerReceivedResult).as("listener should not be called").hasValue(null);
 
         listenerReceivedResult.set(null);
 
@@ -1035,6 +1036,38 @@ public class StatementProxyLogicMockTest {
         }
 
         assertThat(elapsedTimeHolder).hasValueGreaterThanOrEqualTo(3);
+    }
+
+    @Test
+    void getGeneratedKeysShouldNotInvokeQueryListener() throws Throwable {
+        Statement stmt = mock(Statement.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
+
+        StatementProxyLogic logic = getProxyLogic(stmt, listener, null, true, false);
+
+        Method getGeneratedKeysMethod = Statement.class.getMethod("getGeneratedKeys");
+
+        logic.invoke(getGeneratedKeysMethod, null);
+
+        // beforeQuery()/afterQuery() should not be called
+        verify(listener, never()).beforeQuery(any());
+        verify(listener, never()).afterQuery(any());
+    }
+
+    @Test
+    void getResultSetShouldNotInvokeQueryListener() throws Throwable {
+        Statement stmt = mock(Statement.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
+
+        StatementProxyLogic logic = getProxyLogic(stmt, listener, null, true, false);
+
+        Method getResultSet = Statement.class.getMethod("getResultSet");
+
+        logic.invoke(getResultSet, null);
+
+        // beforeQuery()/afterQuery() should not be called
+        verify(listener, never()).beforeQuery(any());
+        verify(listener, never()).afterQuery(any());
     }
 
 }
