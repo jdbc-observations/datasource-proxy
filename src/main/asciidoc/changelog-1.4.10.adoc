@@ -1,0 +1,6 @@
+[[changelog-1.4.10]]
+=== 1.4.10
+
+* Fix empty log line for `getGeneratedKeys()` and `getResultSet()` method calls.
+  (https://github.com/ttddyy/datasource-proxy/pull/54[Issue-54])
+
