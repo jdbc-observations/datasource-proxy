@@ -493,6 +493,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#changelog">8. Changelog</a>
 <ul class="sectlevel2">
 <li><a href="#changelog-2.0">2.0</a></li>
+<li><a href="#changelog-1.4.10">1.4.10</a></li>
 <li><a href="#changelog-1.4.9">1.4.9</a></li>
 <li><a href="#changelog-1.4.8">1.4.8</a></li>
 <li><a href="#changelog-1.4.7">1.4.7</a></li>
@@ -2300,6 +2301,17 @@ public class MyController {
 Changed query listener signature from <code>(ExecutionInfo execInfo, List&lt;QueryInfo&gt; queryInfo)</code> to
 <code>(ExecutionInfo execInfo)</code> on <code>ProxyDataSourceListener#beforeQuery()</code> and <code>afterQuery()</code>.
 <code>ExecutionInfo</code> class now has a list of <code>QueryInfo</code> and <code>ExecutionInfo#getQueries()</code> method is added.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="changelog-1.4.10"><a class="anchor" href="#changelog-1.4.10"></a>1.4.10</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Fix empty log line for <code>getGeneratedKeys()</code> and <code>getResultSet()</code> method calls.
+(<a href="https://github.com/ttddyy/datasource-proxy/pull/54">Issue-54</a>)</p>
 </li>
 </ul>
 </div>
