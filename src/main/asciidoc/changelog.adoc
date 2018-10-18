@@ -5,6 +5,8 @@
 
 include::changelog-2.0.adoc[]
 
+include::changelog-1.4.10.adoc[]
+
 include::changelog-1.4.9.adoc[]
 
 include::changelog-1.4.8.adoc[]
