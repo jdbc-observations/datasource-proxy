@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import static net.ttddyy.dsproxy.proxy.StatementMethodNames.GET_GENERATED_KEYS_METHOD;
+import static net.ttddyy.dsproxy.proxy.StatementMethodNames.GET_RESULTSET_METHOD;
 import static net.ttddyy.dsproxy.proxy.StatementMethodNames.METHODS_TO_RETURN_RESULTSET;
 
 /**
@@ -300,7 +301,12 @@ public class StatementProxyLogic {
 
         final ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo, this.statement, isBatchExecution, batchSize, method, args);
 
-        queryListener.beforeQuery(execInfo, queries);
+        boolean isGetResultSetMethod = GET_RESULTSET_METHOD.equals(methodName);
+        boolean performQueryListener = !isGetGeneratedKeysMethod && !isGetResultSetMethod;
+
+        if (performQueryListener) {
+            queryListener.beforeQuery(execInfo, queries);
+        }
 
         final long beforeTime = System.currentTimeMillis();
 
@@ -384,7 +390,10 @@ public class StatementProxyLogic {
             execInfo.setSuccess(false);
             throw ex.getTargetException();
         } finally {
-            queryListener.afterQuery(execInfo, queries);
+
+            if (performQueryListener) {
+                queryListener.afterQuery(execInfo, queries);
+            }
 
             // auto-close the auto-retrieved generated keys. result of "getGeneratedKeys()" should not be affected.
             if (!isGetGeneratedKeysMethod && this.proxyConfig.isAutoCloseGeneratedKeys()
