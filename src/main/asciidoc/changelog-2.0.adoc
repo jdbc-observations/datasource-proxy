@@ -1,6 +1,9 @@
 [[changelog-2.0]]
 === 2.0
 
+* Added `ExecutionInfoFormatter` to replace `QueryLogEntryCreator`
+  `OutputParameterFormatterSupport` is added to replace `OutputParameterLogEntryCreator`
+
 * Removed query count logging support using spring `HandlerInterceptor`
   - net.ttddyy.dsproxy.support.AbstractQueryCountLoggingHandlerInterceptor
   - net.ttddyy.dsproxy.support.QueryCounterClearHandlerInterceptor
