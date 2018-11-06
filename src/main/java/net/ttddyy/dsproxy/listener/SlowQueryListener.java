@@ -24,9 +24,9 @@ import java.util.function.Consumer;
  * <pre>
  * {@code}
  * long thresholdInMills = ...
- * SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener(){
+ * ProxyDataSourceListener listener = new ProxyDataSourceListener(){
  *      {@literal @}Override
- *      public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+ *      public void afterQuery(ExecutionInfo execInfo) {
  *          if (execInfo.getElapsedTime() >= thresholdInMills) {
  *              super.afterQuery(execInfo, queryInfoList);
  *          }

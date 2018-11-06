@@ -1,8 +1,6 @@
 package net.ttddyy.dsproxy.support.jndi;
 
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
-import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
-import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 
@@ -37,16 +35,12 @@ import java.util.Set;
  * <ul>
  * <li> <b>dataSource <i>(required)</i></b>: Reference to actual datasource resource.  ex: java:jdbc/global/myDS
  * <li> <b>proxyName</b>:             ProxyDataSource name
- * <li> <b>logLevel</b>:              Loglevel for commons-logging or slf4j. ex: DEBUG, INFO, etc.
  * <li> <b>listeners</b>:             Fully qualified class name of `ProxyDataSourceListener` implementation class,or predefined values below. Can be comma delimited.
  * <li> <b>queryTransformer</b>:      Fully qualified class name of `QueryTransformer` implementation class.
  * </ul>
  *
  * <i>listeners</i> parameter:
  * <ul>
- * <li> <b>sysout</b>:   alias to `net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener`
- * <li> <b>commons</b>:  alias to `net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener`
- * <li> <b>slf4j</b>:    alias to `net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener`
  * <li> <b>count</b>:    alias to `net.ttddyy.dsproxy.listener.DataSourceQueryCountListener`
  * <li> <b>x.y.z.MyQueryExecutionListener</b>: Fully qualified class name of `ProxyDataSourceListener` implementation
  * </ul>
@@ -72,9 +66,6 @@ public class ProxyDataSourceObjectFactory implements ObjectFactory {
         String dataSourceJndiName = getContentFromReference(reference, "dataSource");
         String proxyDataSourceName = getContentFromReference(reference, "proxyName");
         String listenerNames = getContentFromReference(reference, "listeners");
-        String logLevel = getContentFromReference(reference, "logLevel");
-        String loggerName = getContentFromReference(reference, "loggerName");
-        String format = getContentFromReference(reference, "format");
         String queryTransformer = getContentFromReference(reference, "queryTransformer");
 
         // retrieve datasource from JNDI
@@ -95,42 +86,12 @@ public class ProxyDataSourceObjectFactory implements ObjectFactory {
 
         if (listenerNames != null) {
             for (String listenerName : getListenerNames(listenerNames)) {
-                if ("commons".equalsIgnoreCase(listenerName)) {
-                    boolean hasLogLevel = logLevel != null;
-                    boolean hasLoggerName = loggerName != null;
-                    if (hasLogLevel && hasLoggerName) {
-                        builder.logQueryByCommons(CommonsLogLevel.valueOf(logLevel.toUpperCase()), loggerName);
-                    } else if (hasLogLevel) {
-                        builder.logQueryByCommons(CommonsLogLevel.valueOf(logLevel.toUpperCase()));
-                    } else if (hasLoggerName) {
-                        builder.logQueryByCommons(loggerName);
-                    } else {
-                        builder.logQueryByCommons();
-                    }
-                } else if ("slf4j".equalsIgnoreCase(listenerName)) {
-                    boolean hasLogLevel = logLevel != null;
-                    boolean hasLogName = loggerName != null;
-                    if (hasLogLevel && hasLogName) {
-                        builder.logQueryBySlf4j(SLF4JLogLevel.valueOf(logLevel.toUpperCase()), loggerName);
-                    } else if (hasLogLevel) {
-                        builder.logQueryBySlf4j(SLF4JLogLevel.valueOf(logLevel.toUpperCase()));
-                    } else if (hasLogName) {
-                        builder.logQueryBySlf4j(loggerName);
-                    } else {
-                        builder.logQueryBySlf4j();
-                    }
-                } else if ("sysout".equalsIgnoreCase(listenerName)) {
-                    builder.logQueryToSysOut();
-                } else if ("count".equalsIgnoreCase(listenerName)) {
+                if ("count".equalsIgnoreCase(listenerName)) {
                     builder.countQuery();
                 } else {
                     ProxyDataSourceListener listener = createNewInstance(ProxyDataSourceListener.class, listenerName);
                     builder.listener(listener);
                 }
-            }
-
-            if (format != null && "json".equals(format.toLowerCase())) {
-                builder.asJson();
             }
         }
 

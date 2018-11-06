@@ -27,6 +27,21 @@
 
   ```
 
+* Removed specific logging implementation for `~QueryLoggingListener`
+  - net.ttddyy.dsproxy.listener.logging.AbstractQueryLoggingListener
+  - net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener
+  - net.ttddyy.dsproxy.listener.logging.JULQueryLoggingListener
+  - net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener
+  - net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener
+
+  Related builder methods on `ProxyDataSourceBuilder` are removed:
+  - `logQueryByCommons()`
+  - `logQueryBySlf4j()`
+  - `logQueryByJUL()`
+  - `logQueryToSysOut()`
+  - `multiline()`
+  - `json()`
+
 
 * Added `ExecutionInfoFormatter` and `ExecutionInfoJsonFormatter` to replace
   `QueryLogEntryCreator`.

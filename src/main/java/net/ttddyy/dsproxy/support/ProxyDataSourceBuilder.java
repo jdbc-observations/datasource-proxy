@@ -8,14 +8,6 @@ import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.QueryCountStrategy;
 import net.ttddyy.dsproxy.listener.SlowQueryListener;
 import net.ttddyy.dsproxy.listener.TracingMethodListener;
-import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
-import net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener;
-import net.ttddyy.dsproxy.listener.logging.DefaultJsonQueryLogEntryCreator;
-import net.ttddyy.dsproxy.listener.logging.DefaultQueryLogEntryCreator;
-import net.ttddyy.dsproxy.listener.logging.JULQueryLoggingListener;
-import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
-import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
-import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
 import net.ttddyy.dsproxy.proxy.DefaultConnectionIdManager;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -30,7 +22,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 
 /**
  * Builder for {@link net.ttddyy.dsproxy.support.ProxyDataSource}.
@@ -48,31 +39,9 @@ public class ProxyDataSourceBuilder {
     private BooleanSupplier tracingCondition;
     private Consumer<String> tracingMessageConsumer;
 
-    // For building QueryLoggingListeners
-
-    // CommonsQueryLoggingListener
-    private boolean createCommonsQueryListener;
-    private CommonsLogLevel commonsLogLevel;
-    private String commonsLoggerName;
-
-    // for SLF4JQueryLoggingListener
-    private boolean createSlf4jQueryListener;
-    private SLF4JLogLevel slf4jLogLevel;
-    private String slf4jLoggerName;
-
-    // for JULQueryLoggingListener
-    private boolean createJulQueryListener;
-    private Level julLogLevel;
-    private String julLoggerName;
-
-    // for SystemOutQueryLoggingListener
-    private boolean createSysOutQueryListener;
-
     private boolean createDataSourceQueryCountListener;
     private QueryCountStrategy queryCountStrategy;
 
-    private boolean jsonFormat;
-    private boolean multiline;
     private List<ProxyDataSourceListener> listeners = new ArrayList<>();
 
     private QueryTransformer queryTransformer;
@@ -116,155 +85,6 @@ public class ProxyDataSourceBuilder {
     public ProxyDataSourceBuilder dataSource(DataSource dataSource) {
         this.dataSource = dataSource;
         return this;
-    }
-
-    /**
-     * Register {@link CommonsQueryLoggingListener}.
-     *
-     * @return builder
-     */
-    public ProxyDataSourceBuilder logQueryByCommons() {
-        return logQueryByCommons(null, null);
-    }
-
-    /**
-     * Register {@link CommonsQueryLoggingListener}.
-     *
-     * @param logLevel log level for commons
-     * @return builder
-     */
-    public ProxyDataSourceBuilder logQueryByCommons(CommonsLogLevel logLevel) {
-        return logQueryByCommons(logLevel, null);
-    }
-
-    /**
-     * Register {@link CommonsQueryLoggingListener}.
-     *
-     * @param commonsLoggerName commons logger name
-     * @return builder
-     * @since 1.3.1
-     */
-    public ProxyDataSourceBuilder logQueryByCommons(String commonsLoggerName) {
-        return logQueryByCommons(null, commonsLoggerName);
-    }
-
-    /**
-     * Register {@link CommonsQueryLoggingListener}.
-     *
-     * @param logLevel          log level for commons
-     * @param commonsLoggerName commons logger name
-     * @return builder
-     * @since 1.3.1
-     */
-    public ProxyDataSourceBuilder logQueryByCommons(CommonsLogLevel logLevel, String commonsLoggerName) {
-        this.createCommonsQueryListener = true;
-        this.commonsLogLevel = logLevel;
-        this.commonsLoggerName = commonsLoggerName;
-        return this;
-    }
-
-
-    /**
-     * Register {@link SLF4JQueryLoggingListener}.
-     *
-     * @return builder
-     */
-    public ProxyDataSourceBuilder logQueryBySlf4j() {
-        return logQueryBySlf4j(null, null);
-    }
-
-    /**
-     * Register {@link SLF4JQueryLoggingListener}.
-     *
-     * @param logLevel log level for slf4j
-     * @return builder
-     */
-    public ProxyDataSourceBuilder logQueryBySlf4j(SLF4JLogLevel logLevel) {
-        return logQueryBySlf4j(logLevel, null);
-    }
-
-    /**
-     * Register {@link SLF4JQueryLoggingListener}.
-     *
-     * @param slf4jLoggerName slf4j logger name
-     * @return builder
-     * @since 1.3.1
-     */
-    public ProxyDataSourceBuilder logQueryBySlf4j(String slf4jLoggerName) {
-        return logQueryBySlf4j(null, slf4jLoggerName);
-    }
-
-    /**
-     * Register {@link SLF4JQueryLoggingListener}.
-     *
-     * @param logLevel        log level for slf4j
-     * @param slf4jLoggerName slf4j logger name
-     * @return builder
-     * @since 1.3.1
-     */
-    public ProxyDataSourceBuilder logQueryBySlf4j(SLF4JLogLevel logLevel, String slf4jLoggerName) {
-        this.createSlf4jQueryListener = true;
-        this.slf4jLogLevel = logLevel;
-        this.slf4jLoggerName = slf4jLoggerName;
-        return this;
-    }
-
-    /**
-     * Register {@link JULQueryLoggingListener}.
-     *
-     * @return builder
-     * @since 1.4
-     */
-    public ProxyDataSourceBuilder logQueryByJUL() {
-        return logQueryByJUL(null, null);
-    }
-
-    /**
-     * Register {@link JULQueryLoggingListener}.
-     *
-     * @param logLevel log level for JUL
-     * @return builder
-     * @since 1.4
-     */
-    public ProxyDataSourceBuilder logQueryByJUL(Level logLevel) {
-        return logQueryByJUL(logLevel, null);
-    }
-
-    /**
-     * Register {@link JULQueryLoggingListener}.
-     *
-     * @param julLoggerName JUL logger name
-     * @return builder
-     * @since 1.4
-     */
-    public ProxyDataSourceBuilder logQueryByJUL(String julLoggerName) {
-        return logQueryByJUL(null, julLoggerName);
-    }
-
-    /**
-     * Register {@link JULQueryLoggingListener}.
-     *
-     * @param logLevel      log level for JUL
-     * @param julLoggerName JUL logger name
-     * @return builder
-     * @since 1.4
-     */
-    public ProxyDataSourceBuilder logQueryByJUL(Level logLevel, String julLoggerName) {
-        this.createJulQueryListener = true;
-        this.julLogLevel = logLevel;
-        this.julLoggerName = julLoggerName;
-        return this;
-    }
-
-    /**
-     * Register {@link SystemOutQueryLoggingListener}.
-     *
-     * @return builder
-     */
-    public ProxyDataSourceBuilder logQueryToSysOut() {
-        this.createSysOutQueryListener = true;
-        return this;
-
     }
 
     /**
@@ -337,16 +157,6 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Format logging output as JSON.
-     *
-     * @return builder
-     */
-    public ProxyDataSourceBuilder asJson() {
-        this.jsonFormat = true;
-        return this;
-    }
-
-    /**
      * Set datasource name.
      *
      * @param dataSourceName datasource name
@@ -365,17 +175,6 @@ public class ProxyDataSourceBuilder {
      */
     public ProxyDataSourceBuilder queryTransformer(QueryTransformer queryTransformer) {
         this.queryTransformer = queryTransformer;
-        return this;
-    }
-
-    /**
-     * Use multiline output for logging query.
-     *
-     * @return builder
-     * @since 1.4.1
-     */
-    public ProxyDataSourceBuilder multiline() {
-        this.multiline = true;
         return this;
     }
 
@@ -684,21 +483,6 @@ public class ProxyDataSourceBuilder {
         // Query Logging Listeners
         List<ProxyDataSourceListener> listeners = new ArrayList<>();
 
-        // query logging listeners
-        if (this.createCommonsQueryListener) {
-            listeners.add(buildCommonsQueryListener());
-        }
-        if (this.createSlf4jQueryListener) {
-            listeners.add(buildSlf4jQueryListener());
-        }
-        if (this.createJulQueryListener) {
-            listeners.add(buildJulQueryListener());
-        }
-        if (this.createSysOutQueryListener) {
-            listeners.add(buildSysOutQueryListener());
-        }
-
-
         // countQuery listener
         if (this.createDataSourceQueryCountListener) {
             DataSourceQueryCountListener countListener = new DataSourceQueryCountListener();
@@ -775,74 +559,6 @@ public class ProxyDataSourceBuilder {
         proxyDataSource.setProxyConfig(proxyConfig);
 
         return proxyDataSource;
-    }
-
-    private CommonsQueryLoggingListener buildCommonsQueryListener() {
-        CommonsQueryLoggingListener listener = new CommonsQueryLoggingListener();
-        if (this.commonsLogLevel != null) {
-            listener.setLogLevel(this.commonsLogLevel);
-        }
-        if (this.commonsLoggerName != null && !this.commonsLoggerName.isEmpty()) {
-            listener.setLog(this.commonsLoggerName);
-        }
-        if (this.jsonFormat) {
-            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
-        }
-        if (this.multiline) {
-            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
-        }
-        return listener;
-    }
-
-    private SLF4JQueryLoggingListener buildSlf4jQueryListener() {
-        SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener();
-        if (this.slf4jLogLevel != null) {
-            listener.setLogLevel(this.slf4jLogLevel);
-        }
-        if (this.slf4jLoggerName != null && !this.slf4jLoggerName.isEmpty()) {
-            listener.setLogger(this.slf4jLoggerName);
-        }
-        if (this.jsonFormat) {
-            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
-        }
-        if (this.multiline) {
-            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
-        }
-        return listener;
-    }
-
-    private JULQueryLoggingListener buildJulQueryListener() {
-        JULQueryLoggingListener listener = new JULQueryLoggingListener();
-        if (this.julLogLevel != null) {
-            listener.setLogLevel(this.julLogLevel);
-        }
-        if (this.julLoggerName != null && !this.julLoggerName.isEmpty()) {
-            listener.setLogger(this.julLoggerName);
-        }
-        if (this.jsonFormat) {
-            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
-        }
-        if (this.multiline) {
-            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
-        }
-        return listener;
-    }
-
-    private SystemOutQueryLoggingListener buildSysOutQueryListener() {
-        SystemOutQueryLoggingListener listener = new SystemOutQueryLoggingListener();
-        if (this.jsonFormat) {
-            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
-        }
-        if (this.multiline) {
-            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
-        }
-        return listener;
-    }
-
-    private DefaultQueryLogEntryCreator buildMultilineQueryLogEntryCreator() {
-        DefaultQueryLogEntryCreator entryCreator = new DefaultQueryLogEntryCreator();
-        entryCreator.setMultiline(true);
-        return entryCreator;
     }
 
     private TracingMethodListener buildTracingMethodListenr() {

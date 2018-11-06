@@ -29,7 +29,7 @@ import net.ttddyy.dsproxy.transform.QueryTransformer;
  * <bean id="myListener" class="net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener">
  *   <property name="listeners">
  *     <list>
- *       <bean class="net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener"/>
+ *       <bean class="..."/>
  *     </list>
  *   </property>
  * </bean>

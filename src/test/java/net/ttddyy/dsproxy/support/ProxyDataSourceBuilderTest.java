@@ -9,15 +9,6 @@ import net.ttddyy.dsproxy.listener.QueryCountStrategy;
 import net.ttddyy.dsproxy.listener.SlowQueryListener;
 import net.ttddyy.dsproxy.listener.ThreadQueryCountHolder;
 import net.ttddyy.dsproxy.listener.TracingMethodListener;
-import net.ttddyy.dsproxy.listener.logging.AbstractQueryLoggingListener;
-import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
-import net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener;
-import net.ttddyy.dsproxy.listener.logging.DefaultQueryLogEntryCreator;
-import net.ttddyy.dsproxy.listener.logging.JULQueryLoggingListener;
-import net.ttddyy.dsproxy.listener.logging.QueryLogEntryCreator;
-import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
-import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
-import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.RepeatableReadResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
@@ -28,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -37,100 +27,6 @@ import static org.mockito.Mockito.mock;
  * @author Tadaya Tsuyukubo
  */
 public class ProxyDataSourceBuilderTest {
-
-    @Test
-    public void buildCommonsQueryLoggingListener() {
-
-        ProxyDataSource ds;
-        CommonsQueryLoggingListener listener;
-
-        ds = ProxyDataSourceBuilder.create().logQueryByCommons().build();
-        listener = getAndVerifyListener(ds, CommonsQueryLoggingListener.class);
-        assertThat(listener.getLogLevel()).as("default log level").isEqualTo(CommonsLogLevel.DEBUG);
-
-        // with logLevel
-        ds = ProxyDataSourceBuilder.create().logQueryByCommons(CommonsLogLevel.ERROR).build();
-        listener = getAndVerifyListener(ds, CommonsQueryLoggingListener.class);
-        assertThat(listener.getLogLevel()).as("log level").isEqualTo(CommonsLogLevel.ERROR);
-
-        // with name and logLevel
-        ds = ProxyDataSourceBuilder.create().logQueryByCommons(CommonsLogLevel.FATAL, "my.log").build();
-        listener = getAndVerifyListener(ds, CommonsQueryLoggingListener.class);
-        assertThat(listener.getLogLevel()).as("log level").isEqualTo(CommonsLogLevel.FATAL);
-    }
-
-    @Test
-    public void buildSLF4JQueryLoggingListener() {
-
-        ProxyDataSource ds;
-        SLF4JQueryLoggingListener listener;
-        org.slf4j.Logger logger;
-
-        // default
-        ds = ProxyDataSourceBuilder.create().logQueryBySlf4j().build();
-        listener = getAndVerifyListener(ds, SLF4JQueryLoggingListener.class);
-        logger = listener.getLogger();
-        assertThat(logger.getName()).isEqualTo("net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener");
-        assertThat(listener.getLogLevel()).as("default log level").isEqualTo(SLF4JLogLevel.DEBUG);
-
-        // with level
-        ds = ProxyDataSourceBuilder.create().logQueryBySlf4j(SLF4JLogLevel.TRACE).build();
-        listener = getAndVerifyListener(ds, SLF4JQueryLoggingListener.class);
-        assertThat(listener.getLogLevel()).as("log level").isEqualTo(SLF4JLogLevel.TRACE);
-
-        // with logger name
-        ds = ProxyDataSourceBuilder.create().logQueryBySlf4j("my.logger").build();
-        listener = getAndVerifyListener(ds, SLF4JQueryLoggingListener.class);
-        logger = listener.getLogger();
-        assertThat(logger.getName()).isEqualTo("my.logger");
-
-        // with level and logger name
-        ds = ProxyDataSourceBuilder.create().logQueryBySlf4j(SLF4JLogLevel.ERROR, "my.logger").build();
-        listener = getAndVerifyListener(ds, SLF4JQueryLoggingListener.class);
-        logger = listener.getLogger();
-        assertThat(logger.getName()).isEqualTo("my.logger");
-        assertThat(listener.getLogLevel()).as("log level").isEqualTo(SLF4JLogLevel.ERROR);
-    }
-
-    @Test
-    public void buildJULQueryLoggingListener() {
-
-        ProxyDataSource ds;
-        JULQueryLoggingListener listener;
-        java.util.logging.Logger logger;
-
-        // default
-        ds = ProxyDataSourceBuilder.create().logQueryByJUL().build();
-        listener = getAndVerifyListener(ds, JULQueryLoggingListener.class);
-        logger = listener.getLogger();
-        assertThat(logger.getName()).isEqualTo("net.ttddyy.dsproxy.listener.logging.JULQueryLoggingListener");
-        assertThat(listener.getLogLevel()).as("default log level").isEqualTo(Level.FINE);
-
-        // with level
-        ds = ProxyDataSourceBuilder.create().logQueryByJUL(Level.WARNING).build();
-        listener = getAndVerifyListener(ds, JULQueryLoggingListener.class);
-        assertThat(listener.getLogLevel()).as("log level").isEqualTo(Level.WARNING);
-
-        // with logger name
-        ds = ProxyDataSourceBuilder.create().logQueryByJUL("my.logger").build();
-        listener = getAndVerifyListener(ds, JULQueryLoggingListener.class);
-        logger = listener.getLogger();
-        assertThat(logger.getName()).isEqualTo("my.logger");
-
-        // with level and logger name
-        ds = ProxyDataSourceBuilder.create().logQueryByJUL(Level.SEVERE, "my.logger").build();
-        listener = getAndVerifyListener(ds, JULQueryLoggingListener.class);
-        logger = listener.getLogger();
-        assertThat(logger.getName()).isEqualTo("my.logger");
-        assertThat(listener.getLogLevel()).as("log level").isEqualTo(Level.SEVERE);
-    }
-
-    @Test
-    public void buildSysOutQueryLoggingListener() {
-        ProxyDataSource ds = ProxyDataSourceBuilder.create().logQueryToSysOut().build();
-        getAndVerifyListener(ds, SystemOutQueryLoggingListener.class);
-    }
-
 
     @Test
     public void onSlowQuery() {
@@ -146,33 +42,6 @@ public class ProxyDataSourceBuilderTest {
         assertThat(listener.getThreshold()).isEqualTo(10);
         assertThat(listener.getThresholdTimeUnit()).isEqualTo(TimeUnit.SECONDS);
     }
-
-    @Test
-    public void multiline() {
-        ProxyDataSource ds;
-
-        ds = ProxyDataSourceBuilder.create().multiline().logQueryByCommons().build();
-        verifyMultiline(ds, CommonsQueryLoggingListener.class);
-
-        ds = ProxyDataSourceBuilder.create().multiline().logQueryBySlf4j().build();
-        verifyMultiline(ds, SLF4JQueryLoggingListener.class);
-
-        ds = ProxyDataSourceBuilder.create().multiline().logQueryByJUL().build();
-        verifyMultiline(ds, JULQueryLoggingListener.class);
-
-        ds = ProxyDataSourceBuilder.create().multiline().logQueryToSysOut().build();
-        verifyMultiline(ds, SystemOutQueryLoggingListener.class);
-
-    }
-
-    private void verifyMultiline(ProxyDataSource ds, Class<? extends ProxyDataSourceListener> listenerClass) {
-        ProxyDataSourceListener listener = getAndVerifyListener(ds, listenerClass);
-
-        QueryLogEntryCreator entryCreator = ((AbstractQueryLoggingListener) listener).getQueryLogEntryCreator();
-        assertThat(entryCreator).isInstanceOf(DefaultQueryLogEntryCreator.class);
-        assertThat(((DefaultQueryLogEntryCreator) entryCreator).isMultiline()).as("multiline output").isTrue();
-    }
-
 
     @SuppressWarnings("unchecked")
     private <T extends ProxyDataSourceListener> T getAndVerifyListener(ProxyDataSource ds, Class<T> listenerClass) {
