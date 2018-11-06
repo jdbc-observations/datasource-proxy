@@ -610,20 +610,12 @@ public class ProxyDataSourceBuilder {
      *
      * @param threashold threashold time
      * @param timeUnit   threashold time unit
-     * @param callback   a lambda function executed on {@link SlowQueryListener#onSlowQuery(ExecutionInfo, long)}
+     * @param callback   a lambda function executed only once per query if it exceeds the threshold time.
      * @return builder
      * @since 2.0
      */
     public ProxyDataSourceBuilder onSlowQuery(long threashold, TimeUnit timeUnit, Consumer<ExecutionInfo> callback) {
-        SlowQueryListener listener = new SlowQueryListener() {
-            @Override
-            protected void onSlowQuery(ExecutionInfo execInfo, long startTimeInMills) {
-                callback.accept(execInfo);
-            }
-        };
-        listener.setThreshold(threashold);
-        listener.setThresholdTimeUnit(timeUnit);
-        this.listeners.add(listener);
+        this.listeners.add(new SlowQueryListener(threashold, timeUnit, callback));
         return this;
     }
 

@@ -7,13 +7,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 
 /**
  * Slow query detection listener.
  *
- * When query takes more than specified threshold, {@link #onSlowQuery(ExecutionInfo, long)} callback method
- * is called. The callback is called only once for the target query if it exceeds the threshold time.
+ * When query takes more than specified threshold, {@link #onSlowQuery} callback is called.
+ * The callback is called only once for the target query if it exceeds the threshold time.
  *
  * NOTE:
  * {@link ExecutionInfo#elapsedTime} contains the time when callback is triggered which usually is the specified threshold time.
@@ -66,6 +67,20 @@ public class SlowQueryListener implements ProxyDataSourceListener {
 
     protected Map<String, RunningQueryContext> inExecution = new ConcurrentHashMap<>();
 
+    // Callback when query execution time exceeds the threshold.
+    // This callback is called only once per query if it exceeds the threshold time.
+    protected Consumer<ExecutionInfo> onSlowQuery = executionInfo -> {
+    };
+
+    public SlowQueryListener() {
+    }
+
+    public SlowQueryListener(long threshold, TimeUnit thresholdTimeUnit, Consumer<ExecutionInfo> onSlowQuery) {
+        this.threshold = threshold;
+        this.thresholdTimeUnit = thresholdTimeUnit;
+        this.onSlowQuery = onSlowQuery;
+    }
+
     @Override
     public void beforeQuery(ExecutionInfo execInfo) {
 
@@ -83,7 +98,7 @@ public class SlowQueryListener implements ProxyDataSourceListener {
                     context.executionInfo.setElapsedTime(elapsedTime);
                 }
 
-                onSlowQuery(context.executionInfo, context.startTimeInMills);
+                this.onSlowQuery.accept(context.executionInfo);
             }
         };
         this.executor.schedule(check, this.threshold, this.thresholdTimeUnit);
@@ -118,18 +133,6 @@ public class SlowQueryListener implements ProxyDataSourceListener {
         return String.valueOf(exeInfoKey);
     }
 
-    /**
-     * Callback when query execution time exceeds the threshold.
-     *
-     * This callback is called only once per query if it exceeds the threshold time.
-     *
-     * @param execInfo         query execution info
-     * @param startTimeInMills time in mills when the query started
-     */
-    protected void onSlowQuery(ExecutionInfo execInfo, long startTimeInMills) {
-        // TODO: make it consumer
-    }
-
     public void setThreshold(long threshHold) {
         this.threshold = threshHold;
     }
@@ -160,4 +163,13 @@ public class SlowQueryListener implements ProxyDataSourceListener {
         this.useDaemonThread = useDaemonThread;
     }
 
+    /**
+     * Callback when query execution time exceeds the threshold.
+     *
+     * @param onSlowQuery a consumer that is called only once per query if it exceeds the threshold time.
+     * @since 2.0
+     */
+    public void setOnSlowQuery(Consumer<ExecutionInfo> onSlowQuery) {
+        this.onSlowQuery = onSlowQuery;
+    }
 }

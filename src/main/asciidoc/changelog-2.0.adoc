@@ -1,6 +1,8 @@
 [[changelog-2.0]]
 === 2.0
 
+* `SlowQueryListener#onSlowQuery` is converted to a consumer(`Consumer<ExecutionInfo>`).
+
 * Removed specific logging implementation for `SlowQueryListener`
   - net.ttddyy.dsproxy.listener.logging.AbstractSlowQueryLoggingListener
   - net.ttddyy.dsproxy.listener.logging.CommonsSlowQueryListener

@@ -41,15 +41,10 @@ public class SlowQueryListenerDbTest {
 
         final AtomicInteger counter = new AtomicInteger();
 
-        SlowQueryListener listener = new SlowQueryListener() {
-            @Override
-            protected void onSlowQuery(ExecutionInfo execInfo, long startTimeInMills) {
-                counter.incrementAndGet();
-                assertThat(execInfo).isSameAs(executionInfo);
-            }
-        };
-        listener.setThreshold(50);
-        listener.setThresholdTimeUnit(TimeUnit.MILLISECONDS);
+        SlowQueryListener listener = new SlowQueryListener(50, TimeUnit.MILLISECONDS, execInfo -> {
+            counter.incrementAndGet();
+            assertThat(execInfo).isSameAs(executionInfo);
+        });
 
         // simulate slow query
         listener.beforeQuery(executionInfo);
@@ -60,16 +55,11 @@ public class SlowQueryListenerDbTest {
     }
 
     @Test
-    public void onSlowQueryWithFastQuery() throws Exception {
+    public void onSlowQueryWithFastQuery() {
 
-        SlowQueryListener listener = new SlowQueryListener() {
-            @Override
-            protected void onSlowQuery(ExecutionInfo execInfo, long startTimeInMills) {
-                fail("onSlowQuery method should not be called for fast query");
-            }
-        };
-        listener.setThreshold(100);
-        listener.setThresholdTimeUnit(TimeUnit.MILLISECONDS);
+        SlowQueryListener listener = new SlowQueryListener(100, TimeUnit.MILLISECONDS, execInfo -> {
+            fail("onSlowQuery method should not be called for fast query");
+        });
 
         final ExecutionInfo executionInfo = new ExecutionInfo();
 
@@ -83,16 +73,9 @@ public class SlowQueryListenerDbTest {
     public void executionTime() throws Exception {
 
         final AtomicLong executionTime = new AtomicLong(0);
-        SlowQueryListener listener = new SlowQueryListener() {
-            @Override
-            protected void onSlowQuery(ExecutionInfo execInfo, long startTimeInMills) {
-                executionTime.set(execInfo.getElapsedTime());
-            }
-        };
-
-        listener.setThreshold(100);
-        listener.setThresholdTimeUnit(TimeUnit.MILLISECONDS);
-
+        SlowQueryListener listener = new SlowQueryListener(100, TimeUnit.MILLISECONDS, executionInfo -> {
+            executionTime.set(executionInfo.getElapsedTime());
+        });
 
         ProxyDataSource pds = ProxyDataSourceBuilder.create(jdbcDataSource).listener(listener).build();
 
