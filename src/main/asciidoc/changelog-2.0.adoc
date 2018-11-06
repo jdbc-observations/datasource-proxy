@@ -1,6 +1,31 @@
 [[changelog-2.0]]
 === 2.0
 
+* Removed specific logging implementation for `SlowQueryListener`
+  - net.ttddyy.dsproxy.listener.logging.AbstractSlowQueryLoggingListener
+  - net.ttddyy.dsproxy.listener.logging.CommonsSlowQueryListener
+  - net.ttddyy.dsproxy.listener.logging.JULSlowQueryListener
+  - net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener
+  - net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener
+
+  Also, related builder methods on `ProxyDataSourceBuilder` are removed:
+  - logSlowQueryByCommons()
+  - logSlowQueryBySlf4j()
+  - logSlowQueryByJUL()
+  - logSlowQueryToSysOut()
+
+  Instead, use following:
+
+  ```java
+    ExecutionInfoFormatter formatter = ExecutionInfoFormatter.showAll();
+    builder.onSlowQuery(threashold, timeunit, queryInfo -> {
+      String log = formatter.format(queryInfo);  // convert to String
+      logger.warn(log);  // write log
+    });
+
+  ```
+
+
 * Added `ExecutionInfoFormatter` to replace `QueryLogEntryCreator`
   `OutputParameterFormatterSupport` is added to replace `OutputParameterLogEntryCreator`
 

@@ -35,10 +35,6 @@ import java.util.concurrent.TimeUnit;
  * </pre>
  *
  * @author Tadaya Tsuyukubo
- * @see net.ttddyy.dsproxy.listener.logging.CommonsSlowQueryListener
- * @see net.ttddyy.dsproxy.listener.logging.JULSlowQueryListener
- * @see net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener
- * @see net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener
  * @since 1.4.1
  */
 public class SlowQueryListener implements ProxyDataSourceListener {
@@ -131,6 +127,7 @@ public class SlowQueryListener implements ProxyDataSourceListener {
      * @param startTimeInMills time in mills when the query started
      */
     protected void onSlowQuery(ExecutionInfo execInfo, long startTimeInMills) {
+        // TODO: make it consumer
     }
 
     public void setThreshold(long threshHold) {

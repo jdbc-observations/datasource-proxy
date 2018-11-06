@@ -1,26 +1,23 @@
 package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
+import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.QueryCountStrategy;
+import net.ttddyy.dsproxy.listener.SlowQueryListener;
 import net.ttddyy.dsproxy.listener.ThreadQueryCountHolder;
 import net.ttddyy.dsproxy.listener.TracingMethodListener;
 import net.ttddyy.dsproxy.listener.logging.AbstractQueryLoggingListener;
-import net.ttddyy.dsproxy.listener.logging.AbstractSlowQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
 import net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener;
-import net.ttddyy.dsproxy.listener.logging.CommonsSlowQueryListener;
 import net.ttddyy.dsproxy.listener.logging.DefaultQueryLogEntryCreator;
 import net.ttddyy.dsproxy.listener.logging.JULQueryLoggingListener;
-import net.ttddyy.dsproxy.listener.logging.JULSlowQueryListener;
 import net.ttddyy.dsproxy.listener.logging.QueryLogEntryCreator;
 import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
 import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
-import net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
-import net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.RepeatableReadResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
@@ -136,106 +133,18 @@ public class ProxyDataSourceBuilderTest {
 
 
     @Test
-    public void buildCommonsSlowQueryListener() {
+    public void onSlowQuery() {
 
         ProxyDataSource ds;
-        CommonsSlowQueryListener listener;
+        SlowQueryListener listener;
 
-        // default
-        ds = ProxyDataSourceBuilder.create().logSlowQueryByCommons(10, TimeUnit.SECONDS).build();
-        listener = getAndVerifyListener(ds, CommonsSlowQueryListener.class);
+        Consumer<ExecutionInfo> consumer = executionInfo -> {
+        };
+
+        ds = ProxyDataSourceBuilder.create().onSlowQuery(10, TimeUnit.SECONDS, consumer).build();
+        listener = getAndVerifyListener(ds, SlowQueryListener.class);
         assertThat(listener.getThreshold()).isEqualTo(10);
         assertThat(listener.getThresholdTimeUnit()).isEqualTo(TimeUnit.SECONDS);
-        assertThat(listener.getLogLevel()).as("default log level").isEqualTo(CommonsLogLevel.WARN);
-
-        // with logLevel
-        ds = ProxyDataSourceBuilder.create().logSlowQueryByCommons(10, TimeUnit.SECONDS, CommonsLogLevel.INFO).build();
-        listener = getAndVerifyListener(ds, CommonsSlowQueryListener.class);
-        assertThat(listener.getLogLevel()).as("log level").isEqualTo(CommonsLogLevel.INFO);
-
-        // with logLevel and logger name
-        ds = ProxyDataSourceBuilder.create().logSlowQueryByCommons(10, TimeUnit.SECONDS, CommonsLogLevel.FATAL, "my.logger").build();
-        listener = getAndVerifyListener(ds, CommonsSlowQueryListener.class);
-        assertThat(listener.getLogLevel()).as("log level").isEqualTo(CommonsLogLevel.FATAL);
-
-    }
-
-    @Test
-    public void buildSLF4JSlowQueryListener() {
-
-        ProxyDataSource ds;
-        SLF4JSlowQueryListener listener;
-        org.slf4j.Logger logger;
-
-        // default
-        ds = ProxyDataSourceBuilder.create().logSlowQueryBySlf4j(10, TimeUnit.SECONDS).build();
-        listener = getAndVerifyListener(ds, SLF4JSlowQueryListener.class);
-        assertThat(listener.getThreshold()).isEqualTo(10);
-        assertThat(listener.getThresholdTimeUnit()).isEqualTo(TimeUnit.SECONDS);
-        logger = listener.getLogger();
-        assertThat(logger.getName()).isEqualTo("net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener");
-        assertThat(listener.getLogLevel()).as("default log level").isEqualTo(SLF4JLogLevel.WARN);
-
-        // with logLevel
-        ds = ProxyDataSourceBuilder.create().logSlowQueryBySlf4j(10, TimeUnit.SECONDS, SLF4JLogLevel.TRACE).build();
-        listener = getAndVerifyListener(ds, SLF4JSlowQueryListener.class);
-        assertThat(listener.getLogLevel()).as("log level").isEqualTo(SLF4JLogLevel.TRACE);
-
-        // with logger name
-        ds = ProxyDataSourceBuilder.create().logSlowQueryBySlf4j(10, TimeUnit.SECONDS, "my.logger").build();
-        listener = getAndVerifyListener(ds, SLF4JSlowQueryListener.class);
-        logger = listener.getLogger();
-        assertThat(logger.getName()).isEqualTo("my.logger");
-
-        // with logLevel and logger name
-        ds = ProxyDataSourceBuilder.create().logSlowQueryBySlf4j(10, TimeUnit.SECONDS, SLF4JLogLevel.INFO, "my.logger").build();
-        listener = getAndVerifyListener(ds, SLF4JSlowQueryListener.class);
-        logger = listener.getLogger();
-        assertThat(logger.getName()).isEqualTo("my.logger");
-        assertThat(listener.getLogLevel()).as("log level").isEqualTo(SLF4JLogLevel.INFO);
-
-    }
-
-    @Test
-    public void buildJULJSlowQueryListener() {
-
-        ProxyDataSource ds;
-        JULSlowQueryListener listener;
-        java.util.logging.Logger logger;
-
-        // default
-        ds = ProxyDataSourceBuilder.create().logSlowQueryByJUL(10, TimeUnit.SECONDS).build();
-        listener = getAndVerifyListener(ds, JULSlowQueryListener.class);
-        assertThat(listener.getThreshold()).isEqualTo(10);
-        assertThat(listener.getThresholdTimeUnit()).isEqualTo(TimeUnit.SECONDS);
-        logger = listener.getLogger();
-        assertThat(logger.getName()).isEqualTo("net.ttddyy.dsproxy.listener.logging.JULSlowQueryListener");
-        assertThat(listener.getLogLevel()).as("default log level").isEqualTo(Level.WARNING);
-
-        // with logLevel
-        ds = ProxyDataSourceBuilder.create().logSlowQueryByJUL(10, TimeUnit.SECONDS, Level.FINE).build();
-        listener = getAndVerifyListener(ds, JULSlowQueryListener.class);
-        assertThat(listener.getLogLevel()).as("ølog level").isEqualTo(Level.FINE);
-
-        // with logger name
-        ds = ProxyDataSourceBuilder.create().logSlowQueryByJUL(10, TimeUnit.SECONDS, "my.logger").build();
-        listener = getAndVerifyListener(ds, JULSlowQueryListener.class);
-        logger = listener.getLogger();
-        assertThat(logger.getName()).isEqualTo("my.logger");
-
-        // with logLevel and logger name
-        ds = ProxyDataSourceBuilder.create().logSlowQueryByJUL(10, TimeUnit.SECONDS, Level.INFO, "my.logger").build();
-        listener = getAndVerifyListener(ds, JULSlowQueryListener.class);
-        logger = listener.getLogger();
-        assertThat(logger.getName()).isEqualTo("my.logger");
-        assertThat(listener.getLogLevel()).as("log level").isEqualTo(Level.INFO);
-
-    }
-
-    @Test
-    public void buildSysOutSlowQueryListener() {
-        ProxyDataSource ds = ProxyDataSourceBuilder.create().logSlowQueryToSysOut(10, TimeUnit.SECONDS).build();
-        getAndVerifyListener(ds, SystemOutSlowQueryListener.class);
     }
 
     @Test
@@ -254,31 +163,12 @@ public class ProxyDataSourceBuilderTest {
         ds = ProxyDataSourceBuilder.create().multiline().logQueryToSysOut().build();
         verifyMultiline(ds, SystemOutQueryLoggingListener.class);
 
-
-        long threshold = 10;
-        TimeUnit timeUnit = TimeUnit.SECONDS;
-        ds = ProxyDataSourceBuilder.create().multiline().logSlowQueryByCommons(threshold, timeUnit).build();
-        verifyMultiline(ds, CommonsSlowQueryListener.class);
-
-        ds = ProxyDataSourceBuilder.create().multiline().logSlowQueryBySlf4j(threshold, timeUnit).build();
-        verifyMultiline(ds, SLF4JSlowQueryListener.class);
-
-        ds = ProxyDataSourceBuilder.create().multiline().logSlowQueryByJUL(threshold, timeUnit).build();
-        verifyMultiline(ds, JULSlowQueryListener.class);
-
-        ds = ProxyDataSourceBuilder.create().multiline().logSlowQueryToSysOut(threshold, timeUnit).build();
-        verifyMultiline(ds, SystemOutSlowQueryListener.class);
     }
 
     private void verifyMultiline(ProxyDataSource ds, Class<? extends ProxyDataSourceListener> listenerClass) {
         ProxyDataSourceListener listener = getAndVerifyListener(ds, listenerClass);
 
-        QueryLogEntryCreator entryCreator;
-        if (listener instanceof AbstractQueryLoggingListener) {
-            entryCreator = ((AbstractQueryLoggingListener) listener).getQueryLogEntryCreator();
-        } else {
-            entryCreator = ((AbstractSlowQueryLoggingListener) listener).getQueryLogEntryCreator();
-        }
+        QueryLogEntryCreator entryCreator = ((AbstractQueryLoggingListener) listener).getQueryLogEntryCreator();
         assertThat(entryCreator).isInstanceOf(DefaultQueryLogEntryCreator.class);
         assertThat(((DefaultQueryLogEntryCreator) entryCreator).isMultiline()).as("multiline output").isTrue();
     }

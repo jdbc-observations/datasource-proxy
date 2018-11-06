@@ -5,9 +5,6 @@ import net.ttddyy.dsproxy.DatabaseType;
 import net.ttddyy.dsproxy.DbResourceCleaner;
 import net.ttddyy.dsproxy.EnabledOnDatabase;
 import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.listener.logging.DefaultQueryLogEntryCreator;
-import net.ttddyy.dsproxy.listener.logging.QueryLogEntryCreator;
-import net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.junit.jupiter.api.Test;
@@ -86,16 +83,15 @@ public class SlowQueryListenerDbTest {
     public void executionTime() throws Exception {
 
         final AtomicLong executionTime = new AtomicLong(0);
-        QueryLogEntryCreator queryLogEntryCreator = new DefaultQueryLogEntryCreator() {
+        SlowQueryListener listener = new SlowQueryListener() {
             @Override
-            public String getLogEntry(ExecutionInfo execInfo, boolean writeDataSourceName, boolean writeConnectionId) {
+            protected void onSlowQuery(ExecutionInfo execInfo, long startTimeInMills) {
                 executionTime.set(execInfo.getElapsedTime());
-                return super.getLogEntry(execInfo, writeDataSourceName, writeConnectionId);
             }
         };
 
-        SLF4JSlowQueryListener listener = new SLF4JSlowQueryListener(100, TimeUnit.MILLISECONDS);
-        listener.setQueryLogEntryCreator(queryLogEntryCreator);
+        listener.setThreshold(100);
+        listener.setThresholdTimeUnit(TimeUnit.MILLISECONDS);
 
 
         ProxyDataSource pds = ProxyDataSourceBuilder.create(jdbcDataSource).listener(listener).build();
