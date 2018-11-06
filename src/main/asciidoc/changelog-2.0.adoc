@@ -1,6 +1,29 @@
 [[changelog-2.0]]
 === 2.0
 
+
+* Removed support to log query count in `ServletRequestListener` or `Filter`
+  - net.ttddyy.dsproxy.support.QueryCountLoggerBuilder
+  - net.ttddyy.dsproxy.support.QueryCounterClearFilter
+  - net.ttddyy.dsproxy.support.QueryCounterClearServletRequestListener
+
+  - net.ttddyy.dsproxy.support.AbstractQueryCountLoggingRequestListener
+  - net.ttddyy.dsproxy.support.CommonsQueryCountLoggingRequestListener
+  - net.ttddyy.dsproxy.support.SystemOutQueryCountLoggingRequestListener
+  - net.ttddyy.dsproxy.support.SLF4JQueryCountLoggingRequestListener
+  - net.ttddyy.dsproxy.support.JULQueryCountLoggingRequestListener
+
+  - net.ttddyy.dsproxy.support.AbstractQueryCountLoggingServletFilter
+  - net.ttddyy.dsproxy.support.CommonsQueryCountLoggingServletFilter
+  - net.ttddyy.dsproxy.support.SystemOutQueryCountLoggingServletFilter
+  - net.ttddyy.dsproxy.support.JULQueryCountLoggingServletFilter
+  - net.ttddyy.dsproxy.support.SLF4JQueryCountLoggingServletFilter
+
+  - net.ttddyy.dsproxy.support.CommonsLogUtils
+  - net.ttddyy.dsproxy.support.SLF4JLogUtils
+  - net.ttddyy.dsproxy.listener.logging.CommonsLogLevel
+  - net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel
+
 * `SlowQueryListener#onSlowQuery` is converted to a consumer(`Consumer<ExecutionInfo>`).
 
 * Removed specific logging implementation for `SlowQueryListener`
