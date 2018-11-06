@@ -28,7 +28,8 @@
   ```
 
 
-* Added `ExecutionInfoFormatter` to replace `QueryLogEntryCreator`
+* Added `ExecutionInfoFormatter` and `ExecutionInfoJsonFormatter` to replace
+  `QueryLogEntryCreator`.
   `OutputParameterFormatterSupport` is added to replace `OutputParameterLogEntryCreator`
 
 * Removed query count logging support using spring `HandlerInterceptor`

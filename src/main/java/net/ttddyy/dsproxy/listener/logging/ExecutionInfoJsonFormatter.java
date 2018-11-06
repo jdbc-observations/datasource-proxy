@@ -15,12 +15,12 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
- * Convert {@link ExecutionInfo} to {@code String}.
+ * Convert {@link ExecutionInfo} to json {@code String}.
  *
  * @author Tadaya Tsuyukubo
  * @since 2.0
  */
-public class ExecutionInfoFormatter extends AbstractFormatterSupport implements Function<ExecutionInfo, String> {
+public class ExecutionInfoJsonFormatter extends AbstractFormatterSupport implements Function<ExecutionInfo, String> {
 
     private static final String DEFAULT_DELIMITER = ", ";
 
@@ -29,23 +29,24 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport implements 
 
     private BiConsumer<ExecutionInfo, StringBuilder> onDataSourceName = (execInfo, sb) -> {
         String name = execInfo.getDataSourceName();
-        sb.append("Name:");
-        sb.append(name == null ? "" : name);
+        sb.append("\"name\":\"");
+        sb.append(name == null ? "" : escapeSpecialCharacterForJson(name));
+        sb.append("\"");
     };
     private BiConsumer<ExecutionInfo, StringBuilder> onConnection = (execInfo, sb) -> {
-        sb.append("Connection:");
+        sb.append("\"connection\":");
         sb.append(execInfo.getConnectionId());
     };
     private BiConsumer<ExecutionInfo, StringBuilder> onDuration = (execInfo, sb) -> {
-        sb.append("Time:");
+        sb.append("\"time\":");
         sb.append(execInfo.getElapsedTime());
     };
     private BiConsumer<ExecutionInfo, StringBuilder> onSuccess = (execInfo, sb) -> {
-        sb.append("Success:");
-        sb.append(execInfo.isSuccess() ? "True" : "False");
+        sb.append("\"success\":");
+        sb.append(execInfo.isSuccess() ? "true" : "false");
     };
     private BiConsumer<ExecutionInfo, StringBuilder> onStatementType = (execInfo, sb) -> {
-        sb.append("Type:");
+        sb.append("\"type\":\"");
         switch (execInfo.getStatementType()) {
             case STATEMENT:
                 sb.append("Statement");
@@ -60,39 +61,39 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport implements 
                 sb.append("Unknown");
                 break;
         }
+        sb.append("\"");
     };
     private BiConsumer<ExecutionInfo, StringBuilder> onBatch = (execInfo, sb) -> {
-        sb.append("Batch:");
-        sb.append(execInfo.isBatch() ? "True" : "False");
+        sb.append("\"batch\":");
+        sb.append(execInfo.isBatch() ? "true" : "false");
     };
     private BiConsumer<ExecutionInfo, StringBuilder> onQuerySize = (execInfo, sb) -> {
-        sb.append("QuerySize:");
+        sb.append("\"querySize\":");
         sb.append(execInfo.getQueries().size());
     };
     private BiConsumer<ExecutionInfo, StringBuilder> onBatchSize = (execInfo, sb) -> {
-        sb.append("BatchSize:");
+        sb.append("\"batchSize\":");
         sb.append(execInfo.getBatchSize());
     };
 
     // Each query statement
-    private Function<String, String> onQuery = Function.identity();
+    private Function<String, String> onQuery = AbstractFormatterSupport::escapeSpecialCharacterForJson;
 
 
     private BiConsumer<ExecutionInfo, StringBuilder> onQueries = (execInfo, sb) -> {
-        sb.append("Query:[");
+        sb.append("\"query\":[");
         execInfo.getQueries().forEach(queryInfo -> {
             sb.append("\"");
             sb.append(this.onQuery.apply(queryInfo.getQuery()));
             sb.append("\",");
         });
         chompIfEndWith(sb, ',');
-
         sb.append("]");
     };
     private BiConsumer<ExecutionInfo, StringBuilder> onParameters = (execInfo, sb) -> {
         boolean isPrepared = execInfo.getStatementType() == StatementType.PREPARED;
 
-        sb.append("Params:[");
+        sb.append("\"params\":[");
 
         execInfo.getQueries().stream()
                 .map(QueryInfo::getParametersList)
@@ -118,30 +119,48 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport implements 
     /**
      * Write query parameters for PreparedStatement.
      *
-     * default: Params:[(foo,100),(bar,101)],
+     * default: ["foo","100"],
      */
     private BiConsumer<SortedMap<String, String>, StringBuilder> onPreparedParameters = (paramMap, sb) -> {
-        sb.append("(");
-        sb.append(String.join(",", paramMap.values()));
-        sb.append("),");
+        sb.append("[");
+        paramMap.values().forEach(value -> {
+            if (value == null) {
+                sb.append("null");
+            } else {
+                sb.append("\"");
+                sb.append(escapeSpecialCharacterForJson(value));
+                sb.append("\"");
+            }
+            sb.append(",");
+        });
+
+        chompIfEndWith(sb, ',');
+        sb.append("],");
     };
 
 
     /**
      * Write parameters for single execution.
      *
-     * <p>default: (1=foo,bar=100),
+     * <p>default: {"1"="foo","bar"="100"},
      */
     private BiConsumer<SortedMap<String, String>, StringBuilder> onCallableParameters = (paramMap, sb) -> {
-        sb.append("(");
+        sb.append("{");
         paramMap.forEach((key, value) -> {
-            sb.append(key);
-            sb.append("=");
-            sb.append(value);
+            sb.append("\"");
+            sb.append(escapeSpecialCharacterForJson(key));
+            sb.append("\":");
+            if (value == null) {
+                sb.append("null");
+            } else {
+                sb.append("\"");
+                sb.append(escapeSpecialCharacterForJson(value));
+                sb.append("\"");
+            }
             sb.append(",");
         });
         chompIfEndWith(sb, ',');
-        sb.append("),");
+        sb.append("},");
     };
 
     private BiConsumer<ExecutionInfo, StringBuilder> newLine = (executionInfo, sb) -> {
@@ -219,8 +238,8 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport implements 
     private List<BiConsumer<ExecutionInfo, StringBuilder>> consumers = new ArrayList<>();
 
 
-    public static ExecutionInfoFormatter showAll() {
-        ExecutionInfoFormatter formatter = new ExecutionInfoFormatter();
+    public static ExecutionInfoJsonFormatter showAll() {
+        ExecutionInfoJsonFormatter formatter = new ExecutionInfoJsonFormatter();
         formatter.addConsumer(formatter.onDataSourceName);
         formatter.addConsumer(formatter.onConnection);
         formatter.addConsumer(formatter.onDuration);
@@ -234,12 +253,12 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport implements 
         return formatter;
     }
 
-    public ExecutionInfoFormatter addConsumer(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public ExecutionInfoJsonFormatter addConsumer(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
         this.consumers.add(consumer);
         return this;
     }
 
-    public ExecutionInfoFormatter newLine() {
+    public ExecutionInfoJsonFormatter newLine() {
         this.consumers.add(this.newLine);
         return this;
     }
@@ -248,12 +267,8 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport implements 
 
         StringBuilder sb = new StringBuilder();
 
+        sb.append("{");
         this.consumers.forEach(consumer -> {
-
-            // if it is newLine, remove previously added delimiter
-            if (consumer == this.newLine) {
-                chompIfEndWith(sb, this.delimiter);
-            }
 
             consumer.accept(executionInfo, sb);
 
@@ -263,6 +278,8 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport implements 
         });
 
         chompIfEndWith(sb, this.delimiter);
+
+        sb.append("}");
 
         return sb.toString();
 
@@ -286,110 +303,110 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport implements 
         return value == null ? null : value.toString();
     }
 
-    public ExecutionInfoFormatter showDataSourceName() {
+    public ExecutionInfoJsonFormatter showDataSourceName() {
         this.addConsumer(this.onDataSourceName);
         return this;
     }
 
-    public ExecutionInfoFormatter showDataSourceName(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public ExecutionInfoJsonFormatter showDataSourceName(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
         this.onDataSourceName = consumer;
         return showDataSourceName();
     }
 
-    public ExecutionInfoFormatter showDuration() {
+    public ExecutionInfoJsonFormatter showDuration() {
         this.addConsumer(this.onDuration);
         return this;
     }
 
-    public ExecutionInfoFormatter showDuration(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public ExecutionInfoJsonFormatter showDuration(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
         this.onDuration = consumer;
         return showDuration();
     }
 
 
-    public ExecutionInfoFormatter showSuccess() {
+    public ExecutionInfoJsonFormatter showSuccess() {
         this.addConsumer(this.onSuccess);
         return this;
     }
 
-    public ExecutionInfoFormatter showSuccess(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public ExecutionInfoJsonFormatter showSuccess(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
         this.onSuccess = consumer;
         return showSuccess();
     }
 
-    public ExecutionInfoFormatter showStatementType() {
+    public ExecutionInfoJsonFormatter showStatementType() {
         this.addConsumer(this.onStatementType);
         return this;
     }
 
-    public ExecutionInfoFormatter showStatementType(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public ExecutionInfoJsonFormatter showStatementType(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
         this.onStatementType = consumer;
         return showStatementType();
     }
 
 
-    public ExecutionInfoFormatter showBatch() {
+    public ExecutionInfoJsonFormatter showBatch() {
         this.addConsumer(this.onBatch);
         return this;
     }
 
-    public ExecutionInfoFormatter showBatch(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public ExecutionInfoJsonFormatter showBatch(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
         this.onBatch = consumer;
         return showBatch();
     }
 
-    public ExecutionInfoFormatter showQuerySize() {
+    public ExecutionInfoJsonFormatter showQuerySize() {
         this.addConsumer(this.onQuerySize);
         return this;
     }
 
-    public ExecutionInfoFormatter showQuerySize(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public ExecutionInfoJsonFormatter showQuerySize(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
         this.onQuerySize = consumer;
         return showQuerySize();
     }
 
-    public ExecutionInfoFormatter showBatchSize() {
+    public ExecutionInfoJsonFormatter showBatchSize() {
         this.addConsumer(this.onBatchSize);
         return this;
     }
 
-    public ExecutionInfoFormatter showBatchSize(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public ExecutionInfoJsonFormatter showBatchSize(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
         this.onBatchSize = consumer;
         return showBatchSize();
     }
 
 
-    public ExecutionInfoFormatter showQueries() {
+    public ExecutionInfoJsonFormatter showQueries() {
         this.addConsumer(this.onQueries);
         return this;
     }
 
-    public ExecutionInfoFormatter showQueries(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public ExecutionInfoJsonFormatter showQueries(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
         this.onQueries = consumer;
         return showQueries();
     }
 
-    public ExecutionInfoFormatter showParameters() {
+    public ExecutionInfoJsonFormatter showParameters() {
         this.addConsumer(this.onParameters);
         return this;
     }
 
-    public ExecutionInfoFormatter showParameters(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public ExecutionInfoJsonFormatter showParameters(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
         this.onParameters = consumer;
         return showParameters();
     }
 
-    public ExecutionInfoFormatter onQuery(Function<String, String> onQuery) {
+    public ExecutionInfoJsonFormatter onQuery(Function<String, String> onQuery) {
         this.onQuery = onQuery;
         return this;
     }
 
-    public ExecutionInfoFormatter onPreparedParameters(BiConsumer<SortedMap<String, String>, StringBuilder> onPreparedParameters) {
+    public ExecutionInfoJsonFormatter onPreparedParameters(BiConsumer<SortedMap<String, String>, StringBuilder> onPreparedParameters) {
         this.onPreparedParameters = onPreparedParameters;
         return this;
     }
 
-    public ExecutionInfoFormatter onCallableParameters(BiConsumer<SortedMap<String, String>, StringBuilder> onCallableParameters) {
+    public ExecutionInfoJsonFormatter onCallableParameters(BiConsumer<SortedMap<String, String>, StringBuilder> onCallableParameters) {
         this.onCallableParameters = onCallableParameters;
         return this;
     }
