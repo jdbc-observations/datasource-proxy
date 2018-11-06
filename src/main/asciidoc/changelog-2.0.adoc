@@ -30,7 +30,8 @@
 
 * Added `ExecutionInfoFormatter` and `ExecutionInfoJsonFormatter` to replace
   `QueryLogEntryCreator`.
-  `OutputParameterFormatterSupport` is added to replace `OutputParameterLogEntryCreator`
+  `OutputParameterFormatterSupport` and `OutputParameterJsonFormatterSupport` are added
+  to replace `OutputParameterLogEntryCreator`
 
 * Removed query count logging support using spring `HandlerInterceptor`
   - net.ttddyy.dsproxy.support.AbstractQueryCountLoggingHandlerInterceptor
