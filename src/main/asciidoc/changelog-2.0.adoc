@@ -1,6 +1,11 @@
 [[changelog-2.0]]
 === 2.0
 
+* Removed `QueryLogEntryCreator` related classes
+  - net.ttddyy.dsproxy.listener.logging.QueryLogEntryCreator
+  - net.ttddyy.dsproxy.listener.logging.AbstractQueryLogEntryCreator
+  - net.ttddyy.dsproxy.listener.logging.DefaultQueryLogEntryCreator
+  - net.ttddyy.dsproxy.listener.logging.DefaultJsonQueryLogEntryCreator
 
 * Removed support to log query count in `ServletRequestListener` or `Filter`
   - net.ttddyy.dsproxy.support.QueryCountLoggerBuilder
