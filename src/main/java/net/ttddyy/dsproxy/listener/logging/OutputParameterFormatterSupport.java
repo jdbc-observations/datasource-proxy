@@ -17,7 +17,7 @@ import java.util.function.BiConsumer;
  * @see ExecutionInfoFormatter
  * @since 2.0
  */
-public class OutputParameterFormatterSupport extends AbstractFormatterSupport {
+public class OutputParameterFormatterSupport extends AbstractFormatterSupport<ExecutionInfo> {
 
     public static BiConsumer<ExecutionInfo, StringBuilder> onOutputParameter = (execInfo, sb) -> {
         sb.append("OutParams:[");

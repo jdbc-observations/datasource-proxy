@@ -2,12 +2,15 @@ package net.ttddyy.dsproxy.listener.logging;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 /**
  * @author Tadaya Tsuyukubo
  * @since 2.0
  */
-public abstract class AbstractFormatterSupport {
+public abstract class AbstractFormatterSupport<T> {
+
+    protected static final String DEFAULT_DELIMITER = ", ";
 
     protected static final Map<Character, String> JSON_SPECIAL_CHARS = new HashMap<>();
 
@@ -52,5 +55,11 @@ public abstract class AbstractFormatterSupport {
         }
         return sb.toString();
     }
+
+    protected BiConsumer<T, StringBuilder> newLine = (executionInfo, sb) -> {
+        sb.append(System.lineSeparator());
+    };
+
+    protected String delimiter = DEFAULT_DELIMITER;
 
 }

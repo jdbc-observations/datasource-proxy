@@ -1,6 +1,12 @@
 [[changelog-2.0]]
 === 2.0
 
+* Removed `QueryCount` log creators.
+  - net.ttddyy.dsproxy.support.DefaultQueryCountLogEntryCreator
+  - net.ttddyy.dsproxy.support.QueryCountLogEntryCreator
+
+  Instead, use `QueryCountFormatter`/`QueryCountJsonFormatter`
+
 * Removed `QueryLogEntryCreator` related classes
   - net.ttddyy.dsproxy.listener.logging.QueryLogEntryCreator
   - net.ttddyy.dsproxy.listener.logging.AbstractQueryLogEntryCreator

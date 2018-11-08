@@ -20,9 +20,7 @@ import java.util.function.Function;
  * @author Tadaya Tsuyukubo
  * @since 2.0
  */
-public class ExecutionInfoJsonFormatter extends AbstractFormatterSupport implements Function<ExecutionInfo, String> {
-
-    private static final String DEFAULT_DELIMITER = ", ";
+public class ExecutionInfoJsonFormatter extends AbstractFormatterSupport<ExecutionInfo> implements Function<ExecutionInfo, String> {
 
     protected ParameterValueConverter setNullParameterValueConverter = new SetNullParameterValueConverter();
     protected ParameterValueConverter registerOutParameterValueConverter = new RegisterOutParameterValueConverter();
@@ -163,10 +161,6 @@ public class ExecutionInfoJsonFormatter extends AbstractFormatterSupport impleme
         sb.append("},");
     };
 
-    private BiConsumer<ExecutionInfo, StringBuilder> newLine = (executionInfo, sb) -> {
-        sb.append(System.lineSeparator());
-    };
-
 
     protected SortedMap<String, String> getParametersToDisplay(List<ParameterSetOperation> params) {
 
@@ -232,8 +226,6 @@ public class ExecutionInfoJsonFormatter extends AbstractFormatterSupport impleme
         }
         return value;
     }
-
-    private String delimiter = DEFAULT_DELIMITER;
 
     private List<BiConsumer<ExecutionInfo, StringBuilder>> consumers = new ArrayList<>();
 

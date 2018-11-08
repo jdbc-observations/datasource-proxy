@@ -17,7 +17,7 @@ import java.util.function.BiConsumer;
  * @see ExecutionInfoFormatter
  * @since 2.0
  */
-public class OutputParameterJsonFormatterSupport extends AbstractFormatterSupport {
+public class OutputParameterJsonFormatterSupport extends AbstractFormatterSupport<ExecutionInfo> {
 
     public static BiConsumer<ExecutionInfo, StringBuilder> onOutputParameter = (execInfo, sb) -> {
 
