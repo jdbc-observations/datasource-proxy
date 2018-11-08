@@ -2097,6 +2097,198 @@ public class MyController {
 <div class="ulist">
 <ul>
 <li>
+<p>Removed <code>QueryCount</code> log creators.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>net.ttddyy.dsproxy.support.DefaultQueryCountLogEntryCreator</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.QueryCountLogEntryCreator</p>
+<div class="literalblock">
+<div class="content">
+<pre>Instead, use `QueryCountFormatter`/`QueryCountJsonFormatter`</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Removed <code>QueryLogEntryCreator</code> related classes</p>
+<div class="ulist">
+<ul>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.QueryLogEntryCreator</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.AbstractQueryLogEntryCreator</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.DefaultQueryLogEntryCreator</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.DefaultJsonQueryLogEntryCreator</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Removed support to log query count in <code>ServletRequestListener</code> or <code>Filter</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>net.ttddyy.dsproxy.support.QueryCountLoggerBuilder</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.QueryCounterClearFilter</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.QueryCounterClearServletRequestListener</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.AbstractQueryCountLoggingRequestListener</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.CommonsQueryCountLoggingRequestListener</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.SystemOutQueryCountLoggingRequestListener</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.SLF4JQueryCountLoggingRequestListener</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.JULQueryCountLoggingRequestListener</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.AbstractQueryCountLoggingServletFilter</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.CommonsQueryCountLoggingServletFilter</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.SystemOutQueryCountLoggingServletFilter</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.JULQueryCountLoggingServletFilter</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.SLF4JQueryCountLoggingServletFilter</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.CommonsLogUtils</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.support.SLF4JLogUtils</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.CommonsLogLevel</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Removed specific logging implementation for <code>SlowQueryListener</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.AbstractSlowQueryLoggingListener</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.CommonsSlowQueryListener</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.JULSlowQueryListener</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener</p>
+<div class="literalblock">
+<div class="content">
+<pre>Also, related builder methods on `ProxyDataSourceBuilder` are removed:
+- logSlowQueryByCommons()
+- logSlowQueryBySlf4j()
+- logSlowQueryByJUL()
+- logSlowQueryToSysOut()</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>Instead, use following:</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>```java
+  ExecutionInfoFormatter formatter = ExecutionInfoFormatter.showAll();
+  builder.onSlowQuery(threashold, timeunit, queryInfo -&gt; {
+    String log = formatter.format(queryInfo);  // convert to String
+    logger.warn(log);  // write log
+  });</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>```</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Removed specific logging implementation for <code>~QueryLoggingListener</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.AbstractQueryLoggingListener</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.JULQueryLoggingListener</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener</p>
+</li>
+<li>
+<p>net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener</p>
+<div class="literalblock">
+<div class="content">
+<pre>Related builder methods on `ProxyDataSourceBuilder` are removed:
+- `logQueryByCommons()`
+- `logQueryBySlf4j()`
+- `logQueryByJUL()`
+- `logQueryToSysOut()`
+- `multiline()`
+- `json()`</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Added <code>ExecutionInfoFormatter</code> and <code>ExecutionInfoJsonFormatter</code> to replace
+<code>QueryLogEntryCreator</code>.
+<code>OutputParameterFormatterSupport</code> and <code>OutputParameterJsonFormatterSupport</code> are added
+to replace <code>OutputParameterLogEntryCreator</code> and <code>OutputParameterJsonLogEntryCreator</code></p>
+<div class="literalblock">
+<div class="content">
+<pre>Removed:
+- net.ttddyy.dsproxy.listener.logging.OutputParameterLogEntryCreator
+- net.ttddyy.dsproxy.listener.logging.OutputParameterJsonLogEntryCreator</pre>
+</div>
+</div>
+</li>
+<li>
 <p>Removed query count logging support using spring <code>HandlerInterceptor</code></p>
 <div class="ulist">
 <ul>
