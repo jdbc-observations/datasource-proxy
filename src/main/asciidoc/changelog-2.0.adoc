@@ -29,7 +29,6 @@
   - net.ttddyy.dsproxy.listener.logging.CommonsLogLevel
   - net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel
 
-* `SlowQueryListener#onSlowQuery` is converted to a consumer(`Consumer<ExecutionInfo>`).
 
 * Removed specific logging implementation for `SlowQueryListener`
   - net.ttddyy.dsproxy.listener.logging.AbstractSlowQueryLoggingListener
