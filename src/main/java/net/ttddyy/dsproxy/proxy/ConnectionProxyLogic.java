@@ -5,7 +5,6 @@ import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import net.ttddyy.dsproxy.transform.TransformInfo;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -37,7 +36,7 @@ public class ConnectionProxyLogic extends CallbackSupport {
         boolean isRollbackMethod = "rollback".equals(method.getName());
 
         return MethodExecutionListenerUtils.invoke(
-                (proxyTarget, targetMethod, targetArgs) -> {
+                (methodContext, proxyTarget, targetMethod, targetArgs) -> {
                     Object result = performQueryExecutionListener(proxyConnection, targetMethod, targetArgs);
                     ConnectionInfo connectionInfo = ConnectionProxyLogic.this.connectionInfo;
                     if (isCommitMethod) {

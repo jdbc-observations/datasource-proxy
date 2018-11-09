@@ -2,13 +2,18 @@ package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
+import net.ttddyy.dsproxy.proxy.DataSourceProxyLogic;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
-import net.ttddyy.dsproxy.support.ProxyDataSource;
+import net.ttddyy.dsproxy.proxy.jdk.DataSourceInvocationHandler;
+import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DatabaseTest
 public class ProxyDataSourceDbTest {
 
-    private ProxyDataSource proxyDataSource;
+    private DataSource proxyDataSource;
     private TestListener listener;
     private CallCheckMethodExecutionListener methodListener;
 
@@ -40,18 +45,14 @@ public class ProxyDataSourceDbTest {
     }
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() {
         listener = new TestListener();
         methodListener = new CallCheckMethodExecutionListener();
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+        proxyDataSource = ProxyDataSourceBuilder.create(this.jdbcDataSource)
                 .listener(this.listener)
                 .listener(this.methodListener)
                 .build();
-
-        proxyDataSource = new ProxyDataSource();
-        proxyDataSource.setDataSource(this.jdbcDataSource);
-        proxyDataSource.setProxyConfig(proxyConfig);
     }
 
     @Test
@@ -158,7 +159,7 @@ public class ProxyDataSourceDbTest {
         assertTrue(this.methodListener.isAfterMethodCalled(), "methodListener should be called for getConnection");
 
         MethodExecutionContext context = this.methodListener.getAfterMethodContext();
-        assertThat(context.getTarget()).isSameAs(proxyDataSource);
+        assertThat(context.getTarget()).isSameAs(this.jdbcDataSource);
         assertThat(context.getResult()).isSameAs(connection);
         assertThat(context.getMethod().getDeclaringClass()).isSameAs(DataSource.class);
         assertThat(context.getMethod().getName()).isEqualTo("getConnection");
@@ -179,38 +180,33 @@ public class ProxyDataSourceDbTest {
         this.cleaner.add(connection);
         this.methodListener.reset();
 
-        // for now, only getConnection is supported for method execution listener
-
-        proxyDataSource.close();
-        assertFalse(this.methodListener.isBeforeMethodCalled(), "methodListener should NOT be called for close");
-        assertFalse(this.methodListener.isAfterMethodCalled(), "methodListener should NOT be called for close");
-
-        this.methodListener.reset();
-
         proxyDataSource.getLoginTimeout();
-        assertFalse(this.methodListener.isBeforeMethodCalled(), "methodListener should NOT be called for getLoginTimeout");
-        assertFalse(this.methodListener.isAfterMethodCalled(), "methodListener should NOT be called for getLoginTimeout");
+        assertTrue(this.methodListener.isBeforeMethodCalled(), "methodListener should be called for getLoginTimeout");
+        assertTrue(this.methodListener.isAfterMethodCalled(), "methodListener should be called for getLoginTimeout");
 
         this.methodListener.reset();
 
         proxyDataSource.setLoginTimeout(100);
-        assertFalse(this.methodListener.isBeforeMethodCalled(), "methodListener should NOT be called for setLoginTimeout");
-        assertFalse(this.methodListener.isAfterMethodCalled(), "methodListener should NOT be called for setLoginTimeout");
+        assertTrue(this.methodListener.isBeforeMethodCalled(), "methodListener should be called for setLoginTimeout");
+        assertTrue(this.methodListener.isAfterMethodCalled(), "methodListener should be called for setLoginTimeout");
 
         this.methodListener.reset();
 
         PrintWriter writer = proxyDataSource.getLogWriter();
-        assertFalse(this.methodListener.isBeforeMethodCalled(), "methodListener should NOT be called for getLogWriter");
-        assertFalse(this.methodListener.isAfterMethodCalled(), "methodListener should NOT be called for getLogWriter");
+        assertTrue(this.methodListener.isBeforeMethodCalled(), "methodListener should be called for getLogWriter");
+        assertTrue(this.methodListener.isAfterMethodCalled(), "methodListener should be called for getLogWriter");
+
+        this.methodListener.reset();
 
         proxyDataSource.setLogWriter(writer);
-        assertFalse(this.methodListener.isBeforeMethodCalled(), "methodListener should NOT be called for setLogWriter");
-        assertFalse(this.methodListener.isAfterMethodCalled(), "methodListener should NOT be called for setLogWriter");
+        assertTrue(this.methodListener.isBeforeMethodCalled(), "methodListener should be called for setLogWriter");
+        assertTrue(this.methodListener.isAfterMethodCalled(), "methodListener should be called for setLogWriter");
     }
 
     @Test
     public void connectionClose() throws Exception {
-        ConnectionIdManager connIdManager = proxyDataSource.getConnectionIdManager();
+        ProxyConfig proxyConfig = getProxyConfig(this.proxyDataSource);
+        ConnectionIdManager connIdManager = proxyConfig.getConnectionIdManager();
         Connection conn = proxyDataSource.getConnection();
         Statement st = conn.createStatement();
         this.cleaner.add(conn);
@@ -255,6 +251,21 @@ public class ProxyDataSourceDbTest {
         conn.rollback();
         assertThat(connInfo.getCommitCount()).isEqualTo(2);
         assertThat(connInfo.getRollbackCount()).isEqualTo(2);
+    }
+
+    private ProxyConfig getProxyConfig(DataSource proxyDataSource) {
+        // reflectively retrieve ProxyConfig for test sake
+        try {
+            InvocationHandler ih = Proxy.getInvocationHandler(proxyDataSource);
+            Field delegateField = DataSourceInvocationHandler.class.getDeclaredField("delegate");
+            delegateField.setAccessible(true);
+            DataSourceProxyLogic logic = (DataSourceProxyLogic) delegateField.get(ih);
+            Field proxyConfigField = DataSourceProxyLogic.class.getDeclaredField("proxyConfig");
+            proxyConfigField.setAccessible(true);
+            return (ProxyConfig) proxyConfigField.get(logic);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

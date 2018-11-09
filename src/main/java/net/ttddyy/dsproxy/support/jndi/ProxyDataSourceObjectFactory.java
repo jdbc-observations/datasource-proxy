@@ -16,12 +16,12 @@ import java.util.Hashtable;
 import java.util.Set;
 
 /**
- * JNDI ObjectFactory to create {@link net.ttddyy.dsproxy.support.ProxyDataSource}.
+ * JNDI ObjectFactory to create proxy {@link DataSource}.
  *
  * <pre>{@code
  * <Resource name="jdbc/global/myProxy"
  *           auth="Container"
- *           type="net.ttddyy.dsproxy.support.ProxyDataSource"
+ *           type="javax.sql.DataSource"
  *           factory="net.ttddyy.dsproxy.support.jndi.ProxyDataSourceObjectFactory"
  *           description="ds"
  *           listeners="count,sysout,org.example.SampleListener"

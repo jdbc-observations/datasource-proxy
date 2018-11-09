@@ -2,7 +2,6 @@ package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.DatabaseTest;
 import net.ttddyy.dsproxy.DbResourceCleaner;
-import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +40,7 @@ public class MethodExecutionListenerDbTest {
             }
         };
 
-        ProxyDataSource ds = ProxyDataSourceBuilder.create(this.jdbcDataSource).methodListener(methodListener).build();
+        DataSource ds = ProxyDataSourceBuilder.create(this.jdbcDataSource).methodListener(methodListener).build();
         Connection conn = ds.getConnection();
         Statement statement = conn.createStatement();
         this.cleaner.add(conn);

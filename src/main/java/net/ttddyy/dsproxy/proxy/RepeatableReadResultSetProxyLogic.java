@@ -105,7 +105,7 @@ public class RepeatableReadResultSetProxyLogic extends CallbackSupport implement
     @Override
     public Object invoke(Method method, Object[] args) throws Throwable {
         return MethodExecutionListenerUtils.invoke(
-                (proxyTarget, targetMethod, targetArgs) ->
+                (methodContext, proxyTarget, targetMethod, targetArgs) ->
                         performQueryExecutionListener(targetMethod, targetArgs),
                 this.proxyConfig, this.resultSet, this.connectionInfo, method, args);
     }

@@ -1,6 +1,10 @@
 [[changelog-2.0]]
 === 2.0
 
+* Changed `ProxyDataSourceBuilder` to generate actual proxy with `DataSourceProxyLogic`.
+  Removed `ProxyDataSource`.
+ - net.ttddyy.dsproxy.support.ProxyDataSource
+
 * Removed following classes for internal clean up:
   - net.ttddyy.dsproxy.proxy.MethodUtils
 

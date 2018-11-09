@@ -41,7 +41,7 @@ public class CachedRowSetResultSetProxyLogic extends CallbackSupport implements 
     @Override
     public Object invoke(Method method, Object[] args) throws Throwable {
         return MethodExecutionListenerUtils.invoke(
-                (proxyTarget, targetMethod, targetArgs) -> {
+                (methodContext, proxyTarget, targetMethod, targetArgs) -> {
                     return performQueryExecutionListener(targetMethod, targetArgs);
                 }, this.proxyConfig, this.cachedRowSet, this.connectionInfo, method, args);
     }

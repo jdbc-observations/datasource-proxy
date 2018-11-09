@@ -5,7 +5,6 @@ import net.ttddyy.dsproxy.DatabaseType;
 import net.ttddyy.dsproxy.DbResourceCleaner;
 import net.ttddyy.dsproxy.EnabledOnDatabase;
 import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -77,7 +76,7 @@ public class SlowQueryListenerDbTest {
             executionTime.set(executionInfo.getElapsedTime());
         });
 
-        ProxyDataSource pds = ProxyDataSourceBuilder.create(jdbcDataSource).listener(listener).build();
+        DataSource pds = ProxyDataSourceBuilder.create(jdbcDataSource).listener(listener).build();
 
         String funcSleep = "CREATE FUNCTION funcSleep()" +
                 " RETURNS INTEGER" +

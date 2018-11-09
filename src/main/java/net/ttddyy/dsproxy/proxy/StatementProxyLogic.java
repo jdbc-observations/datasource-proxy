@@ -115,7 +115,7 @@ public class StatementProxyLogic extends CallbackSupport {
     public Object invoke(Method method, Object[] args) throws Throwable {
 
         return MethodExecutionListenerUtils.invoke(
-                (proxyTarget, targetMethod, targetArgs) ->
+                (methodContext, proxyTarget, targetMethod, targetArgs) ->
                         performQueryExecutionListener(targetMethod, targetArgs),
                 this.proxyConfig, this.statement, this.connectionInfo, method, args);
 

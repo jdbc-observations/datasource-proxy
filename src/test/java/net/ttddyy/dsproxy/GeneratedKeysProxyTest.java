@@ -1,11 +1,11 @@
 package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
-import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.jupiter.api.Test;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,7 +28,7 @@ public class GeneratedKeysProxyTest {
         JDBCDataSource dataSourceWithData = dataSourceWithData();
 
         GeneratedKeysProxyTest.LoggingExecutionListener listener = new GeneratedKeysProxyTest.LoggingExecutionListener();
-        ProxyDataSource proxyDataSource = ProxyDataSourceBuilder.create(dataSourceWithData)
+        DataSource proxyDataSource = ProxyDataSourceBuilder.create(dataSourceWithData)
                 .listener(listener)
                 .autoRetrieveGeneratedKeysWithRepeatableReadProxy(false)
                 .build();
@@ -51,7 +51,7 @@ public class GeneratedKeysProxyTest {
         return dataSource;
     }
 
-    private void checkThatResultSetCanBeConsumedViaTheProxyDataSource(ProxyDataSource proxyDataSource) throws SQLException {
+    private void checkThatResultSetCanBeConsumedViaTheProxyDataSource(DataSource proxyDataSource) throws SQLException {
         Connection connection = proxyDataSource.getConnection();
 
         PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO GeneratedKeysProxyTest(id) VALUES(default)", Statement.RETURN_GENERATED_KEYS);

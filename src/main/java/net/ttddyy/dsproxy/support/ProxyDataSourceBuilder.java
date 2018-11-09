@@ -24,7 +24,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 /**
- * Builder for {@link net.ttddyy.dsproxy.support.ProxyDataSource}.
+ * Builder for proxy {@link DataSource}.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.3
@@ -478,7 +478,7 @@ public class ProxyDataSourceBuilder {
     }
 
 
-    public ProxyDataSource build() {
+    public DataSource build() {
 
         // Query Logging Listeners
         List<ProxyDataSourceListener> listeners = new ArrayList<>();
@@ -551,12 +551,15 @@ public class ProxyDataSourceBuilder {
 
 
         // build ProxyDataSource
-        ProxyDataSource proxyDataSource = new ProxyDataSource();
-        if (this.dataSource != null) {
-            proxyDataSource.setDataSource(dataSource);
-        }
+//        ProxyDataSource proxyDataSource = new ProxyDataSource();
+//        if (this.dataSource != null) {
+//            proxyDataSource.setDataSource(dataSource);
+//        }
+
+        // TODO: if this.dataSource==null, fail
+
         ProxyConfig proxyConfig = proxyConfigBuilder.build();
-        proxyDataSource.setProxyConfig(proxyConfig);
+        DataSource proxyDataSource = proxyConfig.getJdbcProxyFactory().createDataSource(this.dataSource, proxyConfig);
 
         return proxyDataSource;
     }

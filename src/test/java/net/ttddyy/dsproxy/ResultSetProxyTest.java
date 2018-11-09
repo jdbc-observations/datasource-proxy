@@ -1,11 +1,11 @@
 package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
-import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.jupiter.api.Test;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,7 +26,7 @@ public class ResultSetProxyTest {
         JDBCDataSource dataSourceWithData = dataSourceWithData();
 
         LoggingExecutionListener listener = new LoggingExecutionListener();
-        ProxyDataSource proxyDataSource = ProxyDataSourceBuilder.create(dataSourceWithData)
+        DataSource proxyDataSource = ProxyDataSourceBuilder.create(dataSourceWithData)
                 .listener(listener)
                 .repeatableReadResultSet()
                 .build();
@@ -55,7 +55,7 @@ public class ResultSetProxyTest {
         return dataSource;
     }
 
-    private void checkThatResultSetCanBeConsumedViaTheProxyDataSource(ProxyDataSource proxyDataSource) throws SQLException {
+    private void checkThatResultSetCanBeConsumedViaTheProxyDataSource(DataSource proxyDataSource) throws SQLException {
         Connection connection = proxyDataSource.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement("SELECT * from test");
         ResultSet resultSet = preparedStatement.executeQuery();

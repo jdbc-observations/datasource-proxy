@@ -13,7 +13,7 @@ public class MethodExecutionListenerUtils {
 
     @FunctionalInterface
     public interface MethodExecutionCallback {
-        Object execute(Object proxyTarget, Method targetMethod, Object[] targetArgs) throws Throwable;
+        Object execute(MethodExecutionContext methodExecutionContext, Object proxyTarget, Method targetMethod, Object[] targetArgs) throws Throwable;
     }
 
     public static Object invoke(MethodExecutionCallback callback, ProxyConfig proxyConfig,
@@ -39,7 +39,7 @@ public class MethodExecutionListenerUtils {
         Object result = null;
         Throwable thrown = null;
         try {
-            result = callback.execute(proxyTarget, methodToInvoke, methodArgsToInvoke);
+            result = callback.execute(methodContext, proxyTarget, methodToInvoke, methodArgsToInvoke);
         } catch (Throwable throwable) {
             thrown = throwable;
             throw throwable;

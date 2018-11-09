@@ -13,7 +13,7 @@ import java.lang.reflect.Proxy;
 import java.sql.Connection;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -164,7 +164,7 @@ public class DataSourceProxyLogicMockTest {
         assertSame(DataSource.class, executionContext.getMethod().getDeclaringClass(), "method should come from interface");
         assertSame("getConnection", executionContext.getMethod().getName());
         assertSame(ds, executionContext.getTarget());
-        assertNull(executionContext.getConnectionInfo());
+        assertNotNull(executionContext.getConnectionInfo());
     }
 
 }

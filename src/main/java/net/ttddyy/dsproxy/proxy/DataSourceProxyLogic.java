@@ -2,10 +2,10 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 
 import javax.sql.DataSource;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 
@@ -28,13 +28,13 @@ public class DataSourceProxyLogic extends CallbackSupport {
     public Object invoke(Method method, Object[] args) throws Throwable {
 
         return MethodExecutionListenerUtils.invoke(
-                (proxyTarget, targetMethod, targetArgs) ->
-                        performQueryExecutionListener(targetMethod, targetArgs)
+                (methodExecContext, proxyTarget, targetMethod, targetArgs) ->
+                        performQueryExecutionListener(methodExecContext, targetMethod, targetArgs)
                 , this.proxyConfig, this.dataSource, null, method, args);
 
     }
 
-    private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {
+    private Object performQueryExecutionListener(MethodExecutionContext methodExecContext, Method method, Object[] args) throws Throwable {
 
         String dataSourceName = this.proxyConfig.getDataSourceName();
         JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
@@ -60,6 +60,9 @@ public class DataSourceProxyLogic extends CallbackSupport {
             ConnectionInfo connectionInfo = new ConnectionInfo();
             connectionInfo.setConnectionId(connId);
             connectionInfo.setDataSourceName(dataSourceName);
+
+            // add MethodExecutionContext, so that it is available in afterMethod() callback
+            methodExecContext.setConnectionInfo(connectionInfo);
 
             return jdbcProxyFactory.createConnection((Connection) retVal, connectionInfo, this.proxyConfig);
         } else {

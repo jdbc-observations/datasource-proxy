@@ -64,7 +64,7 @@ public class MethodExecutionListenerUtilsTest {
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
         Object result = MethodExecutionListenerUtils.invoke(
-                (proxyTarget, targetMethod, targetArgs) -> returnObj,
+                (methodContext, proxyTarget, targetMethod, targetArgs) -> returnObj,
                 proxyConfig, target, connectionInfo, method, methodArgs);
 
         assertSame(returnObj, result);
@@ -111,7 +111,7 @@ public class MethodExecutionListenerUtilsTest {
         Throwable thrownException = null;
         try {
             MethodExecutionListenerUtils.invoke(
-                    (proxyTarget, targetMethod, targetArgs) -> {
+                    (methodContext, proxyTarget, targetMethod, targetArgs) -> {
                         throw exception;
                     },
                     proxyConfig, target, connectionInfo, method, methodArgs);
@@ -162,7 +162,7 @@ public class MethodExecutionListenerUtilsTest {
         final AtomicReference<Object[]> invokedMethodArgs = new AtomicReference<>();
 
         MethodExecutionListenerUtils.invoke(
-                (proxyTarget, targetMethod, targetArgs) -> {
+                (methodContext, proxyTarget, targetMethod, targetArgs) -> {
                     invokedMethod.set(targetMethod);
                     invokedMethodArgs.set(targetArgs);
                     return null;
