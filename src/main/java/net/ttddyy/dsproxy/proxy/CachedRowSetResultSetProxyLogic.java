@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
@@ -40,12 +41,13 @@ public class CachedRowSetResultSetProxyLogic extends CallbackSupport implements 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         return proceedMethodExecution(
-                (methodContext, proxyTarget, targetMethod, targetArgs) -> {
-                    return performQueryExecutionListener(targetMethod, targetArgs);
-                }, this.proxyConfig, this.cachedRowSet, this.connectionInfo, method, args);
+                (methodContext, proxyTarget, targetMethod, targetArgs) ->
+                        performProxyLogic(proxy, targetMethod, targetArgs, methodContext)
+                , this.proxyConfig, this.cachedRowSet, this.connectionInfo, method, args);
     }
 
-    private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {
+    @Override
+    protected Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable {
 
         String methodName = method.getName();
 

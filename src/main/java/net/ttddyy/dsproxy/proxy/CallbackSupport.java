@@ -82,8 +82,8 @@ public abstract class CallbackSupport implements ProxyLogic {
     }
 
     protected Object proceedMethodExecution(MethodExecutionCallback callback, ProxyConfig proxyConfig,
-                                Object proxyTarget, ConnectionInfo connectionInfo, Method method,
-                                Object[] args) throws Throwable {
+                                            Object proxyTarget, ConnectionInfo connectionInfo, Method method,
+                                            Object[] args) throws Throwable {
 
         MethodExecutionContext methodContext = MethodExecutionContext.Builder.create()
                 .target(proxyTarget)
@@ -120,5 +120,7 @@ public abstract class CallbackSupport implements ProxyLogic {
         }
         return result;
     }
+
+    protected abstract Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable;
 
 }

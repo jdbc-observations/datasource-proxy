@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import net.ttddyy.dsproxy.transform.TransformInfo;
 
@@ -32,12 +33,13 @@ public class ConnectionProxyLogic extends CallbackSupport {
     public Object invoke(Object proxyConnection, Method method, Object[] args) throws Throwable {
         return proceedMethodExecution(
                 (methodContext, proxyTarget, targetMethod, targetArgs) -> {
-                    Object result = performQueryExecutionListener(proxyConnection, targetMethod, targetArgs);
+                    Object result = performProxyLogic(proxyConnection, targetMethod, targetArgs, methodContext);
                     return result;
                 }, this.proxyConfig, this.connection, this.connectionInfo, method, args);
     }
 
-    private Object performQueryExecutionListener(Object proxy, Method method, Object[] args) throws Throwable {
+    @Override
+    protected Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable {
         final Connection proxyConnection = (Connection) proxy;
         final String methodName = method.getName();
 

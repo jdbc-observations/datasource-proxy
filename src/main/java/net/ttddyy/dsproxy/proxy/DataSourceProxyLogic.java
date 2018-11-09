@@ -24,24 +24,16 @@ public class DataSourceProxyLogic extends CallbackSupport {
         this.proxyConfig = proxyConfig;
     }
 
-    public Object invoke(Method method, Object[] args) throws Throwable {
-
-        return proceedMethodExecution(
-                (methodExecContext, proxyTarget, targetMethod, targetArgs) ->
-                        performQueryExecutionListener(methodExecContext, targetMethod, targetArgs)
-                , this.proxyConfig, this.dataSource, null, method, args);
-
-    }
-
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         return proceedMethodExecution(
-                (methodExecContext, proxyTarget, targetMethod, targetArgs) ->
-                        performQueryExecutionListener(methodExecContext, targetMethod, targetArgs)
+                (methodContext, proxyTarget, targetMethod, targetArgs) ->
+                        performProxyLogic(proxy, targetMethod, targetArgs, methodContext)
                 , this.proxyConfig, this.dataSource, null, method, args);
     }
 
-    private Object performQueryExecutionListener(MethodExecutionContext methodExecContext, Method method, Object[] args) throws Throwable {
+    @Override
+    protected Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable {
 
         String dataSourceName = this.proxyConfig.getDataSourceName();
         JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
@@ -69,7 +61,7 @@ public class DataSourceProxyLogic extends CallbackSupport {
             connectionInfo.setDataSourceName(dataSourceName);
 
             // add MethodExecutionContext, so that it is available in afterMethod() callback
-            methodExecContext.setConnectionInfo(connectionInfo);
+            methodContext.setConnectionInfo(connectionInfo);
 
             return jdbcProxyFactory.createConnection((Connection) retVal, connectionInfo, this.proxyConfig);
         } else {

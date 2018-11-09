@@ -22,6 +22,6 @@ public class DataSourceInvocationHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        return delegate.invoke(method, args);
+        return delegate.invoke(proxy, method, args);
     }
 }

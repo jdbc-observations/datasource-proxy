@@ -33,7 +33,7 @@ public class DataSourceProxyLogicMockTest {
         DataSourceProxyLogic logic = getProxyLogic(ds);
 
         Method method = DataSource.class.getMethod("getConnection");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isInstanceOf(Connection.class);
         verifyConnection((Connection) result);
@@ -66,7 +66,7 @@ public class DataSourceProxyLogicMockTest {
         DataSourceProxyLogic logic = getProxyLogic(ds);
 
         Method method = ProxyJdbcObject.class.getMethod("getTarget");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isInstanceOf(DataSource.class);
         DataSource resultDS = (DataSource) result;
@@ -81,7 +81,7 @@ public class DataSourceProxyLogicMockTest {
         DataSourceProxyLogic logic = getProxyLogic(ds);
 
         Method method = Connection.class.getMethod("unwrap", Class.class);
-        Object result = logic.invoke(method, new Object[]{String.class});
+        Object result = logic.invoke(null, method, new Object[]{String.class});
 
         verify(ds).unwrap(String.class);
         assertThat(result).isEqualTo("called");
@@ -95,7 +95,7 @@ public class DataSourceProxyLogicMockTest {
         DataSourceProxyLogic logic = getProxyLogic(ds);
 
         Method method = Connection.class.getMethod("isWrapperFor", Class.class);
-        Object result = logic.invoke(method, new Object[]{String.class});
+        Object result = logic.invoke(null, method, new Object[]{String.class});
 
         verify(ds).isWrapperFor(String.class);
         assertThat(result).isEqualTo(true);
@@ -109,7 +109,7 @@ public class DataSourceProxyLogicMockTest {
         DataSourceProxyLogic logic = getProxyLogic(ds);
 
         Method method = Object.class.getMethod("toString");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isEqualTo(ds.getClass().getSimpleName() + " [my ds]");
     }
@@ -120,7 +120,7 @@ public class DataSourceProxyLogicMockTest {
         DataSourceProxyLogic logic = getProxyLogic(ds);
 
         Method method = Object.class.getMethod("hashCode");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isEqualTo(ds.hashCode());
     }
@@ -133,11 +133,11 @@ public class DataSourceProxyLogicMockTest {
         Method method = Object.class.getMethod("equals", Object.class);
 
         // equals(null)
-        Object result = logic.invoke(method, new Object[]{null});
+        Object result = logic.invoke(null, method, new Object[]{null});
         assertThat(result).isEqualTo(false);
 
         // equals(true)
-        result = logic.invoke(method, new Object[]{ds});
+        result = logic.invoke(null, method, new Object[]{ds});
         assertThat(result).isEqualTo(true);
     }
 
@@ -155,7 +155,7 @@ public class DataSourceProxyLogicMockTest {
 
 
         Method method = DataSource.class.getMethod("getConnection");
-        logic.invoke(method, new Object[]{});
+        logic.invoke(null, method, new Object[]{});
 
         assertTrue(listener.isBeforeMethodCalled());
         assertTrue(listener.isAfterMethodCalled());

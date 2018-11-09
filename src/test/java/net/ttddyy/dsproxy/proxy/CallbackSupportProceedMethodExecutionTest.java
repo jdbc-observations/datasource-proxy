@@ -25,6 +25,11 @@ public class CallbackSupportProceedMethodExecutionTest {
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             return null;
         }
+
+        @Override
+        protected Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable {
+            return null;
+        }
     };
 
     @Test

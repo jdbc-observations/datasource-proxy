@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
@@ -27,11 +28,12 @@ public class SimpleResultSetProxyLogic extends CallbackSupport implements Result
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         return proceedMethodExecution(
                 (methodContext, proxyTarget, targetMethod, targetArgs) ->
-                        performQueryExecutionListener(targetMethod, targetArgs),
+                        performProxyLogic(proxy, targetMethod, targetArgs, methodContext),
                 this.proxyConfig, this.resultSet, this.connectionInfo, method, args);
     }
 
-    private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {
+    @Override
+    protected Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable {
 
         String methodName = method.getName();
 
