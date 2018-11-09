@@ -108,29 +108,29 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         Method setURL = PreparedStatement.class.getMethod("setURL", int.class, URL.class);
         Method executeQuery = PreparedStatement.class.getMethod("executeQuery");
 
-        logic.invoke(setArray, new Object[]{1, array});
-        logic.invoke(setAsciiStream, new Object[]{2, inputStream});
-        logic.invoke(setBigDecimal, new Object[]{3, bigDecimal});
-        logic.invoke(setBinaryStream, new Object[]{4, binaryStream});
-        logic.invoke(setBlob, new Object[]{5, blob});
-        logic.invoke(setBoolean, new Object[]{6, booleanValue});
-        logic.invoke(setCharacterStream, new Object[]{7, reader});
-        logic.invoke(setClob, new Object[]{8, clob});
-        logic.invoke(setDate, new Object[]{9, date});
-        logic.invoke(setDouble, new Object[]{10, doubleValue});
-        logic.invoke(setFloat, new Object[]{11, floatValue});
-        logic.invoke(setInt, new Object[]{12, intvalue});
-        logic.invoke(setLong, new Object[]{13, longValue});
-        logic.invoke(setNull, new Object[]{14, Types.VARCHAR});
-        logic.invoke(setObject, new Object[]{15, object});
-        logic.invoke(setRef, new Object[]{16, ref});
-        logic.invoke(setShort, new Object[]{17, shortValue});
-        logic.invoke(setString, new Object[]{18, stringValue});
-        logic.invoke(setTime, new Object[]{19, time});
-        logic.invoke(setTimestamp, new Object[]{20, timestamp});
-        logic.invoke(setURL, new Object[]{21, url});
+        logic.invoke(null, setArray, new Object[]{1, array});
+        logic.invoke(null, setAsciiStream, new Object[]{2, inputStream});
+        logic.invoke(null, setBigDecimal, new Object[]{3, bigDecimal});
+        logic.invoke(null, setBinaryStream, new Object[]{4, binaryStream});
+        logic.invoke(null, setBlob, new Object[]{5, blob});
+        logic.invoke(null, setBoolean, new Object[]{6, booleanValue});
+        logic.invoke(null, setCharacterStream, new Object[]{7, reader});
+        logic.invoke(null, setClob, new Object[]{8, clob});
+        logic.invoke(null, setDate, new Object[]{9, date});
+        logic.invoke(null, setDouble, new Object[]{10, doubleValue});
+        logic.invoke(null, setFloat, new Object[]{11, floatValue});
+        logic.invoke(null, setInt, new Object[]{12, intvalue});
+        logic.invoke(null, setLong, new Object[]{13, longValue});
+        logic.invoke(null, setNull, new Object[]{14, Types.VARCHAR});
+        logic.invoke(null, setObject, new Object[]{15, object});
+        logic.invoke(null, setRef, new Object[]{16, ref});
+        logic.invoke(null, setShort, new Object[]{17, shortValue});
+        logic.invoke(null, setString, new Object[]{18, stringValue});
+        logic.invoke(null, setTime, new Object[]{19, time});
+        logic.invoke(null, setTimestamp, new Object[]{20, timestamp});
+        logic.invoke(null, setURL, new Object[]{21, url});
 
-        logic.invoke(executeQuery, null);
+        logic.invoke(null, executeQuery, null);
 
         verify(stat).setArray(1, array);
         verify(stat).setAsciiStream(2, inputStream);
@@ -260,19 +260,19 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         Method addBatch = PreparedStatement.class.getMethod("addBatch");
         Method executeBatch = PreparedStatement.class.getMethod("executeBatch");
 
-        logic.invoke(setString, new Object[]{1, "foo"});
-        logic.invoke(setInt, new Object[]{2, 10});
-        logic.invoke(addBatch, null);
+        logic.invoke(null, setString, new Object[]{1, "foo"});
+        logic.invoke(null, setInt, new Object[]{2, 10});
+        logic.invoke(null, addBatch, null);
 
-        logic.invoke(setString, new Object[]{1, "bar"});
-        logic.invoke(setInt, new Object[]{2, 20});
-        logic.invoke(addBatch, null);
+        logic.invoke(null, setString, new Object[]{1, "bar"});
+        logic.invoke(null, setInt, new Object[]{2, 20});
+        logic.invoke(null, addBatch, null);
 
-        logic.invoke(setString, new Object[]{1, "baz"});
-        logic.invoke(setInt, new Object[]{2, 30});
-        logic.invoke(addBatch, null);
+        logic.invoke(null, setString, new Object[]{1, "baz"});
+        logic.invoke(null, setInt, new Object[]{2, 30});
+        logic.invoke(null, addBatch, null);
 
-        Object result = logic.invoke(executeBatch, null);
+        Object result = logic.invoke(null, executeBatch, null);
 
         assertThat(result).isInstanceOf(int[].class);
         assertThat(((int[]) result).length).isEqualTo(3);
@@ -322,17 +322,17 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         Method clearBatch = PreparedStatement.class.getMethod("clearBatch");
         Method executeBatch = PreparedStatement.class.getMethod("executeBatch");
 
-        logic.invoke(setString, new Object[]{1, "foo"});
-        logic.invoke(setInt, new Object[]{2, 10});
-        logic.invoke(addBatch, null);
+        logic.invoke(null, setString, new Object[]{1, "foo"});
+        logic.invoke(null, setInt, new Object[]{2, 10});
+        logic.invoke(null, addBatch, null);
 
-        logic.invoke(clearBatch, null);
+        logic.invoke(null, clearBatch, null);
 
-        logic.invoke(setString, new Object[]{1, "FOO"});
-        logic.invoke(setInt, new Object[]{2, 20});
-        logic.invoke(addBatch, null);
+        logic.invoke(null, setString, new Object[]{1, "FOO"});
+        logic.invoke(null, setInt, new Object[]{2, 20});
+        logic.invoke(null, addBatch, null);
 
-        Object result = logic.invoke(executeBatch, null);
+        Object result = logic.invoke(null, executeBatch, null);
 
         assertThat(result).isInstanceOf(int[].class);
 
@@ -372,13 +372,13 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         Method clearParametes = PreparedStatement.class.getMethod("clearParameters");
         Method executeBatch = PreparedStatement.class.getMethod("executeBatch");
 
-        logic.invoke(setString, new Object[]{1, "foo"});
-        logic.invoke(clearParametes, null);
-        logic.invoke(setString, new Object[]{1, "FOO"});
-        logic.invoke(setInt, new Object[]{2, 10});
-        logic.invoke(addBatch, null);
+        logic.invoke(null, setString, new Object[]{1, "foo"});
+        logic.invoke(null, clearParametes, null);
+        logic.invoke(null, setString, new Object[]{1, "FOO"});
+        logic.invoke(null, setInt, new Object[]{2, 10});
+        logic.invoke(null, addBatch, null);
 
-        Object result = logic.invoke(executeBatch, null);
+        Object result = logic.invoke(null, executeBatch, null);
 
         assertThat(result).isInstanceOf(int[].class);
 
@@ -416,12 +416,12 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         Method clearParametes = PreparedStatement.class.getMethod("clearParameters");
         Method executeBatch = PreparedStatement.class.getMethod("executeBatch");
 
-        logic.invoke(setString, new Object[]{1, "foo"});
-        logic.invoke(setInt, new Object[]{2, 10});
-        logic.invoke(clearParametes, null);
-        logic.invoke(addBatch, null);
+        logic.invoke(null, setString, new Object[]{1, "foo"});
+        logic.invoke(null, setInt, new Object[]{2, 10});
+        logic.invoke(null, clearParametes, null);
+        logic.invoke(null, addBatch, null);
 
-        logic.invoke(executeBatch, null);
+        logic.invoke(null, executeBatch, null);
 
         verify(stat).setString(1, "foo");
         verify(stat).setInt(2, 10);
@@ -450,7 +450,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         StatementProxyLogic logic = getProxyLogic(stmt, null, listener, null);
 
         Method method = ProxyJdbcObject.class.getMethod("getTarget");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isInstanceOf(PreparedStatement.class).isSameAs(stmt);
     }
@@ -464,7 +464,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         StatementProxyLogic logic = getProxyLogic(mock, null, listener, null);
 
         Method method = PreparedStatement.class.getMethod("unwrap", Class.class);
-        Object result = logic.invoke(method, new Object[]{String.class});
+        Object result = logic.invoke(null, method, new Object[]{String.class});
 
         verify(mock).unwrap(String.class);
         assertThat(result).isInstanceOf(String.class).isEqualTo("called");
@@ -479,7 +479,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         StatementProxyLogic logic = getProxyLogic(mock, null, listener, null);
 
         Method method = PreparedStatement.class.getMethod("isWrapperFor", Class.class);
-        Object result = logic.invoke(method, new Object[]{String.class});
+        Object result = logic.invoke(null, method, new Object[]{String.class});
 
         verify(mock).isWrapperFor(String.class);
         assertThat(result).isInstanceOf(Boolean.class).isEqualTo(true);
@@ -495,7 +495,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, null, listener, conn);
 
         Method method = PreparedStatement.class.getMethod("getConnection");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isSameAs(conn);
     }
@@ -509,7 +509,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, null, listener, null);
 
         Method method = Object.class.getMethod("toString");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isEqualTo(stat.getClass().getSimpleName() + " [my ps]");
     }
@@ -522,7 +522,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, null, listener, null);
 
         Method method = Object.class.getMethod("hashCode");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isInstanceOf(Integer.class).isEqualTo(stat.hashCode());
     }
@@ -536,11 +536,11 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         Method method = Object.class.getMethod("equals", Object.class);
 
         // equals(null)
-        Object result = logic.invoke(method, new Object[]{null});
+        Object result = logic.invoke(null, method, new Object[]{null});
         assertThat(result).isInstanceOf(Boolean.class).isEqualTo(false);
 
         // equals(true)
-        result = logic.invoke(method, new Object[]{stat});
+        result = logic.invoke(null, method, new Object[]{stat});
         assertThat(result).isInstanceOf(Boolean.class).isEqualTo(true);
     }
 
@@ -573,7 +573,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         Object result;
 
         // check "executeQuery"
-        result = logic.invoke(executeQueryMethod, new Object[]{});
+        result = logic.invoke(null, executeQueryMethod, new Object[]{});
         assertThat(result).isInstanceOf(ResultSet.class);
         assertTrue(Proxy.isProxyClass(result.getClass()));
         assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
@@ -582,7 +582,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         listenerReceivedResult.set(null);
 
         // check "getGeneratedKeys". generated keys has separate configuration
-        result = logic.invoke(getGeneratedKeysMethod, null);
+        result = logic.invoke(null, getGeneratedKeysMethod, null);
         assertThat(result).isInstanceOf(ResultSet.class);
         assertFalse(Proxy.isProxyClass(result.getClass()));
 
@@ -621,7 +621,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
 
 
         // check "getGeneratedKeys"
-        result = logic.invoke(getGeneratedKeysMethod, new Object[]{});
+        result = logic.invoke(null, getGeneratedKeysMethod, new Object[]{});
         assertThat(result).isInstanceOf(ResultSet.class);
         assertTrue(Proxy.isProxyClass(result.getClass()));
         assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
@@ -630,12 +630,12 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         listenerReceivedResult.set(null);
 
         // check "executeQuery"
-        result = logic.invoke(executeQueryMethod, null);
+        result = logic.invoke(null, executeQueryMethod, null);
         assertThat(result).isInstanceOf(ResultSet.class);
         assertFalse(Proxy.isProxyClass(result.getClass()));
 
         // check "getResultSet"
-        result = logic.invoke(getResultSetMethod, null);
+        result = logic.invoke(null, getResultSetMethod, null);
         assertThat(result).isInstanceOf(ResultSet.class);
         assertFalse(Proxy.isProxyClass(result.getClass()));
 
@@ -666,7 +666,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
 
         // executeUpdate
         Method executeUpdate = PreparedStatement.class.getMethod("executeUpdate");
-        logic.invoke(executeUpdate, null);
+        logic.invoke(null, executeUpdate, null);
 
         verify(resultSet).close();
 
@@ -687,7 +687,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
 
 
         // "executeQuery
-        logic.invoke(executeUpdate, null);
+        logic.invoke(null, executeUpdate, null);
 
         verify(resultSet, never()).close();
 
@@ -711,7 +711,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
                 .build();
 
         Method method = PreparedStatement.class.getMethod("executeQuery");
-        logic.invoke(method, new Object[]{});
+        logic.invoke(null, method, new Object[]{});
 
         assertTrue(listener.isBeforeMethodCalled());
         assertTrue(listener.isAfterMethodCalled());

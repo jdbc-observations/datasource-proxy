@@ -111,13 +111,12 @@ public class StatementProxyLogic extends CallbackSupport {
     private ResultSet generatedKeys;
     private boolean generateKey;  // set true if auto-generate keys is enabled at "Connection#prepareStatement()"
 
-    public Object invoke(Method method, Object[] args) throws Throwable {
-
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         return proceedMethodExecution(
                 (methodContext, proxyTarget, targetMethod, targetArgs) ->
                         performQueryExecutionListener(targetMethod, targetArgs),
                 this.proxyConfig, this.statement, this.connectionInfo, method, args);
-
     }
 
     private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {

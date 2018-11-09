@@ -33,6 +33,14 @@ public class DataSourceProxyLogic extends CallbackSupport {
 
     }
 
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        return proceedMethodExecution(
+                (methodExecContext, proxyTarget, targetMethod, targetArgs) ->
+                        performQueryExecutionListener(methodExecContext, targetMethod, targetArgs)
+                , this.proxyConfig, this.dataSource, null, method, args);
+    }
+
     private Object performQueryExecutionListener(MethodExecutionContext methodExecContext, Method method, Object[] args) throws Throwable {
 
         String dataSourceName = this.proxyConfig.getDataSourceName();

@@ -20,6 +20,7 @@ public class DataSourceInvocationHandler implements InvocationHandler {
         delegate = new DataSourceProxyLogic(dataSource, proxyConfig);
     }
 
+    @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         return delegate.invoke(method, args);
     }

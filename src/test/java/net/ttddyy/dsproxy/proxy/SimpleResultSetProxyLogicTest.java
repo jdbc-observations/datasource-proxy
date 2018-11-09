@@ -28,7 +28,7 @@ public class SimpleResultSetProxyLogicTest {
         when(rs.toString()).thenReturn("my rs");
 
         Method method = Object.class.getMethod("toString");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isInstanceOf(String.class).isEqualTo(rs.getClass().getSimpleName() + " [my rs]");
     }
@@ -39,7 +39,7 @@ public class SimpleResultSetProxyLogicTest {
         SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, new ConnectionInfo(), ProxyConfig.Builder.create().build());
 
         Method method = Object.class.getMethod("hashCode");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isInstanceOf(Integer.class).isEqualTo(rs.hashCode());
     }
@@ -52,11 +52,11 @@ public class SimpleResultSetProxyLogicTest {
         Method method = Object.class.getMethod("equals", Object.class);
 
         // equals(null)
-        Object result = logic.invoke(method, new Object[]{null});
+        Object result = logic.invoke(null, method, new Object[]{null});
         assertThat(result).isEqualTo(false);
 
         // equals(true)
-        result = logic.invoke(method, new Object[]{rs});
+        result = logic.invoke(null, method, new Object[]{rs});
         assertThat(result).isEqualTo(true);
     }
 
@@ -70,7 +70,7 @@ public class SimpleResultSetProxyLogicTest {
         SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, connectionInfo, proxyConfig);
 
         Method method = ResultSet.class.getMethod("close");
-        logic.invoke(method, new Object[]{});
+        logic.invoke(null, method, new Object[]{});
 
         assertTrue(listener.isBeforeMethodCalled());
         assertTrue(listener.isAfterMethodCalled());

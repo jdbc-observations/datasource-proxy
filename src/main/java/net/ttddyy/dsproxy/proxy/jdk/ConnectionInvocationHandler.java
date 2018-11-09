@@ -21,6 +21,7 @@ public class ConnectionInvocationHandler implements InvocationHandler {
         this.delegate = new ConnectionProxyLogic(connection, connectionInfo, proxyConfig);
     }
 
+    @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         return delegate.invoke(proxy, method, args);
     }

@@ -28,6 +28,7 @@ public class ConnectionProxyLogic extends CallbackSupport {
         this.proxyConfig = proxyConfig;
     }
 
+    @Override
     public Object invoke(Object proxyConnection, Method method, Object[] args) throws Throwable {
 
         boolean isCloseMethod = "close".equals(method.getName());

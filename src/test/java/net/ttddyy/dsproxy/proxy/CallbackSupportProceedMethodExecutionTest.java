@@ -21,6 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CallbackSupportProceedMethodExecutionTest {
 
     private CallbackSupport callbackSupport = new CallbackSupport() {
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            return null;
+        }
     };
 
     @Test
