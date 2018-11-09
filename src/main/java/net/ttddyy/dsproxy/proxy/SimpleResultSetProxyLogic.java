@@ -26,10 +26,7 @@ public class SimpleResultSetProxyLogic extends CallbackSupport implements Result
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        return proceedMethodExecution(
-                (methodContext, proxyTarget, targetMethod, targetArgs) ->
-                        performProxyLogic(proxy, targetMethod, targetArgs, methodContext),
-                this.proxyConfig, this.resultSet, this.connectionInfo, method, args);
+        return proceedMethodExecution(this.proxyConfig, this.resultSet, this.connectionInfo, proxy, method, args);
     }
 
     @Override

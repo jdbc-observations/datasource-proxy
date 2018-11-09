@@ -31,11 +31,7 @@ public class ConnectionProxyLogic extends CallbackSupport {
 
     @Override
     public Object invoke(Object proxyConnection, Method method, Object[] args) throws Throwable {
-        return proceedMethodExecution(
-                (methodContext, proxyTarget, targetMethod, targetArgs) -> {
-                    Object result = performProxyLogic(proxyConnection, targetMethod, targetArgs, methodContext);
-                    return result;
-                }, this.proxyConfig, this.connection, this.connectionInfo, method, args);
+        return proceedMethodExecution(this.proxyConfig, this.connection, this.connectionInfo, proxyConnection, method, args);
     }
 
     @Override

@@ -26,10 +26,7 @@ public class DataSourceProxyLogic extends CallbackSupport {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        return proceedMethodExecution(
-                (methodContext, proxyTarget, targetMethod, targetArgs) ->
-                        performProxyLogic(proxy, targetMethod, targetArgs, methodContext)
-                , this.proxyConfig, this.dataSource, null, method, args);
+        return proceedMethodExecution(this.proxyConfig, this.dataSource, null, proxy, method, args);
     }
 
     @Override

@@ -114,10 +114,7 @@ public class StatementProxyLogic extends CallbackSupport {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        return proceedMethodExecution(
-                (methodContext, proxyTarget, targetMethod, targetArgs) ->
-                        performProxyLogic(proxy, targetMethod, targetArgs, methodContext),
-                this.proxyConfig, this.statement, this.connectionInfo, method, args);
+        return proceedMethodExecution(this.proxyConfig, this.statement, this.connectionInfo, proxy, method, args);
     }
 
     @Override

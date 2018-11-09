@@ -3,34 +3,26 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.proxy.CallbackSupport;
-import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.lang.reflect.Method;
 import java.sql.Statement;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Tadaya Tsuyukubo
  */
 public class CallbackSupportProceedMethodExecutionTest {
 
-    private CallbackSupport callbackSupport = new CallbackSupport() {
-        @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            return null;
-        }
-
-        @Override
-        protected Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable {
-            return null;
-        }
-    };
+    private CallbackSupport callbackSupport = spy(CallbackSupport.class);
 
     @Test
     public void invokeNormal() throws Throwable {
@@ -78,9 +70,11 @@ public class CallbackSupportProceedMethodExecutionTest {
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
-        Object result = this.callbackSupport.proceedMethodExecution(
-                (methodContext, proxyTarget, targetMethod, targetArgs) -> returnObj,
-                proxyConfig, target, connectionInfo, method, methodArgs);
+        when(this.callbackSupport.performProxyLogic(any(), any(), any(), any())).thenReturn(returnObj);
+
+        Object result = this.callbackSupport.proceedMethodExecution(proxyConfig, target, connectionInfo, null, method, methodArgs);
+
+        verify(this.callbackSupport).performProxyLogic(any(), any(), any(), any());
 
         assertSame(returnObj, result);
         assertTrue(listener.isBeforeMethodCalled());
@@ -122,14 +116,12 @@ public class CallbackSupportProceedMethodExecutionTest {
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
+        when(this.callbackSupport.performProxyLogic(any(), any(), any(), any())).thenThrow(exception);
+
         // when callback throws exception
         Throwable thrownException = null;
         try {
-            this.callbackSupport.proceedMethodExecution(
-                    (methodContext, proxyTarget, targetMethod, targetArgs) -> {
-                        throw exception;
-                    },
-                    proxyConfig, target, connectionInfo, method, methodArgs);
+            this.callbackSupport.proceedMethodExecution(proxyConfig, target, connectionInfo, null, method, methodArgs);
 
         } catch (Throwable throwable) {
             thrownException = throwable;
@@ -173,18 +165,16 @@ public class CallbackSupportProceedMethodExecutionTest {
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
-        final AtomicReference<Method> invokedMethod = new AtomicReference<>();
-        final AtomicReference<Object[]> invokedMethodArgs = new AtomicReference<>();
+        ArgumentCaptor<Method> invokedMethodCaptor = ArgumentCaptor.forClass(Method.class);
+        ArgumentCaptor<Object[]> invokedMethodArgsCaptor = ArgumentCaptor.forClass(Object[].class);
 
-        this.callbackSupport.proceedMethodExecution(
-                (methodContext, proxyTarget, targetMethod, targetArgs) -> {
-                    invokedMethod.set(targetMethod);
-                    invokedMethodArgs.set(targetArgs);
-                    return null;
-                }, proxyConfig, target, connectionInfo, method, methodArgs);
+        this.callbackSupport.proceedMethodExecution(proxyConfig, target, connectionInfo, null, method, methodArgs);
 
-        assertThat(invokedMethod.get()).isSameAs(replacedMethod);
-        assertThat(invokedMethodArgs.get()).isSameAs(replacedMethodArgs);
+        verify(this.callbackSupport).performProxyLogic(any(), invokedMethodCaptor.capture(), invokedMethodArgsCaptor.capture(), any());
+
+        assertSame(replacedMethod, invokedMethodCaptor.getValue());
+        assertSame(replacedMethodArgs, invokedMethodArgsCaptor.getValue());
+
 
     }
 
