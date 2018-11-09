@@ -1,7 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import net.ttddyy.dsproxy.transform.TransformInfo;
 
@@ -35,7 +34,7 @@ public class ConnectionProxyLogic extends CallbackSupport {
         boolean isCommitMethod = "commit".equals(method.getName());
         boolean isRollbackMethod = "rollback".equals(method.getName());
 
-        return MethodExecutionListenerUtils.invoke(
+        return proceedMethodExecution(
                 (methodContext, proxyTarget, targetMethod, targetArgs) -> {
                     Object result = performQueryExecutionListener(proxyConnection, targetMethod, targetArgs);
                     ConnectionInfo connectionInfo = ConnectionProxyLogic.this.connectionInfo;

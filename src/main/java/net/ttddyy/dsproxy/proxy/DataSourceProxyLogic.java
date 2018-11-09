@@ -3,7 +3,6 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Method;
@@ -27,7 +26,7 @@ public class DataSourceProxyLogic extends CallbackSupport {
 
     public Object invoke(Method method, Object[] args) throws Throwable {
 
-        return MethodExecutionListenerUtils.invoke(
+        return proceedMethodExecution(
                 (methodExecContext, proxyTarget, targetMethod, targetArgs) ->
                         performQueryExecutionListener(methodExecContext, targetMethod, targetArgs)
                 , this.proxyConfig, this.dataSource, null, method, args);

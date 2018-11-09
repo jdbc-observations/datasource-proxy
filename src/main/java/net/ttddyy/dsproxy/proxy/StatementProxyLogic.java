@@ -4,7 +4,6 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
-import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import net.ttddyy.dsproxy.transform.TransformInfo;
@@ -114,7 +113,7 @@ public class StatementProxyLogic extends CallbackSupport {
 
     public Object invoke(Method method, Object[] args) throws Throwable {
 
-        return MethodExecutionListenerUtils.invoke(
+        return proceedMethodExecution(
                 (methodContext, proxyTarget, targetMethod, targetArgs) ->
                         performQueryExecutionListener(targetMethod, targetArgs),
                 this.proxyConfig, this.statement, this.connectionInfo, method, args);

@@ -1,6 +1,9 @@
-package net.ttddyy.dsproxy.listener;
+package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
+import net.ttddyy.dsproxy.proxy.CallbackSupport;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class MethodExecutionListenerUtilsTest {
+public class CallbackSupportProceedMethodExecutionTest {
+
+    private CallbackSupport callbackSupport = new CallbackSupport() {
+    };
 
     @Test
     public void invokeNormal() throws Throwable {
@@ -63,7 +69,7 @@ public class MethodExecutionListenerUtilsTest {
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
-        Object result = MethodExecutionListenerUtils.invoke(
+        Object result = this.callbackSupport.proceedMethodExecution(
                 (methodContext, proxyTarget, targetMethod, targetArgs) -> returnObj,
                 proxyConfig, target, connectionInfo, method, methodArgs);
 
@@ -110,7 +116,7 @@ public class MethodExecutionListenerUtilsTest {
         // when callback throws exception
         Throwable thrownException = null;
         try {
-            MethodExecutionListenerUtils.invoke(
+            this.callbackSupport.proceedMethodExecution(
                     (methodContext, proxyTarget, targetMethod, targetArgs) -> {
                         throw exception;
                     },
@@ -161,7 +167,7 @@ public class MethodExecutionListenerUtilsTest {
         final AtomicReference<Method> invokedMethod = new AtomicReference<>();
         final AtomicReference<Object[]> invokedMethodArgs = new AtomicReference<>();
 
-        MethodExecutionListenerUtils.invoke(
+        this.callbackSupport.proceedMethodExecution(
                 (methodContext, proxyTarget, targetMethod, targetArgs) -> {
                     invokedMethod.set(targetMethod);
                     invokedMethodArgs.set(targetArgs);

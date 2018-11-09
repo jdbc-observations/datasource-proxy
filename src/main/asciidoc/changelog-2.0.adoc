@@ -7,6 +7,7 @@
 
 * Removed following classes for internal clean up:
   - net.ttddyy.dsproxy.proxy.MethodUtils
+  - net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils
 
 * Removed `QueryCount` log creators.
   - net.ttddyy.dsproxy.support.DefaultQueryCountLogEntryCreator
