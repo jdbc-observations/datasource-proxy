@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
+import net.ttddyy.dsproxy.DataSourceProxyException;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
@@ -550,13 +551,9 @@ public class ProxyDataSourceBuilder {
         proxyConfigBuilder.generatedKeysProxyLogicFactory(this.generatedKeysProxyLogicFactory);
 
 
-        // build ProxyDataSource
-//        ProxyDataSource proxyDataSource = new ProxyDataSource();
-//        if (this.dataSource != null) {
-//            proxyDataSource.setDataSource(dataSource);
-//        }
-
-        // TODO: if this.dataSource==null, fail
+        if (this.dataSource == null) {
+            throw new DataSourceProxyException("Original DataSource is requiired.");
+        }
 
         ProxyConfig proxyConfig = proxyConfigBuilder.build();
         DataSource proxyDataSource = proxyConfig.getJdbcProxyFactory().createDataSource(this.dataSource, proxyConfig);
