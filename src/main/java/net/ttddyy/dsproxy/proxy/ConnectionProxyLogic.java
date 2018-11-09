@@ -61,13 +61,8 @@ public class ConnectionProxyLogic extends CallbackSupport {
         JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
 
-        if ("toString".equals(methodName)) {
-            final StringBuilder sb = new StringBuilder();
-            sb.append(this.connection.getClass().getSimpleName());
-            sb.append(" [");
-            sb.append(this.connection.toString());
-            sb.append("]");
-            return sb.toString(); // differentiate toString message.
+        if (isToStringMethod(methodName)) {
+            return handleToStringMethod(this.connection);
         } else if ("getTarget".equals(methodName)) {
             // ProxyJdbcObject interface has method to return original object.
             return this.connection;

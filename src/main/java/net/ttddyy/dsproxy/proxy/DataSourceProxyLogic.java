@@ -42,13 +42,8 @@ public class DataSourceProxyLogic extends CallbackSupport {
 
         String methodName = method.getName();
 
-        if ("toString".equals(methodName)) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(dataSource.getClass().getSimpleName());
-            sb.append(" [");
-            sb.append(dataSource.toString());
-            sb.append("]");
-            return sb.toString(); // differentiate toString message.
+        if (isToStringMethod(methodName)) {
+            return handleToStringMethod(this.dataSource);
         } else if ("getTarget".equals(methodName)) {
             // ProxyJdbcObject interface has method to return original object.
             return dataSource;

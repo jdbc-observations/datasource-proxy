@@ -17,6 +17,8 @@ public abstract class CallbackSupport {
             new HashSet<>(Arrays.asList("unwrap", "isWrapperFor"))
     );
 
+    protected static final String TO_STRING_METHOD = "toString";
+
 
     // handle wrapper methods
     protected boolean isWrapperMethods(String methodName) {
@@ -34,4 +36,18 @@ public abstract class CallbackSupport {
             return wrapper.isWrapperFor(clazz);
         }
     }
+
+    protected boolean isToStringMethod(String methodName) {
+        return TO_STRING_METHOD.contains(methodName);
+    }
+
+    protected String handleToStringMethod(Object target) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(target.getClass().getSimpleName());
+        sb.append(" [");
+        sb.append(target.toString());
+        sb.append("]");
+        return sb.toString(); // differentiate toString message.
+    }
+
 }

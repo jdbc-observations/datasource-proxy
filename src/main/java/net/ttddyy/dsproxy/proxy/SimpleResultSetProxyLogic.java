@@ -12,7 +12,7 @@ import java.sql.ResultSet;
  * @author Tadaya Tsuyukubo
  * @since 1.4.3
  */
-public class SimpleResultSetProxyLogic implements ResultSetProxyLogic {
+public class SimpleResultSetProxyLogic extends CallbackSupport implements ResultSetProxyLogic {
 
     private ResultSet resultSet;
     private ConnectionInfo connectionInfo;
@@ -37,13 +37,8 @@ public class SimpleResultSetProxyLogic implements ResultSetProxyLogic {
         String methodName = method.getName();
 
         // special treat for toString method
-        if ("toString".equals(methodName)) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(this.resultSet.getClass().getSimpleName());
-            sb.append(" [");
-            sb.append(this.resultSet.toString());
-            sb.append("]");
-            return sb.toString(); // differentiate toString message.
+        if (isToStringMethod(methodName)) {
+            return handleToStringMethod(this.resultSet);
         } else if ("getTarget".equals(methodName)) {
             // ProxyJdbcObject interface has a method to return original object.
             return this.resultSet;

@@ -135,13 +135,8 @@ public class StatementProxyLogic extends CallbackSupport {
 
 
         // special treat for toString method
-        if ("toString".equals(methodName)) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(statement.getClass().getSimpleName());   // Statement, PreparedStatement, or CallableStatement
-            sb.append(" [");
-            sb.append(statement.toString());
-            sb.append("]");
-            return sb.toString(); // differentiate toString message.
+        if (isToStringMethod(methodName)) {
+            return handleToStringMethod(this.statement);  // Statement, PreparedStatement, or CallableStatement
         } else if ("getTarget".equals(methodName)) {
             // ProxyJdbcObject interface has a method to return original object.
             return statement;

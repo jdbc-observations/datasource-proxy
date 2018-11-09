@@ -5,10 +5,15 @@ import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static java.lang.Boolean.TRUE;
 import static java.lang.String.format;
@@ -20,7 +25,7 @@ import static java.lang.String.format;
  * @see net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler
  * @since 1.4
  */
-public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
+public class RepeatableReadResultSetProxyLogic extends CallbackSupport implements ResultSetProxyLogic {
 
     private static final Set<String> METHODS_TO_INTERCEPT = Collections.unmodifiableSet(
             new HashSet<String>() {
@@ -115,13 +120,8 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
         }
 
         // special treat for toString method
-        if ("toString".equals(methodName)) {
-            final StringBuilder sb = new StringBuilder();
-            sb.append(this.resultSet.getClass().getSimpleName());
-            sb.append(" [");
-            sb.append(this.resultSet.toString());
-            sb.append("]");
-            return sb.toString(); // differentiate toString message.
+        if (isToStringMethod(methodName)) {
+            return handleToStringMethod(this.resultSet);
         } else if ("getTarget".equals(methodName)) {
             // ProxyJdbcObject interface has a method to return original object.
             return this.resultSet;

@@ -20,7 +20,7 @@ import java.sql.SQLException;
  * @see CachedRowSetResultSetProxyLogicFactory
  * @since 1.4.7
  */
-public class CachedRowSetResultSetProxyLogic implements ResultSetProxyLogic {
+public class CachedRowSetResultSetProxyLogic extends CallbackSupport implements ResultSetProxyLogic {
 
     private ResultSet resultSet;  // original resultset
     private ResultSet cachedRowSet;
@@ -50,13 +50,8 @@ public class CachedRowSetResultSetProxyLogic implements ResultSetProxyLogic {
 
         String methodName = method.getName();
 
-        if ("toString".equals(methodName)) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(this.resultSet.getClass().getSimpleName());
-            sb.append(" [");
-            sb.append(this.resultSet.toString());
-            sb.append("]");
-            return sb.toString(); // differentiate toString message.
+        if (isToStringMethod(methodName)) {
+            return handleToStringMethod(this.resultSet);
         } else if ("hashCode".equals(methodName)) {
             return this.resultSet.hashCode();  // returns original resultset hashcode
         } else if ("equals".equals(methodName)) {
