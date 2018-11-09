@@ -31,7 +31,7 @@ import static net.ttddyy.dsproxy.proxy.StatementMethodNames.METHODS_TO_RETURN_RE
  * @author Tadaya Tsuyukubo
  * @since 1.2
  */
-public class StatementProxyLogic {
+public class StatementProxyLogic extends CallbackSupport {
 
     /**
      * Builder for {@link StatementProxyLogic}.
@@ -150,13 +150,8 @@ public class StatementProxyLogic {
         }
 
         // "unwrap", "isWrapperFor"
-        if (StatementMethodNames.JDBC4_METHODS.contains(methodName)) {
-            Class<?> clazz = (Class<?>) args[0];
-            if ("unwrap".equals(methodName)) {
-                return statement.unwrap(clazz);
-            } else if ("isWrapperFor".equals(methodName)) {
-                return statement.isWrapperFor(clazz);
-            }
+        if (isWrapperMethods(methodName)) {
+            return handleWrapperMethods(methodName, this.statement, args);
         }
 
         // "getConnection"

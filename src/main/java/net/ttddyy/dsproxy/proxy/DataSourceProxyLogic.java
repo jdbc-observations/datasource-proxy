@@ -8,10 +8,6 @@ import javax.sql.DataSource;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Proxy Logic implementation for {@link DataSource} methods.
@@ -19,11 +15,7 @@ import java.util.Set;
  * @author Tadaya Tsuyukubo
  * @since 1.2
  */
-public class DataSourceProxyLogic {
-
-    private static final Set<String> JDBC4_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("unwrap", "isWrapperFor"))
-    );
+public class DataSourceProxyLogic extends CallbackSupport {
 
     private DataSource dataSource;
     private ProxyConfig proxyConfig;
@@ -64,13 +56,8 @@ public class DataSourceProxyLogic {
             return dataSource;
         }
 
-        if (JDBC4_METHODS.contains(methodName)) {
-            Class<?> clazz = (Class<?>) args[0];
-            if ("unwrap".equals(methodName)) {
-                return dataSource.unwrap(clazz);
-            } else if ("isWrapperFor".equals(methodName)) {
-                return dataSource.isWrapperFor(clazz);
-            }
+        if (isWrapperMethods(methodName)) {
+            return handleWrapperMethods(methodName, this.dataSource, args);
         }
 
         // Invoke method on original datasource.
