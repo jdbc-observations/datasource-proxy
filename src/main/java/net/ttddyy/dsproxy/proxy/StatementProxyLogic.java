@@ -142,8 +142,6 @@ public class StatementProxyLogic extends CallbackSupport {
             sb.append(statement.toString());
             sb.append("]");
             return sb.toString(); // differentiate toString message.
-        } else if ("getDataSourceName".equals(methodName)) {
-            return this.connectionInfo.getDataSourceName();
         } else if ("getTarget".equals(methodName)) {
             // ProxyJdbcObject interface has a method to return original object.
             return statement;

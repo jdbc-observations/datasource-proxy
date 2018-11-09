@@ -81,7 +81,6 @@ public interface StatementMethodNames {
                     addAll(JDBC4_METHODS);
                     addAll(METHODS_TO_RETURN_RESULTSET);
                     add(GET_CONNECTION_METHOD);
-                    add("getDataSourceName");
                     add("toString");
                     add("getTarget"); // from ProxyJdbcObject
                 }

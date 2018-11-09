@@ -68,8 +68,6 @@ public class ConnectionProxyLogic extends CallbackSupport {
             sb.append(this.connection.toString());
             sb.append("]");
             return sb.toString(); // differentiate toString message.
-        } else if ("getDataSourceName".equals(methodName)) {
-            return this.connectionInfo.getDataSourceName();
         } else if ("getTarget".equals(methodName)) {
             // ProxyJdbcObject interface has method to return original object.
             return this.connection;
