@@ -50,23 +50,22 @@ public class DataSourceProxyLogic extends CallbackSupport {
             return handleWrapperMethods(methodName, this.dataSource, args);
         }
 
+
         // Invoke method on original datasource.
-        try {
-            Object retVal = method.invoke(dataSource, args);
+        Object retVal = proceedExecution(method, this.dataSource, args);
 
-            if ("getConnection".equals(methodName)) {
-                Connection conn = (Connection) retVal;
-                String connId = connectionIdManager.getId(conn);
-                ConnectionInfo connectionInfo = new ConnectionInfo();
-                connectionInfo.setConnectionId(connId);
-                connectionInfo.setDataSourceName(dataSourceName);
+        if ("getConnection".equals(methodName)) {
+            Connection conn = (Connection) retVal;
+            String connId = connectionIdManager.getId(conn);
+            ConnectionInfo connectionInfo = new ConnectionInfo();
+            connectionInfo.setConnectionId(connId);
+            connectionInfo.setDataSourceName(dataSourceName);
 
-                return jdbcProxyFactory.createConnection((Connection) retVal, connectionInfo, this.proxyConfig);
-            }
+            return jdbcProxyFactory.createConnection((Connection) retVal, connectionInfo, this.proxyConfig);
+        } else {
             return retVal;
-        } catch (InvocationTargetException ex) {
-            throw ex.getTargetException();
         }
+
     }
 
 }

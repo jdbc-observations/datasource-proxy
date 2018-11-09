@@ -126,7 +126,7 @@ public class StatementProxyLogic extends CallbackSupport {
         String methodName = method.getName();
 
         if (!StatementMethodNames.METHODS_TO_INTERCEPT.contains(methodName)) {
-            return MethodUtils.proceedExecution(method, statement, args);
+            return proceedExecution(method, statement, args);
         }
 
         QueryTransformer queryTransformer = this.proxyConfig.getQueryTransformer();
@@ -165,7 +165,7 @@ public class StatementProxyLogic extends CallbackSupport {
                 }
 
                 // proceed execution, no need to call listener
-                return MethodUtils.proceedExecution(method, statement, args);
+                return proceedExecution(method, statement, args);
             }
 
         } else {
@@ -187,7 +187,7 @@ public class StatementProxyLogic extends CallbackSupport {
                         } else if (args[0] instanceof String) {
                             parameterKey = new ParameterKey((String) args[0]);
                         } else {
-                            return MethodUtils.proceedExecution(method, ps, args);
+                            return proceedExecution(method, ps, args);
                         }
 
                         // when same key is specified, old value will be overridden
@@ -210,7 +210,7 @@ public class StatementProxyLogic extends CallbackSupport {
                 }
 
                 // proceed execution, no need to call listener
-                return MethodUtils.proceedExecution(method, ps, args);
+                return proceedExecution(method, ps, args);
             }
 
         }

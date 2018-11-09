@@ -1,6 +1,9 @@
 [[changelog-2.0]]
 === 2.0
 
+* Removed following classes for internal clean up:
+  - net.ttddyy.dsproxy.proxy.MethodUtils
+
 * Removed `QueryCount` log creators.
   - net.ttddyy.dsproxy.support.DefaultQueryCountLogEntryCreator
   - net.ttddyy.dsproxy.support.QueryCountLogEntryCreator

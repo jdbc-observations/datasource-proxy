@@ -42,6 +42,6 @@ public class SimpleResultSetProxyLogic extends CallbackSupport implements Result
             return this.resultSet;  // ProxyJdbcObject interface has a method to return original object.
         }
 
-        return MethodUtils.proceedExecution(method, this.resultSet, args);
+        return proceedExecution(method, this.resultSet, args);
     }
 }

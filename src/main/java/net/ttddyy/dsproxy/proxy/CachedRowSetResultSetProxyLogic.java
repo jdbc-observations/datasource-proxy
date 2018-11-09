@@ -71,7 +71,7 @@ public class CachedRowSetResultSetProxyLogic extends CallbackSupport implements 
         // TODO: handle getStatement() method to return proxied statement
 
         try {
-            return MethodUtils.proceedExecution(method, this.cachedRowSet, args);
+            return proceedExecution(method, this.cachedRowSet, args);
         } catch (Throwable throwable) {
             if (throwable instanceof SQLException) {
                 throw throwable;

@@ -82,12 +82,7 @@ public class ConnectionProxyLogic extends CallbackSupport {
         }
 
         // Invoke method on original Connection.
-        final Object retVal;
-        try {
-            retVal = method.invoke(this.connection, args);
-        } catch (InvocationTargetException ex) {
-            throw ex.getTargetException();
-        }
+        final Object retVal = proceedExecution(method, this.connection, args);
 
         // when it is a call to createStatement, prepareStatement or prepareCall, returns a proxy.
         // most of the time, spring and hibernate use prepareStatement to execute query as batch

@@ -116,7 +116,7 @@ public class RepeatableReadResultSetProxyLogic extends CallbackSupport implement
         final String methodName = method.getName();
 
         if (!METHODS_TO_INTERCEPT.contains(methodName)) {
-            return MethodUtils.proceedExecution(method, this.resultSet, args);
+            return proceedExecution(method, this.resultSet, args);
         }
 
         if (isToStringMethod(methodName)) {
