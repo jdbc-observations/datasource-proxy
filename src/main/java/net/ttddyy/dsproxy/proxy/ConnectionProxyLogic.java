@@ -63,12 +63,9 @@ public class ConnectionProxyLogic extends CallbackSupport {
 
         if (isToStringMethod(methodName)) {
             return handleToStringMethod(this.connection);
-        } else if ("getTarget".equals(methodName)) {
-            // ProxyJdbcObject interface has method to return original object.
-            return this.connection;
-        }
-
-        if (isWrapperMethods(methodName)) {
+        } else if (isGetTargetMethod(methodName)) {
+            return this.connection;  // ProxyJdbcObject interface has method to return original object.
+        } else if (isWrapperMethods(methodName)) {
             return handleWrapperMethods(methodName, this.connection, args);
         }
 

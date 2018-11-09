@@ -60,9 +60,8 @@ public class CachedRowSetResultSetProxyLogic extends CallbackSupport implements 
 
         if ("close".equals(methodName)) {
             this.isClosed = true;
-        } else if ("getTarget".equals(methodName)) {
-            // ProxyJdbcObject interface has a method to return original object.
-            return this.resultSet;
+        } else if (isGetTargetMethod(methodName)) {
+            return this.resultSet;  // ProxyJdbcObject interface has a method to return original object.
         }
 
         if (this.supportIsClosedMethod && "isClosed".equals(methodName)) {

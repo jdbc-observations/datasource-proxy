@@ -134,16 +134,13 @@ public class StatementProxyLogic extends CallbackSupport {
         JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
 
-        // special treat for toString method
         if (isToStringMethod(methodName)) {
+            // special treat for toString method
             return handleToStringMethod(this.statement);  // Statement, PreparedStatement, or CallableStatement
-        } else if ("getTarget".equals(methodName)) {
-            // ProxyJdbcObject interface has a method to return original object.
-            return statement;
-        }
-
-        // "unwrap", "isWrapperFor"
-        if (isWrapperMethods(methodName)) {
+        } else if (isGetTargetMethod(methodName)) {
+            return statement;  // ProxyJdbcObject interface has a method to return original object.
+        } else if (isWrapperMethods(methodName)) {
+            // "unwrap", "isWrapperFor"
             return handleWrapperMethods(methodName, this.statement, args);
         }
 

@@ -18,6 +18,7 @@ public abstract class CallbackSupport {
     );
 
     protected static final String TO_STRING_METHOD = "toString";
+    protected static final String GET_TARGET_METHOD = "getTarget";
 
 
     // handle wrapper methods
@@ -48,6 +49,13 @@ public abstract class CallbackSupport {
         sb.append(target.toString());
         sb.append("]");
         return sb.toString(); // differentiate toString message.
+    }
+
+    /**
+     * {@link ProxyJdbcObject} interface has a method to return original object.
+     */
+    protected boolean isGetTargetMethod(String methodName) {
+        return GET_TARGET_METHOD.contains(methodName);
     }
 
 }

@@ -119,12 +119,10 @@ public class RepeatableReadResultSetProxyLogic extends CallbackSupport implement
             return MethodUtils.proceedExecution(method, this.resultSet, args);
         }
 
-        // special treat for toString method
         if (isToStringMethod(methodName)) {
-            return handleToStringMethod(this.resultSet);
-        } else if ("getTarget".equals(methodName)) {
-            // ProxyJdbcObject interface has a method to return original object.
-            return this.resultSet;
+            return handleToStringMethod(this.resultSet);  // special treat for toString method
+        } else if (isGetTargetMethod(methodName)) {
+            return this.resultSet;  // ProxyJdbcObject interface has a method to return original object.
         }
 
 

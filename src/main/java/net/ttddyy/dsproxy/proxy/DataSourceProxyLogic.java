@@ -44,12 +44,9 @@ public class DataSourceProxyLogic extends CallbackSupport {
 
         if (isToStringMethod(methodName)) {
             return handleToStringMethod(this.dataSource);
-        } else if ("getTarget".equals(methodName)) {
-            // ProxyJdbcObject interface has method to return original object.
-            return dataSource;
-        }
-
-        if (isWrapperMethods(methodName)) {
+        } else if (isGetTargetMethod(methodName)) {
+            return this.dataSource;  // ProxyJdbcObject interface has method to return original object.
+        } else if (isWrapperMethods(methodName)) {
             return handleWrapperMethods(methodName, this.dataSource, args);
         }
 
