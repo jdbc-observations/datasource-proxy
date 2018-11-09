@@ -30,24 +30,9 @@ public class ConnectionProxyLogic extends CallbackSupport {
 
     @Override
     public Object invoke(Object proxyConnection, Method method, Object[] args) throws Throwable {
-
-        boolean isCloseMethod = "close".equals(method.getName());
-        boolean isCommitMethod = "commit".equals(method.getName());
-        boolean isRollbackMethod = "rollback".equals(method.getName());
-
         return proceedMethodExecution(
                 (methodContext, proxyTarget, targetMethod, targetArgs) -> {
                     Object result = performQueryExecutionListener(proxyConnection, targetMethod, targetArgs);
-                    ConnectionInfo connectionInfo = ConnectionProxyLogic.this.connectionInfo;
-                    if (isCommitMethod) {
-                        connectionInfo.incrementCommitCount();
-                    } else if (isRollbackMethod) {
-                        connectionInfo.incrementRollbackCount();
-                    } else if (isCloseMethod) {
-                        connectionInfo.setClosed(true);
-                        String connId = connectionInfo.getConnectionId();
-                        ConnectionProxyLogic.this.proxyConfig.getConnectionIdManager().addClosedId(connId);
-                    }
                     return result;
                 }, this.proxyConfig, this.connection, this.connectionInfo, method, args);
     }
@@ -80,8 +65,25 @@ public class ConnectionProxyLogic extends CallbackSupport {
             }
         }
 
+        boolean isCloseMethod = "close".equals(method.getName());
+        boolean isCommitMethod = "commit".equals(method.getName());
+        boolean isRollbackMethod = "rollback".equals(method.getName());
+
+
         // Invoke method on original Connection.
         final Object retVal = proceedExecution(method, this.connection, args);
+
+        // update ConnectionInfo
+        ConnectionInfo connectionInfo = ConnectionProxyLogic.this.connectionInfo;
+        if (isCommitMethod) {
+            connectionInfo.incrementCommitCount();
+        } else if (isRollbackMethod) {
+            connectionInfo.incrementRollbackCount();
+        } else if (isCloseMethod) {
+            connectionInfo.setClosed(true);
+            String connId = connectionInfo.getConnectionId();
+            ConnectionProxyLogic.this.proxyConfig.getConnectionIdManager().addClosedId(connId);
+        }
 
         // when it is a call to createStatement, prepareStatement or prepareCall, returns a proxy.
         // most of the time, spring and hibernate use prepareStatement to execute query as batch
