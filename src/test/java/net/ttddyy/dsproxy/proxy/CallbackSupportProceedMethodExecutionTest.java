@@ -3,13 +3,21 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.lang.reflect.Method;
 import java.sql.Statement;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,6 +41,11 @@ public class CallbackSupportProceedMethodExecutionTest {
         final Object returnObj = new Object();
         final ConnectionInfo connectionInfo = new ConnectionInfo();
 
+        // since no concurrency change in this test
+        Thread currentThread = Thread.currentThread();
+        long threadId = currentThread.getId();
+        String threadName = currentThread.getName();
+
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {
@@ -48,6 +61,9 @@ public class CallbackSupportProceedMethodExecutionTest {
 
                 assertThat(executionContext.getConnectionInfo()).isSameAs(connectionInfo);
                 assertThat(executionContext.getProxyConfig()).isNotNull();
+
+                assertThat(executionContext.getThreadId()).isEqualTo(threadId);
+                assertThat(executionContext.getThreadName()).isEqualTo(threadName);
             }
 
             @Override
@@ -64,6 +80,9 @@ public class CallbackSupportProceedMethodExecutionTest {
 
                 assertThat(executionContext.getConnectionInfo()).isSameAs(connectionInfo);
                 assertThat(executionContext.getProxyConfig()).isNotNull();
+
+                assertThat(executionContext.getThreadId()).isEqualTo(threadId);
+                assertThat(executionContext.getThreadName()).isEqualTo(threadName);
             }
         };
 
@@ -175,6 +194,62 @@ public class CallbackSupportProceedMethodExecutionTest {
         assertSame(replacedMethod, invokedMethodCaptor.getValue());
         assertSame(replacedMethodArgs, invokedMethodArgsCaptor.getValue());
 
+    }
+
+    @Test
+    void differentThread() throws Throwable {
+        final Object target = new Object();
+        final Method method = Statement.class.getMethod("execute", String.class);
+        final Object[] methodArgs = new Object[]{};
+        final ConnectionInfo connectionInfo = new ConnectionInfo();
+
+        AtomicLong beforeMethodThreadId = new AtomicLong();
+        AtomicLong afterMethodThreadId = new AtomicLong();
+        AtomicReference<String> beforeMethodThreadName = new AtomicReference<>();
+        AtomicReference<String> afterMethodThreadName = new AtomicReference<>();
+
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+            @Override
+            public void beforeMethod(MethodExecutionContext executionContext) {
+                beforeMethodThreadId.set(executionContext.getThreadId());
+                beforeMethodThreadName.set(executionContext.getThreadName());
+            }
+
+            @Override
+            public void afterMethod(MethodExecutionContext executionContext) {
+                afterMethodThreadId.set(executionContext.getThreadId());
+                afterMethodThreadName.set(executionContext.getThreadName());
+            }
+        };
+
+
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
+
+        AtomicLong executedThreadId = new AtomicLong();
+        AtomicReference<String> executedThreadName = new AtomicReference<>();
+
+        AtomicBoolean failed = new AtomicBoolean();
+        CountDownLatch latch = new CountDownLatch(1);
+
+        Executors.newSingleThreadExecutor().submit(() -> {
+            try {
+                executedThreadId.set(Thread.currentThread().getId());
+                executedThreadName.set(Thread.currentThread().getName());
+                this.callbackSupport.proceedMethodExecution(proxyConfig, target, connectionInfo, null, method, methodArgs);
+            } catch (Throwable throwable) {
+                failed.set(true);
+            }
+            latch.countDown();
+        });
+
+        latch.await();
+
+        assertFalse(failed.get());
+
+        assertEquals(executedThreadId.get(), beforeMethodThreadId.get());
+        assertEquals(executedThreadId.get(), afterMethodThreadId.get());
+        assertEquals(executedThreadName.get(), beforeMethodThreadName.get());
+        assertEquals(executedThreadName.get(), afterMethodThreadName.get());
 
     }
 

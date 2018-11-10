@@ -82,12 +82,18 @@ public abstract class CallbackSupport implements ProxyLogic {
     protected Object proceedMethodExecution(ProxyConfig proxyConfig, Object proxyTarget, ConnectionInfo connectionInfo,
                                             Object proxy, Method method, Object[] args) throws Throwable {
 
+        Thread beforeMethodThread = Thread.currentThread();
+        long beforeMethodThreadId = beforeMethodThread.getId();
+        String beforeMethodThreadName = beforeMethodThread.getName();
+
         MethodExecutionContext methodContext = MethodExecutionContext.Builder.create()
                 .target(proxyTarget)
                 .method(method)
                 .methodArgs(args)
                 .connectionInfo(connectionInfo)
                 .proxyConfig(proxyConfig)
+                .threadId(beforeMethodThreadId)
+                .threadName(beforeMethodThreadName)
                 .build();
 
         ProxyDataSourceListener methodExecutionListener = proxyConfig.getListeners();
@@ -112,6 +118,13 @@ public abstract class CallbackSupport implements ProxyLogic {
             methodContext.setElapsedTime(elapsedTime);
             methodContext.setResult(result);
             methodContext.setThrown(thrown);
+
+            Thread afterMethodThread = Thread.currentThread();
+            long afterMethodThreadId = afterMethodThread.getId();
+            String afterMethodThreadName = afterMethodThread.getName();
+
+            methodContext.setThreadId(afterMethodThreadId);
+            methodContext.setThreadName(afterMethodThreadName);
 
             methodExecutionListener.afterMethod(methodContext);
         }

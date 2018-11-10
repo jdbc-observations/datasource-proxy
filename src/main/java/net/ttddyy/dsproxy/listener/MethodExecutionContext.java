@@ -23,6 +23,8 @@ public class MethodExecutionContext {
         private long elapsedTime;
         private ConnectionInfo connectionInfo;
         private ProxyConfig proxyConfig;
+        private long threadId;
+        private String threadName;
 
         public static Builder create() {
             return new Builder();
@@ -38,6 +40,8 @@ public class MethodExecutionContext {
             context.elapsedTime = this.elapsedTime;
             context.connectionInfo = this.connectionInfo;
             context.proxyConfig = this.proxyConfig;
+            context.threadId = this.threadId;
+            context.threadName = this.threadName;
             return context;
         }
 
@@ -80,6 +84,16 @@ public class MethodExecutionContext {
             this.proxyConfig = proxyConfig;
             return this;
         }
+
+        public Builder threadId(long threadId) {
+            this.threadId = threadId;
+            return this;
+        }
+
+        public Builder threadName(String threadName) {
+            this.threadName = threadName;
+            return this;
+        }
     }
 
 
@@ -91,6 +105,8 @@ public class MethodExecutionContext {
     private long elapsedTime;
     private ConnectionInfo connectionInfo;
     private ProxyConfig proxyConfig;
+    private long threadId;
+    private String threadName;
 
     public Object getTarget() {
         return target;
@@ -178,4 +194,31 @@ public class MethodExecutionContext {
         this.proxyConfig = proxyConfig;
     }
 
+    /**
+     * @since 2.0
+     */
+    public long getThreadId() {
+        return threadId;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public void setThreadId(long threadId) {
+        this.threadId = threadId;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public String getThreadName() {
+        return threadName;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public void setThreadName(String threadName) {
+        this.threadName = threadName;
+    }
 }
