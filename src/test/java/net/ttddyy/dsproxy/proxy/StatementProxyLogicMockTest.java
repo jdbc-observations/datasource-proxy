@@ -21,11 +21,15 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -473,6 +477,12 @@ public class StatementProxyLogicMockTest {
         assertThat(queryInfoList).hasSize(1);
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery()).isEqualTo(query);
+
+        long threadId = Thread.currentThread().getId();
+        String threadName = Thread.currentThread().getName();
+
+        assertEquals(threadId, execInfo.getThreadId());
+        assertEquals(threadName, execInfo.getThreadName());
     }
 
     @SuppressWarnings("unchecked")
@@ -697,6 +707,70 @@ public class StatementProxyLogicMockTest {
         }
 
     }
+
+    @Test
+    void differentThread() throws Throwable {
+
+        String query = "insert into emp (id, name) values (1, 'foo')";
+
+        Statement stat = mock(Statement.class);
+        when(stat.executeUpdate(query)).thenReturn(100);
+
+        AtomicLong beforeQueryThreadId = new AtomicLong();
+        AtomicLong afterQueryThreadId = new AtomicLong();
+        AtomicReference<String> beforeQueryThreadName = new AtomicReference<>();
+        AtomicReference<String> afterQueryThreadName = new AtomicReference<>();
+
+
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+            @Override
+            public void beforeQuery(ExecutionInfo execInfo) {
+                beforeQueryThreadId.set(execInfo.getThreadId());
+                beforeQueryThreadName.set(execInfo.getThreadName());
+            }
+
+            @Override
+            public void afterQuery(ExecutionInfo execInfo) {
+                afterQueryThreadId.set(execInfo.getThreadId());
+                afterQueryThreadName.set(execInfo.getThreadName());
+            }
+        };
+
+        StatementProxyLogic logic = getProxyLogic(stat, listener, null);
+
+        Method method = Statement.class.getMethod("executeUpdate", String.class);
+        Object[] args = new Object[]{query};
+
+
+        AtomicLong executedThreadId = new AtomicLong();
+        AtomicReference<String> executedThreadName = new AtomicReference<>();
+
+        AtomicBoolean failed = new AtomicBoolean();
+        CountDownLatch latch = new CountDownLatch(1);
+
+        Executors.newSingleThreadExecutor().submit(() -> {
+            try {
+                executedThreadId.set(Thread.currentThread().getId());
+                executedThreadName.set(Thread.currentThread().getName());
+
+                logic.invoke(null, method, args);
+            } catch (Throwable throwable) {
+                failed.set(true);
+            }
+            latch.countDown();
+        });
+
+        latch.await();
+
+        assertFalse(failed.get());
+
+        assertEquals(executedThreadId.get(), beforeQueryThreadId.get());
+        assertEquals(executedThreadId.get(), afterQueryThreadId.get());
+        assertEquals(executedThreadName.get(), beforeQueryThreadName.get());
+        assertEquals(executedThreadName.get(), afterQueryThreadName.get());
+
+    }
+
 
     @Test
     public void testGetTarget() throws Throwable {

@@ -26,6 +26,8 @@ public class ExecutionInfo {
     private Statement statement;
     private ResultSet generatedKeys;
     private List<QueryInfo> queries = new ArrayList<>();
+    private long threadId;
+    private String threadName;
 
     public ExecutionInfo() {
     }
@@ -203,5 +205,33 @@ public class ExecutionInfo {
      */
     public void setQueries(List<QueryInfo> queries) {
         this.queries = queries;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public long getThreadId() {
+        return threadId;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public void setThreadId(long threadId) {
+        this.threadId = threadId;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public String getThreadName() {
+        return threadName;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public void setThreadName(String threadName) {
+        this.threadName = threadName;
     }
 }

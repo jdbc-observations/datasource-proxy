@@ -269,7 +269,13 @@ public class StatementProxyLogic extends CallbackSupport {
             }
         }
 
+        Thread beforeQueryThread = Thread.currentThread();
+        long beforeQueryThreadId = beforeQueryThread.getId();
+        String beforeQueryThreadName = beforeQueryThread.getName();
+
         ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo, this.statement, isBatchExecution, batchSize, method, args, queries);
+        execInfo.setThreadId(beforeQueryThreadId);
+        execInfo.setThreadName(beforeQueryThreadName);
 
 
         boolean isGetResultSetMethod = GET_RESULTSET_METHOD.equals(methodName);
@@ -361,6 +367,12 @@ public class StatementProxyLogic extends CallbackSupport {
             execInfo.setSuccess(false);
             throw ex.getTargetException();
         } finally {
+
+            Thread afterQueryThread = Thread.currentThread();
+            long afterQueryThreadId = afterQueryThread.getId();
+            String afterQueryThreadName = afterQueryThread.getName();
+            execInfo.setThreadId(afterQueryThreadId);
+            execInfo.setThreadName(afterQueryThreadName);
 
             if (performQueryListener) {
                 queryListener.afterQuery(execInfo);

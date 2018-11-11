@@ -1,6 +1,8 @@
 [[changelog-2.0]]
 === 2.0
 
+* Added thread id and name to method and query executions
+
 * Changed `ProxyDataSourceBuilder` to generate actual proxy with `DataSourceProxyLogic`.
   Removed `ProxyDataSource`.
  - net.ttddyy.dsproxy.support.ProxyDataSource
