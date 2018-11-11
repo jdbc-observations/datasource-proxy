@@ -39,12 +39,14 @@ public class ExecutionInfoFormatterTest {
                 .batch(false)
                 .batchSize(0)
                 .queries(Lists.newArrayList(queryInfo))
+                .threadId(30)
+                .threadName("my-thread")
                 .build();
 
         ExecutionInfoFormatter formatter = ExecutionInfoFormatter.showAll();
 
         String entry = formatter.format(executionInfo);
-        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Success:True, Type:Statement, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[()]");
+        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Thread:my-thread(30), Success:True, Type:Statement, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[()]");
     }
 
     @Test
@@ -67,12 +69,14 @@ public class ExecutionInfoFormatterTest {
                 .batch(true)
                 .batchSize(2)
                 .queries(Lists.newArrayList(queryInfo1, queryInfo2))
+                .threadId(30)
+                .threadName("my-thread")
                 .build();
 
         ExecutionInfoFormatter formatter = ExecutionInfoFormatter.showAll();
 
         String entry = formatter.format(executionInfo);
-        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Success:True, Type:Statement, Batch:True, QuerySize:2, BatchSize:2, Query:[\"select 1\",\"select 2\"], Params:[(),()]");
+        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Thread:my-thread(30), Success:True, Type:Statement, Batch:True, QuerySize:2, BatchSize:2, Query:[\"select 1\",\"select 2\"], Params:[(),()]");
 
     }
 
@@ -100,12 +104,14 @@ public class ExecutionInfoFormatterTest {
                 .batch(false)
                 .batchSize(0)
                 .queries(Lists.newArrayList(queryInfo))
+                .threadId(30)
+                .threadName("my-thread")
                 .build();
 
         ExecutionInfoFormatter formatter = ExecutionInfoFormatter.showAll();
 
         String entry = formatter.format(executionInfo);
-        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Success:True, Type:Prepared, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(foo,100,null)]");
+        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Thread:my-thread(30), Success:True, Type:Prepared, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(foo,100,null)]");
 
     }
 
@@ -134,13 +140,15 @@ public class ExecutionInfoFormatterTest {
                 .batch(true)
                 .batchSize(2)
                 .queries(Lists.newArrayList(queryInfo))
+                .threadId(30)
+                .threadName("my-thread")
                 .build();
 
         ExecutionInfoFormatter formatter = ExecutionInfoFormatter.showAll();
 
 
         String entry = formatter.format(executionInfo);
-        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(foo,100),(bar,200)]");
+        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Thread:my-thread(30), Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(foo,100),(bar,200)]");
 
     }
 
@@ -167,12 +175,14 @@ public class ExecutionInfoFormatterTest {
                 .batch(false)
                 .batchSize(0)
                 .queries(Lists.newArrayList(queryInfo))
+                .threadId(30)
+                .threadName("my-thread")
                 .build();
 
         ExecutionInfoFormatter formatter = ExecutionInfoFormatter.showAll();
 
         String entry = formatter.format(executionInfo);
-        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Success:True, Type:Callable, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(id=100,name=foo)]");
+        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Thread:my-thread(30), Success:True, Type:Callable, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(id=100,name=foo)]");
 
     }
 
@@ -201,13 +211,15 @@ public class ExecutionInfoFormatterTest {
                 .batch(true)
                 .batchSize(2)
                 .queries(Lists.newArrayList(queryInfo))
+                .threadId(30)
+                .threadName("my-thread")
                 .build();
 
         ExecutionInfoFormatter formatter = ExecutionInfoFormatter.showAll();
 
 
         String entry = formatter.format(executionInfo);
-        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Success:True, Type:Callable, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(id=100,name=foo),(id=200,name=bar)]");
+        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Thread:my-thread(30), Success:True, Type:Callable, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(id=100,name=foo),(id=200,name=bar)]");
 
     }
 
@@ -297,6 +309,19 @@ public class ExecutionInfoFormatterTest {
         executionInfo = ExecutionInfoBuilder.create().elapsedTime(23).build();
         result = formatter.format(executionInfo);
         assertThat(result).isEqualTo("Time:23");
+    }
+
+    @Test
+    void showThread() {
+        ExecutionInfo executionInfo;
+        String result;
+
+        ExecutionInfoFormatter formatter = new ExecutionInfoFormatter();
+        formatter.showThread();
+
+        executionInfo = ExecutionInfoBuilder.create().threadId(23).threadName("myThread").build();
+        result = formatter.format(executionInfo);
+        assertThat(result).isEqualTo("Thread:myThread(23)");
     }
 
     @Test

@@ -38,6 +38,13 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport<ExecutionIn
         sb.append("Time:");
         sb.append(execInfo.getElapsedTime());
     };
+    private BiConsumer<ExecutionInfo, StringBuilder> onThread = (execInfo, sb) -> {
+        sb.append("Thread:");
+        sb.append(execInfo.getThreadName());
+        sb.append("(");
+        sb.append(execInfo.getThreadId());
+        sb.append(")");
+    };
     private BiConsumer<ExecutionInfo, StringBuilder> onSuccess = (execInfo, sb) -> {
         sb.append("Success:");
         sb.append(execInfo.isSuccess() ? "True" : "False");
@@ -216,6 +223,7 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport<ExecutionIn
         formatter.addConsumer(formatter.onDataSourceName);
         formatter.addConsumer(formatter.onConnection);
         formatter.addConsumer(formatter.onDuration);
+        formatter.addConsumer(formatter.onThread);
         formatter.addConsumer(formatter.onSuccess);
         formatter.addConsumer(formatter.onStatementType);
         formatter.addConsumer(formatter.onBatch);
@@ -296,6 +304,16 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport<ExecutionIn
     public ExecutionInfoFormatter showDuration(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
         this.onDuration = consumer;
         return showDuration();
+    }
+
+    public ExecutionInfoFormatter showThread() {
+        this.addConsumer(this.onThread);
+        return this;
+    }
+
+    public ExecutionInfoFormatter showThread(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+        this.onThread = consumer;
+        return showThread();
     }
 
 

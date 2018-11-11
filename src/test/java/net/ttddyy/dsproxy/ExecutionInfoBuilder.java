@@ -21,6 +21,8 @@ public class ExecutionInfoBuilder {
     private int batchSize;
     private String connectionId;
     private List<QueryInfo> queries = new ArrayList<>();
+    private long threadId;
+    private String threadName;
 
     public static ExecutionInfoBuilder create() {
         return new ExecutionInfoBuilder();
@@ -86,6 +88,22 @@ public class ExecutionInfoBuilder {
         return this;
     }
 
+    /**
+     * @since 2.0
+     */
+    public ExecutionInfoBuilder threadId(long threadId) {
+        this.threadId = threadId;
+        return this;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public ExecutionInfoBuilder threadName(String threadName) {
+        this.threadName = threadName;
+        return this;
+    }
+
     public ExecutionInfo build() {
         ExecutionInfo executionInfo = new ExecutionInfo();
         executionInfo.setDataSourceName(dataSourceName);
@@ -100,6 +118,8 @@ public class ExecutionInfoBuilder {
         executionInfo.setBatchSize(batchSize);
         executionInfo.setConnectionId(this.connectionId);
         executionInfo.setQueries(this.queries);
+        executionInfo.setThreadId(this.threadId);
+        executionInfo.setThreadName(this.threadName);
         return executionInfo;
     }
 }
