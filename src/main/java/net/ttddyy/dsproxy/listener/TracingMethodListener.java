@@ -49,7 +49,9 @@ public class TracingMethodListener implements ProxyDataSourceListener {
         long seq = this.sequenceNumber.getAndIncrement();
         String args = getArguments(executionContext.getMethodArgs());
 
-        String message = constructMessage(seq, thrown, execTime, connectionId, targetClass, method, args);
+        long threadId = executionContext.getThreadId();
+
+        String message = constructMessage(seq, thrown, execTime, connectionId, threadId, targetClass, method, args);
         logMessage(message);
 
     }
@@ -169,13 +171,14 @@ public class TracingMethodListener implements ProxyDataSourceListener {
      * @param thrown       thrown exception
      * @param execTime     time took to perform the method
      * @param connectionId connection id
+     * @param threadId     thread id
      * @param targetClass  invoked class
      * @param method       invoked method
      * @param args         method arguments(parameters)
      * @return message to log
      */
-    protected String constructMessage(long seq, Throwable thrown, long execTime,
-                                      String connectionId, Class<?> targetClass, Method method, String args) {
+    protected String constructMessage(long seq, Throwable thrown, long execTime, String connectionId, long threadId,
+                                      Class<?> targetClass, Method method, String args) {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         sb.append(seq);
@@ -191,6 +194,10 @@ public class TracingMethodListener implements ProxyDataSourceListener {
 
         sb.append("[conn=");
         sb.append(connectionId);
+        sb.append("]");
+
+        sb.append("[thread=");
+        sb.append(threadId);
         sb.append("]");
 
         if (thrown != null) {

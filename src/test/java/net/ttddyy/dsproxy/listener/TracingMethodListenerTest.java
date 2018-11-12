@@ -60,12 +60,13 @@ public class TracingMethodListenerTest {
                 .method(method)
                 .elapsedTime(99)
                 .connectionInfo(connectionInfo)
+                .threadId(20)
                 .methodArgs(new Object[]{50, "foo"})
                 .build();
 
         listener.afterMethod(context);
 
-        assertThat(messageHolder.get()).isEqualTo("[1][success][99ms][conn=100] MyTarget#setString(50,\"foo\")");
+        assertThat(messageHolder.get()).isEqualTo("[1][success][99ms][conn=100][thread=20] MyTarget#setString(50,\"foo\")");
     }
 
     @Test
@@ -89,11 +90,12 @@ public class TracingMethodListenerTest {
                 .method(method)
                 .elapsedTime(99)
                 .connectionInfo(connectionInfo)
+                .threadId(20)
                 .methodArgs(new Object[]{50, "foo"})
                 .build();
 
         listener.afterMethod(context);
 
-        assertThat(messageHolder.get()).isEqualTo("[1][success][99ms][conn=100] MyTarget#setString(50,\"foo\")");
+        assertThat(messageHolder.get()).isEqualTo("[1][success][99ms][conn=100][thread=20] MyTarget#setString(50,\"foo\")");
     }
 }
