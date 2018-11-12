@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
-import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.LastExecutionAwareListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
@@ -143,7 +143,7 @@ public class DataSourceProxyLogicMockTest {
 
     @Test
     public void methodExecutionListener() throws Throwable {
-        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
+        LastExecutionAwareListener listener = new LastExecutionAwareListener();
 
         DataSource ds = mock(DataSource.class);
 

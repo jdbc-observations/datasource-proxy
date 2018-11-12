@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.LastExecutionAwareListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.jdk.PreparedStatementInvocationHandler;
@@ -301,7 +301,7 @@ public class ConnectionProxyLogicMockTest {
 
     @Test
     public void methodExecutionListener() throws Throwable {
-        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
+        LastExecutionAwareListener listener = new LastExecutionAwareListener();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
         ConnectionInfo connectionInfo = new ConnectionInfo();
 

@@ -1,6 +1,9 @@
 [[changelog-2.0]]
 === 2.0
 
+* Rename `CallCheckMethodExecutionListener` to `LastExecutionAwareListener` and move it
+  from `test` to `main`.
+
 * Added thread id and name to method and query executions
 
 * Changed `ProxyDataSourceBuilder` to generate actual proxy with `DataSourceProxyLogic`.

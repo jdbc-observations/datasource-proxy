@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.LastExecutionAwareListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.proxy.DataSourceProxyLogic;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -34,7 +34,7 @@ public class ProxyDataSourceDbTest {
 
     private DataSource proxyDataSource;
     private TestListener listener;
-    private CallCheckMethodExecutionListener methodListener;
+    private LastExecutionAwareListener methodListener;
 
     private DataSource jdbcDataSource;
     private DbResourceCleaner cleaner;
@@ -47,7 +47,7 @@ public class ProxyDataSourceDbTest {
     @BeforeEach
     void setup() {
         listener = new TestListener();
-        methodListener = new CallCheckMethodExecutionListener();
+        methodListener = new LastExecutionAwareListener();
 
         proxyDataSource = ProxyDataSourceBuilder.create(this.jdbcDataSource)
                 .listener(this.listener)

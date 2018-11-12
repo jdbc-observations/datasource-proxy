@@ -4,7 +4,7 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
-import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.LastExecutionAwareListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
@@ -1048,7 +1048,7 @@ public class StatementProxyLogicMockTest {
 
     @Test
     public void methodExecutionListener() throws Throwable {
-        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
+        LastExecutionAwareListener listener = new LastExecutionAwareListener();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
         final String query = "insert into emp (id, name) values (1, 'foo')";

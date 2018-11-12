@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.LastExecutionAwareListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,7 @@ public class CallbackSupportProceedMethodExecutionTest {
         long threadId = currentThread.getId();
         String threadName = currentThread.getName();
 
-        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener() {
+        LastExecutionAwareListener listener = new LastExecutionAwareListener() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {
                 super.beforeMethod(executionContext);
@@ -115,7 +115,7 @@ public class CallbackSupportProceedMethodExecutionTest {
         final Exception exception = new Exception();
         final ConnectionInfo connectionInfo = new ConnectionInfo();
 
-        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener() {
+        LastExecutionAwareListener listener = new LastExecutionAwareListener() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {
                 super.beforeMethod(executionContext);
@@ -162,7 +162,7 @@ public class CallbackSupportProceedMethodExecutionTest {
 
         final ConnectionInfo connectionInfo = new ConnectionInfo();
 
-        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener() {
+        LastExecutionAwareListener listener = new LastExecutionAwareListener() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {
                 super.beforeMethod(executionContext);
