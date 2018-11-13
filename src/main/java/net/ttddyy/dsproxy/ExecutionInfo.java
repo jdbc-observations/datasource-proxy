@@ -28,11 +28,13 @@ public class ExecutionInfo {
     private List<QueryInfo> queries = new ArrayList<>();
     private long threadId;
     private String threadName;
+    private ConnectionInfo connectionInfo;
 
     public ExecutionInfo() {
     }
 
     public ExecutionInfo(ConnectionInfo connectionInfo, Statement statement, boolean isBatch, int batchSize, Method method, Object[] methodArgs, List<QueryInfo> queries) {
+        this.connectionInfo = connectionInfo;
         this.dataSourceName = connectionInfo.getDataSourceName();
         this.connectionId = connectionInfo.getConnectionId();
         this.statement = statement;
@@ -233,5 +235,19 @@ public class ExecutionInfo {
      */
     public void setThreadName(String threadName) {
         this.threadName = threadName;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public ConnectionInfo getConnectionInfo() {
+        return connectionInfo;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public void setConnectionInfo(ConnectionInfo connectionInfo) {
+        this.connectionInfo = connectionInfo;
     }
 }
