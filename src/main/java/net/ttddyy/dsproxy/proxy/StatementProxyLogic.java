@@ -17,9 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import static net.ttddyy.dsproxy.proxy.StatementMethodNames.GET_GENERATED_KEYS_METHOD;
 import static net.ttddyy.dsproxy.proxy.StatementMethodNames.GET_RESULTSET_METHOD;
@@ -100,12 +98,10 @@ public class StatementProxyLogic extends CallbackSupport {
     private String query;
     private ConnectionInfo connectionInfo;
 
-    // when same key(index/name) is used for parameter set operation, old value will be replaced. To implement that logic
-    // using a map, so that putting same key will override the entry.
-    private Map<ParameterKey, ParameterSetOperation> parameters = new LinkedHashMap<>();
+    private ParameterSetOperations parameterSetOperations = new ParameterSetOperations();
 
     private List<String> batchQueries = new ArrayList<>();  // used for batch statement
-    private List<Map<ParameterKey, ParameterSetOperation>> batchParameters = new ArrayList<>();
+    private List<ParameterSetOperations> batchParameterSetOperations = new ArrayList<>();
 
     private Connection proxyConnection;
     private ProxyConfig proxyConfig;
@@ -175,7 +171,7 @@ public class StatementProxyLogic extends CallbackSupport {
 
                     // operation to set or clear parameterOperationHolder
                     if ("clearParameters".equals(methodName)) {
-                        parameters.clear();
+                        this.parameterSetOperations.clear();
                     } else {
 
                         ParameterKey parameterKey;
@@ -188,7 +184,7 @@ public class StatementProxyLogic extends CallbackSupport {
                         }
 
                         // when same key is specified, old value will be overridden
-                        parameters.put(parameterKey, new ParameterSetOperation(method, args));
+                        this.parameterSetOperations.add(new ParameterSetOperation(parameterKey, method, args));
                     }
 
                 } else if (StatementMethodNames.BATCH_PARAM_METHODS.contains(methodName)) {
@@ -196,13 +192,12 @@ public class StatementProxyLogic extends CallbackSupport {
                     // Batch parameter operation
                     if ("addBatch".equals(methodName)) {
 
-                        // copy values
-                        Map<ParameterKey, ParameterSetOperation> newParams = new LinkedHashMap<>(parameters);
-                        batchParameters.add(newParams);
+                        this.batchParameterSetOperations.add(this.parameterSetOperations);
 
-                        parameters.clear();
+                        // assign new instance for parameter operations on next batch
+                        this.parameterSetOperations = new ParameterSetOperations();
                     } else if ("clearBatch".equals(methodName)) {
-                        batchParameters.clear();
+                        this.batchParameterSetOperations.clear();
                     }
                 }
 
@@ -231,13 +226,11 @@ public class StatementProxyLogic extends CallbackSupport {
             } else {
                 // one query with multiple parameters
                 QueryInfo queryInfo = new QueryInfo(this.query);
-                for (Map<ParameterKey, ParameterSetOperation> params : batchParameters) {
-                    queryInfo.getParametersList().add(new ArrayList<>(params.values()));
-                }
+                queryInfo.getParameterSetOperations().addAll(this.batchParameterSetOperations);
                 queries.add(queryInfo);
 
-                batchSize = batchParameters.size();
-                batchParameters.clear();
+                batchSize = this.batchParameterSetOperations.size();
+                this.batchParameterSetOperations.clear();
             }
 
             //  "executeQuery", "executeUpdate", "execute", "executeLargeUpdate"
@@ -252,7 +245,7 @@ public class StatementProxyLogic extends CallbackSupport {
                 queryInfo = new QueryInfo(transformedQuery);
             } else {
                 queryInfo = new QueryInfo(this.query);
-                queryInfo.getParametersList().add(new ArrayList<>(parameters.values()));
+                queryInfo.getParameterSetOperations().add(this.parameterSetOperations);
             }
             queries.add(queryInfo);
         }

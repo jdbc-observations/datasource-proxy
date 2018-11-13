@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
+import net.ttddyy.dsproxy.proxy.ParameterSetOperations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
 public class QueryInfo {
     private String query;
 
-    private List<List<ParameterSetOperation>> parametersList = new ArrayList<>();
+    private List<ParameterSetOperations> parameterSetOperations = new ArrayList<>();
 
     public QueryInfo() {
     }
@@ -35,20 +35,20 @@ public class QueryInfo {
     }
 
     /**
-     * List of parameter-operation-list.
+     * List of {@link ParameterSetOperations}.
      *
-     * For non-batch Prepared/Callable execution, this list contains 1 element that is a list which contains all
-     * parameter sets operations for the execution.
+     * For non-batch Prepared/Callable execution, this list contains 1 element that contains all parameter sets
+     * operations for the execution.
      * For batch Prepared/Callable executions, this list will have N number of elements.
      *
-     * @return list of prameter operation list
-     * @since 1.4
+     * @return list of parameter operation list
+     * @since 2.0
      */
-    public List<List<ParameterSetOperation>> getParametersList() {
-        return parametersList;
+    public List<ParameterSetOperations> getParameterSetOperations() {
+        return parameterSetOperations;
     }
 
-    public void setParametersList(List<List<ParameterSetOperation>> parametersList) {
-        this.parametersList = parametersList;
+    public void setParameterSetOperations(List<ParameterSetOperations> parameterSetOperations) {
+        this.parameterSetOperations = parameterSetOperations;
     }
 }

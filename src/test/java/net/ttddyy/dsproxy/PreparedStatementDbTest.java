@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
+import net.ttddyy.dsproxy.proxy.ParameterSetOperations;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.SimpleResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
@@ -108,15 +109,15 @@ public class PreparedStatementDbTest {
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
         assertThat(beforeQueries).hasSize(1);
         assertThat(beforeQueries.get(0).getQuery()).isEqualTo(query);
-        assertThat(beforeQueries.get(0).getParametersList()).hasSize(1);
-        assertThat(beforeQueries.get(0).getParametersList().get(0))
+        assertThat(beforeQueries.get(0).getParameterSetOperations()).hasSize(1);
+        assertThat(beforeQueries.get(0).getParameterSetOperations().get(0).getOperations())
                 .extracting("args", Object[].class).isEmpty();
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
         assertThat(afterQueries).hasSize(1);
         assertThat(afterQueries.get(0).getQuery()).isEqualTo(query);
-        assertThat(afterQueries.get(0).getParametersList()).hasSize(1);
-        assertThat(afterQueries.get(0).getParametersList().get(0))
+        assertThat(afterQueries.get(0).getParameterSetOperations()).hasSize(1);
+        assertThat(afterQueries.get(0).getParameterSetOperations().get(0).getOperations())
                 .extracting("args", Object[].class).isEmpty();
     }
 
@@ -135,8 +136,8 @@ public class PreparedStatementDbTest {
         assertThat(beforeQueries).hasSize(1);
         final QueryInfo beforeInfo = beforeQueries.get(0);
         assertThat(beforeInfo.getQuery()).isEqualTo(query);
-        assertThat(beforeInfo.getParametersList()).hasSize(1);
-        assertThat(beforeInfo.getParametersList().get(0))
+        assertThat(beforeInfo.getParameterSetOperations()).hasSize(1);
+        assertThat(beforeInfo.getParameterSetOperations().get(0).getOperations())
                 .extracting("args", Object[].class).containsExactly(new Object[]{1, 1});
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
@@ -144,8 +145,8 @@ public class PreparedStatementDbTest {
         final QueryInfo afterInfo = afterQueries.get(0);
         assertThat(afterInfo.getQuery()).isEqualTo(query);
 
-        assertThat(afterInfo.getParametersList()).hasSize(1);
-        assertThat(afterInfo.getParametersList().get(0))
+        assertThat(afterInfo.getParameterSetOperations()).hasSize(1);
+        assertThat(afterInfo.getParameterSetOperations().get(0).getOperations())
                 .extracting("args", Object[].class).containsExactly(new Object[]{1, 1});
     }
 
@@ -244,14 +245,14 @@ public class PreparedStatementDbTest {
 
     private void verifyQueryArgs(QueryInfo info, String expectedQuery, Object[]... expectedQueryArgs) {
         final String actualQuery = info.getQuery();
-        List<List<ParameterSetOperation>> parametersList = info.getParametersList();
+        List<ParameterSetOperations> parameterSetOperations = info.getParameterSetOperations();
 
         // verify query
         assertThat(actualQuery).isEqualTo(expectedQuery);
 
         // verify args
-        assertThat(parametersList).as("non-batch execution parametersList should have size 1").hasSize(1);
-        List<ParameterSetOperation> params = parametersList.get(0);
+        assertThat(parameterSetOperations).as("non-batch execution parametersList should have size 1").hasSize(1);
+        List<ParameterSetOperation> params = parameterSetOperations.get(0).getOperations();
         assertThat(params).extracting("args", Object[].class).containsExactly(expectedQueryArgs);
     }
 
@@ -287,20 +288,20 @@ public class PreparedStatementDbTest {
         QueryInfo queryInfo = beforeQueries.get(0);
 
         assertThat(queryInfo.getQuery()).isEqualTo(query);
-        assertThat(queryInfo.getParametersList()).hasSize(2);
-        assertThat(queryInfo.getParametersList().get(0))
+        assertThat(queryInfo.getParameterSetOperations()).hasSize(2);
+        assertThat(queryInfo.getParameterSetOperations().get(0).getOperations())
                 .extracting("args", Object[].class).containsExactly(new Object[]{1, "FOO"}, new Object[]{2, 1});
-        assertThat(queryInfo.getParametersList().get(1))
+        assertThat(queryInfo.getParameterSetOperations().get(1).getOperations())
                 .extracting("args", Object[].class).containsExactly(new Object[]{1, "BAR"}, new Object[]{2, 2});
 
         List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
         assertThat(afterQueries).as("PreparedStatement batch execution will have always one query").hasSize(1);
         queryInfo = afterQueries.get(0);
         assertThat(queryInfo.getQuery()).isEqualTo(query);
-        assertThat(queryInfo.getParametersList()).hasSize(2);
-        assertThat(queryInfo.getParametersList().get(0))
+        assertThat(queryInfo.getParameterSetOperations()).hasSize(2);
+        assertThat(queryInfo.getParameterSetOperations().get(0).getOperations())
                 .extracting("args", Object[].class).containsExactly(new Object[]{1, "FOO"}, new Object[]{2, 1});
-        assertThat(queryInfo.getParametersList().get(1))
+        assertThat(queryInfo.getParameterSetOperations().get(1).getOperations())
                 .extracting("args", Object[].class).containsExactly(new Object[]{1, "BAR"}, new Object[]{2, 2});
     }
 
@@ -331,7 +332,7 @@ public class PreparedStatementDbTest {
         List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
         assertThat(afterQueries).as("should has one query").hasSize(1);
         QueryInfo queryInfo = afterQueries.get(0);
-        assertThat(queryInfo.getParametersList()).as("should have two batch params").hasSize(2);
+        assertThat(queryInfo.getParameterSetOperations()).as("should have two batch params").hasSize(2);
 
         stat.setInt(1, 300);
         stat.setString(2, "BAZ");
@@ -345,7 +346,7 @@ public class PreparedStatementDbTest {
         assertThat(afterQueries).isNotNull();
         assertThat(afterQueries).as("should pass one QueryInfo (BAZ)").hasSize(1);
         queryInfo = afterQueries.get(0);
-        assertThat(queryInfo.getParametersList()).as("should have one batch params").hasSize(1);
+        assertThat(queryInfo.getParameterSetOperations()).as("should have one batch params").hasSize(1);
 
         // verify actual data. 3 rows must be inserted, in addition to original data(2rows)
         int count = DbTestUtils.countTable(jdbcDataSource, "emp");

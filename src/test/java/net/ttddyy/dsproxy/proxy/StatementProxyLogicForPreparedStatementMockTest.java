@@ -228,11 +228,12 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery()).isEqualTo(query);
 
-        List<List<ParameterSetOperation>> queryArgsList = queryInfo.getParametersList();
-        assertThat(queryArgsList).hasSize(1).as("non-batch query size is always 1");
+        List<ParameterSetOperations> parameterSetOperations = queryInfo.getParameterSetOperations();
+        assertThat(parameterSetOperations).hasSize(1).as("non-batch query size is always 1");
+        List<ParameterSetOperation> operations = parameterSetOperations.get(0).getOperations();
 
         Map<String, Object> queryArgs = new HashMap<String, Object>();
-        for (ParameterSetOperation operation : queryArgsList.get(0)) {
+        for (ParameterSetOperation operation : operations) {
             Object[] args = operation.getArgs();
             queryArgs.put(args[0].toString(), args[1]);
         }
@@ -436,8 +437,8 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         List<QueryInfo> queryInfoList = execInfo.getQueries();
         assertThat(queryInfoList).hasSize(1);
 
-        assertThat(queryInfoList.get(0).getParametersList()).hasSize(1);
-        assertThat(queryInfoList.get(0).getParametersList().get(0)).as("Args should be empty").isEmpty();
+        assertThat(queryInfoList.get(0).getParameterSetOperations()).hasSize(1);
+        assertThat(queryInfoList.get(0).getParameterSetOperations().get(0).getOperations()).as("Args should be empty").isEmpty();
 
 
     }

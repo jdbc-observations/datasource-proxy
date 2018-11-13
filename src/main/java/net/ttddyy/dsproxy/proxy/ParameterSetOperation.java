@@ -35,13 +35,23 @@ public class ParameterSetOperation {
         return StatementMethodNames.PARAMETER_METHOD_SET_NULL.equals(methodName);
     }
 
+    private ParameterKey parameterKey;
     private Method method;
     private Object[] args;
 
     public ParameterSetOperation() {
     }
 
-    public ParameterSetOperation(Method method, Object[] args) {
+    public ParameterSetOperation(int parameterIndex, Method method, Object[] args) {
+        this(new ParameterKey(parameterIndex), method, args);
+    }
+
+    public ParameterSetOperation(String parameterName, Method method, Object[] args) {
+        this(new ParameterKey(parameterName), method, args);
+    }
+
+    public ParameterSetOperation(ParameterKey parameterKey, Method method, Object[] args) {
+        this.parameterKey = parameterKey;
         this.method = method;
         this.args = args;
     }
@@ -61,5 +71,13 @@ public class ParameterSetOperation {
 
     public void setArgs(Object[] args) {
         this.args = args;
+    }
+
+    public ParameterKey getParameterKey() {
+        return parameterKey;
+    }
+
+    public void setParameterKey(ParameterKey parameterKey) {
+        this.parameterKey = parameterKey;
     }
 }

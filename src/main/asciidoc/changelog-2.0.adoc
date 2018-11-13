@@ -1,6 +1,9 @@
 [[changelog-2.0]]
 === 2.0
 
+* Introduce `ParameterSetOperations` to represent set of `ParameterSetOperation`.
+  On `QueryInfo`, `[set|get]ParametersList` are replaced to `[set|get]ParameterSetOperations`
+
 * Rename `CallCheckMethodExecutionListener` to `LastExecutionAwareListener` and move it
   from `test` to `main`.
 

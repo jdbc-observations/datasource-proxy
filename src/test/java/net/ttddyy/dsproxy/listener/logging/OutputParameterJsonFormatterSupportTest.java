@@ -4,7 +4,9 @@ import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.ExecutionInfoBuilder;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
+import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
+import net.ttddyy.dsproxy.proxy.ParameterSetOperations;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 
@@ -30,29 +32,41 @@ public class OutputParameterJsonFormatterSupportTest {
 
         ParameterSetOperation param1 = new ParameterSetOperation();
         param1.setMethod(CallableStatement.class.getMethod("registerOutParameter", int.class, int.class));
+        param1.setParameterKey(new ParameterKey(1));
         param1.setArgs(new Object[]{1, 10});
 
         ParameterSetOperation param2 = new ParameterSetOperation();
         param2.setMethod(CallableStatement.class.getMethod("registerOutParameter", String.class, int.class));
+        param2.setParameterKey(new ParameterKey("foo"));
         param2.setArgs(new Object[]{"foo", 11});
 
         ParameterSetOperation param3 = new ParameterSetOperation();
         param3.setMethod(CallableStatement.class.getMethod("registerOutParameter", int.class, int.class));
+        param3.setParameterKey(new ParameterKey(2));
         param3.setArgs(new Object[]{2, 20});
 
         ParameterSetOperation param4 = new ParameterSetOperation();
         param4.setMethod(CallableStatement.class.getMethod("registerOutParameter", String.class, int.class));
+        param4.setParameterKey(new ParameterKey("bar"));
         param4.setArgs(new Object[]{"bar", 21});
 
 
-        List<List<ParameterSetOperation>> paramsList = new ArrayList<List<ParameterSetOperation>>();
-        paramsList.add(Arrays.asList(param1, param2));  // first batch
-        paramsList.add(Arrays.asList(param3, param4));  // second batch
+        // first batch
+        ParameterSetOperations params1 = new ParameterSetOperations();
+        params1.add(param1);
+        params1.add(param2);
+
+        // second batch
+        ParameterSetOperations params2 = new ParameterSetOperations();
+        params2.add(param3);
+        params2.add(param4);
+
+        List<ParameterSetOperations> parameterSetOperations = new ArrayList<>(Arrays.asList(params1, params2));
 
 
         QueryInfo queryInfo = new QueryInfo();
         queryInfo.setQuery("select 1");
-        queryInfo.setParametersList(paramsList);
+        queryInfo.getParameterSetOperations().addAll(parameterSetOperations);
 
 
         // prepare ExecutionInfo

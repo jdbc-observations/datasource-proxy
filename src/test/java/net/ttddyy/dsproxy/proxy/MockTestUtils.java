@@ -27,7 +27,6 @@ public class MockTestUtils {
         verify(listener).afterQuery(executionInfoCaptor.capture());
 
 
-
         final int expectedBatchSize = expectedQueryParamsArray.length;
 
         ExecutionInfo execInfo = executionInfoCaptor.getValue();
@@ -44,12 +43,13 @@ public class MockTestUtils {
         assertThat(queryInfoList).hasSize(1).as("for prepared/callable statement, batch query size is always 1");
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery()).isEqualTo(query);
-        assertThat(queryInfo.getParametersList()).hasSize(expectedBatchSize);
+        assertThat(queryInfo.getParameterSetOperations()).hasSize(expectedBatchSize);
 
         for (int i = 0; i < expectedBatchSize; i++) {
             Map<String, Object> expectedQueryArgs = expectedQueryParamsArray[i];
             Map<String, Object> actualQueryArgs = new HashMap<String, Object>();
-            for (ParameterSetOperation operation : queryInfo.getParametersList().get(i)) {
+            ParameterSetOperations operations = queryInfo.getParameterSetOperations().get(i);
+            for (ParameterSetOperation operation : operations.getOperations()) {
                 Object[] args = operation.getArgs();
                 actualQueryArgs.put(args[0].toString(), args[1]);
             }

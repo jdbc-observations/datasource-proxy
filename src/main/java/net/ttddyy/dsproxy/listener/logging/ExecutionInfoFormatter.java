@@ -100,10 +100,10 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport<ExecutionIn
         sb.append("Params:[");
 
         execInfo.getQueries().stream()
-                .map(QueryInfo::getParametersList)
+                .map(QueryInfo::getParameterSetOperations)
                 .flatMap(Collection::stream)
-                .forEach(parameters -> {
-                    SortedMap<String, String> paramMap = getParametersToDisplay(parameters);
+                .forEach(parameterSetOperations -> {
+                    SortedMap<String, String> paramMap = getParametersToDisplay(parameterSetOperations.getOperations());
 
                     // parameters per batch.
                     //   for prepared: (val1,val2,...)

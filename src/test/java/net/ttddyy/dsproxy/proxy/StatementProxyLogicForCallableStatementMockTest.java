@@ -35,7 +35,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -393,9 +392,9 @@ public class StatementProxyLogicForCallableStatementMockTest {
         List<QueryInfo> queryInfoList = execInfo.getQueries();
         assertThat(queryInfoList).hasSize(1);
 
-        assertThat(queryInfoList.get(0).getParametersList()).hasSize(1);
-        List<ParameterSetOperation> firstArgs = queryInfoList.get(0).getParametersList().get(0);
-        assertThat(firstArgs).as("Args should be empty").isEmpty();
+        assertThat(queryInfoList.get(0).getParameterSetOperations()).hasSize(1);
+        ParameterSetOperations parameterSetOperations = queryInfoList.get(0).getParameterSetOperations().get(0);
+        assertThat(parameterSetOperations.getOperations()).as("Args should be empty").isEmpty();
 
     }
 
@@ -666,11 +665,12 @@ public class StatementProxyLogicForCallableStatementMockTest {
 
         // TODO: clean up the comparison logic
 
-        List<List<ParameterSetOperation>> queryArgsList = queryInfo.getParametersList();
-        assertThat(queryArgsList).as("non-batch exec should have only one params.").hasSize(1);
+        List<ParameterSetOperations> parameterSetOperationsList = queryInfo.getParameterSetOperations();
+        assertThat(parameterSetOperationsList).as("non-batch exec should have only one params.").hasSize(1);
 
         Map<String, Object> queryArgs = new HashMap<>();
-        for (ParameterSetOperation operation : queryArgsList.get(0)) {
+        ParameterSetOperations parameterSetOperations = parameterSetOperationsList.get(0);
+        for (ParameterSetOperation operation : parameterSetOperations.getOperations()) {
             Object[] args = operation.getArgs();
             queryArgs.put(args[0].toString(), args[1]);
         }

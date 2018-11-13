@@ -1,12 +1,10 @@
 package net.ttddyy.dsproxy;
 
+import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
+import net.ttddyy.dsproxy.proxy.ParameterSetOperations;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -26,10 +24,10 @@ public class QueryInfoBuilder {
     }
 
     private String query;
-    private Map<String, Object> queryArgs = new LinkedHashMap<String, Object>();
+    private ParameterSetOperations queryArgs = new ParameterSetOperations();
 
-    // key:batch-index, val: map of query args
-    private SortedMap<Integer, Map<String, Object>> batchParams = new TreeMap<Integer, Map<String, Object>>();
+    // key=batch-index, val=param set ops
+    private SortedMap<Integer, ParameterSetOperations> batchParams = new TreeMap<>();
 
     public static QueryInfoBuilder create() {
         return new QueryInfoBuilder();
@@ -41,25 +39,38 @@ public class QueryInfoBuilder {
     }
 
     public QueryInfoBuilder param(int parameterIndex, Object value) {
-        return this.param(Integer.toString(parameterIndex), value);
+        return param(new ParameterKey(parameterIndex), value);
     }
 
     public QueryInfoBuilder param(String parameterName, Object value) {
-        queryArgs.put(parameterName, value);
+        return param(new ParameterKey(parameterName), value);
+    }
+
+    public QueryInfoBuilder param(ParameterKey parameterKey, Object value) {
+        Object[] args = new Object[]{parameterKey.getKeyAsString(), value};
+        ParameterSetOperation operation = new ParameterSetOperation(parameterKey, DUMMY_METHOD, args);
+        this.queryArgs.add(operation);
         return this;
     }
 
-    public QueryInfoBuilder batchParam(int batchIndex, int parameterName, Object value) {
-        return this.batchParam(batchIndex, Integer.toString(parameterName), value);
+    public QueryInfoBuilder batchParam(int batchIndex, int parameterIndex, Object value) {
+        return this.batchParam(batchIndex, new ParameterKey(parameterIndex), value);
     }
 
-    public QueryInfoBuilder batchParam(int batchIndex, String parameterIndex, Object value) {
-        Map<String, Object> args = batchParams.get(batchIndex);
-        if (args == null) {
-            args = new LinkedHashMap<String, Object>();
-            batchParams.put(batchIndex, args);
+    public QueryInfoBuilder batchParam(int batchIndex, String parameterName, Object value) {
+        return this.batchParam(batchIndex, new ParameterKey(parameterName), value);
+    }
+
+    public QueryInfoBuilder batchParam(int batchIndex, ParameterKey parameterKey, Object value) {
+        ParameterSetOperations parameterSetOperations = this.batchParams.get(batchIndex);
+        if (parameterSetOperations == null) {
+            parameterSetOperations = new ParameterSetOperations();
+            this.batchParams.put(batchIndex, parameterSetOperations);
         }
-        args.put(parameterIndex, value);
+
+        Object[] args = new Object[]{parameterKey.getKeyAsString(), value};
+        ParameterSetOperation operation = new ParameterSetOperation(parameterKey, DUMMY_METHOD, args);
+        parameterSetOperations.add(operation);
         return this;
     }
 
@@ -67,30 +78,11 @@ public class QueryInfoBuilder {
         QueryInfo queryInfo = new QueryInfo();
         queryInfo.setQuery(query);
 
-        // query parameters
         if (!batchParams.isEmpty()) {  // consider it's batch mode
-            // already ordered by batchIndex
-            for (Map<String, Object> map : batchParams.values()) {
-                List<ParameterSetOperation> params = new ArrayList<ParameterSetOperation>();
-                for (Map.Entry<String, Object> entry : map.entrySet()) {
-                    ParameterSetOperation param = new ParameterSetOperation();
-                    param.setArgs(new Object[]{entry.getKey(), entry.getValue()});
-                    param.setMethod(DUMMY_METHOD);
-                    params.add(param);
-                }
-                queryInfo.getParametersList().add(params);
-            }
+            queryInfo.getParameterSetOperations().addAll(this.batchParams.values());
         } else {
-            List<ParameterSetOperation> params = new ArrayList<ParameterSetOperation>();
-            for (Map.Entry<String, Object> entry : queryArgs.entrySet()) {
-                ParameterSetOperation param = new ParameterSetOperation();
-                param.setArgs(new Object[]{entry.getKey(), entry.getValue()});
-                param.setMethod(DUMMY_METHOD);
-                params.add(param);
-            }
-            queryInfo.getParametersList().add(params);
+            queryInfo.getParameterSetOperations().add(this.queryArgs);
         }
-
         return queryInfo;
     }
 }

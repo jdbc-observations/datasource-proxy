@@ -3,10 +3,10 @@ package net.ttddyy.dsproxy.listener.logging;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
+import net.ttddyy.dsproxy.proxy.ParameterSetOperations;
 
 import java.sql.CallableStatement;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.function.BiConsumer;
 
 /**
@@ -23,10 +23,10 @@ public class OutputParameterFormatterSupport extends AbstractFormatterSupport<Ex
         sb.append("OutParams:[");
 
         for (QueryInfo queryInfo : execInfo.getQueries()) {
-            for (List<ParameterSetOperation> parameters : queryInfo.getParametersList()) {
+            for (ParameterSetOperations parameterSetOperations : queryInfo.getParameterSetOperations()) {
                 sb.append("(");
 
-                parameters.stream()
+                parameterSetOperations.getOperations().stream()
                         .filter(ParameterSetOperation::isRegisterOutParameterOperation)
                         .forEach(parameterSetOperation -> {
                             CallableStatement cs = (CallableStatement) execInfo.getStatement();

@@ -675,7 +675,7 @@ public class StatementProxyLogicMockTest {
             String expectedQuery = queries[i];
             QueryInfo queryInfo = queryInfoList.get(i);
             assertThat(queryInfo.getQuery()).isEqualTo(expectedQuery);
-            assertThat(queryInfo.getParametersList()).isEmpty();
+            assertThat(queryInfo.getParameterSetOperations()).isEmpty();
         }
     }
 
@@ -703,7 +703,7 @@ public class StatementProxyLogicMockTest {
             String expectedQuery = queries[i];
             QueryInfo queryInfo = queryInfoList.get(i);
             assertThat(queryInfo.getQuery()).isEqualTo(expectedQuery);
-            assertThat(queryInfo.getParametersList()).isEmpty();
+            assertThat(queryInfo.getParameterSetOperations()).isEmpty();
         }
 
     }
