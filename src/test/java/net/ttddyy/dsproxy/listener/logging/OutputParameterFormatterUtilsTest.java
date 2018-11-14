@@ -24,7 +24,7 @@ import static org.mockito.Mockito.mock;
  * @author Tadaya Tsuyukubo
  * @since 2.0
  */
-public class OutputParameterFormatterSupportTest {
+public class OutputParameterFormatterUtilsTest {
 
     @Test
     public void outParams() throws Exception {
@@ -96,7 +96,7 @@ public class OutputParameterFormatterSupportTest {
 
 
         QueryExecutionContextFormatter formatter = new QueryExecutionContextFormatter();
-        formatter.addConsumer(OutputParameterFormatterSupport.onOutputParameter);
+        formatter.addConsumer(OutputParameterFormatterUtils.onOutputParameter);
 
         String entry = formatter.format(queryExecutionContext);
         assertThat(entry).isEqualTo("OutParams:[(1=100,foo=101),(2=200,bar=201)]");

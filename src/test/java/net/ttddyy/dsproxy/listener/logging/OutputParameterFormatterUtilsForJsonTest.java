@@ -24,7 +24,7 @@ import static org.mockito.Mockito.mock;
  * @author Tadaya Tsuyukubo
  * @since 2.0
  */
-public class OutputParameterJsonFormatterSupportTest {
+public class OutputParameterFormatterUtilsForJsonTest {
 
     @Test
     public void outParams() throws Exception {
@@ -97,7 +97,7 @@ public class OutputParameterJsonFormatterSupportTest {
 
 
         QueryExecutionContextJsonFormatter formatter = new QueryExecutionContextJsonFormatter();
-        formatter.addConsumer(OutputParameterJsonFormatterSupport.onOutputParameter);
+        formatter.addConsumer(OutputParameterFormatterUtils.onOutputParameterAsJson);
 
         String entry = formatter.format(queryExecutionContext);
         assertThat(entry).isEqualTo("{\"outParams\":[{\"1\":\"100\",\"foo\":\"101\"},{\"2\":\"200\",\"bar\":\"201\"}]}");

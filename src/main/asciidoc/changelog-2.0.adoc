@@ -97,8 +97,8 @@
 
 * Added `ExecutionInfoFormatter` and `ExecutionInfoJsonFormatter` to replace
   `QueryLogEntryCreator`.
-  `OutputParameterFormatterSupport` and `OutputParameterJsonFormatterSupport` are added
-  to replace `OutputParameterLogEntryCreator` and `OutputParameterJsonLogEntryCreator`
+  `OutputParameterFormatterUtils` is added to replace
+  `OutputParameterLogEntryCreator` and `OutputParameterJsonLogEntryCreator`
 
   Removed:
   - net.ttddyy.dsproxy.listener.logging.OutputParameterLogEntryCreator
