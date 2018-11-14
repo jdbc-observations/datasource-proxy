@@ -1,7 +1,5 @@
 package net.ttddyy.dsproxy.listener;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-
 /**
  * Keep the last invoked execution.
  *
@@ -14,8 +12,8 @@ public class LastExecutionAwareListener implements ProxyDataSourceListener {
 
     private MethodExecutionContext beforeMethodContext;
     private MethodExecutionContext afterMethodContext;
-    private ExecutionInfo beforeQueryContext;
-    private ExecutionInfo afterQueryContext;
+    private QueryExecutionContext beforeQueryContext;
+    private QueryExecutionContext afterQueryContext;
 
     @Override
     public void beforeMethod(MethodExecutionContext executionContext) {
@@ -28,13 +26,13 @@ public class LastExecutionAwareListener implements ProxyDataSourceListener {
     }
 
     @Override
-    public void beforeQuery(ExecutionInfo execInfo) {
-        this.beforeQueryContext = execInfo;
+    public void beforeQuery(QueryExecutionContext executionContext) {
+        this.beforeQueryContext = executionContext;
     }
 
     @Override
-    public void afterQuery(ExecutionInfo execInfo) {
-        this.afterQueryContext = execInfo;
+    public void afterQuery(QueryExecutionContext executionContext) {
+        this.afterQueryContext = executionContext;
     }
 
     public boolean isBeforeMethodCalled() {
@@ -61,11 +59,11 @@ public class LastExecutionAwareListener implements ProxyDataSourceListener {
         return afterMethodContext;
     }
 
-    public ExecutionInfo getBeforeQueryContext() {
+    public QueryExecutionContext getBeforeQueryContext() {
         return beforeQueryContext;
     }
 
-    public ExecutionInfo getAfterQueryContext() {
+    public QueryExecutionContext getAfterQueryContext() {
         return afterQueryContext;
     }
 

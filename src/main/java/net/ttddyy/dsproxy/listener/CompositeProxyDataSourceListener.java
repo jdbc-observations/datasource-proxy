@@ -1,8 +1,5 @@
 package net.ttddyy.dsproxy.listener;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryInfo;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -27,13 +24,13 @@ public class CompositeProxyDataSourceListener implements ProxyDataSourceListener
     }
 
     @Override
-    public void beforeQuery(ExecutionInfo execInfo) {
-        this.listeners.forEach(listener -> listener.beforeQuery(execInfo));
+    public void beforeQuery(QueryExecutionContext executionContext) {
+        this.listeners.forEach(listener -> listener.beforeQuery(executionContext));
     }
 
     @Override
-    public void afterQuery(ExecutionInfo execInfo) {
-        this.listeners.forEach(listener -> listener.afterQuery(execInfo));
+    public void afterQuery(QueryExecutionContext executionContext) {
+        this.listeners.forEach(listener -> listener.afterQuery(executionContext));
     }
 
 

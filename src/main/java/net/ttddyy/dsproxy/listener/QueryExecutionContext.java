@@ -1,4 +1,8 @@
-package net.ttddyy.dsproxy;
+package net.ttddyy.dsproxy.listener;
+
+import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.StatementType;
 
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
@@ -11,7 +15,7 @@ import java.util.List;
  *
  * @author Tadaya Tsuyukubo
  */
-public class ExecutionInfo {
+public class QueryExecutionContext {
     private String dataSourceName;
     private String connectionId;
     private Method method;
@@ -30,10 +34,10 @@ public class ExecutionInfo {
     private String threadName;
     private ConnectionInfo connectionInfo;
 
-    public ExecutionInfo() {
+    public QueryExecutionContext() {
     }
 
-    public ExecutionInfo(ConnectionInfo connectionInfo, Statement statement, boolean isBatch, int batchSize, Method method, Object[] methodArgs, List<QueryInfo> queries) {
+    public QueryExecutionContext(ConnectionInfo connectionInfo, Statement statement, boolean isBatch, int batchSize, Method method, Object[] methodArgs, List<QueryInfo> queries) {
         this.connectionInfo = connectionInfo;
         this.dataSourceName = connectionInfo.getDataSourceName();
         this.connectionId = connectionInfo.getConnectionId();

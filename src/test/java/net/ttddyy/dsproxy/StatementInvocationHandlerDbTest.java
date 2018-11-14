@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy;
 
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.LastExecutionAwareListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
@@ -79,7 +80,7 @@ public class StatementInvocationHandlerDbTest {
         assertThat(afterQueries).hasSize(1);
         assertThat(afterQueries.get(0).getQuery()).isEqualTo(query);
 
-        ExecutionInfo afterExec = lastQueryListener.getAfterQueryContext();
+        QueryExecutionContext afterExec = lastQueryListener.getAfterQueryContext();
         assertThat(afterExec).isNotNull();
         assertThat(afterExec.getThrowable()).isNotNull();
 
@@ -206,13 +207,13 @@ public class StatementInvocationHandlerDbTest {
     }
 
     @Test
-    public void sameInstanceOfExecutionInfo() throws Exception {
+    public void sameInstanceOfExecutionContext() throws Exception {
         final String query = "select * from emp;";
         statement.executeQuery(query);
 
-        ExecutionInfo before = lastQueryListener.getBeforeQueryContext();
-        ExecutionInfo after = lastQueryListener.getAfterQueryContext();
+        QueryExecutionContext before = lastQueryListener.getBeforeQueryContext();
+        QueryExecutionContext after = lastQueryListener.getAfterQueryContext();
 
-        assertThat(before).as("before and after uses same ExecutionInfo instance").isSameAs(after);
+        assertThat(before).as("before and after uses same QueryExecutionContext instance").isSameAs(after);
     }
 }

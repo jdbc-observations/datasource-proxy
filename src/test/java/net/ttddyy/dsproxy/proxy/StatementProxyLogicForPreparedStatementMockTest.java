@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.ExecutionInfo;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.LastExecutionAwareListener;
@@ -209,21 +209,21 @@ public class StatementProxyLogicForPreparedStatementMockTest {
 
     @SuppressWarnings("unchecked")
     private void verifyListener(ProxyDataSourceListener listener, String methodName, String query, Map<String, Object> expectedQueryArgs) {
-        ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
+        ArgumentCaptor<QueryExecutionContext> executionContextCaptor = ArgumentCaptor.forClass(QueryExecutionContext.class);
 
-        verify(listener).afterQuery(executionInfoCaptor.capture());
+        verify(listener).afterQuery(executionContextCaptor.capture());
 
-        ExecutionInfo execInfo = executionInfoCaptor.getValue();
-        assertThat(execInfo.getMethod()).isNotNull();
-        assertThat(execInfo.getMethod().getName()).isEqualTo(methodName);
+        QueryExecutionContext queryContext = executionContextCaptor.getValue();
+        assertThat(queryContext.getMethod()).isNotNull();
+        assertThat(queryContext.getMethod().getName()).isEqualTo(methodName);
 
-        assertThat(execInfo.getMethodArgs()).isNull();
-        assertThat(execInfo.getDataSourceName()).isEqualTo(DS_NAME);
-        assertThat(execInfo.getThrowable()).isNull();
-        assertThat(execInfo.isBatch()).isFalse();
-        assertThat(execInfo.getBatchSize()).isEqualTo(0);
+        assertThat(queryContext.getMethodArgs()).isNull();
+        assertThat(queryContext.getDataSourceName()).isEqualTo(DS_NAME);
+        assertThat(queryContext.getThrowable()).isNull();
+        assertThat(queryContext.isBatch()).isFalse();
+        assertThat(queryContext.getBatchSize()).isEqualTo(0);
 
-        List<QueryInfo> queryInfoList = execInfo.getQueries();
+        List<QueryInfo> queryInfoList = queryContext.getQueries();
         assertThat(queryInfoList).hasSize(1);
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery()).isEqualTo(query);
@@ -429,12 +429,12 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         verify(stat).clearParameters();
         verify(stat).addBatch();
 
-        ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
+        ArgumentCaptor<QueryExecutionContext> executionContextCaptor = ArgumentCaptor.forClass(QueryExecutionContext.class);
 
-        verify(listener).afterQuery(executionInfoCaptor.capture());
+        verify(listener).afterQuery(executionContextCaptor.capture());
 
-        ExecutionInfo execInfo = executionInfoCaptor.getValue();
-        List<QueryInfo> queryInfoList = execInfo.getQueries();
+        QueryExecutionContext queryContext = executionContextCaptor.getValue();
+        List<QueryInfo> queryInfoList = queryContext.getQueries();
         assertThat(queryInfoList).hasSize(1);
 
         assertThat(queryInfoList.get(0).getParameterSetOperations()).hasSize(1);
@@ -551,8 +551,8 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         final AtomicReference<Object> listenerReceivedResult = new AtomicReference<>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo) {
-                listenerReceivedResult.set(execInfo.getResult());
+            public void afterQuery(QueryExecutionContext executionContext) {
+                listenerReceivedResult.set(executionContext.getResult());
             }
         };
 
@@ -595,8 +595,8 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         final AtomicReference<Object> listenerReceivedResult = new AtomicReference<>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo) {
-                listenerReceivedResult.set(execInfo.getResult());
+            public void afterQuery(QueryExecutionContext executionContext) {
+                listenerReceivedResult.set(executionContext.getResult());
             }
         };
 

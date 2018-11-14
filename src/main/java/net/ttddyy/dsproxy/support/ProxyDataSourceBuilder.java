@@ -2,7 +2,7 @@ package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.DataSourceProxyException;
-import net.ttddyy.dsproxy.ExecutionInfo;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
@@ -122,17 +122,17 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Add {@link ProxyDataSourceListener} that performs given lambda on {@link ProxyDataSourceListener#beforeQuery(ExecutionInfo)}.
+     * Add {@link ProxyDataSourceListener} that performs given lambda on {@link ProxyDataSourceListener#beforeQuery(QueryExecutionContext)}.
      *
-     * @param callback a lambda function executed on {@link ProxyDataSourceListener#beforeQuery(ExecutionInfo)}
+     * @param callback a lambda function executed on {@link ProxyDataSourceListener#beforeQuery(QueryExecutionContext)}
      * @return builder
      * @since 1.4.3
      */
-    public ProxyDataSourceBuilder beforeQuery(Consumer<ExecutionInfo> callback) {
+    public ProxyDataSourceBuilder beforeQuery(Consumer<QueryExecutionContext> callback) {
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void beforeQuery(ExecutionInfo execInfo) {
-                callback.accept(execInfo);
+            public void beforeQuery(QueryExecutionContext executionContext) {
+                callback.accept(executionContext);
             }
         };
         this.listeners.add(listener);
@@ -140,17 +140,17 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Add {@link ProxyDataSourceListener} that performs given lambda on {@link ProxyDataSourceListener#afterQuery(ExecutionInfo)}.
+     * Add {@link ProxyDataSourceListener} that performs given lambda on {@link ProxyDataSourceListener#afterQuery(QueryExecutionContext)}.
      *
-     * @param callback a lambda function executed on {@link ProxyDataSourceListener#afterQuery(ExecutionInfo)}
+     * @param callback a lambda function executed on {@link ProxyDataSourceListener#afterQuery(QueryExecutionContext)}
      * @return builder
      * @since 1.4.3
      */
-    public ProxyDataSourceBuilder afterQuery(Consumer<ExecutionInfo> callback) {
+    public ProxyDataSourceBuilder afterQuery(Consumer<QueryExecutionContext> callback) {
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo) {
-                callback.accept(execInfo);
+            public void afterQuery(QueryExecutionContext executionContext) {
+                callback.accept(executionContext);
             }
         };
         this.listeners.add(listener);
@@ -264,13 +264,13 @@ public class ProxyDataSourceBuilder {
      * Enable auto retrieval of generated keys.
      *
      * When it is enabled, after executing query, it always call {@link Statement#getGeneratedKeys()}.
-     * The retrieved {@link java.sql.ResultSet} is available via {@link ExecutionInfo#getGeneratedKeys()}.
+     * The retrieved {@link java.sql.ResultSet} is available via {@link QueryExecutionContext#getGeneratedKeys()}.
      *
      * When this configuration is combined with {@link #proxyGeneratedKeys(ResultSetProxyLogicFactory)}, the proxied
-     * {@link java.sql.ResultSet} will be returned from {@link ExecutionInfo#getGeneratedKeys()}.
+     * {@link java.sql.ResultSet} will be returned from {@link QueryExecutionContext#getGeneratedKeys()}.
      *
      * When autoClose parameter is set to {@code true}, datasource-proxy will close the generated-keys {@link java.sql.ResultSet}
-     * after it called {@link ProxyDataSourceListener#afterQuery(ExecutionInfo)}.
+     * after it called {@link ProxyDataSourceListener#afterQuery(QueryExecutionContext)}.
      * This behavior might not be ideal if above layer, such as OR Mapper or application code, need to access generated-keys
      * because when they access generated-keys, the resultset is already closed.
      *
@@ -414,7 +414,7 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 2.0
      */
-    public ProxyDataSourceBuilder onSlowQuery(long threashold, TimeUnit timeUnit, Consumer<ExecutionInfo> callback) {
+    public ProxyDataSourceBuilder onSlowQuery(long threashold, TimeUnit timeUnit, Consumer<QueryExecutionContext> callback) {
         this.listeners.add(new SlowQueryListener(threashold, timeUnit, callback));
         return this;
     }

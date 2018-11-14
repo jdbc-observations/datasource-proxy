@@ -1,11 +1,8 @@
 package net.ttddyy.dsproxy.listener;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryCount;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.QueryType;
-
-import java.util.List;
 
 /**
  * Update database access information.
@@ -41,28 +38,28 @@ public class DataSourceQueryCountListener implements ProxyDataSourceListener {
     private QueryCountStrategy queryCountStrategy = new ThreadQueryCountHolder();
 
     @Override
-    public void afterQuery(ExecutionInfo execInfo) {
-        String dataSourceName = execInfo.getDataSourceName();
+    public void afterQuery(QueryExecutionContext executionContext) {
+        String dataSourceName = executionContext.getDataSourceName();
 
         QueryCount count = this.queryCountStrategy.getOrCreateQueryCount(dataSourceName);
 
         // increment db call
         count.incrementTotal();
-        if (execInfo.isSuccess()) {
+        if (executionContext.isSuccess()) {
             count.incrementSuccess();
         } else {
             count.incrementFailure();
         }
 
         // increment elapsed time
-        long elapsedTime = execInfo.getElapsedTime();
+        long elapsedTime = executionContext.getElapsedTime();
         count.incrementTime(elapsedTime);
 
         // increment statement type
-        count.increment(execInfo.getStatementType());
+        count.increment(executionContext.getStatementType());
 
         // increment query count
-        for (QueryInfo queryInfo : execInfo.getQueries()) {
+        for (QueryInfo queryInfo : executionContext.getQueries()) {
             String query = queryInfo.getQuery();
             QueryType type = QueryUtils.getQueryType(query);
             count.increment(type);

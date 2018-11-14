@@ -4,7 +4,6 @@ import net.ttddyy.dsproxy.DatabaseTest;
 import net.ttddyy.dsproxy.DatabaseType;
 import net.ttddyy.dsproxy.DbResourceCleaner;
 import net.ttddyy.dsproxy.EnabledOnDatabase;
-import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -36,19 +35,19 @@ public class SlowQueryListenerDbTest {
     @Test
     public void onSlowQuery() throws Exception {
 
-        final ExecutionInfo executionInfo = new ExecutionInfo();
+        final QueryExecutionContext queryExecutionContext = new QueryExecutionContext();
 
         final AtomicInteger counter = new AtomicInteger();
 
-        SlowQueryListener listener = new SlowQueryListener(50, TimeUnit.MILLISECONDS, execInfo -> {
+        SlowQueryListener listener = new SlowQueryListener(50, TimeUnit.MILLISECONDS, queryContext -> {
             counter.incrementAndGet();
-            assertThat(execInfo).isSameAs(executionInfo);
+            assertThat(queryContext).isSameAs(queryExecutionContext);
         });
 
         // simulate slow query
-        listener.beforeQuery(executionInfo);
+        listener.beforeQuery(queryExecutionContext);
         TimeUnit.MILLISECONDS.sleep(200);  // ample time
-        listener.afterQuery(executionInfo);
+        listener.afterQuery(queryExecutionContext);
 
         assertThat(counter.get()).as("callback should be called, and it should be once").isEqualTo(1);
     }
@@ -56,15 +55,15 @@ public class SlowQueryListenerDbTest {
     @Test
     public void onSlowQueryWithFastQuery() {
 
-        SlowQueryListener listener = new SlowQueryListener(100, TimeUnit.MILLISECONDS, execInfo -> {
+        SlowQueryListener listener = new SlowQueryListener(100, TimeUnit.MILLISECONDS, queryContext -> {
             fail("onSlowQuery method should not be called for fast query");
         });
 
-        final ExecutionInfo executionInfo = new ExecutionInfo();
+        final QueryExecutionContext queryExecutionContext = new QueryExecutionContext();
 
         // calling immediately after
-        listener.beforeQuery(executionInfo);
-        listener.afterQuery(executionInfo);
+        listener.beforeQuery(queryExecutionContext);
+        listener.afterQuery(queryExecutionContext);
     }
 
 
@@ -72,8 +71,8 @@ public class SlowQueryListenerDbTest {
     public void executionTime() throws Exception {
 
         final AtomicLong executionTime = new AtomicLong(0);
-        SlowQueryListener listener = new SlowQueryListener(100, TimeUnit.MILLISECONDS, executionInfo -> {
-            executionTime.set(executionInfo.getElapsedTime());
+        SlowQueryListener listener = new SlowQueryListener(100, TimeUnit.MILLISECONDS, executionContext -> {
+            executionTime.set(executionContext.getElapsedTime());
         });
 
         DataSource pds = ProxyDataSourceBuilder.create(jdbcDataSource).listener(listener).build();
@@ -93,7 +92,7 @@ public class SlowQueryListenerDbTest {
         this.cleaner.add(cs);
         cs.execute();
 
-        assertThat(executionTime.get()).as("execInfo.elapsedTime should be populated").isGreaterThanOrEqualTo(100).isLessThan(300);
+        assertThat(executionTime.get()).as("queryContext.elapsedTime should be populated").isGreaterThanOrEqualTo(100).isLessThan(300);
     }
 
 

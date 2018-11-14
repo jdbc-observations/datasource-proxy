@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy;
 
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -123,12 +124,12 @@ public class StatementQueryDbTest {
         this.cleaner.add(conn);
         this.cleaner.add(st);
 
-        final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
+        final AtomicReference<QueryExecutionContext> listenerReceivedExecutionContext = new AtomicReference<>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo) {
+            public void afterQuery(QueryExecutionContext executionContext) {
                 // since generatedKeys will NOT be closed, they can be read afterwards.
-                listenerReceivedExecutionInfo.set(execInfo);
+                listenerReceivedExecutionContext.set(executionContext);
             }
         };
 
@@ -143,7 +144,7 @@ public class StatementQueryDbTest {
 
         proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", Statement.RETURN_GENERATED_KEYS);
 
-        ExecutionInfo info = listenerReceivedExecutionInfo.get();
+        QueryExecutionContext info = listenerReceivedExecutionContext.get();
         assertThat(info).isNotNull();
 
         ResultSet generatedKeys = info.getGeneratedKeys();
@@ -160,7 +161,7 @@ public class StatementQueryDbTest {
         assertThat(generatedId).as("generated ID").isEqualTo(3);  // sequence starts from 1. (two rows are inserted as initial data)
 
         // reset
-        listenerReceivedExecutionInfo.set(null);
+        listenerReceivedExecutionContext.set(null);
 
         // autoRetrieveGeneratedKeys=false
         proxyConfig = ProxyConfig.Builder.create()
@@ -172,7 +173,7 @@ public class StatementQueryDbTest {
 
         proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", Statement.RETURN_GENERATED_KEYS);
 
-        info = listenerReceivedExecutionInfo.get();
+        info = listenerReceivedExecutionContext.get();
         assertThat(info).isNotNull();
 
         assertThat(info.getGeneratedKeys()).isNull();
@@ -185,12 +186,12 @@ public class StatementQueryDbTest {
         this.cleaner.add(conn);
         this.cleaner.add(st);
 
-        final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
+        final AtomicReference<QueryExecutionContext> listenerReceivedExecutionContext = new AtomicReference<QueryExecutionContext>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo) {
+            public void afterQuery(QueryExecutionContext executionContext) {
                 // since generatedKeys will NOT be closed, they can be read afterwards.
-                listenerReceivedExecutionInfo.set(execInfo);
+                listenerReceivedExecutionContext.set(executionContext);
             }
         };
 
@@ -205,7 +206,7 @@ public class StatementQueryDbTest {
 
         // it should NOT generate keys
         proxySt.execute("insert into emp ( id, name ) values (3, 'baz');");
-        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
+        assertThat(listenerReceivedExecutionContext.get().getGeneratedKeys()).isNull();
 
 
     }
@@ -217,12 +218,12 @@ public class StatementQueryDbTest {
         this.cleaner.add(conn);
         this.cleaner.add(st);
 
-        final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
+        final AtomicReference<QueryExecutionContext> listenerReceivedExecutionContext = new AtomicReference<QueryExecutionContext>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo) {
+            public void afterQuery(QueryExecutionContext executionContext) {
                 // since generatedKeys will NOT be closed, they can be read afterwards.
-                listenerReceivedExecutionInfo.set(execInfo);
+                listenerReceivedExecutionContext.set(executionContext);
             }
         };
 
@@ -238,21 +239,21 @@ public class StatementQueryDbTest {
 
         // Test with NOT enabling generated-keys
         proxySt.execute("insert into emp_with_auto_id ( name ) values ('BAZ');");
-        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
+        assertThat(listenerReceivedExecutionContext.get().getGeneratedKeys()).isNull();
 
         proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
         proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');");
-        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
+        assertThat(listenerReceivedExecutionContext.get().getGeneratedKeys()).isNull();
 
         // Statement#executeLargeUpdate is not implemented in HSQL yet
 
         // Specify NO_GENERATED_KEYS
         proxySt.execute("insert into emp_with_auto_id ( name ) values ('BAZ');", Statement.NO_GENERATED_KEYS);
-        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
+        assertThat(listenerReceivedExecutionContext.get().getGeneratedKeys()).isNull();
 
         proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
         proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", Statement.NO_GENERATED_KEYS);
-        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
+        assertThat(listenerReceivedExecutionContext.get().getGeneratedKeys()).isNull();
 
 
         // Test with enabling generated-keys
@@ -260,13 +261,13 @@ public class StatementQueryDbTest {
         // with Statement.RETURN_GENERATED_KEYS
         proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
         proxySt.execute("insert into emp_with_auto_id ( name ) values ('BAZ');", Statement.RETURN_GENERATED_KEYS);
-        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
-        listenerReceivedExecutionInfo.set(null);
+        assertThat(listenerReceivedExecutionContext.get().getGeneratedKeys()).isNotNull();
+        listenerReceivedExecutionContext.set(null);
 
         proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
         proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", Statement.RETURN_GENERATED_KEYS);
-        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
-        listenerReceivedExecutionInfo.set(null);
+        assertThat(listenerReceivedExecutionContext.get().getGeneratedKeys()).isNotNull();
+        listenerReceivedExecutionContext.set(null);
 
 
         if (!DbTestUtils.isPostgres()) {
@@ -275,25 +276,25 @@ public class StatementQueryDbTest {
             // with int[]
             proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
             proxySt.execute("insert into emp_with_auto_id ( name ) values ('BAZ');", new int[]{1});
-            assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
-            listenerReceivedExecutionInfo.set(null);
+            assertThat(listenerReceivedExecutionContext.get().getGeneratedKeys()).isNotNull();
+            listenerReceivedExecutionContext.set(null);
 
             proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
             proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", new int[]{1});
-            assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
-            listenerReceivedExecutionInfo.set(null);
+            assertThat(listenerReceivedExecutionContext.get().getGeneratedKeys()).isNotNull();
+            listenerReceivedExecutionContext.set(null);
         }
 
         // with String[]
         proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
         proxySt.execute("insert into emp_with_auto_id ( name ) values ('BAZ');", new String[]{"id"});
-        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
-        listenerReceivedExecutionInfo.set(null);
+        assertThat(listenerReceivedExecutionContext.get().getGeneratedKeys()).isNotNull();
+        listenerReceivedExecutionContext.set(null);
 
         proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
         proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", new String[]{"id"});
-        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
-        listenerReceivedExecutionInfo.set(null);
+        assertThat(listenerReceivedExecutionContext.get().getGeneratedKeys()).isNotNull();
+        listenerReceivedExecutionContext.set(null);
 
     }
 
@@ -304,12 +305,12 @@ public class StatementQueryDbTest {
         this.cleaner.add(conn);
         this.cleaner.add(st);
 
-        final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
+        final AtomicReference<QueryExecutionContext> listenerReceivedExecutionContext = new AtomicReference<QueryExecutionContext>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo) {
+            public void afterQuery(QueryExecutionContext executionContext) {
                 // since generatedKeys will NOT be closed, they can be read afterwards.
-                listenerReceivedExecutionInfo.set(execInfo);
+                listenerReceivedExecutionContext.set(executionContext);
             }
         };
 
@@ -329,8 +330,8 @@ public class StatementQueryDbTest {
         proxySt.addBatch("insert into emp_with_auto_id ( name ) values ('BAZ');");
         proxySt.addBatch("insert into emp_with_auto_id ( name ) values ('BAZ');");
         proxySt.executeBatch();
-        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
-        listenerReceivedExecutionInfo.set(null);
+        assertThat(listenerReceivedExecutionContext.get().getGeneratedKeys()).isNull();
+        listenerReceivedExecutionContext.set(null);
 
         // executeLargeBatch is not implemented for HSQLDB
 
@@ -347,8 +348,8 @@ public class StatementQueryDbTest {
         proxySt.addBatch("insert into emp_with_auto_id ( name ) values ('BAZ');");
         proxySt.addBatch("insert into emp_with_auto_id ( name ) values ('BAZ');");
         proxySt.executeBatch();
-        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNotNull();
-        listenerReceivedExecutionInfo.set(null);
+        assertThat(listenerReceivedExecutionContext.get().getGeneratedKeys()).isNotNull();
+        listenerReceivedExecutionContext.set(null);
 
 
         // autoRetrieve for batch statement = false
@@ -364,7 +365,7 @@ public class StatementQueryDbTest {
         proxySt.addBatch("insert into emp_with_auto_id ( name ) values ('BAZ');");
         proxySt.addBatch("insert into emp_with_auto_id ( name ) values ('BAZ');");
         proxySt.executeBatch();
-        assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
+        assertThat(listenerReceivedExecutionContext.get().getGeneratedKeys()).isNull();
     }
 
 
@@ -532,11 +533,11 @@ public class StatementQueryDbTest {
         this.cleaner.add(conn);
         this.cleaner.add(st);
 
-        final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
+        final AtomicReference<QueryExecutionContext> listenerReceivedExecutionContext = new AtomicReference<QueryExecutionContext>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo) {
-                ResultSet generatedKeys = execInfo.getGeneratedKeys();
+            public void afterQuery(QueryExecutionContext executionContext) {
+                ResultSet generatedKeys = executionContext.getGeneratedKeys();
                 boolean isClosed = true;
                 try {
                     isClosed = generatedKeys.isClosed();
@@ -544,7 +545,7 @@ public class StatementQueryDbTest {
                     fail("Failed to call generatedKeys.isClosed() message=" + ex.getMessage());
                 }
                 assertThat(isClosed).isFalse();
-                listenerReceivedExecutionInfo.set(execInfo);
+                listenerReceivedExecutionContext.set(executionContext);
             }
         };
 
@@ -559,7 +560,7 @@ public class StatementQueryDbTest {
 
         proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", Statement.RETURN_GENERATED_KEYS);
 
-        ExecutionInfo info = listenerReceivedExecutionInfo.get();
+        QueryExecutionContext info = listenerReceivedExecutionContext.get();
         ResultSet generatedKeys = info.getGeneratedKeys();
         assertThat(generatedKeys.isClosed()).isFalse();
 
@@ -569,7 +570,7 @@ public class StatementQueryDbTest {
             fail("closing non closed ResultSet should success. message=" + ex.getMessage());
         }
 
-        listenerReceivedExecutionInfo.set(null);
+        listenerReceivedExecutionContext.set(null);
 
         // autoCloseGeneratedKeys=true
         proxyConfig = ProxyConfig.Builder.create()
@@ -581,7 +582,7 @@ public class StatementQueryDbTest {
 
         proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('QUX');", Statement.RETURN_GENERATED_KEYS);
 
-        info = listenerReceivedExecutionInfo.get();
+        info = listenerReceivedExecutionContext.get();
         generatedKeys = info.getGeneratedKeys();
         assertThat(generatedKeys.isClosed()).isTrue();
 
@@ -594,11 +595,11 @@ public class StatementQueryDbTest {
         this.cleaner.add(conn);
         this.cleaner.add(st);
 
-        final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
+        final AtomicReference<QueryExecutionContext> listenerReceivedExecutionContext = new AtomicReference<QueryExecutionContext>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo) {
-                listenerReceivedExecutionInfo.set(execInfo);
+            public void afterQuery(QueryExecutionContext executionContext) {
+                listenerReceivedExecutionContext.set(executionContext);
             }
         };
 
@@ -615,7 +616,7 @@ public class StatementQueryDbTest {
 
         proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", Statement.RETURN_GENERATED_KEYS);
 
-        ExecutionInfo info = listenerReceivedExecutionInfo.get();
+        QueryExecutionContext info = listenerReceivedExecutionContext.get();
         assertThat(info).isNotNull();
         assertThat(info.getGeneratedKeys()).isInstanceOf(ResultSet.class);
 

@@ -56,7 +56,7 @@ public abstract class AbstractFormatterSupport<T> {
         return sb.toString();
     }
 
-    protected BiConsumer<T, StringBuilder> newLine = (executionInfo, sb) -> {
+    protected BiConsumer<T, StringBuilder> newLine = (executionContext, sb) -> {
         sb.append(System.lineSeparator());
     };
 

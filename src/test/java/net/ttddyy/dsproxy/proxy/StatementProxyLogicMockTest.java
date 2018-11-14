@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.ExecutionInfo;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.LastExecutionAwareListener;
@@ -458,22 +458,22 @@ public class StatementProxyLogicMockTest {
     @SuppressWarnings("unchecked")
     private void verifyListener(ProxyDataSourceListener listener, String methodName, String query, Object... methodArgs) {
 
-        ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
+        ArgumentCaptor<QueryExecutionContext> executionContextCaptor = ArgumentCaptor.forClass(QueryExecutionContext.class);
 
-        verify(listener).afterQuery(executionInfoCaptor.capture());
+        verify(listener).afterQuery(executionContextCaptor.capture());
 
-        ExecutionInfo execInfo = executionInfoCaptor.getValue();
-        assertThat(execInfo.getMethod()).isNotNull();
-        assertThat(execInfo.getMethod().getName()).isEqualTo(methodName);
+        QueryExecutionContext queryContext = executionContextCaptor.getValue();
+        assertThat(queryContext.getMethod()).isNotNull();
+        assertThat(queryContext.getMethod().getName()).isEqualTo(methodName);
 
-        assertThat(execInfo.getMethodArgs()).hasSize(methodArgs.length);
-        assertThat(execInfo.getMethodArgs()).contains(methodArgs);
-        assertThat(execInfo.getDataSourceName()).isEqualTo(DS_NAME);
-        assertThat(execInfo.getThrowable()).isNull();
-        assertThat(execInfo.isBatch()).isFalse();
-        assertThat(execInfo.getBatchSize()).isEqualTo(0);
+        assertThat(queryContext.getMethodArgs()).hasSize(methodArgs.length);
+        assertThat(queryContext.getMethodArgs()).contains(methodArgs);
+        assertThat(queryContext.getDataSourceName()).isEqualTo(DS_NAME);
+        assertThat(queryContext.getThrowable()).isNull();
+        assertThat(queryContext.isBatch()).isFalse();
+        assertThat(queryContext.getBatchSize()).isEqualTo(0);
 
-        List<QueryInfo> queryInfoList = execInfo.getQueries();
+        List<QueryInfo> queryInfoList = queryContext.getQueries();
         assertThat(queryInfoList).hasSize(1);
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery()).isEqualTo(query);
@@ -481,28 +481,28 @@ public class StatementProxyLogicMockTest {
         long threadId = Thread.currentThread().getId();
         String threadName = Thread.currentThread().getName();
 
-        assertEquals(threadId, execInfo.getThreadId());
-        assertEquals(threadName, execInfo.getThreadName());
+        assertEquals(threadId, queryContext.getThreadId());
+        assertEquals(threadName, queryContext.getThreadName());
     }
 
     @SuppressWarnings("unchecked")
     private void verifyListenerForException(ProxyDataSourceListener listener, String methodName,
                                             String query, Object... methodArgs) {
 
-        ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
+        ArgumentCaptor<QueryExecutionContext> executionContextCaptor = ArgumentCaptor.forClass(QueryExecutionContext.class);
 
-        verify(listener).afterQuery(executionInfoCaptor.capture());
+        verify(listener).afterQuery(executionContextCaptor.capture());
 
-        ExecutionInfo execInfo = executionInfoCaptor.getValue();
-        assertThat(execInfo.getMethod()).isNotNull();
-        assertThat(execInfo.getMethod().getName()).isEqualTo(methodName);
+        QueryExecutionContext queryContext = executionContextCaptor.getValue();
+        assertThat(queryContext.getMethod()).isNotNull();
+        assertThat(queryContext.getMethod().getName()).isEqualTo(methodName);
 
-        assertThat(execInfo.getMethodArgs()).hasSize(methodArgs.length);
-        assertThat(execInfo.getMethodArgs()).contains(methodArgs);
-        assertThat(execInfo.getDataSourceName()).isEqualTo(DS_NAME);
-        assertThat(execInfo.getThrowable()).isInstanceOf(SQLException.class);
+        assertThat(queryContext.getMethodArgs()).hasSize(methodArgs.length);
+        assertThat(queryContext.getMethodArgs()).contains(methodArgs);
+        assertThat(queryContext.getDataSourceName()).isEqualTo(DS_NAME);
+        assertThat(queryContext.getThrowable()).isInstanceOf(SQLException.class);
 
-        List<QueryInfo> queryInfoList = execInfo.getQueries();
+        List<QueryInfo> queryInfoList = queryContext.getQueries();
         assertThat(queryInfoList).hasSize(1);
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery()).isEqualTo(query);
@@ -654,19 +654,19 @@ public class StatementProxyLogicMockTest {
 
     @SuppressWarnings("unchecked")
     private void verifyListenerForBatchExecution(String batchMethod, ProxyDataSourceListener listener, String... queries) {
-        ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
+        ArgumentCaptor<QueryExecutionContext> executionContextCaptor = ArgumentCaptor.forClass(QueryExecutionContext.class);
 
-        verify(listener).afterQuery(executionInfoCaptor.capture());
+        verify(listener).afterQuery(executionContextCaptor.capture());
 
-        ExecutionInfo execInfo = executionInfoCaptor.getValue();
-        assertThat(execInfo.getMethod()).isNotNull();
-        assertThat(execInfo.getMethod().getName()).isEqualTo(batchMethod);
-        assertThat(execInfo.getDataSourceName()).isEqualTo(DS_NAME);
-        assertThat(execInfo.getMethodArgs()).isNull();
-        assertThat(execInfo.isBatch()).isTrue();
-        assertThat(execInfo.getBatchSize()).isEqualTo(queries.length);
+        QueryExecutionContext queryContext = executionContextCaptor.getValue();
+        assertThat(queryContext.getMethod()).isNotNull();
+        assertThat(queryContext.getMethod().getName()).isEqualTo(batchMethod);
+        assertThat(queryContext.getDataSourceName()).isEqualTo(DS_NAME);
+        assertThat(queryContext.getMethodArgs()).isNull();
+        assertThat(queryContext.isBatch()).isTrue();
+        assertThat(queryContext.getBatchSize()).isEqualTo(queries.length);
 
-        List<QueryInfo> queryInfoList = execInfo.getQueries();
+        List<QueryInfo> queryInfoList = queryContext.getQueries();
 
         assertThat(queryInfoList).isNotNull();
         assertThat(queryInfoList).hasSize(queries.length);
@@ -681,21 +681,21 @@ public class StatementProxyLogicMockTest {
 
     @SuppressWarnings("unchecked")
     private void verifyListenerForExecuteBatchForException(ProxyDataSourceListener listener, String... queries) {
-        ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
+        ArgumentCaptor<QueryExecutionContext> executionContextCaptor = ArgumentCaptor.forClass(QueryExecutionContext.class);
 
-        verify(listener).afterQuery(executionInfoCaptor.capture());
+        verify(listener).afterQuery(executionContextCaptor.capture());
 
-        ExecutionInfo execInfo = executionInfoCaptor.getValue();
-        assertThat(execInfo.getMethod()).isNotNull();
-        assertThat(execInfo.getMethod().getName()).isEqualTo("executeBatch");
-        assertThat(execInfo.getDataSourceName()).isEqualTo(DS_NAME);
-        assertThat(execInfo.getMethodArgs()).isNull();
-        assertThat(execInfo.getThrowable()).isInstanceOf(SQLException.class);
-        assertThat(execInfo.isBatch()).isTrue();
-        assertThat(execInfo.getBatchSize()).isEqualTo(queries.length);
+        QueryExecutionContext queryContext = executionContextCaptor.getValue();
+        assertThat(queryContext.getMethod()).isNotNull();
+        assertThat(queryContext.getMethod().getName()).isEqualTo("executeBatch");
+        assertThat(queryContext.getDataSourceName()).isEqualTo(DS_NAME);
+        assertThat(queryContext.getMethodArgs()).isNull();
+        assertThat(queryContext.getThrowable()).isInstanceOf(SQLException.class);
+        assertThat(queryContext.isBatch()).isTrue();
+        assertThat(queryContext.getBatchSize()).isEqualTo(queries.length);
 
 
-        List<QueryInfo> queryInfoList = execInfo.getQueries();
+        List<QueryInfo> queryInfoList = queryContext.getQueries();
 
         assertThat(queryInfoList).hasSize(queries.length);
 
@@ -724,15 +724,15 @@ public class StatementProxyLogicMockTest {
 
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void beforeQuery(ExecutionInfo execInfo) {
-                beforeQueryThreadId.set(execInfo.getThreadId());
-                beforeQueryThreadName.set(execInfo.getThreadName());
+            public void beforeQuery(QueryExecutionContext executionContext) {
+                beforeQueryThreadId.set(executionContext.getThreadId());
+                beforeQueryThreadName.set(executionContext.getThreadName());
             }
 
             @Override
-            public void afterQuery(ExecutionInfo execInfo) {
-                afterQueryThreadId.set(execInfo.getThreadId());
-                afterQueryThreadName.set(execInfo.getThreadName());
+            public void afterQuery(QueryExecutionContext executionContext) {
+                afterQueryThreadId.set(executionContext.getThreadId());
+                afterQueryThreadName.set(executionContext.getThreadName());
             }
         };
 
@@ -890,8 +890,8 @@ public class StatementProxyLogicMockTest {
         final AtomicReference<Object> listenerReceivedResult = new AtomicReference<Object>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo) {
-                listenerReceivedResult.set(execInfo.getResult());
+            public void afterQuery(QueryExecutionContext executionContext) {
+                listenerReceivedResult.set(executionContext.getResult());
             }
         };
 
@@ -947,8 +947,8 @@ public class StatementProxyLogicMockTest {
         final AtomicReference<Object> listenerReceivedResult = new AtomicReference<Object>();
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo) {
-                listenerReceivedResult.set(execInfo.getResult());
+            public void afterQuery(QueryExecutionContext executionContext) {
+                listenerReceivedResult.set(executionContext.getResult());
             }
         };
 
@@ -1096,8 +1096,8 @@ public class StatementProxyLogicMockTest {
 
         ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo) {
-                elapsedTimeHolder.set(execInfo.getElapsedTime());
+            public void afterQuery(QueryExecutionContext executionContext) {
+                elapsedTimeHolder.set(executionContext.getElapsedTime());
             }
         };
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);

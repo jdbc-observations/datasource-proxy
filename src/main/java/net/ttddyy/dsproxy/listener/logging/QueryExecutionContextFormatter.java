@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
@@ -15,43 +15,43 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
- * Convert {@link ExecutionInfo} to {@code String}.
+ * Convert {@link QueryExecutionContext} to {@code String}.
  *
  * @author Tadaya Tsuyukubo
  * @since 2.0
  */
-public class ExecutionInfoFormatter extends AbstractFormatterSupport<ExecutionInfo> implements Function<ExecutionInfo, String> {
+public class QueryExecutionContextFormatter extends AbstractFormatterSupport<QueryExecutionContext> implements Function<QueryExecutionContext, String> {
 
     protected ParameterValueConverter setNullParameterValueConverter = new SetNullParameterValueConverter();
     protected ParameterValueConverter registerOutParameterValueConverter = new RegisterOutParameterValueConverter();
 
-    private BiConsumer<ExecutionInfo, StringBuilder> onDataSourceName = (execInfo, sb) -> {
-        String name = execInfo.getDataSourceName();
+    private BiConsumer<QueryExecutionContext, StringBuilder> onDataSourceName = (queryContext, sb) -> {
+        String name = queryContext.getDataSourceName();
         sb.append("Name:");
         sb.append(name == null ? "" : name);
     };
-    private BiConsumer<ExecutionInfo, StringBuilder> onConnection = (execInfo, sb) -> {
+    private BiConsumer<QueryExecutionContext, StringBuilder> onConnection = (queryContext, sb) -> {
         sb.append("Connection:");
-        sb.append(execInfo.getConnectionId());
+        sb.append(queryContext.getConnectionId());
     };
-    private BiConsumer<ExecutionInfo, StringBuilder> onDuration = (execInfo, sb) -> {
+    private BiConsumer<QueryExecutionContext, StringBuilder> onDuration = (queryContext, sb) -> {
         sb.append("Time:");
-        sb.append(execInfo.getElapsedTime());
+        sb.append(queryContext.getElapsedTime());
     };
-    private BiConsumer<ExecutionInfo, StringBuilder> onThread = (execInfo, sb) -> {
+    private BiConsumer<QueryExecutionContext, StringBuilder> onThread = (queryContext, sb) -> {
         sb.append("Thread:");
-        sb.append(execInfo.getThreadName());
+        sb.append(queryContext.getThreadName());
         sb.append("(");
-        sb.append(execInfo.getThreadId());
+        sb.append(queryContext.getThreadId());
         sb.append(")");
     };
-    private BiConsumer<ExecutionInfo, StringBuilder> onSuccess = (execInfo, sb) -> {
+    private BiConsumer<QueryExecutionContext, StringBuilder> onSuccess = (queryContext, sb) -> {
         sb.append("Success:");
-        sb.append(execInfo.isSuccess() ? "True" : "False");
+        sb.append(queryContext.isSuccess() ? "True" : "False");
     };
-    private BiConsumer<ExecutionInfo, StringBuilder> onStatementType = (execInfo, sb) -> {
+    private BiConsumer<QueryExecutionContext, StringBuilder> onStatementType = (queryContext, sb) -> {
         sb.append("Type:");
-        switch (execInfo.getStatementType()) {
+        switch (queryContext.getStatementType()) {
             case STATEMENT:
                 sb.append("Statement");
                 break;
@@ -66,26 +66,26 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport<ExecutionIn
                 break;
         }
     };
-    private BiConsumer<ExecutionInfo, StringBuilder> onBatch = (execInfo, sb) -> {
+    private BiConsumer<QueryExecutionContext, StringBuilder> onBatch = (queryContext, sb) -> {
         sb.append("Batch:");
-        sb.append(execInfo.isBatch() ? "True" : "False");
+        sb.append(queryContext.isBatch() ? "True" : "False");
     };
-    private BiConsumer<ExecutionInfo, StringBuilder> onQuerySize = (execInfo, sb) -> {
+    private BiConsumer<QueryExecutionContext, StringBuilder> onQuerySize = (queryContext, sb) -> {
         sb.append("QuerySize:");
-        sb.append(execInfo.getQueries().size());
+        sb.append(queryContext.getQueries().size());
     };
-    private BiConsumer<ExecutionInfo, StringBuilder> onBatchSize = (execInfo, sb) -> {
+    private BiConsumer<QueryExecutionContext, StringBuilder> onBatchSize = (queryContext, sb) -> {
         sb.append("BatchSize:");
-        sb.append(execInfo.getBatchSize());
+        sb.append(queryContext.getBatchSize());
     };
 
     // Each query statement
     private Function<String, String> onQuery = Function.identity();
 
 
-    private BiConsumer<ExecutionInfo, StringBuilder> onQueries = (execInfo, sb) -> {
+    private BiConsumer<QueryExecutionContext, StringBuilder> onQueries = (queryContext, sb) -> {
         sb.append("Query:[");
-        execInfo.getQueries().forEach(queryInfo -> {
+        queryContext.getQueries().forEach(queryInfo -> {
             sb.append("\"");
             sb.append(this.onQuery.apply(queryInfo.getQuery()));
             sb.append("\",");
@@ -94,12 +94,12 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport<ExecutionIn
 
         sb.append("]");
     };
-    private BiConsumer<ExecutionInfo, StringBuilder> onParameters = (execInfo, sb) -> {
-        boolean isPrepared = execInfo.getStatementType() == StatementType.PREPARED;
+    private BiConsumer<QueryExecutionContext, StringBuilder> onParameters = (queryContext, sb) -> {
+        boolean isPrepared = queryContext.getStatementType() == StatementType.PREPARED;
 
         sb.append("Params:[");
 
-        execInfo.getQueries().stream()
+        queryContext.getQueries().stream()
                 .map(QueryInfo::getParameterSetOperations)
                 .flatMap(Collection::stream)
                 .forEach(parameterSetOperations -> {
@@ -215,11 +215,11 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport<ExecutionIn
         return value;
     }
 
-    private List<BiConsumer<ExecutionInfo, StringBuilder>> consumers = new ArrayList<>();
+    private List<BiConsumer<QueryExecutionContext, StringBuilder>> consumers = new ArrayList<>();
 
 
-    public static ExecutionInfoFormatter showAll() {
-        ExecutionInfoFormatter formatter = new ExecutionInfoFormatter();
+    public static QueryExecutionContextFormatter showAll() {
+        QueryExecutionContextFormatter formatter = new QueryExecutionContextFormatter();
         formatter.addConsumer(formatter.onDataSourceName);
         formatter.addConsumer(formatter.onConnection);
         formatter.addConsumer(formatter.onDuration);
@@ -234,17 +234,17 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport<ExecutionIn
         return formatter;
     }
 
-    public ExecutionInfoFormatter addConsumer(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public QueryExecutionContextFormatter addConsumer(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.consumers.add(consumer);
         return this;
     }
 
-    public ExecutionInfoFormatter newLine() {
+    public QueryExecutionContextFormatter newLine() {
         this.consumers.add(this.newLine);
         return this;
     }
 
-    public String format(ExecutionInfo executionInfo) {
+    public String format(QueryExecutionContext queryExecutionContext) {
 
         StringBuilder sb = new StringBuilder();
 
@@ -255,7 +255,7 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport<ExecutionIn
                 chompIfEndWith(sb, this.delimiter);
             }
 
-            consumer.accept(executionInfo, sb);
+            consumer.accept(queryExecutionContext, sb);
 
             if (consumer != this.newLine) {
                 sb.append(this.delimiter);
@@ -269,8 +269,8 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport<ExecutionIn
     }
 
     @Override
-    public String apply(ExecutionInfo executionInfo) {
-        return format(executionInfo);
+    public String apply(QueryExecutionContext queryExecutionContext) {
+        return format(queryExecutionContext);
     }
 
     public String getDisplayValueForSetNull(ParameterSetOperation param) {
@@ -286,120 +286,120 @@ public class ExecutionInfoFormatter extends AbstractFormatterSupport<ExecutionIn
         return value == null ? null : value.toString();
     }
 
-    public ExecutionInfoFormatter showDataSourceName() {
+    public QueryExecutionContextFormatter showDataSourceName() {
         this.addConsumer(this.onDataSourceName);
         return this;
     }
 
-    public ExecutionInfoFormatter showDataSourceName(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public QueryExecutionContextFormatter showDataSourceName(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onDataSourceName = consumer;
         return showDataSourceName();
     }
 
-    public ExecutionInfoFormatter showDuration() {
+    public QueryExecutionContextFormatter showDuration() {
         this.addConsumer(this.onDuration);
         return this;
     }
 
-    public ExecutionInfoFormatter showDuration(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public QueryExecutionContextFormatter showDuration(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onDuration = consumer;
         return showDuration();
     }
 
-    public ExecutionInfoFormatter showThread() {
+    public QueryExecutionContextFormatter showThread() {
         this.addConsumer(this.onThread);
         return this;
     }
 
-    public ExecutionInfoFormatter showThread(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public QueryExecutionContextFormatter showThread(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onThread = consumer;
         return showThread();
     }
 
 
-    public ExecutionInfoFormatter showSuccess() {
+    public QueryExecutionContextFormatter showSuccess() {
         this.addConsumer(this.onSuccess);
         return this;
     }
 
-    public ExecutionInfoFormatter showSuccess(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public QueryExecutionContextFormatter showSuccess(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onSuccess = consumer;
         return showSuccess();
     }
 
-    public ExecutionInfoFormatter showStatementType() {
+    public QueryExecutionContextFormatter showStatementType() {
         this.addConsumer(this.onStatementType);
         return this;
     }
 
-    public ExecutionInfoFormatter showStatementType(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public QueryExecutionContextFormatter showStatementType(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onStatementType = consumer;
         return showStatementType();
     }
 
 
-    public ExecutionInfoFormatter showBatch() {
+    public QueryExecutionContextFormatter showBatch() {
         this.addConsumer(this.onBatch);
         return this;
     }
 
-    public ExecutionInfoFormatter showBatch(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public QueryExecutionContextFormatter showBatch(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onBatch = consumer;
         return showBatch();
     }
 
-    public ExecutionInfoFormatter showQuerySize() {
+    public QueryExecutionContextFormatter showQuerySize() {
         this.addConsumer(this.onQuerySize);
         return this;
     }
 
-    public ExecutionInfoFormatter showQuerySize(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public QueryExecutionContextFormatter showQuerySize(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onQuerySize = consumer;
         return showQuerySize();
     }
 
-    public ExecutionInfoFormatter showBatchSize() {
+    public QueryExecutionContextFormatter showBatchSize() {
         this.addConsumer(this.onBatchSize);
         return this;
     }
 
-    public ExecutionInfoFormatter showBatchSize(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public QueryExecutionContextFormatter showBatchSize(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onBatchSize = consumer;
         return showBatchSize();
     }
 
 
-    public ExecutionInfoFormatter showQueries() {
+    public QueryExecutionContextFormatter showQueries() {
         this.addConsumer(this.onQueries);
         return this;
     }
 
-    public ExecutionInfoFormatter showQueries(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public QueryExecutionContextFormatter showQueries(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onQueries = consumer;
         return showQueries();
     }
 
-    public ExecutionInfoFormatter showParameters() {
+    public QueryExecutionContextFormatter showParameters() {
         this.addConsumer(this.onParameters);
         return this;
     }
 
-    public ExecutionInfoFormatter showParameters(BiConsumer<ExecutionInfo, StringBuilder> consumer) {
+    public QueryExecutionContextFormatter showParameters(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onParameters = consumer;
         return showParameters();
     }
 
-    public ExecutionInfoFormatter onQuery(Function<String, String> onQuery) {
+    public QueryExecutionContextFormatter onQuery(Function<String, String> onQuery) {
         this.onQuery = onQuery;
         return this;
     }
 
-    public ExecutionInfoFormatter onPreparedParameters(BiConsumer<SortedMap<String, String>, StringBuilder> onPreparedParameters) {
+    public QueryExecutionContextFormatter onPreparedParameters(BiConsumer<SortedMap<String, String>, StringBuilder> onPreparedParameters) {
         this.onPreparedParameters = onPreparedParameters;
         return this;
     }
 
-    public ExecutionInfoFormatter onCallableParameters(BiConsumer<SortedMap<String, String>, StringBuilder> onCallableParameters) {
+    public QueryExecutionContextFormatter onCallableParameters(BiConsumer<SortedMap<String, String>, StringBuilder> onCallableParameters) {
         this.onCallableParameters = onCallableParameters;
         return this;
     }

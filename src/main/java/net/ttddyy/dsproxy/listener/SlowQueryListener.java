@@ -1,7 +1,5 @@
 package net.ttddyy.dsproxy.listener;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -17,7 +15,7 @@ import java.util.function.Consumer;
  * The callback is called only once for the target query if it exceeds the threshold time.
  *
  * NOTE:
- * {@link ExecutionInfo#elapsedTime} contains the time when callback is triggered which usually is the specified threshold time.
+ * {@link QueryExecutionContext#elapsedTime} contains the time when callback is triggered which usually is the specified threshold time.
  *
  * If you want to log or do something with AFTER execution that has exceeded specified threshold time, use normal
  * logging listener like following:
@@ -26,9 +24,9 @@ import java.util.function.Consumer;
  * long thresholdInMills = ...
  * ProxyDataSourceListener listener = new ProxyDataSourceListener(){
  *      {@literal @}Override
- *      public void afterQuery(ExecutionInfo execInfo) {
- *          if (execInfo.getElapsedTime() >= thresholdInMills) {
- *              super.afterQuery(execInfo, queryInfoList);
+ *      public void afterQuery(QueryExecutionContext queryContext) {
+ *          if (queryContext.getElapsedTime() >= thresholdInMills) {
+ *              super.afterQuery(queryContext, queryInfoList);
  *          }
  *      }
  * };
@@ -43,14 +41,14 @@ public class SlowQueryListener implements ProxyDataSourceListener {
     /**
      * Data holder for currently running query.
      *
-     * This structure is used to avoid hard reference from scheduled {@link Runnable} to {@link ExecutionInfo} and etc.
+     * This structure is used to avoid hard reference from scheduled {@link Runnable} to {@link QueryExecutionContext} and etc.
      */
     protected static class RunningQueryContext {
-        protected ExecutionInfo executionInfo;
+        protected QueryExecutionContext queryExecutionContext;
         protected long startTimeInMills;
 
-        public RunningQueryContext(ExecutionInfo executionInfo, long nowInMills) {
-            this.executionInfo = executionInfo;
+        public RunningQueryContext(QueryExecutionContext queryExecutionContext, long nowInMills) {
+            this.queryExecutionContext = queryExecutionContext;
             this.startTimeInMills = nowInMills;
         }
     }
@@ -69,67 +67,67 @@ public class SlowQueryListener implements ProxyDataSourceListener {
 
     // Callback when query execution time exceeds the threshold.
     // This callback is called only once per query if it exceeds the threshold time.
-    protected Consumer<ExecutionInfo> onSlowQuery = executionInfo -> {
+    protected Consumer<QueryExecutionContext> onSlowQuery = executionContext -> {
     };
 
     public SlowQueryListener() {
     }
 
-    public SlowQueryListener(long threshold, TimeUnit thresholdTimeUnit, Consumer<ExecutionInfo> onSlowQuery) {
+    public SlowQueryListener(long threshold, TimeUnit thresholdTimeUnit, Consumer<QueryExecutionContext> onSlowQuery) {
         this.threshold = threshold;
         this.thresholdTimeUnit = thresholdTimeUnit;
         this.onSlowQuery = onSlowQuery;
     }
 
     @Override
-    public void beforeQuery(ExecutionInfo execInfo) {
+    public void beforeQuery(QueryExecutionContext executionContext) {
 
-        String execInfoKey = getExecutionInfoKey(execInfo);
+        String queryContextKey = getExecutionContextKey(executionContext);
 
-        // only pass the key to prevent hard reference from Runnable to ExecutionInfo. (Issue-53)
+        // only pass the key to prevent hard reference from Runnable to QueryExecutionContext. (Issue-53)
         Runnable check = () -> {
             // if it's still in map, that means it's still running
-            RunningQueryContext context = this.inExecution.get(execInfoKey);
+            RunningQueryContext context = this.inExecution.get(queryContextKey);
 
             if (context != null) {
                 // populate elapsed time
-                if (context.executionInfo.getElapsedTime() == 0) {
+                if (context.queryExecutionContext.getElapsedTime() == 0) {
                     long elapsedTime = System.currentTimeMillis() - context.startTimeInMills;
-                    context.executionInfo.setElapsedTime(elapsedTime);
+                    context.queryExecutionContext.setElapsedTime(elapsedTime);
                 }
 
-                onSlowQuery(context.executionInfo, context.startTimeInMills);
+                onSlowQuery(context.queryExecutionContext, context.startTimeInMills);
             }
         };
         this.executor.schedule(check, this.threshold, this.thresholdTimeUnit);
 
         long now = System.currentTimeMillis();
-        RunningQueryContext context = new RunningQueryContext(execInfo, now);
-        this.inExecution.put(execInfoKey, context);
+        RunningQueryContext context = new RunningQueryContext(executionContext, now);
+        this.inExecution.put(queryContextKey, context);
 
     }
 
     @Override
-    public void afterQuery(ExecutionInfo execInfo) {
-        String executionInfoKey = getExecutionInfoKey(execInfo);
-        this.inExecution.remove(executionInfoKey);
+    public void afterQuery(QueryExecutionContext executionContext) {
+        String executionContextKey = getExecutionContextKey(executionContext);
+        this.inExecution.remove(executionContextKey);
     }
 
 
     /**
-     * Calculate a key for given {@link ExecutionInfo}.
+     * Calculate a key for given {@link QueryExecutionContext}.
      *
-     * <p>This key is passed to the slow query check {@link Runnable} as well as for removal in {@link #afterQuery(ExecutionInfo)}.
+     * <p>This key is passed to the slow query check {@link Runnable} as well as for removal in {@link #afterQuery(QueryExecutionContext)}.
      *
      * <p>Default implementation uses {@link System#identityHashCode(Object)}. This does NOT guarantee 100% of uniqueness; however, since
      * the current usage of the key is short lived and good enough for this use case.
-     * <p>Subclass can override this method to provide different implementation to uniquely represent {@link ExecutionInfo}.
+     * <p>Subclass can override this method to provide different implementation to uniquely represent {@link QueryExecutionContext}.
      *
-     * @param executionInfo execution info
+     * @param queryExecutionContext execution info
      * @return key
      */
-    protected String getExecutionInfoKey(ExecutionInfo executionInfo) {
-        int exeInfoKey = System.identityHashCode(executionInfo);
+    protected String getExecutionContextKey(QueryExecutionContext queryExecutionContext) {
+        int exeInfoKey = System.identityHashCode(queryExecutionContext);
         return String.valueOf(exeInfoKey);
     }
 
@@ -139,12 +137,12 @@ public class SlowQueryListener implements ProxyDataSourceListener {
      * Subclass can override this method to add behavior.
      * This callback is called only once per query if it exceeds the threshold time.
      *
-     * @param execInfo         query execution info
+     * @param queryContext         query execution info
      * @param startTimeInMills time in mills when the query started
      */
-    protected void onSlowQuery(ExecutionInfo execInfo, long startTimeInMills) {
+    protected void onSlowQuery(QueryExecutionContext queryContext, long startTimeInMills) {
         // default implementation delegates the action to the consumer
-        this.onSlowQuery.accept(execInfo);
+        this.onSlowQuery.accept(queryContext);
     }
 
     public void setThreshold(long threshHold) {
@@ -183,7 +181,7 @@ public class SlowQueryListener implements ProxyDataSourceListener {
      * @param onSlowQuery a consumer that is called only once per query if it exceeds the threshold time.
      * @since 2.0
      */
-    public void setOnSlowQuery(Consumer<ExecutionInfo> onSlowQuery) {
+    public void setOnSlowQuery(Consumer<QueryExecutionContext> onSlowQuery) {
         this.onSlowQuery = onSlowQuery;
     }
 }

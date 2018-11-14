@@ -2,7 +2,7 @@ package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.DataSourceProxyException;
-import net.ttddyy.dsproxy.ExecutionInfo;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
@@ -91,7 +91,7 @@ public class ProxyDataSourceBuilderTest {
         DataSource ds;
         SlowQueryListener listener;
 
-        Consumer<ExecutionInfo> consumer = executionInfo -> {
+        Consumer<QueryExecutionContext> consumer = executionContext -> {
         };
 
         ds = ProxyDataSourceBuilder.create(this.mockDs).onSlowQuery(10, TimeUnit.SECONDS, consumer).build();
@@ -284,7 +284,7 @@ public class ProxyDataSourceBuilderTest {
         // check beforeMethod()
         final AtomicBoolean isBeforeInvoked = new AtomicBoolean();
         ds = ProxyDataSourceBuilder.create(this.mockDs)
-                .beforeQuery((execInfo) -> {
+                .beforeQuery((queryContext) -> {
                     isBeforeInvoked.set(true);
                 })
                 .build();
@@ -299,7 +299,7 @@ public class ProxyDataSourceBuilderTest {
         // check afterMethod()
         final AtomicBoolean isAfterInvoked = new AtomicBoolean();
         ds = ProxyDataSourceBuilder.create(this.mockDs)
-                .afterQuery((execInfo) -> {
+                .afterQuery((queryContext) -> {
                     isAfterInvoked.set(true);
                 })
                 .build();

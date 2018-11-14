@@ -1,6 +1,9 @@
 [[changelog-2.0]]
 === 2.0
 
+* Rename and move `net.ttddyy.dsproxy.ExecutionInfo` to
+  `net.ttddyy.dsproxy.listener.QueryExecutionInfo`
+
 * Introduce `ParameterSetOperations` to represent set of `ParameterSetOperation`.
   On `QueryInfo`, `[set|get]ParametersList` are replaced to `[set|get]ParameterSetOperations`
 

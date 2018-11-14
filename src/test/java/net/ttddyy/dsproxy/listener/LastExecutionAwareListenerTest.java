@@ -1,6 +1,5 @@
 package net.ttddyy.dsproxy.listener;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -63,41 +62,41 @@ public class LastExecutionAwareListenerTest {
 
     @Test
     void beforeQuery() {
-        ExecutionInfo executionInfo = new ExecutionInfo();
+        QueryExecutionContext queryExecutionContext = new QueryExecutionContext();
 
         assertNull(listener.getBeforeQueryContext());
         assertFalse(listener.isBeforeQueryCalled());
 
-        listener.beforeQuery(executionInfo);
+        listener.beforeQuery(queryExecutionContext);
 
-        assertSame(executionInfo, listener.getBeforeQueryContext());
+        assertSame(queryExecutionContext, listener.getBeforeQueryContext());
         assertTrue(listener.isBeforeQueryCalled());
 
-        ExecutionInfo anotherExecutionInfo = new ExecutionInfo();
+        QueryExecutionContext anotherQueryExecutionContext = new QueryExecutionContext();
 
-        listener.beforeQuery(anotherExecutionInfo);
+        listener.beforeQuery(anotherQueryExecutionContext);
 
-        assertSame(anotherExecutionInfo, listener.getBeforeQueryContext());
+        assertSame(anotherQueryExecutionContext, listener.getBeforeQueryContext());
 
     }
 
     @Test
     void afterQuery() {
-        ExecutionInfo executionInfo = new ExecutionInfo();
+        QueryExecutionContext queryExecutionContext = new QueryExecutionContext();
 
         assertNull(listener.getAfterQueryContext());
         assertFalse(listener.isAfterQueryCalled());
 
-        listener.afterQuery(executionInfo);
+        listener.afterQuery(queryExecutionContext);
 
-        assertSame(executionInfo, listener.getAfterQueryContext());
+        assertSame(queryExecutionContext, listener.getAfterQueryContext());
         assertTrue(listener.isAfterQueryCalled());
 
-        ExecutionInfo anotherExecutionInfo = new ExecutionInfo();
+        QueryExecutionContext anotherQueryExecutionContext = new QueryExecutionContext();
 
-        listener.afterQuery(anotherExecutionInfo);
+        listener.afterQuery(anotherQueryExecutionContext);
 
-        assertSame(anotherExecutionInfo, listener.getAfterQueryContext());
+        assertSame(anotherQueryExecutionContext, listener.getAfterQueryContext());
     }
 
 }

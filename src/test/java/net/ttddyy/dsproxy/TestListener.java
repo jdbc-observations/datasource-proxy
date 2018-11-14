@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy;
 
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 
 /**
@@ -10,12 +11,12 @@ public class TestListener implements ProxyDataSourceListener {
     int afterCount = 0;
 
     @Override
-    public void beforeQuery(ExecutionInfo execInfo) {
+    public void beforeQuery(QueryExecutionContext executionContext) {
         beforeCount++;
     }
 
     @Override
-    public void afterQuery(ExecutionInfo execInfo) {
+    public void afterQuery(QueryExecutionContext executionContext) {
         afterCount++;
     }
 

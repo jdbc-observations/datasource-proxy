@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.ExecutionInfoBuilder;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
+import net.ttddyy.dsproxy.QueryExecutionContextBuilder;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.QueryInfoBuilder;
 import net.ttddyy.dsproxy.StatementType;
@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class ExecutionInfoFormatterTest {
+public class QueryExecutionContextFormatterJsonTest {
 
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
@@ -27,7 +27,7 @@ public class ExecutionInfoFormatterTest {
 
         QueryInfo queryInfo = QueryInfoBuilder.create().query("select 1").build();
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        QueryExecutionContext queryExecutionContext = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
                 .connectionId("10")
@@ -39,14 +39,12 @@ public class ExecutionInfoFormatterTest {
                 .batch(false)
                 .batchSize(0)
                 .queries(Lists.newArrayList(queryInfo))
-                .threadId(30)
-                .threadName("my-thread")
                 .build();
 
-        ExecutionInfoFormatter formatter = ExecutionInfoFormatter.showAll();
+        QueryExecutionContextJsonFormatter formatter = QueryExecutionContextJsonFormatter.showAll();
 
-        String entry = formatter.format(executionInfo);
-        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Thread:my-thread(30), Success:True, Type:Statement, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[()]");
+        String entry = formatter.format(queryExecutionContext);
+        assertThat(entry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"time\":100, \"success\":true, \"type\":\"Statement\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{}]}");
     }
 
     @Test
@@ -57,7 +55,7 @@ public class ExecutionInfoFormatterTest {
         QueryInfo queryInfo1 = QueryInfoBuilder.create().query("select 1").build();
         QueryInfo queryInfo2 = QueryInfoBuilder.create().query("select 2").build();
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        QueryExecutionContext queryExecutionContext = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
                 .connectionId("10")
@@ -69,14 +67,12 @@ public class ExecutionInfoFormatterTest {
                 .batch(true)
                 .batchSize(2)
                 .queries(Lists.newArrayList(queryInfo1, queryInfo2))
-                .threadId(30)
-                .threadName("my-thread")
                 .build();
 
-        ExecutionInfoFormatter formatter = ExecutionInfoFormatter.showAll();
+        QueryExecutionContextJsonFormatter formatter = QueryExecutionContextJsonFormatter.showAll();
 
-        String entry = formatter.format(executionInfo);
-        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Thread:my-thread(30), Success:True, Type:Statement, Batch:True, QuerySize:2, BatchSize:2, Query:[\"select 1\",\"select 2\"], Params:[(),()]");
+        String entry = formatter.format(queryExecutionContext);
+        assertThat(entry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"time\":100, \"success\":true, \"type\":\"Statement\", \"batch\":true, \"querySize\":2, \"batchSize\":2, \"query\":[\"select 1\",\"select 2\"], \"params\":[{},{}]}");
 
     }
 
@@ -92,7 +88,7 @@ public class ExecutionInfoFormatterTest {
                 .param(3, null)  // mimic "setString(3, null)"
                 .build();
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        QueryExecutionContext queryExecutionContext = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
                 .connectionId("10")
@@ -104,14 +100,12 @@ public class ExecutionInfoFormatterTest {
                 .batch(false)
                 .batchSize(0)
                 .queries(Lists.newArrayList(queryInfo))
-                .threadId(30)
-                .threadName("my-thread")
                 .build();
 
-        ExecutionInfoFormatter formatter = ExecutionInfoFormatter.showAll();
+        QueryExecutionContextJsonFormatter formatter = QueryExecutionContextJsonFormatter.showAll();
 
-        String entry = formatter.format(executionInfo);
-        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Thread:my-thread(30), Success:True, Type:Prepared, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(foo,100,null)]");
+        String entry = formatter.format(queryExecutionContext);
+        assertThat(entry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"time\":100, \"success\":true, \"type\":\"Prepared\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[[\"foo\",\"100\",null]]}");
 
     }
 
@@ -128,7 +122,7 @@ public class ExecutionInfoFormatterTest {
                 .batchParam(2, 2, 200)
                 .build();
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        QueryExecutionContext queryExecutionContext = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
                 .connectionId("10")
@@ -140,15 +134,13 @@ public class ExecutionInfoFormatterTest {
                 .batch(true)
                 .batchSize(2)
                 .queries(Lists.newArrayList(queryInfo))
-                .threadId(30)
-                .threadName("my-thread")
                 .build();
 
-        ExecutionInfoFormatter formatter = ExecutionInfoFormatter.showAll();
+        QueryExecutionContextJsonFormatter formatter = QueryExecutionContextJsonFormatter.showAll();
 
 
-        String entry = formatter.format(executionInfo);
-        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Thread:my-thread(30), Success:True, Type:Prepared, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(foo,100),(bar,200)]");
+        String entry = formatter.format(queryExecutionContext);
+        assertThat(entry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"time\":100, \"success\":true, \"type\":\"Prepared\", \"batch\":true, \"querySize\":1, \"batchSize\":2, \"query\":[\"select 1\"], \"params\":[[\"foo\",\"100\"],[\"bar\",\"200\"]]}");
 
     }
 
@@ -163,7 +155,7 @@ public class ExecutionInfoFormatterTest {
                 .param("id", 100)
                 .build();
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        QueryExecutionContext queryExecutionContext = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
                 .connectionId("10")
@@ -175,14 +167,12 @@ public class ExecutionInfoFormatterTest {
                 .batch(false)
                 .batchSize(0)
                 .queries(Lists.newArrayList(queryInfo))
-                .threadId(30)
-                .threadName("my-thread")
                 .build();
 
-        ExecutionInfoFormatter formatter = ExecutionInfoFormatter.showAll();
+        QueryExecutionContextJsonFormatter formatter = QueryExecutionContextJsonFormatter.showAll();
 
-        String entry = formatter.format(executionInfo);
-        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Thread:my-thread(30), Success:True, Type:Callable, Batch:False, QuerySize:1, BatchSize:0, Query:[\"select 1\"], Params:[(id=100,name=foo)]");
+        String entry = formatter.format(queryExecutionContext);
+        assertThat(entry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"time\":100, \"success\":true, \"type\":\"Callable\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{\"id\":\"100\",\"name\":\"foo\"}]}");
 
     }
 
@@ -199,7 +189,7 @@ public class ExecutionInfoFormatterTest {
                 .batchParam(2, "id", 200)
                 .build();
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        QueryExecutionContext queryExecutionContext = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
                 .connectionId("10")
@@ -211,15 +201,13 @@ public class ExecutionInfoFormatterTest {
                 .batch(true)
                 .batchSize(2)
                 .queries(Lists.newArrayList(queryInfo))
-                .threadId(30)
-                .threadName("my-thread")
                 .build();
 
-        ExecutionInfoFormatter formatter = ExecutionInfoFormatter.showAll();
+        QueryExecutionContextJsonFormatter formatter = QueryExecutionContextJsonFormatter.showAll();
 
 
-        String entry = formatter.format(executionInfo);
-        assertThat(entry).isEqualTo("Name:foo, Connection:10, Time:100, Thread:my-thread(30), Success:True, Type:Callable, Batch:True, QuerySize:1, BatchSize:2, Query:[\"select 1\"], Params:[(id=100,name=foo),(id=200,name=bar)]");
+        String entry = formatter.format(queryExecutionContext);
+        assertThat(entry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"time\":100, \"success\":true, \"type\":\"Callable\", \"batch\":true, \"querySize\":1, \"batchSize\":2, \"query\":[\"select 1\"], \"params\":[{\"id\":\"100\",\"name\":\"foo\"},{\"id\":\"200\",\"name\":\"bar\"}]}");
 
     }
 
@@ -238,7 +226,7 @@ public class ExecutionInfoFormatterTest {
                 .batchParam(2, 2, 200)  // batch 2, index 2
                 .build();
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        QueryExecutionContext queryExecutionContext = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
                 .connectionId("10")
@@ -253,11 +241,11 @@ public class ExecutionInfoFormatterTest {
                 .build();
 
 
-        ExecutionInfoFormatter formatter = new ExecutionInfoFormatter();
+        QueryExecutionContextJsonFormatter formatter = new QueryExecutionContextJsonFormatter();
         formatter.showParameters();
 
-        String entry = formatter.format(executionInfo);
-        assertThat(entry).isEqualTo("Params:[(foo,100,FOO),(bar,200,BAR)]");
+        String entry = formatter.format(queryExecutionContext);
+        assertThat(entry).isEqualTo("{\"params\":[[\"foo\",\"100\",\"FOO\"],[\"bar\",\"200\",\"BAR\"]]}");
 
     }
 
@@ -276,7 +264,7 @@ public class ExecutionInfoFormatterTest {
                 .batchParam(2, "c-idx", 200)
                 .build();
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        QueryExecutionContext queryExecutionContext = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
                 .connectionId("10")
@@ -290,185 +278,173 @@ public class ExecutionInfoFormatterTest {
                 .queries(Lists.newArrayList(queryInfo))
                 .build();
 
-        ExecutionInfoFormatter formatter = new ExecutionInfoFormatter();
+        QueryExecutionContextJsonFormatter formatter = new QueryExecutionContextJsonFormatter();
         formatter.showParameters();
 
-        String entry = formatter.format(executionInfo);
-        assertThat(entry).isEqualTo("Params:[(a-idx=foo,b-idx=FOO,c-idx=100),(a-idx=bar,b-idx=BAR,c-idx=200)]");
+        String entry = formatter.format(queryExecutionContext);
+        assertThat(entry).isEqualTo("{\"params\":[{\"a-idx\":\"foo\",\"b-idx\":\"FOO\",\"c-idx\":\"100\"},{\"a-idx\":\"bar\",\"b-idx\":\"BAR\",\"c-idx\":\"200\"}]}");
 
     }
 
     @Test
     void showDuration() {
-        ExecutionInfo executionInfo;
+        QueryExecutionContext queryExecutionContext;
         String result;
 
-        ExecutionInfoFormatter formatter = new ExecutionInfoFormatter();
+        QueryExecutionContextJsonFormatter formatter = new QueryExecutionContextJsonFormatter();
         formatter.showDuration();
 
-        executionInfo = ExecutionInfoBuilder.create().elapsedTime(23).build();
-        result = formatter.format(executionInfo);
-        assertThat(result).isEqualTo("Time:23");
-    }
-
-    @Test
-    void showThread() {
-        ExecutionInfo executionInfo;
-        String result;
-
-        ExecutionInfoFormatter formatter = new ExecutionInfoFormatter();
-        formatter.showThread();
-
-        executionInfo = ExecutionInfoBuilder.create().threadId(23).threadName("myThread").build();
-        result = formatter.format(executionInfo);
-        assertThat(result).isEqualTo("Thread:myThread(23)");
+        queryExecutionContext = QueryExecutionContextBuilder.create().elapsedTime(23).build();
+        result = formatter.format(queryExecutionContext);
+        assertThat(result).isEqualTo("{\"time\":23}");
     }
 
     @Test
     void showStatementType() {
-        ExecutionInfo executionInfo;
+        QueryExecutionContext queryExecutionContext;
         String result;
 
-        ExecutionInfoFormatter formatter = new ExecutionInfoFormatter();
+        QueryExecutionContextJsonFormatter formatter = new QueryExecutionContextJsonFormatter();
         formatter.showStatementType();
 
 
         // Statement
-        executionInfo = ExecutionInfoBuilder.create().statementType(StatementType.STATEMENT).build();
-        result = formatter.format(executionInfo);
-        assertThat(result).isEqualTo("Type:Statement");
+        queryExecutionContext = QueryExecutionContextBuilder.create().statementType(StatementType.STATEMENT).build();
+        result = formatter.format(queryExecutionContext);
+        assertThat(result).isEqualTo("{\"type\":\"Statement\"}");
 
         // PreparedStatement
-        executionInfo = ExecutionInfoBuilder.create().statementType(StatementType.PREPARED).build();
-        result = formatter.format(executionInfo);
-        assertThat(result).isEqualTo("Type:Prepared");
+        queryExecutionContext = QueryExecutionContextBuilder.create().statementType(StatementType.PREPARED).build();
+        result = formatter.format(queryExecutionContext);
+        assertThat(result).isEqualTo("{\"type\":\"Prepared\"}");
 
         // CallableStatement
-        executionInfo = ExecutionInfoBuilder.create().statementType(StatementType.CALLABLE).build();
-        result = formatter.format(executionInfo);
-        assertThat(result).isEqualTo("Type:Callable");
+        queryExecutionContext = QueryExecutionContextBuilder.create().statementType(StatementType.CALLABLE).build();
+        result = formatter.format(queryExecutionContext);
+        assertThat(result).isEqualTo("{\"type\":\"Callable\"}");
     }
 
     @Test
     void showQueries() {
-        ExecutionInfo executionInfo = ExecutionInfoBuilder.create().build();
+        QueryExecutionContext queryExecutionContext = QueryExecutionContextBuilder.create().build();
         QueryInfo select1 = QueryInfoBuilder.create().query("select 1").build();
         QueryInfo select2 = QueryInfoBuilder.create().query("select 2").build();
         QueryInfo select3 = QueryInfoBuilder.create().query("select 3").build();
 
-        ExecutionInfoFormatter formatter = new ExecutionInfoFormatter();
+        QueryExecutionContextJsonFormatter formatter = new QueryExecutionContextJsonFormatter();
         formatter.showQueries();
         String result;
 
         // single query
-        executionInfo.setQueries(Arrays.asList(select1));
-        result = formatter.format(executionInfo);
-        assertThat(result).isEqualTo("Query:[\"select 1\"]");
+        queryExecutionContext.setQueries(Arrays.asList(select1));
+        result = formatter.format(queryExecutionContext);
+        assertThat(result).isEqualTo("{\"query\":[\"select 1\"]}");
 
         // multiple query
-        executionInfo.setQueries(Arrays.asList(select1, select2, select3));
-        result = formatter.format(executionInfo);
-        assertThat(result).isEqualTo("Query:[\"select 1\",\"select 2\",\"select 3\"]");
+        queryExecutionContext.setQueries(Arrays.asList(select1, select2, select3));
+        result = formatter.format(queryExecutionContext);
+        assertThat(result).isEqualTo("{\"query\":[\"select 1\",\"select 2\",\"select 3\"]}");
     }
 
     @Test
     void showQuerySize() {
-        ExecutionInfo executionInfo = ExecutionInfoBuilder.create().build();
+        QueryExecutionContext queryExecutionContext = QueryExecutionContextBuilder.create().build();
         QueryInfo select1 = QueryInfoBuilder.create().query("select 1").build();
         QueryInfo select2 = QueryInfoBuilder.create().query("select 2").build();
         QueryInfo select3 = QueryInfoBuilder.create().query("select 3").build();
 
-        ExecutionInfoFormatter formatter = new ExecutionInfoFormatter();
+        QueryExecutionContextJsonFormatter formatter = new QueryExecutionContextJsonFormatter();
         formatter.showQuerySize();
         String result;
 
         // single query
-        executionInfo.setQueries(Arrays.asList(select1));
-        result = formatter.format(executionInfo);
-        assertThat(result).isEqualTo("QuerySize:1");
+        queryExecutionContext.setQueries(Arrays.asList(select1));
+        result = formatter.format(queryExecutionContext);
+        assertThat(result).isEqualTo("{\"querySize\":1}");
 
         // multiple query
-        executionInfo.setQueries(Arrays.asList(select1, select2, select3));
-        result = formatter.format(executionInfo);
-        assertThat(result).isEqualTo("QuerySize:3");
+        queryExecutionContext.setQueries(Arrays.asList(select1, select2, select3));
+        result = formatter.format(queryExecutionContext);
+        assertThat(result).isEqualTo("{\"querySize\":3}");
     }
 
     @Test
     void showSuccess() {
-        ExecutionInfo executionInfo;
+        QueryExecutionContext queryExecutionContext;
         String result;
 
-        ExecutionInfoFormatter formatter = new ExecutionInfoFormatter();
+        QueryExecutionContextJsonFormatter formatter = new QueryExecutionContextJsonFormatter();
         formatter.showSuccess();
 
         // success
-        executionInfo = ExecutionInfoBuilder.create().success(true).build();
-        result = formatter.format(executionInfo);
-        assertThat(result).isEqualTo("Success:True");
+        queryExecutionContext = QueryExecutionContextBuilder.create().success(true).build();
+        result = formatter.format(queryExecutionContext);
+        assertThat(result).isEqualTo("{\"success\":true}");
 
         // fail
-        executionInfo = ExecutionInfoBuilder.create().success(false).build();
-        result = formatter.format(executionInfo);
-        assertThat(result).isEqualTo("Success:False");
+        queryExecutionContext = QueryExecutionContextBuilder.create().success(false).build();
+        result = formatter.format(queryExecutionContext);
+        assertThat(result).isEqualTo("{\"success\":false}");
 
     }
 
     @Test
     void showBatch() {
-        ExecutionInfo executionInfo;
+        QueryExecutionContext queryExecutionContext;
         String result;
 
-        ExecutionInfoFormatter formatter = new ExecutionInfoFormatter();
+        QueryExecutionContextJsonFormatter formatter = new QueryExecutionContextJsonFormatter();
         formatter.showBatch();
 
         // success
-        executionInfo = ExecutionInfoBuilder.create().batch(true).build();
-        result = formatter.format(executionInfo);
-        assertThat(result).isEqualTo("Batch:True");
+        queryExecutionContext = QueryExecutionContextBuilder.create().batch(true).build();
+        result = formatter.format(queryExecutionContext);
+        assertThat(result).isEqualTo("{\"batch\":true}");
 
         // fail
-        executionInfo = ExecutionInfoBuilder.create().batch(false).build();
-        result = formatter.format(executionInfo);
-        assertThat(result).isEqualTo("Batch:False");
+        queryExecutionContext = QueryExecutionContextBuilder.create().batch(false).build();
+        result = formatter.format(queryExecutionContext);
+        assertThat(result).isEqualTo("{\"batch\":false}");
     }
 
     @Test
     void showBatchSize() {
-        ExecutionInfo executionInfo;
+        QueryExecutionContext queryExecutionContext;
         String result;
 
-        ExecutionInfoFormatter formatter = new ExecutionInfoFormatter();
+        QueryExecutionContextJsonFormatter formatter = new QueryExecutionContextJsonFormatter();
         formatter.showBatchSize();
 
         // default
-        executionInfo = ExecutionInfoBuilder.create().build();
-        result = formatter.format(executionInfo);
-        assertThat(result).isEqualTo("BatchSize:0");
+        queryExecutionContext = QueryExecutionContextBuilder.create().build();
+        result = formatter.format(queryExecutionContext);
+        assertThat(result).isEqualTo("{\"batchSize\":0}");
 
-        executionInfo = ExecutionInfoBuilder.create().batchSize(100).build();
-        result = formatter.format(executionInfo);
-        assertThat(result).isEqualTo("BatchSize:100");
+        queryExecutionContext = QueryExecutionContextBuilder.create().batchSize(100).build();
+        result = formatter.format(queryExecutionContext);
+        assertThat(result).isEqualTo("{\"batchSize\":100}");
     }
 
 
     @Test
     void newline() {
-        ExecutionInfoFormatter formatter = new ExecutionInfoFormatter();
+        QueryExecutionContextJsonFormatter formatter = new QueryExecutionContextJsonFormatter();
         formatter.newLine();
         formatter.showSuccess();
         formatter.newLine();
         formatter.showSuccess();
         formatter.newLine();
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder.create().build();
-        String result = formatter.format(executionInfo);
+        QueryExecutionContext queryExecutionContext = QueryExecutionContextBuilder.create().build();
+        String result = formatter.format(queryExecutionContext);
 
 
-        assertThat(result).hasLineCount(3);
+        assertThat(result).hasLineCount(4);
         String[] lines = result.split(LINE_SEPARATOR);
-        assertThat(lines[0]).isEqualTo("");
-        assertThat(lines[1]).isEqualTo("Success:False");
-        assertThat(lines[2]).isEqualTo("Success:False");
+        assertThat(lines[0]).isEqualTo("{");
+        assertThat(lines[1]).isEqualTo("\"success\":false, "); // delimiter is appended
+        assertThat(lines[2]).isEqualTo("\"success\":false, "); // delimiter is appended
+        assertThat(lines[3]).isEqualTo("}");
     }
 
 }

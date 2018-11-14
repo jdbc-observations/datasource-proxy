@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.ExecutionInfoBuilder;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
+import net.ttddyy.dsproxy.QueryExecutionContextBuilder;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.proxy.ParameterKey;
@@ -69,7 +69,7 @@ public class OutputParameterJsonFormatterSupportTest {
         queryInfo.getParameterSetOperations().addAll(parameterSetOperations);
 
 
-        // prepare ExecutionInfo
+        // prepare QueryExecutionContext
 
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
@@ -81,7 +81,7 @@ public class OutputParameterJsonFormatterSupportTest {
         given(cs.getObject(2)).willReturn(200);
         given(cs.getObject("bar")).willReturn(201);
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        QueryExecutionContext queryExecutionContext = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
                 .elapsedTime(100)
@@ -93,13 +93,13 @@ public class OutputParameterJsonFormatterSupportTest {
                 .batchSize(0)
                 .queries(Lists.newArrayList(queryInfo))
                 .build();
-        executionInfo.setStatement(cs);   // add mock statement
+        queryExecutionContext.setStatement(cs);   // add mock statement
 
 
-        ExecutionInfoJsonFormatter formatter = new ExecutionInfoJsonFormatter();
+        QueryExecutionContextJsonFormatter formatter = new QueryExecutionContextJsonFormatter();
         formatter.addConsumer(OutputParameterJsonFormatterSupport.onOutputParameter);
 
-        String entry = formatter.format(executionInfo);
+        String entry = formatter.format(queryExecutionContext);
         assertThat(entry).isEqualTo("{\"outParams\":[{\"1\":\"100\",\"foo\":\"101\"},{\"2\":\"200\",\"bar\":\"201\"}]}");
 
     }

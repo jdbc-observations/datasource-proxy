@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.ExecutionInfo;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
@@ -266,16 +266,16 @@ public class StatementProxyLogic extends CallbackSupport {
         long beforeQueryThreadId = beforeQueryThread.getId();
         String beforeQueryThreadName = beforeQueryThread.getName();
 
-        ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo, this.statement, isBatchExecution, batchSize, method, args, queries);
-        execInfo.setThreadId(beforeQueryThreadId);
-        execInfo.setThreadName(beforeQueryThreadName);
+        QueryExecutionContext queryContext = new QueryExecutionContext(this.connectionInfo, this.statement, isBatchExecution, batchSize, method, args, queries);
+        queryContext.setThreadId(beforeQueryThreadId);
+        queryContext.setThreadName(beforeQueryThreadName);
 
 
         boolean isGetResultSetMethod = GET_RESULTSET_METHOD.equals(methodName);
         boolean performQueryListener = !isGetGeneratedKeysMethod && !isGetResultSetMethod;
 
         if (performQueryListener) {
-            queryListener.beforeQuery(execInfo);
+            queryListener.beforeQuery(queryContext);
         }
 
         long beforeTime = System.currentTimeMillis();
@@ -346,29 +346,29 @@ public class StatementProxyLogic extends CallbackSupport {
                 }
             }
 
-            execInfo.setResult(retVal);
-            execInfo.setGeneratedKeys(this.generatedKeys);
-            execInfo.setElapsedTime(afterTime - beforeTime);
-            execInfo.setSuccess(true);
+            queryContext.setResult(retVal);
+            queryContext.setGeneratedKeys(this.generatedKeys);
+            queryContext.setElapsedTime(afterTime - beforeTime);
+            queryContext.setSuccess(true);
 
             return retVal;
         } catch (InvocationTargetException ex) {
             long afterTime = System.currentTimeMillis();
 
-            execInfo.setElapsedTime(afterTime - beforeTime);
-            execInfo.setThrowable(ex.getTargetException());
-            execInfo.setSuccess(false);
+            queryContext.setElapsedTime(afterTime - beforeTime);
+            queryContext.setThrowable(ex.getTargetException());
+            queryContext.setSuccess(false);
             throw ex.getTargetException();
         } finally {
 
             Thread afterQueryThread = Thread.currentThread();
             long afterQueryThreadId = afterQueryThread.getId();
             String afterQueryThreadName = afterQueryThread.getName();
-            execInfo.setThreadId(afterQueryThreadId);
-            execInfo.setThreadName(afterQueryThreadName);
+            queryContext.setThreadId(afterQueryThreadId);
+            queryContext.setThreadName(afterQueryThreadName);
 
             if (performQueryListener) {
-                queryListener.afterQuery(execInfo);
+                queryListener.afterQuery(queryContext);
             }
 
             // auto-close the auto-retrieved generated keys. result of "getGeneratedKeys()" should not be affected.

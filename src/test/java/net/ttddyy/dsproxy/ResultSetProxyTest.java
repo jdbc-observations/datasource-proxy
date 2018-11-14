@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy;
 
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.hsqldb.jdbc.JDBCDataSource;
@@ -86,9 +87,9 @@ public class ResultSetProxyTest {
         private Table table;
 
         @Override
-        public void afterQuery(ExecutionInfo execInfo) {
-            if (execInfo.getResult() instanceof ResultSet) {
-                table = extractTable((ResultSet) execInfo.getResult());
+        public void afterQuery(QueryExecutionContext executionContext) {
+            if (executionContext.getResult() instanceof ResultSet) {
+                table = extractTable((ResultSet) executionContext.getResult());
             }
         }
 

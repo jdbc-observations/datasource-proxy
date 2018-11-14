@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperations;
@@ -10,27 +10,27 @@ import java.sql.SQLException;
 import java.util.function.BiConsumer;
 
 /**
- * In addition to {@link ExecutionInfoJsonFormatter}, append output parameter values to the log for {@link CallableStatement}.
+ * In addition to {@link QueryExecutionContextJsonFormatter}, append output parameter values to the log for {@link CallableStatement}.
  *
  * @author Tadaya Tsuyukubo
  * @author Parikshit Navgire (navgire@optymyze.com)
- * @see ExecutionInfoFormatter
+ * @see QueryExecutionContextFormatter
  * @since 2.0
  */
-public class OutputParameterJsonFormatterSupport extends AbstractFormatterSupport<ExecutionInfo> {
+public class OutputParameterJsonFormatterSupport extends AbstractFormatterSupport<QueryExecutionContext> {
 
-    public static BiConsumer<ExecutionInfo, StringBuilder> onOutputParameter = (execInfo, sb) -> {
+    public static BiConsumer<QueryExecutionContext, StringBuilder> onOutputParameter = (queryContext, sb) -> {
 
         sb.append("\"outParams\":[");
 
-        for (QueryInfo queryInfo : execInfo.getQueries()) {
+        for (QueryInfo queryInfo : queryContext.getQueries()) {
             for (ParameterSetOperations parameterSetOperations : queryInfo.getParameterSetOperations()) {
                 sb.append("{");
 
                 parameterSetOperations.getOperations().stream()
                         .filter(ParameterSetOperation::isRegisterOutParameterOperation)
                         .forEach(parameterSetOperation -> {
-                            CallableStatement cs = (CallableStatement) execInfo.getStatement();
+                            CallableStatement cs = (CallableStatement) queryContext.getStatement();
                             Object key = parameterSetOperation.getArgs()[0];
                             Object value = getOutputValueForDisplay(key, cs);
 
