@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy;
 
+import net.ttddyy.dsproxy.listener.LastExecutionAwareListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +23,7 @@ public class StatementInvocationHandlerDbTest {
 
     private DataSource jdbcDataSource;
     private TestListener testListener;
-    private LastQueryListener lastQueryListener;
+    private LastExecutionAwareListener lastQueryListener;
     private Statement statement;
 
     private DbResourceCleaner cleaner;
@@ -35,7 +36,7 @@ public class StatementInvocationHandlerDbTest {
     @BeforeEach
     public void setup() throws Exception {
         testListener = new TestListener();
-        lastQueryListener = new LastQueryListener();
+        lastQueryListener = new LastExecutionAwareListener();
 
         Connection connection = jdbcDataSource.getConnection();
         Statement stmt = connection.createStatement();
@@ -70,15 +71,15 @@ public class StatementInvocationHandlerDbTest {
         assertThat(testListener.beforeCount).isEqualTo(1);
         assertThat(testListener.afterCount).isEqualTo(1);
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueryContext().getQueries();
         assertThat(beforeQueries).hasSize(1);
         assertThat(beforeQueries.get(0).getQuery()).isEqualTo(query);
 
-        List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueryContext().getQueries();
         assertThat(afterQueries).hasSize(1);
         assertThat(afterQueries.get(0).getQuery()).isEqualTo(query);
 
-        ExecutionInfo afterExec = lastQueryListener.getAfterExecInfo();
+        ExecutionInfo afterExec = lastQueryListener.getAfterQueryContext();
         assertThat(afterExec).isNotNull();
         assertThat(afterExec.getThrowable()).isNotNull();
 
@@ -95,11 +96,11 @@ public class StatementInvocationHandlerDbTest {
         assertThat(testListener.beforeCount).isEqualTo(1);
         assertThat(testListener.afterCount).isEqualTo(1);
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueryContext().getQueries();
         assertThat(beforeQueries).hasSize(1);
         assertThat(beforeQueries.get(0).getQuery()).isEqualTo(query);
 
-        List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueryContext().getQueries();
         assertThat(afterQueries).hasSize(1);
         assertThat(afterQueries.get(0).getQuery()).isEqualTo(query);
     }
@@ -112,11 +113,11 @@ public class StatementInvocationHandlerDbTest {
         assertThat(testListener.beforeCount).isEqualTo(1);
         assertThat(testListener.afterCount).isEqualTo(1);
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueryContext().getQueries();
         assertThat(beforeQueries).hasSize(1);
         assertThat(beforeQueries.get(0).getQuery()).isEqualTo(query);
 
-        List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueryContext().getQueries();
         assertThat(afterQueries).hasSize(1);
         assertThat(afterQueries.get(0).getQuery()).isEqualTo(query);
     }
@@ -141,12 +142,12 @@ public class StatementInvocationHandlerDbTest {
         assertThat(result[0]).as("one row inserted").isEqualTo(1);
         assertThat(result[1]).as("two rows updated").isEqualTo(3);
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueryContext().getQueries();
         assertThat(beforeQueries).hasSize(2);
         assertThat(beforeQueries.get(0).getQuery()).isEqualTo(query1);
         assertThat(beforeQueries.get(1).getQuery()).isEqualTo(query2);
 
-        List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueryContext().getQueries();
         assertThat(afterQueries).hasSize(2);
         assertThat(afterQueries.get(0).getQuery()).isEqualTo(query1);
         assertThat(afterQueries.get(1).getQuery()).isEqualTo(query2);
@@ -165,10 +166,10 @@ public class StatementInvocationHandlerDbTest {
 
         statement.executeBatch();
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueryContext().getQueries();
         assertThat(beforeQueries).isEmpty();
 
-        List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueryContext().getQueries();
         assertThat(afterQueries).isEmpty();
     }
 
@@ -183,7 +184,7 @@ public class StatementInvocationHandlerDbTest {
         statement.addBatch("insert into emp ( id, name ) values (200, 'BAR');");
         statement.executeBatch();  // 1st execution
 
-        List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueryContext().getQueries();
         assertThat(afterQueries).isNotNull();
         assertThat(afterQueries).as("should pass two QueryInfo (FOO,BAR)").hasSize(2);
 
@@ -194,7 +195,7 @@ public class StatementInvocationHandlerDbTest {
         assertThat(updateCount.length).isEqualTo(1);
 
         // second execution should pass only one QueryInfo to listener
-        afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
+        afterQueries = lastQueryListener.getAfterQueryContext().getQueries();
         assertThat(afterQueries).isNotNull();
         assertThat(afterQueries).as("should pass one QueryInfo (BAZ)").hasSize(1);
 
@@ -209,8 +210,8 @@ public class StatementInvocationHandlerDbTest {
         final String query = "select * from emp;";
         statement.executeQuery(query);
 
-        ExecutionInfo before = lastQueryListener.getBeforeExecInfo();
-        ExecutionInfo after = lastQueryListener.getAfterExecInfo();
+        ExecutionInfo before = lastQueryListener.getBeforeQueryContext();
+        ExecutionInfo after = lastQueryListener.getAfterQueryContext();
 
         assertThat(before).as("before and after uses same ExecutionInfo instance").isSameAs(after);
     }

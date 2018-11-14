@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy;
 
+import net.ttddyy.dsproxy.listener.LastExecutionAwareListener;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
@@ -31,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class PreparedStatementDbTest {
 
     private TestListener testListener;
-    private LastQueryListener lastQueryListener;
+    private LastExecutionAwareListener lastQueryListener;
     private Connection connection;
 
     private DataSource jdbcDataSource;
@@ -45,7 +46,7 @@ public class PreparedStatementDbTest {
     @BeforeEach
     public void setup() throws Exception {
         testListener = new TestListener();
-        lastQueryListener = new LastQueryListener();
+        lastQueryListener = new LastExecutionAwareListener();
 
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
@@ -79,15 +80,15 @@ public class PreparedStatementDbTest {
         assertThat(testListener.beforeCount).isEqualTo(1);
         assertThat(testListener.afterCount).isEqualTo(1);
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueryContext().getQueries();
         assertThat(beforeQueries).hasSize(1);
         assertThat(beforeQueries.get(0).getQuery()).isEqualTo(query);
 
-        List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueryContext().getQueries();
         assertThat(afterQueries).hasSize(1);
         assertThat(afterQueries.get(0).getQuery()).isEqualTo(query);
 
-        ExecutionInfo afterExec = lastQueryListener.getAfterExecInfo();
+        ExecutionInfo afterExec = lastQueryListener.getAfterQueryContext();
         assertThat(afterExec).isNotNull();
         assertThat(afterExec.getThrowable()).isNotNull();
 
@@ -106,14 +107,14 @@ public class PreparedStatementDbTest {
         assertThat(testListener.beforeCount).isEqualTo(1);
         assertThat(testListener.afterCount).isEqualTo(1);
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueryContext().getQueries();
         assertThat(beforeQueries).hasSize(1);
         assertThat(beforeQueries.get(0).getQuery()).isEqualTo(query);
         assertThat(beforeQueries.get(0).getParameterSetOperations()).hasSize(1);
         assertThat(beforeQueries.get(0).getParameterSetOperations().get(0).getOperations())
                 .extracting("args", Object[].class).isEmpty();
 
-        List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueryContext().getQueries();
         assertThat(afterQueries).hasSize(1);
         assertThat(afterQueries.get(0).getQuery()).isEqualTo(query);
         assertThat(afterQueries.get(0).getParameterSetOperations()).hasSize(1);
@@ -132,7 +133,7 @@ public class PreparedStatementDbTest {
         assertThat(testListener.beforeCount).isEqualTo(1);
         assertThat(testListener.afterCount).isEqualTo(1);
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueryContext().getQueries();
         assertThat(beforeQueries).hasSize(1);
         final QueryInfo beforeInfo = beforeQueries.get(0);
         assertThat(beforeInfo.getQuery()).isEqualTo(query);
@@ -140,7 +141,7 @@ public class PreparedStatementDbTest {
         assertThat(beforeInfo.getParameterSetOperations().get(0).getOperations())
                 .extracting("args", Object[].class).containsExactly(new Object[]{1, 1});
 
-        List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueryContext().getQueries();
         assertThat(afterQueries).hasSize(1);
         final QueryInfo afterInfo = afterQueries.get(0);
         assertThat(afterInfo.getQuery()).isEqualTo(query);
@@ -162,7 +163,7 @@ public class PreparedStatementDbTest {
         assertThat(testListener.beforeCount).isEqualTo(1);
         assertThat(testListener.afterCount).isEqualTo(1);
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueryContext().getQueries();
         assertThat(beforeQueries).hasSize(1);
 
         Object[][] expectedQueryArgs = new Object[][]{
@@ -185,7 +186,7 @@ public class PreparedStatementDbTest {
         assertThat(testListener.beforeCount).isEqualTo(1);
         assertThat(testListener.afterCount).isEqualTo(1);
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueryContext().getQueries();
         assertThat(beforeQueries).hasSize(1);
 
         Object[][] expectedQueryArgs = new Object[][]{
@@ -203,7 +204,7 @@ public class PreparedStatementDbTest {
         assertThat(testListener.beforeCount).isEqualTo(2);
         assertThat(testListener.afterCount).isEqualTo(2);
 
-        beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
+        beforeQueries = lastQueryListener.getBeforeQueryContext().getQueries();
         assertThat(beforeQueries).hasSize(1);
 
         expectedQueryArgs = new Object[][]{
@@ -232,7 +233,7 @@ public class PreparedStatementDbTest {
         assertThat(testListener.beforeCount).isEqualTo(1);
         assertThat(testListener.afterCount).isEqualTo(1);
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueryContext().getQueries();
         assertThat(beforeQueries).hasSize(1);
 
         Object[][] expectedQueryArgs = new Object[][]{
@@ -283,7 +284,7 @@ public class PreparedStatementDbTest {
         assertThat(updateCount).containsSequence(1, 1);
 
 
-        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeExecInfo().getQueries();
+        List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueryContext().getQueries();
         assertThat(beforeQueries).as("PreparedStatement batch execution will have always one query").hasSize(1);
         QueryInfo queryInfo = beforeQueries.get(0);
 
@@ -294,7 +295,7 @@ public class PreparedStatementDbTest {
         assertThat(queryInfo.getParameterSetOperations().get(1).getOperations())
                 .extracting("args", Object[].class).containsExactly(new Object[]{1, "BAR"}, new Object[]{2, 2});
 
-        List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueryContext().getQueries();
         assertThat(afterQueries).as("PreparedStatement batch execution will have always one query").hasSize(1);
         queryInfo = afterQueries.get(0);
         assertThat(queryInfo.getQuery()).isEqualTo(query);
@@ -329,7 +330,7 @@ public class PreparedStatementDbTest {
 
         stat.executeBatch();  // 1st execution
 
-        List<QueryInfo> afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
+        List<QueryInfo> afterQueries = lastQueryListener.getAfterQueryContext().getQueries();
         assertThat(afterQueries).as("should has one query").hasSize(1);
         QueryInfo queryInfo = afterQueries.get(0);
         assertThat(queryInfo.getParameterSetOperations()).as("should have two batch params").hasSize(2);
@@ -342,7 +343,7 @@ public class PreparedStatementDbTest {
         assertThat(updateCount).hasSize(1);
 
         // second execution should pass only one QueryInfo to listener
-        afterQueries = lastQueryListener.getAfterExecInfo().getQueries();
+        afterQueries = lastQueryListener.getAfterQueryContext().getQueries();
         assertThat(afterQueries).isNotNull();
         assertThat(afterQueries).as("should pass one QueryInfo (BAZ)").hasSize(1);
         queryInfo = afterQueries.get(0);
@@ -361,8 +362,8 @@ public class PreparedStatementDbTest {
         this.cleaner.add(stat);
         stat.executeQuery();
 
-        ExecutionInfo before = lastQueryListener.getBeforeExecInfo();
-        ExecutionInfo after = lastQueryListener.getAfterExecInfo();
+        ExecutionInfo before = lastQueryListener.getBeforeQueryContext();
+        ExecutionInfo after = lastQueryListener.getAfterQueryContext();
 
         assertThat(before).as("before and after uses same ExecutionInfo instance").isSameAs(after);
     }
