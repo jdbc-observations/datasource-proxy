@@ -14,7 +14,7 @@ import java.sql.Connection;
  * @author Tadaya Tsuyukubo
  * @since 1.2
  */
-public class DataSourceProxyLogic extends CallbackSupport {
+public class DataSourceProxyLogic extends ProxyLogicSupport {
 
     private DataSource dataSource;
     private ProxyConfig proxyConfig;

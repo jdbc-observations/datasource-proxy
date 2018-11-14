@@ -28,9 +28,9 @@ import static org.mockito.Mockito.when;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class CallbackSupportProceedMethodExecutionTest {
+public class ProxyLogicSupportProceedMethodExecutionTest {
 
-    private CallbackSupport callbackSupport = spy(CallbackSupport.class);
+    private ProxyLogicSupport proxyLogicSupport = spy(ProxyLogicSupport.class);
 
     @Test
     public void invokeNormal() throws Throwable {
@@ -89,11 +89,11 @@ public class CallbackSupportProceedMethodExecutionTest {
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
-        when(this.callbackSupport.performProxyLogic(any(), any(), any(), any())).thenReturn(returnObj);
+        when(this.proxyLogicSupport.performProxyLogic(any(), any(), any(), any())).thenReturn(returnObj);
 
-        Object result = this.callbackSupport.proceedMethodExecution(proxyConfig, target, connectionInfo, null, method, methodArgs);
+        Object result = this.proxyLogicSupport.proceedMethodExecution(proxyConfig, target, connectionInfo, null, method, methodArgs);
 
-        verify(this.callbackSupport).performProxyLogic(any(), any(), any(), any());
+        verify(this.proxyLogicSupport).performProxyLogic(any(), any(), any(), any());
 
         assertSame(returnObj, result);
         assertTrue(listener.isBeforeMethodCalled());
@@ -135,12 +135,12 @@ public class CallbackSupportProceedMethodExecutionTest {
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
-        when(this.callbackSupport.performProxyLogic(any(), any(), any(), any())).thenThrow(exception);
+        when(this.proxyLogicSupport.performProxyLogic(any(), any(), any(), any())).thenThrow(exception);
 
         // when callback throws exception
         Throwable thrownException = null;
         try {
-            this.callbackSupport.proceedMethodExecution(proxyConfig, target, connectionInfo, null, method, methodArgs);
+            this.proxyLogicSupport.proceedMethodExecution(proxyConfig, target, connectionInfo, null, method, methodArgs);
 
         } catch (Throwable throwable) {
             thrownException = throwable;
@@ -187,9 +187,9 @@ public class CallbackSupportProceedMethodExecutionTest {
         ArgumentCaptor<Method> invokedMethodCaptor = ArgumentCaptor.forClass(Method.class);
         ArgumentCaptor<Object[]> invokedMethodArgsCaptor = ArgumentCaptor.forClass(Object[].class);
 
-        this.callbackSupport.proceedMethodExecution(proxyConfig, target, connectionInfo, null, method, methodArgs);
+        this.proxyLogicSupport.proceedMethodExecution(proxyConfig, target, connectionInfo, null, method, methodArgs);
 
-        verify(this.callbackSupport).performProxyLogic(any(), invokedMethodCaptor.capture(), invokedMethodArgsCaptor.capture(), any());
+        verify(this.proxyLogicSupport).performProxyLogic(any(), invokedMethodCaptor.capture(), invokedMethodArgsCaptor.capture(), any());
 
         assertSame(replacedMethod, invokedMethodCaptor.getValue());
         assertSame(replacedMethodArgs, invokedMethodArgsCaptor.getValue());
@@ -235,7 +235,7 @@ public class CallbackSupportProceedMethodExecutionTest {
             try {
                 executedThreadId.set(Thread.currentThread().getId());
                 executedThreadName.set(Thread.currentThread().getName());
-                this.callbackSupport.proceedMethodExecution(proxyConfig, target, connectionInfo, null, method, methodArgs);
+                this.proxyLogicSupport.proceedMethodExecution(proxyConfig, target, connectionInfo, null, method, methodArgs);
             } catch (Throwable throwable) {
                 failed.set(true);
             }

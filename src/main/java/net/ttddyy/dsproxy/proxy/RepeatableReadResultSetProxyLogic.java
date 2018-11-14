@@ -25,7 +25,7 @@ import static java.lang.String.format;
  * @see net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler
  * @since 1.4
  */
-public class RepeatableReadResultSetProxyLogic extends CallbackSupport implements ResultSetProxyLogic {
+public class RepeatableReadResultSetProxyLogic extends ProxyLogicSupport implements ResultSetProxyLogic {
 
     private static final Set<String> METHODS_TO_INTERCEPT = Collections.unmodifiableSet(
             new HashSet<String>() {

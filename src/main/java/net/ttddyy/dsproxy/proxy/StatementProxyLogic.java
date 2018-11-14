@@ -29,7 +29,7 @@ import static net.ttddyy.dsproxy.proxy.StatementMethodNames.METHODS_TO_RETURN_RE
  * @author Tadaya Tsuyukubo
  * @since 1.2
  */
-public class StatementProxyLogic extends CallbackSupport {
+public class StatementProxyLogic extends ProxyLogicSupport {
 
     /**
      * Builder for {@link StatementProxyLogic}.

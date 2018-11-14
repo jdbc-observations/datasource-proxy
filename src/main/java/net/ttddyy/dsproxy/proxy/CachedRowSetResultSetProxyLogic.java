@@ -20,7 +20,7 @@ import java.sql.SQLException;
  * @see CachedRowSetResultSetProxyLogicFactory
  * @since 1.4.7
  */
-public class CachedRowSetResultSetProxyLogic extends CallbackSupport implements ResultSetProxyLogic {
+public class CachedRowSetResultSetProxyLogic extends ProxyLogicSupport implements ResultSetProxyLogic {
 
     private ResultSet resultSet;  // original resultset
     private ResultSet cachedRowSet;

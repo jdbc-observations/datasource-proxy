@@ -17,7 +17,7 @@ import java.sql.Statement;
  * @author Tadaya Tsuyukubo
  * @since 1.2
  */
-public class ConnectionProxyLogic extends CallbackSupport {
+public class ConnectionProxyLogic extends ProxyLogicSupport {
 
     private Connection connection;
     private ConnectionInfo connectionInfo;

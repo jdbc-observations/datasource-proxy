@@ -12,7 +12,7 @@ import java.sql.ResultSet;
  * @author Tadaya Tsuyukubo
  * @since 1.4.3
  */
-public class SimpleResultSetProxyLogic extends CallbackSupport implements ResultSetProxyLogic {
+public class SimpleResultSetProxyLogic extends ProxyLogicSupport implements ResultSetProxyLogic {
 
     private ResultSet resultSet;
     private ConnectionInfo connectionInfo;

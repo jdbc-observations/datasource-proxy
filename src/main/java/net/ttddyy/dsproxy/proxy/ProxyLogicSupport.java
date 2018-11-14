@@ -17,7 +17,7 @@ import java.util.Set;
  * @author Tadaya Tsuyukubo
  * @since 2.0
  */
-public abstract class CallbackSupport implements ProxyLogic {
+public abstract class ProxyLogicSupport implements ProxyLogic {
 
     protected static final Set<String> WRAPPER_METHODS = Collections.unmodifiableSet(
             new HashSet<>(Arrays.asList("unwrap", "isWrapperFor"))
