@@ -1,16 +1,13 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
-import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -21,9 +18,6 @@ import java.util.function.Function;
  * @since 2.0
  */
 public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport<QueryExecutionContext> implements Function<QueryExecutionContext, String> {
-
-    protected ParameterValueConverter setNullParameterValueConverter = new SetNullParameterValueConverter();
-    protected ParameterValueConverter registerOutParameterValueConverter = new RegisterOutParameterValueConverter();
 
     private BiConsumer<QueryExecutionContext, StringBuilder> onDataSourceName = (queryContext, sb) -> {
         String name = queryContext.getDataSourceName();
@@ -97,7 +91,7 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
                 .map(QueryInfo::getParameterSetOperations)
                 .flatMap(Collection::stream)
                 .forEach(parameterSetOperations -> {
-                    SortedMap<String, String> paramMap = getParametersToDisplay(parameterSetOperations.getOperations());
+                    SortedMap<String, String> paramMap = getParametersToDisplay(parameterSetOperations);
 
                     // parameters per batch.
                     //   for prepared: (val1,val2,...)
@@ -161,72 +155,6 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
         sb.append("},");
     };
 
-
-    protected SortedMap<String, String> getParametersToDisplay(List<ParameterSetOperation> params) {
-
-        SortedMap<String, String> sortedMap = new TreeMap<>(new StringAsIntegerComparator());
-        for (ParameterSetOperation param : params) {
-            String key = getParameterKeyToDisplay(param);
-            String value = getParameterValueToDisplay(param);
-            sortedMap.put(key, value);
-        }
-        return sortedMap;
-    }
-
-
-    /**
-     * Comparator considering string as integer.
-     *
-     * When it has null, put it as first element(smaller).
-     * If string cannot be parsed to integer, it compared as string.
-     */
-    protected static class StringAsIntegerComparator implements Comparator<String> {
-        @Override
-        public int compare(String left, String right) {
-            // make null first
-            if (left == null && right == null) {
-                return 0;
-            }
-            if (left == null) {
-                return -1; // right is greater
-            }
-            if (right == null) {
-                return 1; // left is greater;
-            }
-
-            try {
-                int leftInt = Integer.parseInt(left);
-                int rightInt = Integer.parseInt(right);
-                return Integer.compare(leftInt, rightInt);
-            } catch (NumberFormatException e) {
-                return left.compareTo(right);  // use String comparison
-            }
-        }
-
-    }
-
-    // TODO: cleanup
-    public String getParameterKeyToDisplay(ParameterSetOperation param) {
-        Object key = param.getArgs()[0];  // either int(parameterIndex) or string(parameterName)
-        return key instanceof String ? (String) key : key.toString();
-    }
-
-    // TODO: cleanup
-    protected String getParameterValueToDisplay(ParameterSetOperation param) {
-
-        String value;
-        if (ParameterSetOperation.isSetNullParameterOperation(param)) {
-            // for setNull
-            value = getDisplayValueForSetNull(param);
-        } else if (ParameterSetOperation.isRegisterOutParameterOperation(param)) {
-            // for registerOutParameter
-            value = getDisplayValueForRegisterOutParameter(param);
-        } else {
-            value = getDisplayValue(param);
-        }
-        return value;
-    }
-
     private List<BiConsumer<QueryExecutionContext, StringBuilder>> consumers = new ArrayList<>();
 
 
@@ -280,19 +208,6 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
     @Override
     public String apply(QueryExecutionContext queryExecutionContext) {
         return format(queryExecutionContext);
-    }
-
-    public String getDisplayValueForSetNull(ParameterSetOperation param) {
-        return this.setNullParameterValueConverter.getValue(param);
-    }
-
-    public String getDisplayValueForRegisterOutParameter(ParameterSetOperation param) {
-        return this.registerOutParameterValueConverter.getValue(param);
-    }
-
-    public String getDisplayValue(ParameterSetOperation param) {
-        Object value = param.getArgs()[1];
-        return value == null ? null : value.toString();
     }
 
     public QueryExecutionContextJsonFormatter showDataSourceName() {

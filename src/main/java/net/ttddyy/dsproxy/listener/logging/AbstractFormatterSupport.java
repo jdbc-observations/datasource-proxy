@@ -1,7 +1,13 @@
 package net.ttddyy.dsproxy.listener.logging;
 
+import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
+import net.ttddyy.dsproxy.proxy.ParameterSetOperations;
+
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.function.BiConsumer;
 
 /**
@@ -56,10 +62,87 @@ public abstract class AbstractFormatterSupport<T> {
         return sb.toString();
     }
 
+    /**
+     * Comparator considering string as integer.
+     *
+     * When it has null, put it as first element(smaller).
+     * If string cannot be parsed to integer, it compared as string.
+     */
+    protected static class StringAsIntegerComparator implements Comparator<String> {
+        @Override
+        public int compare(String left, String right) {
+            // make null first
+            if (left == null && right == null) {
+                return 0;
+            }
+            if (left == null) {
+                return -1; // right is greater
+            }
+            if (right == null) {
+                return 1; // left is greater;
+            }
+
+            try {
+                int leftInt = Integer.parseInt(left);
+                int rightInt = Integer.parseInt(right);
+                return Integer.compare(leftInt, rightInt);
+            } catch (NumberFormatException e) {
+                return left.compareTo(right);  // use String comparison
+            }
+        }
+
+    }
+
     protected BiConsumer<T, StringBuilder> newLine = (executionContext, sb) -> {
         sb.append(System.lineSeparator());
     };
 
     protected String delimiter = DEFAULT_DELIMITER;
+
+    protected ParameterValueConverter parameterValueConverter = new SimpleParameterValueConverter();
+    protected ParameterValueConverter setNullParameterValueConverter = new SetNullParameterValueConverter();
+    protected ParameterValueConverter registerOutParameterValueConverter = new RegisterOutParameterValueConverter();
+
+    protected SortedMap<String, String> getParametersToDisplay(ParameterSetOperations params) {
+
+        SortedMap<String, String> sortedMap = new TreeMap<>(new StringAsIntegerComparator());
+        for (ParameterSetOperation param : params.getOperations()) {
+            String key = getParameterKeyToDisplay(param);
+            String value = getParameterValueToDisplay(param);
+            sortedMap.put(key, value);
+        }
+        return sortedMap;
+    }
+
+    protected String getParameterKeyToDisplay(ParameterSetOperation param) {
+        return param.getParameterKey().getKeyAsString();
+    }
+
+    protected String getParameterValueToDisplay(ParameterSetOperation param) {
+
+        String value;
+        if (ParameterSetOperation.isSetNullParameterOperation(param)) {
+            // for setNull
+            value = getDisplayValueForSetNull(param);
+        } else if (ParameterSetOperation.isRegisterOutParameterOperation(param)) {
+            // for registerOutParameter
+            value = getDisplayValueForRegisterOutParameter(param);
+        } else {
+            value = getDisplayValue(param);
+        }
+        return value;
+    }
+
+    protected String getDisplayValueForSetNull(ParameterSetOperation param) {
+        return this.setNullParameterValueConverter.getValue(param);
+    }
+
+    protected String getDisplayValueForRegisterOutParameter(ParameterSetOperation param) {
+        return this.registerOutParameterValueConverter.getValue(param);
+    }
+
+    protected String getDisplayValue(ParameterSetOperation param) {
+        return this.parameterValueConverter.getValue(param);
+    }
 
 }
