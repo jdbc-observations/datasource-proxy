@@ -497,7 +497,7 @@ public class ProxyDataSourceBuilder {
 
         // tracing listener
         if (this.createTracingMethodListener) {
-            this.listeners.add(buildTracingMethodListenr());
+            this.listeners.add(buildTracingMethodListener());
         }
 
         // explicitly added listeners
@@ -552,7 +552,7 @@ public class ProxyDataSourceBuilder {
 
 
         if (this.dataSource == null) {
-            throw new DataSourceProxyException("Original DataSource is requiired.");
+            throw new DataSourceProxyException("Original DataSource is required.");
         }
 
         ProxyConfig proxyConfig = proxyConfigBuilder.build();
@@ -561,7 +561,7 @@ public class ProxyDataSourceBuilder {
         return proxyDataSource;
     }
 
-    private TracingMethodListener buildTracingMethodListenr() {
+    private TracingMethodListener buildTracingMethodListener() {
         TracingMethodListener listener = new TracingMethodListener();
         if (this.tracingMessageConsumer != null) {
             listener.setTracingMessageConsumer(this.tracingMessageConsumer);
