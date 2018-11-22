@@ -122,7 +122,8 @@
             <artifactId>maven-javadoc-plugin</artifactId>
             <configuration>
               <!-- disable java8 doclint for @see reference to generic class -->
-              <additionalparam>-Xdoclint:none --allow-script-in-comments</additionalparam>
+              <doclint>none</doclint>
+              <additionalOptions>--allow-script-in-comments</additionalOptions>
               <footer>
                 <![CDATA[
                 <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -232,7 +233,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.0.0-M1</version>
+        <version>3.0.1</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -243,7 +244,8 @@
         </executions>
         <configuration>
           <!-- disable java8 doclint for @see reference to generic class -->
-          <additionalparam>-Xdoclint:none --allow-script-in-comments</additionalparam>
+          <doclint>none</doclint>
+          <additionalOptions>--allow-script-in-comments</additionalOptions>
         </configuration>
       </plugin>
 
