@@ -41,7 +41,7 @@ import java.util.Set;
  *
  * <i>listeners</i> parameter:
  * <ul>
- * <li> <b>count</b>:    alias to `net.ttddyy.dsproxy.listener.DataSourceQueryCountListener`
+ * <li> <b>count</b>:    alias to `net.ttddyy.dsproxy.listener.count.DataSourceQueryCountListener`
  * <li> <b>x.y.z.MyQueryExecutionListener</b>: Fully qualified class name of `ProxyDataSourceListener` implementation
  * </ul>
  *

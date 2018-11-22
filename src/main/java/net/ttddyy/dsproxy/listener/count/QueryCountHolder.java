@@ -1,30 +1,37 @@
-package net.ttddyy.dsproxy;
+package net.ttddyy.dsproxy.listener.count;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * Hold QueryCount object by datasource name.
  *
+ * Default uses {@link ThreadQueryCountStrategy} to store the {@link QueryCount} per thread.
+ * This is suitable to get {@link QueryCount} during a request-response lifecycle, if it is used in
+ * request per thread model. (e.g: servlet environment).
+ *
  * @author Tadaya Tsuyukubo
- * @see net.ttddyy.dsproxy.listener.QueryCountStrategy
+ * @see QueryCountStrategy
  */
 public class QueryCountHolder {
 
-    private static ThreadLocal<ConcurrentMap<String, QueryCount>> queryCountMapHolder = ThreadLocal.withInitial(ConcurrentHashMap::new);
+    private static QueryCountStrategy strategy = new ThreadQueryCountStrategy();
 
-    public static QueryCount get(String dataSourceName) {
-        Map<String, QueryCount> map = queryCountMapHolder.get();
-        return map.get(dataSourceName);
+    public static void setQueryCountStrategy(QueryCountStrategy strategy) {
+        QueryCountHolder.strategy = strategy;
+    }
+
+    public static QueryCountStrategy getQueryCountStrategy() {
+        return strategy;
+    }
+
+    public static QueryCount getOrCreateQueryCount(String dataSourceName) {
+        return strategy.getOrCreateQueryCount(dataSourceName);
     }
 
     public static QueryCount getGrandTotal() {
         QueryCount totalCount = new QueryCount();
-        Map<String, QueryCount> map = queryCountMapHolder.get();
+        Map<String, QueryCount> map = strategy.getAll();
         for (QueryCount queryCount : map.values()) {
             totalCount.setSelect(totalCount.getSelect() + queryCount.getSelect());
             totalCount.setInsert(totalCount.getInsert() + queryCount.getInsert());
@@ -39,19 +46,15 @@ public class QueryCountHolder {
         return totalCount;
     }
 
-    public static void put(String dataSourceName, QueryCount count) {
-        queryCountMapHolder.get().put(dataSourceName, count);
-    }
-
-    public static List<String> getDataSourceNamesAsList() {
-        return new ArrayList<String>(getDataSourceNames());
-    }
-
     public static Set<String> getDataSourceNames() {
-        return queryCountMapHolder.get().keySet();
+        return strategy.getAll().keySet();
     }
 
-    public static void clear() {
-        queryCountMapHolder.get().clear();
+    public static void clearAll() {
+        strategy.clearAll();
+    }
+
+    public static void clear(String dataSourceName) {
+        strategy.clear(dataSourceName);
     }
 }

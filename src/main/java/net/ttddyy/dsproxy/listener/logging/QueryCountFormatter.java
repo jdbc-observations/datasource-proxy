@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.QueryCount;
+import net.ttddyy.dsproxy.listener.count.QueryCount;
 
 import java.util.ArrayList;
 import java.util.List;

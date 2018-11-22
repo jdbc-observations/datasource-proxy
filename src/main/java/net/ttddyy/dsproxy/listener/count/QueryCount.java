@@ -1,4 +1,7 @@
-package net.ttddyy.dsproxy;
+package net.ttddyy.dsproxy.listener.count;
+
+import net.ttddyy.dsproxy.QueryType;
+import net.ttddyy.dsproxy.StatementType;
 
 import java.util.concurrent.atomic.AtomicLong;
 

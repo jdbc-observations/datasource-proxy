@@ -1,7 +1,8 @@
 package net.ttddyy.dsproxy.listener;
 
-import net.ttddyy.dsproxy.QueryCount;
-import net.ttddyy.dsproxy.QueryCountHolder;
+import net.ttddyy.dsproxy.listener.count.QueryCount;
+import net.ttddyy.dsproxy.listener.count.QueryCountHolder;
+import net.ttddyy.dsproxy.listener.count.ThreadQueryCountStrategy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,16 +14,16 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Tadaya Tsuyukubo
  * @since 1.4.2
  */
-public class ThreadQueryCountHolderTest {
+public class ThreadQueryCountStrategyTest {
 
     @AfterEach
     public void tearDown() {
-        QueryCountHolder.clear();
+        QueryCountHolder.clearAll();
     }
 
     @Test
     public void getQueryCount() throws Exception {
-        final ThreadQueryCountHolder holder = new ThreadQueryCountHolder();
+        final ThreadQueryCountStrategy holder = new ThreadQueryCountStrategy();
         QueryCount queryCount = holder.getOrCreateQueryCount("testDS");
         queryCount.incrementSuccess();
 

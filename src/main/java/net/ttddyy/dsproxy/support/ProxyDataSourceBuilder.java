@@ -2,13 +2,13 @@ package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.DataSourceProxyException;
-import net.ttddyy.dsproxy.listener.QueryExecutionContext;
-import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
-import net.ttddyy.dsproxy.listener.QueryCountStrategy;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.SlowQueryListener;
 import net.ttddyy.dsproxy.listener.TracingMethodListener;
+import net.ttddyy.dsproxy.listener.count.DataSourceQueryCountListener;
+import net.ttddyy.dsproxy.listener.count.QueryCountStrategy;
 import net.ttddyy.dsproxy.proxy.DefaultConnectionIdManager;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -41,7 +41,6 @@ public class ProxyDataSourceBuilder {
     private Consumer<String> tracingMessageConsumer;
 
     private boolean createDataSourceQueryCountListener;
-    private QueryCountStrategy queryCountStrategy;
 
     private List<ProxyDataSourceListener> listeners = new ArrayList<>();
 
@@ -89,24 +88,12 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Create {@link net.ttddyy.dsproxy.listener.DataSourceQueryCountListener}.
+     * Create {@link DataSourceQueryCountListener}.
      *
      * @return builder
      */
     public ProxyDataSourceBuilder countQuery() {
         this.createDataSourceQueryCountListener = true;
-        return this;
-    }
-
-    /**
-     * Create {@link net.ttddyy.dsproxy.listener.DataSourceQueryCountListener}.
-     *
-     * @return builder
-     * @since 1.4.2
-     */
-    public ProxyDataSourceBuilder countQuery(QueryCountStrategy queryCountStrategy) {
-        this.createDataSourceQueryCountListener = true;
-        this.queryCountStrategy = queryCountStrategy;
         return this;
     }
 
@@ -486,13 +473,7 @@ public class ProxyDataSourceBuilder {
 
         // countQuery listener
         if (this.createDataSourceQueryCountListener) {
-            DataSourceQueryCountListener countListener = new DataSourceQueryCountListener();
-
-            if (this.queryCountStrategy != null) {
-                countListener.setQueryCountStrategy(this.queryCountStrategy);
-            }
-
-            listeners.add(countListener);
+            listeners.add(new DataSourceQueryCountListener());
         }
 
         // tracing listener

@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.support.tags;
 
-import net.ttddyy.dsproxy.QueryCount;
-import net.ttddyy.dsproxy.QueryCountHolder;
+import net.ttddyy.dsproxy.listener.count.QueryCount;
+import net.ttddyy.dsproxy.listener.count.QueryCountHolder;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
@@ -28,7 +28,7 @@ public class MetricsTag extends SimpleTagSupport {
         if (dataSource == null || "".equals(dataSource)) {
             count = QueryCountHolder.getGrandTotal();
         } else {
-            count = QueryCountHolder.get(dataSource);
+            count = QueryCountHolder.getOrCreateQueryCount(dataSource);
         }
 
         if (count == null) {

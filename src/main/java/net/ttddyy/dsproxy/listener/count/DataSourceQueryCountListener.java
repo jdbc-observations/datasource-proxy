@@ -1,25 +1,30 @@
-package net.ttddyy.dsproxy.listener;
+package net.ttddyy.dsproxy.listener.count;
 
-import net.ttddyy.dsproxy.QueryCount;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.QueryType;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
+import net.ttddyy.dsproxy.listener.QueryUtils;
 
 /**
- * Update database access information.
+ * Listener to update {@link QueryCount}.
  *
- * <p>Default implementation uses {@link ThreadQueryCountHolder} strategy that uses thread local to keep
- * {@link net.ttddyy.dsproxy.QueryCount}. {@link QueryCount} can be retrieved by {@link net.ttddyy.dsproxy.QueryCountHolder#get(String)}.
+ * The {@link QueryCount} can be retrieved by {@link QueryCountHolder#getOrCreateQueryCount(String)} static method.
  *
- * <p>Alternatively, {@link SingleQueryCountHolder} strategy can be used. This strategy uses single instance to keep
+ * <p>Default implementation uses {@link ThreadQueryCountStrategy} strategy that uses thread local to keep
+ * {@link QueryCount}. {@link QueryCount} can be retrieved by {@link QueryCountHolder#getOrCreateQueryCount(String)}.
+ *
+ * <p>Alternatively, {@link SingleQueryCountStrategy} strategy may be used. This strategy uses single instance to keep
  * {@link QueryCount}; therefore, {@link QueryCount} holds accumulated total values from any threads until values are cleared.
  *
- * <p>In web application lifecycle, one http request is handled by one thread.
- * Storing database access information into a thread local value provides metrics
- * information per http request.
+ * <p>In typical servlet web application, one http request is handled by one thread.
+ * Storing database access information into a thread local provides metrics information per http request.
+ * You need to clear the ThreadLocal value at the beginning or end of request-response lifecycle in order to have
+ * accurate counts during the lifecycle.
  * On the other hand, using single instance to store database access information allows you to retrieve total accumulated
  * numbers since application has started.
  *
- * <p>{@link net.ttddyy.dsproxy.QueryCount} holds following data:
+ * <p>{@link QueryCount} holds following data:
  * <ul>
  * <li> datasource name
  * <li> number of database call
@@ -28,20 +33,17 @@ import net.ttddyy.dsproxy.QueryType;
  * </ul>
  *
  * @author Tadaya Tsuyukubo
- * @see net.ttddyy.dsproxy.QueryCount
- * @see net.ttddyy.dsproxy.QueryCountHolder
- * @see net.ttddyy.dsproxy.listener.QueryCountStrategy
+ * @see QueryCount
+ * @see QueryCountHolder
+ * @see QueryCountStrategy
  */
 public class DataSourceQueryCountListener implements ProxyDataSourceListener {
-
-    // uses per thread implementation in default
-    private QueryCountStrategy queryCountStrategy = new ThreadQueryCountHolder();
 
     @Override
     public void afterQuery(QueryExecutionContext executionContext) {
         String dataSourceName = executionContext.getDataSourceName();
 
-        QueryCount count = this.queryCountStrategy.getOrCreateQueryCount(dataSourceName);
+        QueryCount count = QueryCountHolder.getOrCreateQueryCount(dataSourceName);
 
         // increment db call
         count.incrementTotal();
@@ -65,20 +67,6 @@ public class DataSourceQueryCountListener implements ProxyDataSourceListener {
             count.increment(type);
         }
 
-    }
-
-    /**
-     * @since 1.4.2
-     */
-    public QueryCountStrategy getQueryCountStrategy() {
-        return queryCountStrategy;
-    }
-
-    /**
-     * @since 1.4.2
-     */
-    public void setQueryCountStrategy(QueryCountStrategy queryCountStrategy) {
-        this.queryCountStrategy = queryCountStrategy;
     }
 
 }

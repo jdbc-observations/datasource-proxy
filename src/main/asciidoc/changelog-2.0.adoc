@@ -1,6 +1,18 @@
 [[changelog-2.0]]
 === 2.0
 
+* `QueryCount` cleanup
+  - Removed following methods on `QueryCountHolder`
+    - `getDataSourceNamesAsList()`
+    - `put()`
+  - Following classes have moved to the `net.ttddyy.dsproxy.listener.count` package
+    - `DataSourceQueryCountListener`
+    - `QueryCount`
+    - `QueryCountHolder`
+    - `QueryCountStrategy`
+    - `ThreadQueryCountStrategy` (previously `ThreadQueryCountHolder`)
+    - `SingleQueryCountStrategy` (previously `SingleQueryCountHolder`)
+
 * Rename and move `net.ttddyy.dsproxy.ExecutionInfo` to
   `net.ttddyy.dsproxy.listener.QueryExecutionInfo`
 

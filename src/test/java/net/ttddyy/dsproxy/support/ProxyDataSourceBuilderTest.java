@@ -2,14 +2,14 @@ package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.DataSourceProxyException;
-import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener;
-import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
-import net.ttddyy.dsproxy.listener.QueryCountStrategy;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.SlowQueryListener;
-import net.ttddyy.dsproxy.listener.ThreadQueryCountHolder;
 import net.ttddyy.dsproxy.listener.TracingMethodListener;
+import net.ttddyy.dsproxy.listener.count.DataSourceQueryCountListener;
+import net.ttddyy.dsproxy.listener.count.QueryCountHolder;
+import net.ttddyy.dsproxy.listener.count.ThreadQueryCountStrategy;
 import net.ttddyy.dsproxy.proxy.DataSourceProxyLogic;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -143,24 +143,16 @@ public class ProxyDataSourceBuilderTest {
     @Test
     public void countListener() {
 
-        DataSource ds;
-        DataSourceQueryCountListener listener;
+        DataSource ds = ProxyDataSourceBuilder.create(this.mockDs).countQuery().build();
+        DataSourceQueryCountListener listener = getAndVerifyListener(ds, DataSourceQueryCountListener.class);
+        assertNotNull(listener);
 
-        // default strategy
-        ds = ProxyDataSourceBuilder.create(this.mockDs).countQuery().build();
-        listener = getAndVerifyListener(ds, DataSourceQueryCountListener.class);
-        assertThat(listener.getQueryCountStrategy()).as("default count listener")
+        // set strategy
+        QueryCountHolder.setQueryCountStrategy(new ThreadQueryCountStrategy());
+
+        assertThat(QueryCountHolder.getQueryCountStrategy()).as("default count listener")
                 .isNotNull()
-                .isInstanceOf(ThreadQueryCountHolder.class);
-
-        // specify strategy
-        QueryCountStrategy strategy = mock(QueryCountStrategy.class);
-
-        ds = ProxyDataSourceBuilder.create(this.mockDs).countQuery(strategy).build();
-        listener = getAndVerifyListener(ds, DataSourceQueryCountListener.class);
-        assertThat(listener.getQueryCountStrategy()).as("count listener with strategy")
-                .isNotNull()
-                .isSameAs(strategy);
+                .isInstanceOf(ThreadQueryCountStrategy.class);
     }
 
     @Test

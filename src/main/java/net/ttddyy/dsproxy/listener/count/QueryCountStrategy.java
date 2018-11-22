@@ -1,6 +1,6 @@
-package net.ttddyy.dsproxy.listener;
+package net.ttddyy.dsproxy.listener.count;
 
-import net.ttddyy.dsproxy.QueryCount;
+import java.util.Map;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -11,4 +11,9 @@ public interface QueryCountStrategy {
 
     QueryCount getOrCreateQueryCount(String dataSourceName);
 
+    Map<String, QueryCount> getAll();
+
+    void clearAll();
+
+    void clear(String dataSourceName);
 }
