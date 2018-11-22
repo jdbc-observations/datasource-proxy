@@ -2097,6 +2097,47 @@ public class MyController {
 <div class="ulist">
 <ul>
 <li>
+<p><code>QueryCount</code> cleanup</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Removed following methods on <code>QueryCountHolder</code></p>
+</li>
+<li>
+<p><code>getDataSourceNamesAsList()</code></p>
+</li>
+<li>
+<p><code>put()</code></p>
+</li>
+<li>
+<p>Following classes have moved to the <code>net.ttddyy.dsproxy.listener.count</code> package</p>
+</li>
+<li>
+<p><code>DataSourceQueryCountListener</code></p>
+</li>
+<li>
+<p><code>QueryCount</code></p>
+</li>
+<li>
+<p><code>QueryCountHolder</code></p>
+</li>
+<li>
+<p><code>QueryCountStrategy</code></p>
+</li>
+<li>
+<p><code>ThreadQueryCountStrategy</code> (previously <code>ThreadQueryCountHolder</code>)</p>
+</li>
+<li>
+<p><code>SingleQueryCountStrategy</code> (previously <code>SingleQueryCountHolder</code>)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Rename and move <code>net.ttddyy.dsproxy.ExecutionInfo</code> to
+<code>net.ttddyy.dsproxy.listener.QueryExecutionInfo</code></p>
+</li>
+<li>
 <p>Introduce <code>ParameterSetOperations</code> to represent set of <code>ParameterSetOperation</code>.
 On <code>QueryInfo</code>, <code>[set|get]ParametersList</code> are replaced to <code>[set|get]ParameterSetOperations</code></p>
 </li>
@@ -2313,8 +2354,8 @@ Removed <code>ProxyDataSource</code>.</p>
 <li>
 <p>Added <code>ExecutionInfoFormatter</code> and <code>ExecutionInfoJsonFormatter</code> to replace
 <code>QueryLogEntryCreator</code>.
-<code>OutputParameterFormatterSupport</code> and <code>OutputParameterJsonFormatterSupport</code> are added
-to replace <code>OutputParameterLogEntryCreator</code> and <code>OutputParameterJsonLogEntryCreator</code></p>
+<code>OutputParameterFormatterUtils</code> is added to replace
+<code>OutputParameterLogEntryCreator</code> and <code>OutputParameterJsonLogEntryCreator</code></p>
 <div class="literalblock">
 <div class="content">
 <pre>Removed:

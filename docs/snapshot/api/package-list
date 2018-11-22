@@ -1,5 +1,6 @@
 net.ttddyy.dsproxy
 net.ttddyy.dsproxy.listener
+net.ttddyy.dsproxy.listener.count
 net.ttddyy.dsproxy.listener.logging
 net.ttddyy.dsproxy.proxy
 net.ttddyy.dsproxy.proxy.jdk
