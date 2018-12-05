@@ -395,14 +395,14 @@ public class ProxyDataSourceBuilder {
     /**
      * Add {@link SlowQueryListener} that performs given lambda.
      *
-     * @param threashold threashold time
-     * @param timeUnit   threashold time unit
+     * @param threshold  threshold time
+     * @param timeUnit   threshold time unit
      * @param callback   a lambda function executed only once per query if it exceeds the threshold time.
      * @return builder
      * @since 2.0
      */
-    public ProxyDataSourceBuilder onSlowQuery(long threashold, TimeUnit timeUnit, Consumer<QueryExecutionContext> callback) {
-        this.listeners.add(new SlowQueryListener(threashold, timeUnit, callback));
+    public ProxyDataSourceBuilder onSlowQuery(long threshold, TimeUnit timeUnit, Consumer<QueryExecutionContext> callback) {
+        this.listeners.add(new SlowQueryListener(threshold, timeUnit, callback));
         return this;
     }
 

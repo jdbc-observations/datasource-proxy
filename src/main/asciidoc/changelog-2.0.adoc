@@ -84,7 +84,7 @@
 
   ```java
     ExecutionInfoFormatter formatter = ExecutionInfoFormatter.showAll();
-    builder.onSlowQuery(threashold, timeunit, queryInfo -> {
+    builder.onSlowQuery(threshold, timeunit, queryInfo -> {
       String log = formatter.format(queryInfo);  // convert to String
       logger.warn(log);  // write log
     });
