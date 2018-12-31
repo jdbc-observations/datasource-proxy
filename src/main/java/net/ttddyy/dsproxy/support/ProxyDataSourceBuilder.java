@@ -8,7 +8,8 @@ import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.SlowQueryListener;
 import net.ttddyy.dsproxy.listener.TracingMethodListener;
 import net.ttddyy.dsproxy.listener.count.DataSourceQueryCountListener;
-import net.ttddyy.dsproxy.listener.count.QueryCountStrategy;
+import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventExecutionListener;
+import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventListener;
 import net.ttddyy.dsproxy.proxy.DefaultConnectionIdManager;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -105,6 +106,19 @@ public class ProxyDataSourceBuilder {
      */
     public ProxyDataSourceBuilder listener(ProxyDataSourceListener listener) {
         this.listeners.add(listener);
+        return this;
+    }
+
+    /**
+     * Register given {@link JdbcLifecycleEventListener}.
+     *
+     * @param listener a listener to register
+     * @return builder
+     * @since 1.5
+     */
+    public ProxyDataSourceBuilder listener(JdbcLifecycleEventListener listener) {
+        JdbcLifecycleEventExecutionListener executionListener = new JdbcLifecycleEventExecutionListener(listener);
+        this.listeners.add(executionListener);
         return this;
     }
 
@@ -395,9 +409,9 @@ public class ProxyDataSourceBuilder {
     /**
      * Add {@link SlowQueryListener} that performs given lambda.
      *
-     * @param threshold  threshold time
-     * @param timeUnit   threshold time unit
-     * @param callback   a lambda function executed only once per query if it exceeds the threshold time.
+     * @param threshold threshold time
+     * @param timeUnit  threshold time unit
+     * @param callback  a lambda function executed only once per query if it exceeds the threshold time.
      * @return builder
      * @since 2.0
      */

@@ -10,6 +10,8 @@ import net.ttddyy.dsproxy.listener.TracingMethodListener;
 import net.ttddyy.dsproxy.listener.count.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.count.QueryCountHolder;
 import net.ttddyy.dsproxy.listener.count.ThreadQueryCountStrategy;
+import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventExecutionListener;
+import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventListener;
 import net.ttddyy.dsproxy.proxy.DataSourceProxyLogic;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -304,6 +306,24 @@ public class ProxyDataSourceBuilderTest {
         assertThat(isAfterInvoked.get()).isTrue();
 
     }
+
+    @Test
+    public void buildJdbcLifecycleEventListener() {
+        JdbcLifecycleEventListener listener = mock(JdbcLifecycleEventListener.class);
+
+        DataSource ds = ProxyDataSourceBuilder.create(this.mockDs).listener(listener).build();
+        CompositeProxyDataSourceListener compositeListener = getProxyConfig(ds).getListeners();
+
+        assertThat(compositeListener.getListeners()).hasSize(1);
+
+        ProxyDataSourceListener proxyListener = compositeListener.getListeners().get(0);
+
+        assertThat(proxyListener).isInstanceOf(JdbcLifecycleEventExecutionListener.class);
+
+        JdbcLifecycleEventListener eventListener = ((JdbcLifecycleEventExecutionListener) proxyListener).getDelegate();
+        assertThat(eventListener).isSameAs(listener);
+    }
+
 
     @Test
     public void proxyResultSet() {
