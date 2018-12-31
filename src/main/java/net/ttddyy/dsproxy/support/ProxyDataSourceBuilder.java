@@ -11,6 +11,8 @@ import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryCountStrategy;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.listener.TracingMethodListener;
+import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventExecutionListener;
+import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
 import net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsSlowQueryListener;
@@ -538,6 +540,20 @@ public class ProxyDataSourceBuilder {
      */
     public ProxyDataSourceBuilder listener(QueryExecutionListener listener) {
         this.queryExecutionListeners.add(listener);
+        return this;
+    }
+
+    /**
+     * Register given {@link JdbcLifecycleEventListener}.
+     *
+     * @param listener a listener to register
+     * @return builder
+     * @since 1.5
+     */
+    public ProxyDataSourceBuilder listener(JdbcLifecycleEventListener listener) {
+        JdbcLifecycleEventExecutionListener executionListener = new JdbcLifecycleEventExecutionListener(listener);
+        this.queryExecutionListeners.add(executionListener);
+        this.methodExecutionListeners.add(executionListener);
         return this;
     }
 

@@ -12,6 +12,8 @@ import net.ttddyy.dsproxy.listener.QueryCountStrategy;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.listener.ThreadQueryCountHolder;
 import net.ttddyy.dsproxy.listener.TracingMethodListener;
+import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventExecutionListener;
+import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventListener;
 import net.ttddyy.dsproxy.listener.logging.AbstractQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.AbstractSlowQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
@@ -506,6 +508,31 @@ public class ProxyDataSourceBuilderTest {
         assertThat(isAfterInvoked.get()).isTrue();
 
     }
+
+    @Test
+    public void buildJdbcLifecycleEventListener() {
+        ProxyDataSource ds;
+
+        JdbcLifecycleEventListener listener = mock(JdbcLifecycleEventListener.class);
+
+        ds = ProxyDataSourceBuilder.create().listener(listener).build();
+        CompositeMethodListener compositeMethodListener = ds.getProxyConfig().getMethodListener();
+        ChainListener chainListener = ds.getProxyConfig().getQueryListener();
+
+        assertThat(compositeMethodListener.getListeners()).hasSize(1);
+        assertThat(chainListener.getListeners()).hasSize(1);
+
+        MethodExecutionListener methodListener = compositeMethodListener.getListeners().get(0);
+        QueryExecutionListener queryListener = chainListener.getListeners().get(0);
+
+        assertThat(methodListener).isInstanceOf(JdbcLifecycleEventExecutionListener.class);
+        assertThat(queryListener).isInstanceOf(JdbcLifecycleEventExecutionListener.class);
+        assertThat(methodListener).isSameAs(queryListener);
+
+        JdbcLifecycleEventListener eventListener = ((JdbcLifecycleEventExecutionListener) methodListener).getDelegate();
+        assertThat(eventListener).isSameAs(listener);
+    }
+
 
     @Test
     public void proxyResultSet() {
