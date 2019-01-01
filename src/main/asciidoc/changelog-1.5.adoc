@@ -1,0 +1,10 @@
+[[changelog-1.5]]
+=== 1.5
+
+* `JdbcLifecycleEventListener` is added.  +
+  This listener defines before/after callback methods for all of proxy classes(`DataSource`,
+  `Connection`, `Statement`, `PreparedStatement`, `CallableStatement`, and `ResultSet`).  +
+  See details on <<jdbclifecycleeventlistener>>.
+
+
+
