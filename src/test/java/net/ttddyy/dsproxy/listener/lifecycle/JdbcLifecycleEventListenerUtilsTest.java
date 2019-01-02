@@ -13,11 +13,12 @@ import java.sql.Statement;
 import java.sql.Wrapper;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static java.lang.String.format;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -111,10 +112,8 @@ public class JdbcLifecycleEventListenerUtilsTest {
                 Method resolvedBeforeMethod = JdbcLifecycleEventListenerUtils.getListenerMethod(method, mock, true);
                 Method resolvedAfterMethod = JdbcLifecycleEventListenerUtils.getListenerMethod(method, mock, false);
 
-                String messageForBefore = format("Failed for %s on %s. expected=%s", method.getName(), proxyClass.getSimpleName(), beforeMethodName);
-                String messageForAfter = format("Failed for %s on %s. expected=%s", method.getName(), proxyClass.getSimpleName(), afterMethodName);
-                assertNotNull(messageForBefore, resolvedBeforeMethod);
-                assertNotNull(messageForAfter, resolvedAfterMethod);
+                assertNotNull(resolvedBeforeMethod, () -> format("Failed for %s on %s. expected=%s", method.getName(), proxyClass.getSimpleName(), beforeMethodName));
+                assertNotNull(resolvedAfterMethod, () -> format("Failed for %s on %s. expected=%s", method.getName(), proxyClass.getSimpleName(), afterMethodName));
                 assertEquals(beforeMethodName, resolvedBeforeMethod.getName());
                 assertEquals(afterMethodName, resolvedAfterMethod.getName());
             }
@@ -134,9 +133,9 @@ public class JdbcLifecycleEventListenerUtilsTest {
                 Method resolvedBeforeMethod = JdbcLifecycleEventListenerUtils.getListenerMethod(method, mock, true);
                 Method resolvedAfterMethod = JdbcLifecycleEventListenerUtils.getListenerMethod(method, mock, false);
 
-                String message = format("method=%s, proxyClass=%s", method.getName(), proxyClass.getSimpleName());
-                assertNull(message, resolvedBeforeMethod);
-                assertNull(message, resolvedAfterMethod);
+                Supplier<String> message = () -> format("method=%s, proxyClass=%s", method.getName(), proxyClass.getSimpleName());
+                assertNull(resolvedBeforeMethod, message);
+                assertNull(resolvedAfterMethod, message);
             }
 
         }
@@ -160,8 +159,8 @@ public class JdbcLifecycleEventListenerUtilsTest {
                 String expectedAfterMethodName = "after" + capitalize(methodName) + "On" + className;
 
                 String message = "Expected method=";
-                assertNotNull(message + expectedBeforeMethodName, resolvedBeforeMethod);
-                assertNotNull(message + expectedAfterMethodName, resolvedAfterMethod);
+                assertNotNull(resolvedBeforeMethod, () -> message + expectedBeforeMethodName);
+                assertNotNull(resolvedAfterMethod, () -> message + expectedAfterMethodName);
                 assertEquals(expectedBeforeMethodName, resolvedBeforeMethod.getName());
                 assertEquals(expectedAfterMethodName, resolvedAfterMethod.getName());
             }
