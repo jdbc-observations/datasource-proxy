@@ -462,6 +462,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_queryexecutionlistener">4.1. QueryExecutionListener</a></li>
 <li><a href="#_methodexecutionlistener">4.2. MethodExecutionListener</a></li>
+<li><a href="#jdbclifecycleeventlistener">4.3. JdbcLifecycleEventListener</a></li>
 </ul>
 </li>
 <li><a href="#built-in-listeners">5. Built-in Listeners</a>
@@ -493,6 +494,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#changelog">8. Changelog</a>
 <ul class="sectlevel2">
 <li><a href="#changelog-2.0">2.0</a></li>
+<li><a href="#changelog-1.5">1.5</a></li>
 <li><a href="#changelog-1.4.10">1.4.10</a></li>
 <li><a href="#changelog-1.4.9">1.4.9</a></li>
 <li><a href="#changelog-1.4.8">1.4.8</a></li>
@@ -1199,7 +1201,20 @@ which you can change via <code>RowSetFactory</code> (please see details on JDK d
 <h2 id="listeners"><a class="anchor" href="#listeners"></a>4. Listeners</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Currently, datasource-proxy provides two types of listener, <code>QueryExecutionListener</code> and <code>MethodExecutionListener</code>.</p>
+<p>Currently, datasource-proxy provides following listeners:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>QueryExecutionListener</code></p>
+</li>
+<li>
+<p><code>MethodExecutionListener</code></p>
+</li>
+<li>
+<p><code>JdbcLifecycleEventListener</code></p>
+</li>
+</ul>
 </div>
 <div class="sect2">
 <h3 id="_queryexecutionlistener"><a class="anchor" href="#_queryexecutionlistener"></a>4.1. QueryExecutionListener</h3>
@@ -1328,6 +1343,37 @@ public void beforeMethod(MethodExecutionContext executionContext) {
 
 }</code></pre>
 </div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="jdbclifecycleeventlistener"><a class="anchor" href="#jdbclifecycleeventlistener"></a>4.3. JdbcLifecycleEventListener</h3>
+<div class="paragraph">
+<p><code>JdbcLifecycleEventListener</code> interface defines before/after method callbacks for all of JDBC interfaces that
+datasource-proxy make proxies(<code>DataSource</code>, <code>Connection</code>, <code>Statement</code>, <code>PreparedStatement</code>, <code>CallableStatement</code>,
+and <code>ResultSet</code>). Also, this interface defines before/after execution of all method invocations and query executions,
+analogous to <code>MethodExecutionListener</code> and <code>QueryExecutionListener</code>.</p>
+</div>
+<div class="paragraph">
+<p>To implement your listener, <code>JdbcLifecycleEventListenerAdapter</code> class, which implements all
+interface methods with no-op, can be extended, and selectively overrides any callback methods you have interests.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">DataSource dataSource =
+  ProxyDataSourceBuilder.create(actualDataSource)
+    .listener(new JdbcLifecycleEventListenerAdapter() {
+      @Override
+      public void beforeGetConnectionOnDataSource(MethodExecutionContext executionContext) {
+        // impl for before DataSource#getConnection();
+      }
+
+      @Override
+      public void afterRollbackOnConnection(MethodExecutionContext executionContext) {
+        // impl for after Connection#rollback();
+      }
+    })
+    .build();</code></pre>
 </div>
 </div>
 </div>
@@ -2303,7 +2349,7 @@ Removed <code>ProxyDataSource</code>.</p>
 <div class="content">
 <pre>```java
   ExecutionInfoFormatter formatter = ExecutionInfoFormatter.showAll();
-  builder.onSlowQuery(threashold, timeunit, queryInfo -&gt; {
+  builder.onSlowQuery(threshold, timeunit, queryInfo -&gt; {
     String log = formatter.format(queryInfo);  // convert to String
     logger.warn(log);  // write log
   });</pre>
@@ -2569,6 +2615,19 @@ Removed <code>ProxyDataSource</code>.</p>
 Changed query listener signature from <code>(ExecutionInfo execInfo, List&lt;QueryInfo&gt; queryInfo)</code> to
 <code>(ExecutionInfo execInfo)</code> on <code>ProxyDataSourceListener#beforeQuery()</code> and <code>afterQuery()</code>.
 <code>ExecutionInfo</code> class now has a list of <code>QueryInfo</code> and <code>ExecutionInfo#getQueries()</code> method is added.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="changelog-1.5"><a class="anchor" href="#changelog-1.5"></a>1.5</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>JdbcLifecycleEventListener</code> is added. <br>
+This listener defines before/after callback methods for all of proxy classes(<code>DataSource</code>,
+<code>Connection</code>, <code>Statement</code>, <code>PreparedStatement</code>, <code>CallableStatement</code>, and <code>ResultSet</code>). <br>
+See details on <a href="#jdbclifecycleeventlistener">JdbcLifecycleEventListener</a>.</p>
 </li>
 </ul>
 </div>
