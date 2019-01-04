@@ -494,6 +494,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#changelog">8. Changelog</a>
 <ul class="sectlevel2">
 <li><a href="#changelog-2.0">2.0</a></li>
+<li><a href="#changelog-1.6">1.6</a></li>
 <li><a href="#changelog-1.5">1.5</a></li>
 <li><a href="#changelog-1.4.10">1.4.10</a></li>
 <li><a href="#changelog-1.4.9">1.4.9</a></li>
@@ -2615,6 +2616,17 @@ Removed <code>ProxyDataSource</code>.</p>
 Changed query listener signature from <code>(ExecutionInfo execInfo, List&lt;QueryInfo&gt; queryInfo)</code> to
 <code>(ExecutionInfo execInfo)</code> on <code>ProxyDataSourceListener#beforeQuery()</code> and <code>afterQuery()</code>.
 <code>ExecutionInfo</code> class now has a list of <code>QueryInfo</code> and <code>ExecutionInfo#getQueries()</code> method is added.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="changelog-1.6"><a class="anchor" href="#changelog-1.6"></a>1.6</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Add custom value store on <code>ExecutionInfo</code> and <code>MethodExecutionContext</code>
+Mainly used for passing values between before and after listener callback.</p>
 </li>
 </ul>
 </div>
