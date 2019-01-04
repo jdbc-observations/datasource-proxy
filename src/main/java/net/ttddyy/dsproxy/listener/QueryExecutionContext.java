@@ -8,7 +8,9 @@ import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Contains query execution information.
@@ -30,6 +32,7 @@ public class QueryExecutionContext {
     private Statement statement;
     private ResultSet generatedKeys;
     private List<QueryInfo> queries = new ArrayList<>();
+    private Map<String, Object> customValues = new HashMap<String, Object>();
     private long threadId;
     private String threadName;
     private ConnectionInfo connectionInfo;
@@ -197,6 +200,26 @@ public class QueryExecutionContext {
     }
 
     /**
+     * Store key/value pair.
+     *
+     * Mainly used for passing values between before and after listener callback.
+     *
+     * @param key   key
+     * @param value value
+     * @since 1.6
+     */
+    public void addCustomValue(String key, Object value) {
+        this.customValues.put(key, value);
+    }
+
+    /**
+     * @since 1.6
+     */
+    public <T> T getCustomValue(String key, Class<T> type) {
+        return type.cast(this.customValues.get(key));
+    }
+
+    /**
      * Returns list of {@link QueryInfo}.
      *
      * @return list of queries. This will NOT return null.
@@ -254,4 +277,5 @@ public class QueryExecutionContext {
     public void setConnectionInfo(ConnectionInfo connectionInfo) {
         this.connectionInfo = connectionInfo;
     }
+
 }
