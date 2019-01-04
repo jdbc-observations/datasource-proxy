@@ -3,6 +3,8 @@ package net.ttddyy.dsproxy;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Contains query execution information.
@@ -23,6 +25,7 @@ public class ExecutionInfo {
     private int batchSize;
     private Statement statement;
     private ResultSet generatedKeys;
+    private Map<String, Object> customValues = new HashMap<String, Object>();
 
     public ExecutionInfo() {
     }
@@ -182,6 +185,26 @@ public class ExecutionInfo {
 
     public void setGeneratedKeys(ResultSet generatedKeys) {
         this.generatedKeys = generatedKeys;
+    }
+
+    /**
+     * Store key/value pair.
+     *
+     * Mainly used for passing values between before and after listener callback.
+     *
+     * @param key   key
+     * @param value value
+     * @since 1.6
+     */
+    public void addCustomValue(String key, Object value) {
+        this.customValues.put(key, value);
+    }
+
+    /**
+     * @since 1.6
+     */
+    public <T> T getCustomValue(String key, Class<T> type) {
+        return type.cast(this.customValues.get(key));
     }
 
 }

@@ -1,0 +1,7 @@
+[[changelog-1.6]]
+=== 1.6
+
+* Add custom value store on `ExecutionInfo` and `MethodExecutionContext`
+  Mainly used for passing values between before and after listener callback.
+
+

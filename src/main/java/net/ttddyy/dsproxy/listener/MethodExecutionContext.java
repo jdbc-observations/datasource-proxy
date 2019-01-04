@@ -4,6 +4,8 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * POJO to hold values for JDBC API invocations.
@@ -91,6 +93,7 @@ public class MethodExecutionContext {
     private long elapsedTime;
     private ConnectionInfo connectionInfo;
     private ProxyConfig proxyConfig;
+    private Map<String, Object> customValues = new HashMap<String, Object>();
 
     public Object getTarget() {
         return target;
@@ -176,6 +179,26 @@ public class MethodExecutionContext {
 
     public void setProxyConfig(ProxyConfig proxyConfig) {
         this.proxyConfig = proxyConfig;
+    }
+
+    /**
+     * Store key/value pair.
+     *
+     * Mainly used for passing values between before and after listener callback.
+     *
+     * @param key   key
+     * @param value value
+     * @since 1.6
+     */
+    public void addCustomValue(String key, Object value) {
+        this.customValues.put(key, value);
+    }
+
+    /**
+     * @since 1.6
+     */
+    public <T> T getCustomValue(String key, Class<T> type) {
+        return type.cast(this.customValues.get(key));
     }
 
 }
