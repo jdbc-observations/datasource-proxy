@@ -64,7 +64,7 @@
     <asciidoctor.version>1.5.3</asciidoctor.version>
     <animal-sniffer-maven-plugin.version>1.16</animal-sniffer-maven-plugin.version>
 
-    <junit.jupiter.version>5.1.0</junit.jupiter.version>
+    <junit.jupiter.version>5.3.2</junit.jupiter.version>
     <junit.platform.version>1.1.0</junit.platform.version>
   </properties>
   <profiles>
@@ -307,6 +307,18 @@
     </plugins>
   </build>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${junit.jupiter.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
 
     <dependency>
@@ -396,19 +408,16 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
-      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
 
