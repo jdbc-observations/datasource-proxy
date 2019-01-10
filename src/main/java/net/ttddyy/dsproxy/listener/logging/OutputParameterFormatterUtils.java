@@ -1,13 +1,13 @@
 package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.function.DSProxyBiConsumer;
 import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperations;
 
 import java.sql.CallableStatement;
 import java.sql.SQLException;
-import java.util.function.BiConsumer;
 
 /**
  * In addition to {@link QueryExecutionContextFormatter}, provides functions to output parameter values to the log for {@link CallableStatement}.
@@ -19,25 +19,28 @@ import java.util.function.BiConsumer;
  */
 public class OutputParameterFormatterUtils extends AbstractFormatterSupport<QueryExecutionContext> {
 
-    public static BiConsumer<QueryExecutionContext, StringBuilder> onOutputParameter = (queryContext, sb) -> {
+    public static DSProxyBiConsumer<QueryExecutionContext, StringBuilder> onOutputParameter = (queryContext, sb) -> {
         sb.append("OutParams:[");
 
         for (QueryInfo queryInfo : queryContext.getQueries()) {
             for (ParameterSetOperations parameterSetOperations : queryInfo.getParameterSetOperations()) {
                 sb.append("(");
 
-                parameterSetOperations.getOperations().stream()
-                        .filter(ParameterSetOperation::isRegisterOutParameterOperation)
-                        .forEach(parameterSetOperation -> {
-                            CallableStatement cs = (CallableStatement) queryContext.getStatement();
-                            Object key = parameterSetOperation.getArgs()[0];
-                            Object value = getOutputValueForDisplay(key, cs);
+                for (ParameterSetOperation parameterSetOperation : parameterSetOperations.getOperations()) {
+                    if (!ParameterSetOperation.isRegisterOutParameterOperation(parameterSetOperation)) {
+                        continue;
+                    }
 
-                            sb.append(key);
-                            sb.append("=");
-                            sb.append(value);
-                            sb.append(",");
-                        });
+                    CallableStatement cs = (CallableStatement) queryContext.getStatement();
+                    Object key = parameterSetOperation.getArgs()[0];
+                    Object value = getOutputValueForDisplay(key, cs);
+
+                    sb.append(key);
+                    sb.append("=");
+                    sb.append(value);
+                    sb.append(",");
+                }
+
                 chompIfEndWith(sb, ',');
                 sb.append("),");
             }
@@ -47,7 +50,7 @@ public class OutputParameterFormatterUtils extends AbstractFormatterSupport<Quer
         sb.append("]");
     };
 
-    public static BiConsumer<QueryExecutionContext, StringBuilder> onOutputParameterAsJson = (queryContext, sb) -> {
+    public static DSProxyBiConsumer<QueryExecutionContext, StringBuilder> onOutputParameterAsJson = (queryContext, sb) -> {
 
         sb.append("\"outParams\":[");
 
@@ -55,27 +58,31 @@ public class OutputParameterFormatterUtils extends AbstractFormatterSupport<Quer
             for (ParameterSetOperations parameterSetOperations : queryInfo.getParameterSetOperations()) {
                 sb.append("{");
 
-                parameterSetOperations.getOperations().stream()
-                        .filter(ParameterSetOperation::isRegisterOutParameterOperation)
-                        .forEach(parameterSetOperation -> {
-                            CallableStatement cs = (CallableStatement) queryContext.getStatement();
-                            Object key = parameterSetOperation.getArgs()[0];
-                            Object value = getOutputValueForDisplay(key, cs);
 
-                            sb.append("\"");
-                            sb.append(escapeSpecialCharacterForJson(key.toString()));
-                            sb.append("\":");
+                for (ParameterSetOperation parameterSetOperation : parameterSetOperations.getOperations()) {
+                    if (!ParameterSetOperation.isRegisterOutParameterOperation(parameterSetOperation)) {
+                        continue;
+                    }
 
-                            if (value == null) {
-                                sb.append("null");
-                            } else {
-                                sb.append("\"");
-                                sb.append(value);
-                                sb.append("\"");
-                            }
-                            sb.append(",");
+                    CallableStatement cs = (CallableStatement) queryContext.getStatement();
+                    Object key = parameterSetOperation.getArgs()[0];
+                    Object value = getOutputValueForDisplay(key, cs);
 
-                        });
+                    sb.append("\"");
+                    sb.append(escapeSpecialCharacterForJson(key.toString()));
+                    sb.append("\":");
+
+                    if (value == null) {
+                        sb.append("null");
+                    } else {
+                        sb.append("\"");
+                        sb.append(value);
+                        sb.append("\"");
+                    }
+                    sb.append(",");
+
+                }
+
                 chompIfEndWith(sb, ',');
                 sb.append("},");
             }

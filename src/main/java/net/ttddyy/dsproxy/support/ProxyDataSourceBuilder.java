@@ -2,8 +2,11 @@ package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.DataSourceProxyException;
+import net.ttddyy.dsproxy.function.DSProxyBooleanSupplier;
+import net.ttddyy.dsproxy.function.DSProxyConsumer;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListenerAdapter;
 import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.SlowQueryListener;
 import net.ttddyy.dsproxy.listener.TracingMethodListener;
@@ -22,8 +25,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 
 /**
  * Builder for proxy {@link DataSource}.
@@ -38,8 +39,8 @@ public class ProxyDataSourceBuilder {
 
     // For building TracingMethodListener
     private boolean createTracingMethodListener;
-    private BooleanSupplier tracingCondition;
-    private Consumer<String> tracingMessageConsumer;
+    private DSProxyBooleanSupplier tracingCondition;
+    private DSProxyConsumer<String> tracingMessageConsumer;
 
     private boolean createDataSourceQueryCountListener;
 
@@ -129,8 +130,8 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 1.4.3
      */
-    public ProxyDataSourceBuilder beforeQuery(Consumer<QueryExecutionContext> callback) {
-        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+    public ProxyDataSourceBuilder beforeQuery(DSProxyConsumer<QueryExecutionContext> callback) {
+        ProxyDataSourceListener listener = new ProxyDataSourceListenerAdapter() {
             @Override
             public void beforeQuery(QueryExecutionContext executionContext) {
                 callback.accept(executionContext);
@@ -147,8 +148,8 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 1.4.3
      */
-    public ProxyDataSourceBuilder afterQuery(Consumer<QueryExecutionContext> callback) {
-        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+    public ProxyDataSourceBuilder afterQuery(DSProxyConsumer<QueryExecutionContext> callback) {
+        ProxyDataSourceListener listener = new ProxyDataSourceListenerAdapter() {
             @Override
             public void afterQuery(QueryExecutionContext executionContext) {
                 callback.accept(executionContext);
@@ -377,8 +378,8 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 1.4.3
      */
-    public ProxyDataSourceBuilder beforeMethod(Consumer<MethodExecutionContext> callback) {
-        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+    public ProxyDataSourceBuilder beforeMethod(DSProxyConsumer<MethodExecutionContext> callback) {
+        ProxyDataSourceListener listener = new ProxyDataSourceListenerAdapter() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {
                 callback.accept(executionContext);
@@ -395,8 +396,8 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 1.4.3
      */
-    public ProxyDataSourceBuilder afterMethod(Consumer<MethodExecutionContext> callback) {
-        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+    public ProxyDataSourceBuilder afterMethod(DSProxyConsumer<MethodExecutionContext> callback) {
+        ProxyDataSourceListener listener = new ProxyDataSourceListenerAdapter() {
             @Override
             public void afterMethod(MethodExecutionContext executionContext) {
                 callback.accept(executionContext);
@@ -415,7 +416,7 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 2.0
      */
-    public ProxyDataSourceBuilder onSlowQuery(long threshold, TimeUnit timeUnit, Consumer<QueryExecutionContext> callback) {
+    public ProxyDataSourceBuilder onSlowQuery(long threshold, TimeUnit timeUnit, DSProxyConsumer<QueryExecutionContext> callback) {
         this.listeners.add(new SlowQueryListener(threshold, timeUnit, callback));
         return this;
     }
@@ -438,7 +439,7 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 1.4.4
      */
-    public ProxyDataSourceBuilder traceMethods(Consumer<String> messageConsumer) {
+    public ProxyDataSourceBuilder traceMethods(DSProxyConsumer<String> messageConsumer) {
         this.createTracingMethodListener = true;
         this.tracingMessageConsumer = messageConsumer;
         return this;
@@ -454,7 +455,7 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 1.4.4
      */
-    public ProxyDataSourceBuilder traceMethodsWhen(BooleanSupplier condition) {
+    public ProxyDataSourceBuilder traceMethodsWhen(DSProxyBooleanSupplier condition) {
         this.createTracingMethodListener = true;
         this.tracingCondition = condition;
         return this;
@@ -472,7 +473,7 @@ public class ProxyDataSourceBuilder {
      * @return builder
      * @since 1.4.4
      */
-    public ProxyDataSourceBuilder traceMethodsWhen(BooleanSupplier condition, Consumer<String> messageConsumer) {
+    public ProxyDataSourceBuilder traceMethodsWhen(DSProxyBooleanSupplier condition, DSProxyConsumer<String> messageConsumer) {
         this.createTracingMethodListener = true;
         this.tracingCondition = condition;
         this.tracingMessageConsumer = messageConsumer;

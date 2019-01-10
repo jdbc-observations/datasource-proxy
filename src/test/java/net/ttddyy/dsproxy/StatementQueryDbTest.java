@@ -1,7 +1,8 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListenerAdapter;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.SimpleResultSetProxyLogicFactory;
@@ -125,7 +126,7 @@ public class StatementQueryDbTest {
         this.cleaner.add(st);
 
         final AtomicReference<QueryExecutionContext> listenerReceivedExecutionContext = new AtomicReference<>();
-        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListenerAdapter() {
             @Override
             public void afterQuery(QueryExecutionContext executionContext) {
                 // since generatedKeys will NOT be closed, they can be read afterwards.
@@ -187,7 +188,7 @@ public class StatementQueryDbTest {
         this.cleaner.add(st);
 
         final AtomicReference<QueryExecutionContext> listenerReceivedExecutionContext = new AtomicReference<QueryExecutionContext>();
-        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListenerAdapter() {
             @Override
             public void afterQuery(QueryExecutionContext executionContext) {
                 // since generatedKeys will NOT be closed, they can be read afterwards.
@@ -219,7 +220,7 @@ public class StatementQueryDbTest {
         this.cleaner.add(st);
 
         final AtomicReference<QueryExecutionContext> listenerReceivedExecutionContext = new AtomicReference<QueryExecutionContext>();
-        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListenerAdapter() {
             @Override
             public void afterQuery(QueryExecutionContext executionContext) {
                 // since generatedKeys will NOT be closed, they can be read afterwards.
@@ -306,7 +307,7 @@ public class StatementQueryDbTest {
         this.cleaner.add(st);
 
         final AtomicReference<QueryExecutionContext> listenerReceivedExecutionContext = new AtomicReference<QueryExecutionContext>();
-        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListenerAdapter() {
             @Override
             public void afterQuery(QueryExecutionContext executionContext) {
                 // since generatedKeys will NOT be closed, they can be read afterwards.
@@ -534,7 +535,7 @@ public class StatementQueryDbTest {
         this.cleaner.add(st);
 
         final AtomicReference<QueryExecutionContext> listenerReceivedExecutionContext = new AtomicReference<QueryExecutionContext>();
-        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListenerAdapter() {
             @Override
             public void afterQuery(QueryExecutionContext executionContext) {
                 ResultSet generatedKeys = executionContext.getGeneratedKeys();
@@ -596,7 +597,7 @@ public class StatementQueryDbTest {
         this.cleaner.add(st);
 
         final AtomicReference<QueryExecutionContext> listenerReceivedExecutionContext = new AtomicReference<QueryExecutionContext>();
-        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListenerAdapter() {
             @Override
             public void afterQuery(QueryExecutionContext executionContext) {
                 listenerReceivedExecutionContext.set(executionContext);

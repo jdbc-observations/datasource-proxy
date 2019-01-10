@@ -1,11 +1,10 @@
 package net.ttddyy.dsproxy.listener.logging;
 
+import net.ttddyy.dsproxy.function.DSProxyBiConsumer;
 import net.ttddyy.dsproxy.listener.count.QueryCount;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 /**
  * Convert {@link QueryCount} to {@code String}.
@@ -13,11 +12,11 @@ import java.util.function.Function;
  * @author Tadaya Tsuyukubo
  * @since 2.0
  */
-public class QueryCountFormatter extends AbstractFormatterSupport<QueryCount> implements Function<QueryCount, String> {
+public class QueryCountFormatter extends AbstractFormatterSupport<QueryCount> {
 
-    private List<BiConsumer<QueryCount, StringBuilder>> consumers = new ArrayList<>();
+    private List<DSProxyBiConsumer<QueryCount, StringBuilder>> consumers = new ArrayList<>();
 
-    public QueryCountFormatter addConsumer(BiConsumer<QueryCount, StringBuilder> consumer) {
+    public QueryCountFormatter addConsumer(DSProxyBiConsumer<QueryCount, StringBuilder> consumer) {
         this.consumers.add(consumer);
         return this;
     }
@@ -27,51 +26,51 @@ public class QueryCountFormatter extends AbstractFormatterSupport<QueryCount> im
         return this;
     }
 
-    private BiConsumer<QueryCount, StringBuilder> onTime = (queryCount, sb) -> {
+    private DSProxyBiConsumer<QueryCount, StringBuilder> onTime = (queryCount, sb) -> {
         sb.append("Time:");
         sb.append(queryCount.getTime());
     };
-    private BiConsumer<QueryCount, StringBuilder> onTotal = (queryCount, sb) -> {
+    private DSProxyBiConsumer<QueryCount, StringBuilder> onTotal = (queryCount, sb) -> {
         sb.append("Total:");
         sb.append(queryCount.getTotal());
     };
-    private BiConsumer<QueryCount, StringBuilder> onSuccess = (queryCount, sb) -> {
+    private DSProxyBiConsumer<QueryCount, StringBuilder> onSuccess = (queryCount, sb) -> {
         sb.append("Success:");
         sb.append(queryCount.getSuccess());
     };
-    private BiConsumer<QueryCount, StringBuilder> onFailure = (queryCount, sb) -> {
+    private DSProxyBiConsumer<QueryCount, StringBuilder> onFailure = (queryCount, sb) -> {
         sb.append("Failure:");
         sb.append(queryCount.getFailure());
     };
-    private BiConsumer<QueryCount, StringBuilder> onSelect = (queryCount, sb) -> {
+    private DSProxyBiConsumer<QueryCount, StringBuilder> onSelect = (queryCount, sb) -> {
         sb.append("Select:");
         sb.append(queryCount.getSelect());
     };
-    private BiConsumer<QueryCount, StringBuilder> onInsert = (queryCount, sb) -> {
+    private DSProxyBiConsumer<QueryCount, StringBuilder> onInsert = (queryCount, sb) -> {
         sb.append("Insert:");
         sb.append(queryCount.getInsert());
     };
-    private BiConsumer<QueryCount, StringBuilder> onUpdate = (queryCount, sb) -> {
+    private DSProxyBiConsumer<QueryCount, StringBuilder> onUpdate = (queryCount, sb) -> {
         sb.append("Update:");
         sb.append(queryCount.getUpdate());
     };
-    private BiConsumer<QueryCount, StringBuilder> onDelete = (queryCount, sb) -> {
+    private DSProxyBiConsumer<QueryCount, StringBuilder> onDelete = (queryCount, sb) -> {
         sb.append("Delete:");
         sb.append(queryCount.getDelete());
     };
-    private BiConsumer<QueryCount, StringBuilder> onOther = (queryCount, sb) -> {
+    private DSProxyBiConsumer<QueryCount, StringBuilder> onOther = (queryCount, sb) -> {
         sb.append("Other:");
         sb.append(queryCount.getOther());
     };
-    private BiConsumer<QueryCount, StringBuilder> onStatement = (queryCount, sb) -> {
+    private DSProxyBiConsumer<QueryCount, StringBuilder> onStatement = (queryCount, sb) -> {
         sb.append("Statement:");
         sb.append(queryCount.getStatement());
     };
-    private BiConsumer<QueryCount, StringBuilder> onPrepared = (queryCount, sb) -> {
+    private DSProxyBiConsumer<QueryCount, StringBuilder> onPrepared = (queryCount, sb) -> {
         sb.append("Prepared:");
         sb.append(queryCount.getPrepared());
     };
-    private BiConsumer<QueryCount, StringBuilder> onCallable = (queryCount, sb) -> {
+    private DSProxyBiConsumer<QueryCount, StringBuilder> onCallable = (queryCount, sb) -> {
         sb.append("Callable:");
         sb.append(queryCount.getCallable());
     };
@@ -94,17 +93,11 @@ public class QueryCountFormatter extends AbstractFormatterSupport<QueryCount> im
         return formatter;
     }
 
-    @Override
-    public String apply(QueryCount queryCount) {
-        return format(queryCount);
-    }
-
     public String format(QueryCount queryCount) {
 
         StringBuilder sb = new StringBuilder();
 
-        this.consumers.forEach(consumer -> {
-
+        for (DSProxyBiConsumer<QueryCount, StringBuilder> consumer : consumers) {
             // if it is newLine, remove previously added delimiter
             if (consumer == this.newLine) {
                 chompIfEndWith(sb, this.delimiter);
@@ -115,7 +108,7 @@ public class QueryCountFormatter extends AbstractFormatterSupport<QueryCount> im
             if (consumer != this.newLine) {
                 sb.append(this.delimiter);
             }
-        });
+        }
 
         chompIfEndWith(sb, this.delimiter);
 
@@ -128,7 +121,7 @@ public class QueryCountFormatter extends AbstractFormatterSupport<QueryCount> im
         return this;
     }
 
-    public QueryCountFormatter showTime(BiConsumer<QueryCount, StringBuilder> consumer) {
+    public QueryCountFormatter showTime(DSProxyBiConsumer<QueryCount, StringBuilder> consumer) {
         this.onTime = consumer;
         return showTime();
     }
@@ -138,7 +131,7 @@ public class QueryCountFormatter extends AbstractFormatterSupport<QueryCount> im
         return this;
     }
 
-    public QueryCountFormatter showTotal(BiConsumer<QueryCount, StringBuilder> consumer) {
+    public QueryCountFormatter showTotal(DSProxyBiConsumer<QueryCount, StringBuilder> consumer) {
         this.onTotal = consumer;
         return showTotal();
     }
@@ -149,7 +142,7 @@ public class QueryCountFormatter extends AbstractFormatterSupport<QueryCount> im
         return this;
     }
 
-    public QueryCountFormatter showSuccess(BiConsumer<QueryCount, StringBuilder> consumer) {
+    public QueryCountFormatter showSuccess(DSProxyBiConsumer<QueryCount, StringBuilder> consumer) {
         this.onSuccess = consumer;
         return showSuccess();
     }
@@ -159,7 +152,7 @@ public class QueryCountFormatter extends AbstractFormatterSupport<QueryCount> im
         return this;
     }
 
-    public QueryCountFormatter showFailure(BiConsumer<QueryCount, StringBuilder> consumer) {
+    public QueryCountFormatter showFailure(DSProxyBiConsumer<QueryCount, StringBuilder> consumer) {
         this.onFailure = consumer;
         return showFailure();
     }
@@ -169,7 +162,7 @@ public class QueryCountFormatter extends AbstractFormatterSupport<QueryCount> im
         return this;
     }
 
-    public QueryCountFormatter showSelect(BiConsumer<QueryCount, StringBuilder> consumer) {
+    public QueryCountFormatter showSelect(DSProxyBiConsumer<QueryCount, StringBuilder> consumer) {
         this.onSelect = consumer;
         return showSelect();
     }
@@ -179,7 +172,7 @@ public class QueryCountFormatter extends AbstractFormatterSupport<QueryCount> im
         return this;
     }
 
-    public QueryCountFormatter showInsert(BiConsumer<QueryCount, StringBuilder> consumer) {
+    public QueryCountFormatter showInsert(DSProxyBiConsumer<QueryCount, StringBuilder> consumer) {
         this.onInsert = consumer;
         return showInsert();
     }
@@ -189,7 +182,7 @@ public class QueryCountFormatter extends AbstractFormatterSupport<QueryCount> im
         return this;
     }
 
-    public QueryCountFormatter showUpdate(BiConsumer<QueryCount, StringBuilder> consumer) {
+    public QueryCountFormatter showUpdate(DSProxyBiConsumer<QueryCount, StringBuilder> consumer) {
         this.onUpdate = consumer;
         return showUpdate();
     }
@@ -199,7 +192,7 @@ public class QueryCountFormatter extends AbstractFormatterSupport<QueryCount> im
         return this;
     }
 
-    public QueryCountFormatter showDelete(BiConsumer<QueryCount, StringBuilder> consumer) {
+    public QueryCountFormatter showDelete(DSProxyBiConsumer<QueryCount, StringBuilder> consumer) {
         this.onDelete = consumer;
         return showDelete();
     }
@@ -209,7 +202,7 @@ public class QueryCountFormatter extends AbstractFormatterSupport<QueryCount> im
         return this;
     }
 
-    public QueryCountFormatter showOther(BiConsumer<QueryCount, StringBuilder> consumer) {
+    public QueryCountFormatter showOther(DSProxyBiConsumer<QueryCount, StringBuilder> consumer) {
         this.onOther = consumer;
         return showOther();
     }
@@ -220,7 +213,7 @@ public class QueryCountFormatter extends AbstractFormatterSupport<QueryCount> im
         return this;
     }
 
-    public QueryCountFormatter showStatement(BiConsumer<QueryCount, StringBuilder> consumer) {
+    public QueryCountFormatter showStatement(DSProxyBiConsumer<QueryCount, StringBuilder> consumer) {
         this.onStatement = consumer;
         return showStatement();
     }
@@ -230,7 +223,7 @@ public class QueryCountFormatter extends AbstractFormatterSupport<QueryCount> im
         return this;
     }
 
-    public QueryCountFormatter showPrepared(BiConsumer<QueryCount, StringBuilder> consumer) {
+    public QueryCountFormatter showPrepared(DSProxyBiConsumer<QueryCount, StringBuilder> consumer) {
         this.onPrepared = consumer;
         return showPrepared();
     }
@@ -240,7 +233,7 @@ public class QueryCountFormatter extends AbstractFormatterSupport<QueryCount> im
         return this;
     }
 
-    public QueryCountFormatter showCallable(BiConsumer<QueryCount, StringBuilder> consumer) {
+    public QueryCountFormatter showCallable(DSProxyBiConsumer<QueryCount, StringBuilder> consumer) {
         this.onCallable = consumer;
         return showCallable();
     }

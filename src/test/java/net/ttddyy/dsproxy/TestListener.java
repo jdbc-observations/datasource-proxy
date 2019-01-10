@@ -1,12 +1,12 @@
 package net.ttddyy.dsproxy;
 
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListenerAdapter;
 import net.ttddyy.dsproxy.listener.QueryExecutionContext;
-import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 
 /**
  * @author Tadaya Tsuyukubo
  */
-public class TestListener implements ProxyDataSourceListener {
+public class TestListener extends ProxyDataSourceListenerAdapter {
     int beforeCount = 0;
     int afterCount = 0;
 

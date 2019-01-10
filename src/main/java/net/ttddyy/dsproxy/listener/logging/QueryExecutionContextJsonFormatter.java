@@ -2,14 +2,15 @@ package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
+import net.ttddyy.dsproxy.function.DSProxyBiConsumer;
+import net.ttddyy.dsproxy.function.DSProxyFunction;
 import net.ttddyy.dsproxy.listener.QueryExecutionContext;
+import net.ttddyy.dsproxy.proxy.ParameterSetOperations;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 /**
  * Convert {@link QueryExecutionContext} to json {@code String}.
@@ -17,27 +18,27 @@ import java.util.function.Function;
  * @author Tadaya Tsuyukubo
  * @since 2.0
  */
-public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport<QueryExecutionContext> implements Function<QueryExecutionContext, String> {
+public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport<QueryExecutionContext> {
 
-    private BiConsumer<QueryExecutionContext, StringBuilder> onDataSourceName = (queryContext, sb) -> {
+    private DSProxyBiConsumer<QueryExecutionContext, StringBuilder> onDataSourceName = (queryContext, sb) -> {
         String name = queryContext.getDataSourceName();
         sb.append("\"name\":\"");
         sb.append(name == null ? "" : escapeSpecialCharacterForJson(name));
         sb.append("\"");
     };
-    private BiConsumer<QueryExecutionContext, StringBuilder> onConnection = (queryContext, sb) -> {
+    private DSProxyBiConsumer<QueryExecutionContext, StringBuilder> onConnection = (queryContext, sb) -> {
         sb.append("\"connection\":");
         sb.append(queryContext.getConnectionId());
     };
-    private BiConsumer<QueryExecutionContext, StringBuilder> onDuration = (queryContext, sb) -> {
+    private DSProxyBiConsumer<QueryExecutionContext, StringBuilder> onDuration = (queryContext, sb) -> {
         sb.append("\"time\":");
         sb.append(queryContext.getElapsedTime());
     };
-    private BiConsumer<QueryExecutionContext, StringBuilder> onSuccess = (queryContext, sb) -> {
+    private DSProxyBiConsumer<QueryExecutionContext, StringBuilder> onSuccess = (queryContext, sb) -> {
         sb.append("\"success\":");
         sb.append(queryContext.isSuccess() ? "true" : "false");
     };
-    private BiConsumer<QueryExecutionContext, StringBuilder> onStatementType = (queryContext, sb) -> {
+    private DSProxyBiConsumer<QueryExecutionContext, StringBuilder> onStatementType = (queryContext, sb) -> {
         sb.append("\"type\":\"");
         switch (queryContext.getStatementType()) {
             case STATEMENT:
@@ -55,54 +56,53 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
         }
         sb.append("\"");
     };
-    private BiConsumer<QueryExecutionContext, StringBuilder> onBatch = (queryContext, sb) -> {
+    private DSProxyBiConsumer<QueryExecutionContext, StringBuilder> onBatch = (queryContext, sb) -> {
         sb.append("\"batch\":");
         sb.append(queryContext.isBatch() ? "true" : "false");
     };
-    private BiConsumer<QueryExecutionContext, StringBuilder> onQuerySize = (queryContext, sb) -> {
+    private DSProxyBiConsumer<QueryExecutionContext, StringBuilder> onQuerySize = (queryContext, sb) -> {
         sb.append("\"querySize\":");
         sb.append(queryContext.getQueries().size());
     };
-    private BiConsumer<QueryExecutionContext, StringBuilder> onBatchSize = (queryContext, sb) -> {
+    private DSProxyBiConsumer<QueryExecutionContext, StringBuilder> onBatchSize = (queryContext, sb) -> {
         sb.append("\"batchSize\":");
         sb.append(queryContext.getBatchSize());
     };
 
     // Each query statement
-    private Function<String, String> onQuery = AbstractFormatterSupport::escapeSpecialCharacterForJson;
+    private DSProxyFunction<String, String> onQuery = AbstractFormatterSupport::escapeSpecialCharacterForJson;
 
 
-    private BiConsumer<QueryExecutionContext, StringBuilder> onQueries = (queryContext, sb) -> {
+    private DSProxyBiConsumer<QueryExecutionContext, StringBuilder> onQueries = (queryContext, sb) -> {
         sb.append("\"query\":[");
-        queryContext.getQueries().forEach(queryInfo -> {
+        for (QueryInfo queryInfo : queryContext.getQueries()) {
             sb.append("\"");
             sb.append(this.onQuery.apply(queryInfo.getQuery()));
             sb.append("\",");
-        });
+        }
         chompIfEndWith(sb, ',');
         sb.append("]");
     };
-    private BiConsumer<QueryExecutionContext, StringBuilder> onParameters = (queryContext, sb) -> {
+    private DSProxyBiConsumer<QueryExecutionContext, StringBuilder> onParameters = (queryContext, sb) -> {
         boolean isPrepared = queryContext.getStatementType() == StatementType.PREPARED;
 
         sb.append("\"params\":[");
 
-        queryContext.getQueries().stream()
-                .map(QueryInfo::getParameterSetOperations)
-                .flatMap(Collection::stream)
-                .forEach(parameterSetOperations -> {
-                    SortedMap<String, String> paramMap = getParametersToDisplay(parameterSetOperations);
+        for (QueryInfo query : queryContext.getQueries()) {
+            for (ParameterSetOperations parameterSetOperations : query.getParameterSetOperations()) {
+                SortedMap<String, String> paramMap = getParametersToDisplay(parameterSetOperations);
 
-                    // parameters per batch.
-                    //   for prepared: (val1,val2,...)
-                    //   for callable: (key1=val1,key2=val2,...)
-                    if (isPrepared) {
-                        this.onPreparedParameters.accept(paramMap, sb);
-                    } else {
-                        this.onCallableParameters.accept(paramMap, sb);
-                    }
+                // parameters per batch.
+                //   for prepared: (val1,val2,...)
+                //   for callable: (key1=val1,key2=val2,...)
+                if (isPrepared) {
+                    this.onPreparedParameters.accept(paramMap, sb);
+                } else {
+                    this.onCallableParameters.accept(paramMap, sb);
+                }
 
-                });
+            }
+        }
 
         chompIfEndWith(sb, ',');
         sb.append("]");
@@ -113,9 +113,10 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
      *
      * default: ["foo","100"],
      */
-    private BiConsumer<SortedMap<String, String>, StringBuilder> onPreparedParameters = (paramMap, sb) -> {
+    private DSProxyBiConsumer<SortedMap<String, String>, StringBuilder> onPreparedParameters = (paramMap, sb) -> {
         sb.append("[");
-        paramMap.values().forEach(value -> {
+
+        for (String value : paramMap.values()) {
             if (value == null) {
                 sb.append("null");
             } else {
@@ -124,7 +125,7 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
                 sb.append("\"");
             }
             sb.append(",");
-        });
+        }
 
         chompIfEndWith(sb, ',');
         sb.append("],");
@@ -136,9 +137,13 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
      *
      * <p>default: {"1"="foo","bar"="100"},
      */
-    private BiConsumer<SortedMap<String, String>, StringBuilder> onCallableParameters = (paramMap, sb) -> {
+    private DSProxyBiConsumer<SortedMap<String, String>, StringBuilder> onCallableParameters = (paramMap, sb) -> {
         sb.append("{");
-        paramMap.forEach((key, value) -> {
+
+        for (Map.Entry<String, String> entry : paramMap.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+
             sb.append("\"");
             sb.append(escapeSpecialCharacterForJson(key));
             sb.append("\":");
@@ -150,12 +155,13 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
                 sb.append("\"");
             }
             sb.append(",");
-        });
+
+        }
         chompIfEndWith(sb, ',');
         sb.append("},");
     };
 
-    private List<BiConsumer<QueryExecutionContext, StringBuilder>> consumers = new ArrayList<>();
+    private List<DSProxyBiConsumer<QueryExecutionContext, StringBuilder>> consumers = new ArrayList<>();
 
 
     public static QueryExecutionContextJsonFormatter showAll() {
@@ -173,7 +179,7 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
         return formatter;
     }
 
-    public QueryExecutionContextJsonFormatter addConsumer(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
+    public QueryExecutionContextJsonFormatter addConsumer(DSProxyBiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.consumers.add(consumer);
         return this;
     }
@@ -188,14 +194,14 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
         StringBuilder sb = new StringBuilder();
 
         sb.append("{");
-        this.consumers.forEach(consumer -> {
 
+        for (DSProxyBiConsumer<QueryExecutionContext, StringBuilder> consumer : consumers) {
             consumer.accept(queryExecutionContext, sb);
 
             if (consumer != this.newLine) {
                 sb.append(this.delimiter);
             }
-        });
+        }
 
         chompIfEndWith(sb, this.delimiter);
 
@@ -205,17 +211,12 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
 
     }
 
-    @Override
-    public String apply(QueryExecutionContext queryExecutionContext) {
-        return format(queryExecutionContext);
-    }
-
     public QueryExecutionContextJsonFormatter showDataSourceName() {
         this.addConsumer(this.onDataSourceName);
         return this;
     }
 
-    public QueryExecutionContextJsonFormatter showDataSourceName(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
+    public QueryExecutionContextJsonFormatter showDataSourceName(DSProxyBiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onDataSourceName = consumer;
         return showDataSourceName();
     }
@@ -225,7 +226,7 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
         return this;
     }
 
-    public QueryExecutionContextJsonFormatter showDuration(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
+    public QueryExecutionContextJsonFormatter showDuration(DSProxyBiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onDuration = consumer;
         return showDuration();
     }
@@ -236,7 +237,7 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
         return this;
     }
 
-    public QueryExecutionContextJsonFormatter showSuccess(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
+    public QueryExecutionContextJsonFormatter showSuccess(DSProxyBiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onSuccess = consumer;
         return showSuccess();
     }
@@ -246,7 +247,7 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
         return this;
     }
 
-    public QueryExecutionContextJsonFormatter showStatementType(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
+    public QueryExecutionContextJsonFormatter showStatementType(DSProxyBiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onStatementType = consumer;
         return showStatementType();
     }
@@ -257,7 +258,7 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
         return this;
     }
 
-    public QueryExecutionContextJsonFormatter showBatch(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
+    public QueryExecutionContextJsonFormatter showBatch(DSProxyBiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onBatch = consumer;
         return showBatch();
     }
@@ -267,7 +268,7 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
         return this;
     }
 
-    public QueryExecutionContextJsonFormatter showQuerySize(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
+    public QueryExecutionContextJsonFormatter showQuerySize(DSProxyBiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onQuerySize = consumer;
         return showQuerySize();
     }
@@ -277,7 +278,7 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
         return this;
     }
 
-    public QueryExecutionContextJsonFormatter showBatchSize(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
+    public QueryExecutionContextJsonFormatter showBatchSize(DSProxyBiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onBatchSize = consumer;
         return showBatchSize();
     }
@@ -288,7 +289,7 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
         return this;
     }
 
-    public QueryExecutionContextJsonFormatter showQueries(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
+    public QueryExecutionContextJsonFormatter showQueries(DSProxyBiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onQueries = consumer;
         return showQueries();
     }
@@ -298,22 +299,22 @@ public class QueryExecutionContextJsonFormatter extends AbstractFormatterSupport
         return this;
     }
 
-    public QueryExecutionContextJsonFormatter showParameters(BiConsumer<QueryExecutionContext, StringBuilder> consumer) {
+    public QueryExecutionContextJsonFormatter showParameters(DSProxyBiConsumer<QueryExecutionContext, StringBuilder> consumer) {
         this.onParameters = consumer;
         return showParameters();
     }
 
-    public QueryExecutionContextJsonFormatter onQuery(Function<String, String> onQuery) {
+    public QueryExecutionContextJsonFormatter onQuery(DSProxyFunction<String, String> onQuery) {
         this.onQuery = onQuery;
         return this;
     }
 
-    public QueryExecutionContextJsonFormatter onPreparedParameters(BiConsumer<SortedMap<String, String>, StringBuilder> onPreparedParameters) {
+    public QueryExecutionContextJsonFormatter onPreparedParameters(DSProxyBiConsumer<SortedMap<String, String>, StringBuilder> onPreparedParameters) {
         this.onPreparedParameters = onPreparedParameters;
         return this;
     }
 
-    public QueryExecutionContextJsonFormatter onCallableParameters(BiConsumer<SortedMap<String, String>, StringBuilder> onCallableParameters) {
+    public QueryExecutionContextJsonFormatter onCallableParameters(DSProxyBiConsumer<SortedMap<String, String>, StringBuilder> onCallableParameters) {
         this.onCallableParameters = onCallableParameters;
         return this;
     }

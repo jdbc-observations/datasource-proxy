@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.listener.logging;
 
+import net.ttddyy.dsproxy.function.DSProxyBiConsumer;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperations;
 
@@ -8,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.function.BiConsumer;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -17,6 +17,9 @@ import java.util.function.BiConsumer;
 public abstract class AbstractFormatterSupport<T> {
 
     protected static final String DEFAULT_DELIMITER = ", ";
+
+    // System.lineSeparator() is from java1.7
+    protected static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     protected static final Map<Character, String> JSON_SPECIAL_CHARS = new HashMap<>();
 
@@ -85,7 +88,7 @@ public abstract class AbstractFormatterSupport<T> {
             try {
                 int leftInt = Integer.parseInt(left);
                 int rightInt = Integer.parseInt(right);
-                return Integer.compare(leftInt, rightInt);
+                return (leftInt < rightInt) ? -1 : ((leftInt == rightInt) ? 0 : 1);  // Integer.compare(int, int) is for java1.7
             } catch (NumberFormatException e) {
                 return left.compareTo(right);  // use String comparison
             }
@@ -93,8 +96,8 @@ public abstract class AbstractFormatterSupport<T> {
 
     }
 
-    protected BiConsumer<T, StringBuilder> newLine = (executionContext, sb) -> {
-        sb.append(System.lineSeparator());
+    protected DSProxyBiConsumer<T, StringBuilder> newLine = (executionContext, sb) -> {
+        sb.append(LINE_SEPARATOR);
     };
 
     protected String delimiter = DEFAULT_DELIMITER;

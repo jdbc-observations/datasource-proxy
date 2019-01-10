@@ -276,9 +276,25 @@
         <configuration>
           <signature>
             <groupId>org.codehaus.mojo.signature</groupId>
-            <artifactId>java18</artifactId>
+            <artifactId>java16</artifactId>
             <version>1.0</version>
           </signature>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>net.orfjackal.retrolambda</groupId>
+        <artifactId>retrolambda-maven-plugin</artifactId>
+        <version>2.5.5</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>process-main</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <target>1.6</target>
         </configuration>
       </plugin>
 

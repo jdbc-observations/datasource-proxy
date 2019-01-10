@@ -15,22 +15,30 @@ public class CompositeProxyDataSourceListener implements ProxyDataSourceListener
 
     @Override
     public void beforeMethod(MethodExecutionContext executionContext) {
-        this.listeners.forEach(listener -> listener.beforeMethod(executionContext));
+        for (ProxyDataSourceListener listener : this.listeners) {
+            listener.beforeMethod(executionContext);
+        }
     }
 
     @Override
     public void afterMethod(MethodExecutionContext executionContext) {
-        this.listeners.forEach(listener -> listener.afterMethod(executionContext));
+        for (ProxyDataSourceListener listener : this.listeners) {
+            listener.afterMethod(executionContext);
+        }
     }
 
     @Override
     public void beforeQuery(QueryExecutionContext executionContext) {
-        this.listeners.forEach(listener -> listener.beforeQuery(executionContext));
+        for (ProxyDataSourceListener listener : this.listeners) {
+            listener.beforeQuery(executionContext);
+        }
     }
 
     @Override
     public void afterQuery(QueryExecutionContext executionContext) {
-        this.listeners.forEach(listener -> listener.afterQuery(executionContext));
+        for (ProxyDataSourceListener listener : this.listeners) {
+            listener.afterQuery(executionContext);
+        }
     }
 
 

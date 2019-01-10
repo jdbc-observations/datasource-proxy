@@ -1,11 +1,12 @@
 package net.ttddyy.dsproxy.listener;
 
+import net.ttddyy.dsproxy.function.DSProxyConsumer;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 
 /**
@@ -22,7 +23,7 @@ import java.util.function.Consumer;
  * <pre>
  * {@code}
  * long thresholdInMills = ...
- * ProxyDataSourceListener listener = new ProxyDataSourceListener(){
+ * ProxyDataSourceListener listener = new ProxyDataSourceListenerAdapter() {
  *      {@literal @}Override
  *      public void afterQuery(QueryExecutionContext queryContext) {
  *          if (queryContext.getElapsedTime() >= thresholdInMills) {
@@ -36,7 +37,7 @@ import java.util.function.Consumer;
  * @author Tadaya Tsuyukubo
  * @since 1.4.1
  */
-public class SlowQueryListener implements ProxyDataSourceListener {
+public class SlowQueryListener extends ProxyDataSourceListenerAdapter {
 
     /**
      * Data holder for currently running query.
@@ -67,13 +68,13 @@ public class SlowQueryListener implements ProxyDataSourceListener {
 
     // Callback when query execution time exceeds the threshold.
     // This callback is called only once per query if it exceeds the threshold time.
-    protected Consumer<QueryExecutionContext> onSlowQuery = executionContext -> {
+    protected DSProxyConsumer<QueryExecutionContext> onSlowQuery = executionContext -> {
     };
 
     public SlowQueryListener() {
     }
 
-    public SlowQueryListener(long threshold, TimeUnit thresholdTimeUnit, Consumer<QueryExecutionContext> onSlowQuery) {
+    public SlowQueryListener(long threshold, TimeUnit thresholdTimeUnit, DSProxyConsumer<QueryExecutionContext> onSlowQuery) {
         this.threshold = threshold;
         this.thresholdTimeUnit = thresholdTimeUnit;
         this.onSlowQuery = onSlowQuery;
@@ -137,7 +138,7 @@ public class SlowQueryListener implements ProxyDataSourceListener {
      * Subclass can override this method to add behavior.
      * This callback is called only once per query if it exceeds the threshold time.
      *
-     * @param queryContext         query execution info
+     * @param queryContext     query execution info
      * @param startTimeInMills time in mills when the query started
      */
     protected void onSlowQuery(QueryExecutionContext queryContext, long startTimeInMills) {
@@ -181,7 +182,7 @@ public class SlowQueryListener implements ProxyDataSourceListener {
      * @param onSlowQuery a consumer that is called only once per query if it exceeds the threshold time.
      * @since 2.0
      */
-    public void setOnSlowQuery(Consumer<QueryExecutionContext> onSlowQuery) {
+    public void setOnSlowQuery(DSProxyConsumer<QueryExecutionContext> onSlowQuery) {
         this.onSlowQuery = onSlowQuery;
     }
 }
