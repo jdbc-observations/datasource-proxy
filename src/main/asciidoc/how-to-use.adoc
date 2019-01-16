@@ -172,10 +172,10 @@ builder
   .build();
 ```
 
-NOTE: When `getExecutionKeys()` is called:  +
+NOTE: When `getGeneratedKeys()` is called:  +
 If there is a cached(auto retrieved) generated-keys and it is still open, then cached `ResultSet` is returned.
 If there is no cached generated-keys or cached one exists but it is already closed, it will perform the
-actual `getExecutionKeys()` on underlying `Statement` object, keep the result into the cache, then return it.
+actual `getGeneratedKeys()` on underlying `Statement` object, keep the result into the cache, then return it.
 
 If you want to *always* retrieve generated-keys without changing application code that may be executing query without
 `Statement#RETURN_GENERATED_KEYS`, see <<replace-invoking-method-and-parameters>>.
@@ -241,7 +241,7 @@ When you decided to reuse generated-keys, you might need to support repeatable r
 <<proxying-generated-keys>> for how to support repeatable read on generated-keys.
 
 
-NOTE: When `getExecutionKeys()` is called, the returned `ResultSet` will NOT be closed by this feature since it is
+NOTE: When `getGeneratedKeys()` is called, the returned `ResultSet` will NOT be closed by this feature since it is
 not auto-retrieved generated-keys.
 
 [[proxying-generated-keys]]
