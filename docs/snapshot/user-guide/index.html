@@ -979,10 +979,10 @@ etc) are called, automatically calls <code>getGeneratedKeys()</code> and make th
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-When <code>getExecutionKeys()</code> is called: <br>
+When <code>getGeneratedKeys()</code> is called: <br>
 If there is a cached(auto retrieved) generated-keys and it is still open, then cached <code>ResultSet</code> is returned.
 If there is no cached generated-keys or cached one exists but it is already closed, it will perform the
-actual <code>getExecutionKeys()</code> on underlying <code>Statement</code> object, keep the result into the cache, then return it.
+actual <code>getGeneratedKeys()</code> on underlying <code>Statement</code> object, keep the result into the cache, then return it.
 </td>
 </tr>
 </table>
@@ -1081,7 +1081,7 @@ When you decided to reuse generated-keys, you might need to support repeatable r
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-When <code>getExecutionKeys()</code> is called, the returned <code>ResultSet</code> will NOT be closed by this feature since it is
+When <code>getGeneratedKeys()</code> is called, the returned <code>ResultSet</code> will NOT be closed by this feature since it is
 not auto-retrieved generated-keys.
 </td>
 </tr>
