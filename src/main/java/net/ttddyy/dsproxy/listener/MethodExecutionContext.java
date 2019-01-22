@@ -167,8 +167,17 @@ public class MethodExecutionContext {
         this.thrown = thrown;
     }
 
+    /**
+     * The time took to execute the method.
+     *
+     * The unit of time is determined by implementation of {@link net.ttddyy.dsproxy.proxy.Stopwatch}.
+     * By default, it uses {@link net.ttddyy.dsproxy.proxy.SystemStopwatchFactory.SystemStopwatch} which
+     * uses milliseconds.
+     *
+     * @return elapsed time for the method execution
+     */
     public long getElapsedTime() {
-        return elapsedTime;
+        return this.elapsedTime;
     }
 
     public void setElapsedTime(long elapsedTime) {

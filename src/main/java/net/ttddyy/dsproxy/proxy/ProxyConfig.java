@@ -34,6 +34,7 @@ public class ProxyConfig {
         private ResultSetProxyLogicFactory resultSetProxyLogicFactory;  // can be null if resultset proxy is disabled
         private ConnectionIdManager connectionIdManager = new DefaultConnectionIdManager();  // create instance every time
         private GeneratedKeysConfig generatedKeysConfig = new GeneratedKeysConfig();
+        private StopwatchFactory stopwatchFactory = new SystemStopwatchFactory();
 
         public static Builder create() {
             return new Builder();
@@ -47,6 +48,7 @@ public class ProxyConfig {
                     .jdbcProxyFactory(proxyConfig.jdbcProxyFactory)
                     .resultSetProxyLogicFactory(proxyConfig.resultSetProxyLogicFactory)
                     .connectionIdManager(proxyConfig.connectionIdManager)
+                    .stopwatchFactory(proxyConfig.stopwatchFactory)
                     .generatedKeysProxyLogicFactory(proxyConfig.generatedKeysConfig.proxyLogicFactory)
                     .autoRetrieveGeneratedKeys(proxyConfig.generatedKeysConfig.autoRetrieve)
                     .retrieveGeneratedKeysForBatchStatement(proxyConfig.generatedKeysConfig.retrieveForBatchStatement)
@@ -63,6 +65,7 @@ public class ProxyConfig {
             proxyConfig.jdbcProxyFactory = this.jdbcProxyFactory;
             proxyConfig.resultSetProxyLogicFactory = this.resultSetProxyLogicFactory;
             proxyConfig.connectionIdManager = this.connectionIdManager;
+            proxyConfig.stopwatchFactory = this.stopwatchFactory;
 
             // generated keys
             proxyConfig.generatedKeysConfig.proxyLogicFactory = this.generatedKeysConfig.proxyLogicFactory;
@@ -133,6 +136,11 @@ public class ProxyConfig {
             return this;
         }
 
+        public Builder stopwatchFactory(StopwatchFactory stopwatchFactory) {
+            this.stopwatchFactory = stopwatchFactory;
+            return this;
+        }
+
     }
 
     private String dataSourceName;
@@ -142,6 +150,7 @@ public class ProxyConfig {
     private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
     private ConnectionIdManager connectionIdManager;
     private GeneratedKeysConfig generatedKeysConfig = new GeneratedKeysConfig();
+    private StopwatchFactory stopwatchFactory;
 
     public String getDataSourceName() {
         return dataSourceName;
@@ -248,4 +257,15 @@ public class ProxyConfig {
     }
 
 
+    /**
+     * Retrieve {@link Stopwatch}.
+     *
+     * Default implementation is {@link SystemStopwatchFactory}.
+     *
+     * @return stopwatchFactory
+     * @since 1.6
+     */
+    public StopwatchFactory getStopwatchFactory() {
+        return this.stopwatchFactory;
+    }
 }

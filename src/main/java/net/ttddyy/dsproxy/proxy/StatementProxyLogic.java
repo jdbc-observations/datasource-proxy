@@ -278,15 +278,14 @@ public class StatementProxyLogic extends ProxyLogicSupport {
             queryListener.beforeQuery(queryContext);
         }
 
-        long beforeTime = System.currentTimeMillis();
+        final Stopwatch stopwatch = this.proxyConfig.getStopwatchFactory().create().start();
 
         // Invoke method on original Statement.
         try {
 
             Object retVal = method.invoke(this.statement, args);
 
-            long afterTime = System.currentTimeMillis();
-
+            final long elapsedTime = stopwatch.getElapsedTime();
 
             // method that returns ResultSet but exclude "getGeneratedKeys()"
             boolean isResultSetReturningMethod = !isGetGeneratedKeysMethod && METHODS_TO_RETURN_RESULTSET.contains(methodName);
@@ -348,14 +347,14 @@ public class StatementProxyLogic extends ProxyLogicSupport {
 
             queryContext.setResult(retVal);
             queryContext.setGeneratedKeys(this.generatedKeys);
-            queryContext.setElapsedTime(afterTime - beforeTime);
+            queryContext.setElapsedTime(elapsedTime);
             queryContext.setSuccess(true);
 
             return retVal;
         } catch (InvocationTargetException ex) {
-            long afterTime = System.currentTimeMillis();
+            final long elapsedTime = stopwatch.getElapsedTime();
 
-            queryContext.setElapsedTime(afterTime - beforeTime);
+            queryContext.setElapsedTime(elapsedTime);
             queryContext.setThrowable(ex.getTargetException());
             queryContext.setSuccess(false);
             throw ex.getTargetException();

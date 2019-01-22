@@ -1,5 +1,9 @@
 package net.ttddyy.dsproxy.listener;
 
+import net.ttddyy.dsproxy.proxy.Stopwatch;
+import net.ttddyy.dsproxy.proxy.StopwatchFactory;
+import net.ttddyy.dsproxy.proxy.SystemStopwatchFactory;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -15,7 +19,7 @@ import java.util.function.Consumer;
  * The callback is called only once for the target query if it exceeds the threshold time.
  *
  * NOTE:
- * {@link QueryExecutionContext#elapsedTime} contains the time when callback is triggered which usually is the specified threshold time.
+ * {@link QueryExecutionContext#getElapsedTime()} contains the time when callback is triggered which usually is the specified threshold time.
  *
  * If you want to log or do something with AFTER execution that has exceeded specified threshold time, use normal
  * logging listener like following:
@@ -46,10 +50,12 @@ public class SlowQueryListener implements ProxyDataSourceListener {
     protected static class RunningQueryContext {
         protected QueryExecutionContext queryExecutionContext;
         protected long startTimeInMills;
+        protected Stopwatch stopwatch;
 
-        public RunningQueryContext(QueryExecutionContext queryExecutionContext, long nowInMills) {
+        public RunningQueryContext(QueryExecutionContext queryExecutionContext, long nowInMills, Stopwatch stopwatch) {
             this.queryExecutionContext = queryExecutionContext;
             this.startTimeInMills = nowInMills;
+            this.stopwatch = stopwatch;
         }
     }
 
@@ -64,6 +70,7 @@ public class SlowQueryListener implements ProxyDataSourceListener {
     protected TimeUnit thresholdTimeUnit;
 
     protected Map<String, RunningQueryContext> inExecution = new ConcurrentHashMap<>();
+    protected StopwatchFactory stopwatchFactory = new SystemStopwatchFactory();
 
     // Callback when query execution time exceeds the threshold.
     // This callback is called only once per query if it exceeds the threshold time.
@@ -92,7 +99,7 @@ public class SlowQueryListener implements ProxyDataSourceListener {
             if (context != null) {
                 // populate elapsed time
                 if (context.queryExecutionContext.getElapsedTime() == 0) {
-                    long elapsedTime = System.currentTimeMillis() - context.startTimeInMills;
+                    long elapsedTime = context.stopwatch.getElapsedTime();
                     context.queryExecutionContext.setElapsedTime(elapsedTime);
                 }
 
@@ -102,7 +109,8 @@ public class SlowQueryListener implements ProxyDataSourceListener {
         this.executor.schedule(check, this.threshold, this.thresholdTimeUnit);
 
         long now = System.currentTimeMillis();
-        RunningQueryContext context = new RunningQueryContext(executionContext, now);
+        Stopwatch stopwatch = this.stopwatchFactory.create().start();
+        RunningQueryContext context = new RunningQueryContext(executionContext, now, stopwatch);
         this.inExecution.put(queryContextKey, context);
 
     }
@@ -137,7 +145,7 @@ public class SlowQueryListener implements ProxyDataSourceListener {
      * Subclass can override this method to add behavior.
      * This callback is called only once per query if it exceeds the threshold time.
      *
-     * @param queryContext         query execution info
+     * @param queryContext     query execution info
      * @param startTimeInMills time in mills when the query started
      */
     protected void onSlowQuery(QueryExecutionContext queryContext, long startTimeInMills) {
@@ -184,4 +192,15 @@ public class SlowQueryListener implements ProxyDataSourceListener {
     public void setOnSlowQuery(Consumer<QueryExecutionContext> onSlowQuery) {
         this.onSlowQuery = onSlowQuery;
     }
+
+    /**
+     * Set {@link StopwatchFactory} which is used to calculate {@link QueryExecutionContext#getElapsedTime()} for slow queries.
+     *
+     * @param stopwatchFactory factory to create {@link Stopwatch} used for calculating elapsed time for slow queries
+     * @since 1.6
+     */
+    public void setStopwatchFactory(StopwatchFactory stopwatchFactory) {
+        this.stopwatchFactory = stopwatchFactory;
+    }
+
 }
