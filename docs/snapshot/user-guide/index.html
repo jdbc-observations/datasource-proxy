@@ -2628,7 +2628,30 @@ Changed query listener signature from <code>(ExecutionInfo execInfo, List&lt;Que
 <p>Add custom value store on <code>ExecutionInfo</code> and <code>MethodExecutionContext</code>
 Mainly used for passing values between before and after listener callback.</p>
 </li>
+<li>
+<p><code>Stopwatch</code> and <code>StopwatchFactory</code> are added for elapsed time calculation. <br>
+Elapsed time calculation for query(<code>ExecutionInfo#getElapsedTime</code>) and method(<code>MethodExecutionContext.getElapsedTime()</code>)
+have been updated to use <code>Stopwatch</code> class. <br>
+<code>Stopwatch</code> is created by <code>StopwatchFactory</code>, and it is configurable in <code>ProxyConfig</code>. <br>
+Two implementation classes are available - <code>SystemStopwatchFactory</code> which creates <code>SystemStopwatch</code> and
+<code>NanoTimeStopwatchFactory</code> which creates <code>NanoTimeStopwatch</code>. <br>
+<code>SystemStopwatch</code> uses <code>System.currentTimeMillis()</code> and <code>NanoTimeStopwatch</code> uses <code>System.nanoTime()</code> to calculate
+elapsed time. Default is set to <code>SystemStopwatchFactory</code>.</p>
+</li>
 </ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<code>SlowQueryListener</code> needs to set <code>StopwatchFactory</code> independently from <code>ProxyConfig</code> in order to calculate
+<code>ExecutionInfo#getElapsedTime()</code> for running slow queries.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
