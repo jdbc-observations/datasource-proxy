@@ -308,14 +308,14 @@ public class StatementProxyLogic {
             queryListener.beforeQuery(execInfo, queries);
         }
 
-        final long beforeTime = System.currentTimeMillis();
+        final Stopwatch stopwatch = this.proxyConfig.getStopwatchFactory().create().start();
 
         // Invoke method on original Statement.
         try {
 
             Object retVal = method.invoke(this.statement, args);
 
-            final long afterTime = System.currentTimeMillis();
+            final long elapsedTime = stopwatch.getElapsedTime();
 
 
             // method that returns ResultSet but exclude "getGeneratedKeys()"
@@ -378,14 +378,14 @@ public class StatementProxyLogic {
 
             execInfo.setResult(retVal);
             execInfo.setGeneratedKeys(this.generatedKeys);
-            execInfo.setElapsedTime(afterTime - beforeTime);
+            execInfo.setElapsedTime(elapsedTime);
             execInfo.setSuccess(true);
 
             return retVal;
         } catch (InvocationTargetException ex) {
-            final long afterTime = System.currentTimeMillis();
+            final long elapsedTime = stopwatch.getElapsedTime();
 
-            execInfo.setElapsedTime(afterTime - beforeTime);
+            execInfo.setElapsedTime(elapsedTime);
             execInfo.setThrowable(ex.getTargetException());
             execInfo.setSuccess(false);
             throw ex.getTargetException();

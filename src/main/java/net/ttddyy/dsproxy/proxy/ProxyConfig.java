@@ -39,6 +39,7 @@ public class ProxyConfig {
         private ConnectionIdManager connectionIdManager = new DefaultConnectionIdManager();  // create instance every time
         private CompositeMethodListener methodListener = new CompositeMethodListener();  // empty default
         private GeneratedKeysConfig generatedKeysConfig = new GeneratedKeysConfig();
+        private StopwatchFactory stopwatchFactory = new SystemStopwatchFactory();
 
         public static Builder create() {
             return new Builder();
@@ -54,6 +55,7 @@ public class ProxyConfig {
                     .resultSetProxyLogicFactory(proxyConfig.resultSetProxyLogicFactory)
                     .connectionIdManager(proxyConfig.connectionIdManager)
                     .methodListener(proxyConfig.methodListener)
+                    .stopwatchFactory(proxyConfig.stopwatchFactory)
                     .generatedKeysProxyLogicFactory(proxyConfig.generatedKeysConfig.proxyLogicFactory)
                     .autoRetrieveGeneratedKeys(proxyConfig.generatedKeysConfig.autoRetrieve)
                     .retrieveGeneratedKeysForBatchStatement(proxyConfig.generatedKeysConfig.retrieveForBatchStatement)
@@ -72,6 +74,7 @@ public class ProxyConfig {
             proxyConfig.resultSetProxyLogicFactory = this.resultSetProxyLogicFactory;
             proxyConfig.connectionIdManager = this.connectionIdManager;
             proxyConfig.methodListener = this.methodListener;
+            proxyConfig.stopwatchFactory = this.stopwatchFactory;
 
             // generated keys
             proxyConfig.generatedKeysConfig.proxyLogicFactory = this.generatedKeysConfig.proxyLogicFactory;
@@ -159,6 +162,11 @@ public class ProxyConfig {
             }
             return this;
         }
+
+        public Builder stopwatchFactory(StopwatchFactory stopwatchFactory) {
+            this.stopwatchFactory = stopwatchFactory;
+            return this;
+        }
     }
 
     private String dataSourceName;
@@ -170,6 +178,7 @@ public class ProxyConfig {
     private ConnectionIdManager connectionIdManager;
     private CompositeMethodListener methodListener;
     private GeneratedKeysConfig generatedKeysConfig = new GeneratedKeysConfig();
+    private StopwatchFactory stopwatchFactory;
 
     public String getDataSourceName() {
         return dataSourceName;
@@ -283,4 +292,15 @@ public class ProxyConfig {
         return methodListener;
     }
 
+    /**
+     * Retrieve {@link Stopwatch}.
+     *
+     * Default implementation is {@link SystemStopwatchFactory}.
+     *
+     * @return stopwatchFactory
+     * @since 1.6
+     */
+    public StopwatchFactory getStopwatchFactory() {
+        return this.stopwatchFactory;
+    }
 }

@@ -115,6 +115,9 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
      *
      * <p>default: Time: 123,
      *
+     * The unit of time is determined by underlying {@link net.ttddyy.dsproxy.proxy.Stopwatch} implementation.
+     * (milli vs nano seconds)
+     *
      * @param sb            StringBuilder to write
      * @param execInfo      execution info
      * @param queryInfoList query info list

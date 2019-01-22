@@ -98,6 +98,10 @@ public class ExecutionInfo {
      * Duration of query execution.
      * Only available after successful query execution.
      *
+     * The unit of time is determined by implementation of {@link net.ttddyy.dsproxy.proxy.Stopwatch}.
+     * By default, it uses {@link net.ttddyy.dsproxy.proxy.SystemStopwatchFactory.SystemStopwatch} which
+     * uses milliseconds.
+     *
      * @return query execution time
      */
     public long getElapsedTime() {

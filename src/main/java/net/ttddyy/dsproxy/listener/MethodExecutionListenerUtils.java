@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.proxy.Stopwatch;
 
 import java.lang.reflect.Method;
 
@@ -34,7 +35,7 @@ public class MethodExecutionListenerUtils {
         Method methodToInvoke = methodContext.getMethod();
         Object[] methodArgsToInvoke = methodContext.getMethodArgs();
 
-        final long beforeTime = System.currentTimeMillis();
+        final Stopwatch stopwatch = proxyConfig.getStopwatchFactory().create().start();
         Object result = null;
         Throwable thrown = null;
         try {
@@ -43,8 +44,7 @@ public class MethodExecutionListenerUtils {
             thrown = throwable;
             throw throwable;
         } finally {
-            final long afterTime = System.currentTimeMillis();
-            long elapsedTime = afterTime - beforeTime;
+            final long elapsedTime = stopwatch.getElapsedTime();
 
             methodContext.setElapsedTime(elapsedTime);
             methodContext.setResult(result);

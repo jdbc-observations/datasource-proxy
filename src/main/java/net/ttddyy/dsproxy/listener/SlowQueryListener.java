@@ -2,6 +2,9 @@ package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.proxy.Stopwatch;
+import net.ttddyy.dsproxy.proxy.StopwatchFactory;
+import net.ttddyy.dsproxy.proxy.SystemStopwatchFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -55,11 +58,13 @@ public class SlowQueryListener implements QueryExecutionListener {
         protected ExecutionInfo executionInfo;
         protected List<QueryInfo> queryInfoList;
         protected long startTimeInMills;
+        protected Stopwatch stopwatch;
 
-        public RunningQueryContext(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList, long nowInMills) {
+        public RunningQueryContext(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList, long nowInMills, Stopwatch stopwatch) {
             this.executionInfo = executionInfo;
             this.queryInfoList = queryInfoList;
             this.startTimeInMills = nowInMills;
+            this.stopwatch = stopwatch;
         }
     }
 
@@ -76,6 +81,7 @@ public class SlowQueryListener implements QueryExecutionListener {
     protected long threshold;
     protected TimeUnit thresholdTimeUnit;
     protected Map<String, RunningQueryContext> inExecution = new ConcurrentHashMap<String, RunningQueryContext>();
+    protected StopwatchFactory stopwatchFactory = new SystemStopwatchFactory();
 
     @Override
     public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
@@ -90,9 +96,9 @@ public class SlowQueryListener implements QueryExecutionListener {
                 RunningQueryContext context = SlowQueryListener.this.inExecution.get(execInfoKey);
 
                 if (context != null) {
+                    long elapsedTime = context.stopwatch.getElapsedTime();
                     // populate elapsed time
                     if (context.executionInfo.getElapsedTime() == 0) {
-                        long elapsedTime = System.currentTimeMillis() - context.startTimeInMills;
                         context.executionInfo.setElapsedTime(elapsedTime);
                     }
 
@@ -103,7 +109,8 @@ public class SlowQueryListener implements QueryExecutionListener {
         this.executor.schedule(check, this.threshold, this.thresholdTimeUnit);
 
         long now = System.currentTimeMillis();
-        RunningQueryContext context = new RunningQueryContext(execInfo, queryInfoList, now);
+        Stopwatch stopwatch = this.stopwatchFactory.create().start();
+        RunningQueryContext context = new RunningQueryContext(execInfo, queryInfoList, now, stopwatch);
         this.inExecution.put(execInfoKey, context);
 
     }
@@ -174,4 +181,14 @@ public class SlowQueryListener implements QueryExecutionListener {
         this.useDaemonThread = useDaemonThread;
     }
 
+
+    /**
+     * Set {@link StopwatchFactory} which is used to calculate {@link ExecutionInfo#getElapsedTime()} for slow queries.
+     *
+     * @param stopwatchFactory factory to create {@link Stopwatch} used for calculating elapsed time for slow queries
+     * @since 1.6
+     */
+    public void setStopwatchFactory(StopwatchFactory stopwatchFactory) {
+        this.stopwatchFactory = stopwatchFactory;
+    }
 }
