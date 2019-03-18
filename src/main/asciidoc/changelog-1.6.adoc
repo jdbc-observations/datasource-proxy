@@ -1,3 +1,9 @@
+[[changelog-1.6.1]]
+=== 1.6.1
+
+* Fix `NullPointerException` when `Object` methods(`toString()`, `hashCode()`, etc) is called on `JdbcLifecycleEventListener`.
+
+
 [[changelog-1.6]]
 === 1.6
 
