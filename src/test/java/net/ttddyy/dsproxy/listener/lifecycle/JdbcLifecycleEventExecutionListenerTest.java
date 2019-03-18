@@ -120,5 +120,34 @@ public class JdbcLifecycleEventExecutionListenerTest {
         return Character.toUpperCase(str.charAt(0)) + str.substring(1);
     }
 
+    @Test
+    void objectMethods() {
+
+        for (Method method : Object.class.getMethods()) {
+
+            // create a listener
+            List<String> invokedMethodNames = new ArrayList<String>();
+            List<List<Object>> invokedMethodArgs = new ArrayList<List<Object>>();
+            JdbcLifecycleEventListener proxyListener = createProxyListener(invokedMethodNames, invokedMethodArgs);
+            JdbcLifecycleEventExecutionListener listener = new JdbcLifecycleEventExecutionListener(proxyListener);
+
+            MethodExecutionContext methodExecContext = new MethodExecutionContext();
+            methodExecContext.setMethod(method);
+            methodExecContext.setTarget(Statement.class);
+
+            listener.beforeMethod(methodExecContext);
+            assertThat(invokedMethodNames).hasSize(1).containsExactly("beforeMethod");
+            assertThat(invokedMethodArgs).hasSize(1);
+            assertThat(invokedMethodArgs.get(0)).hasSize(1).containsExactly(methodExecContext);
+
+            invokedMethodNames.clear();
+            invokedMethodArgs.clear();
+
+            listener.afterMethod(methodExecContext);
+            assertThat(invokedMethodNames).hasSize(1).containsExactly("afterMethod");
+            assertThat(invokedMethodArgs).hasSize(1);
+            assertThat(invokedMethodArgs.get(0)).hasSize(1).containsExactly(methodExecContext);
+        }
+    }
 
 }

@@ -50,6 +50,13 @@ public class JdbcLifecycleEventExecutionListener implements ProxyDataSourceListe
 
         // dynamically invoke corresponding callback method on JdbcLifecycleEventListener.
         Method lifecycleMethod = JdbcLifecycleEventListenerUtils.getListenerMethod(method, proxyTarget, isBefore);
+
+        if (lifecycleMethod == null) {
+            // when there is no corresponding life cycle callback, just skip it.
+            // This happens when method on Object is called. e.g.: toString(), hashCode(), etc.
+            return;
+        }
+
         try {
             lifecycleMethod.invoke(this.delegate, methodContext);
         } catch (InvocationTargetException ex) {
