@@ -1,11 +1,7 @@
-[[changelog-1.6.1]]
-=== 1.6.1
-
-* Fix `NullPointerException` when `Object` methods(`toString()`, `hashCode()`, etc) is called on `JdbcLifecycleEventListener`.
-
-
 [[changelog-1.6]]
 === 1.6
+
+==== New Features and Improvements
 
 * Add custom value store on `ExecutionInfo` and `MethodExecutionContext`
   Mainly used for passing values between before and after listener callback.
@@ -21,3 +17,9 @@
 
 NOTE: `SlowQueryListener` needs to set `StopwatchFactory` independently from `ProxyConfig` in order to calculate
 `ExecutionInfo#getElapsedTime()` for running slow queries.
+
+
+==== Bug Fixes
+
+* Fix `NullPointerException` when `Object` methods(`toString()`, `hashCode()`, etc) is called on `JdbcLifecycleEventListener`.
+
