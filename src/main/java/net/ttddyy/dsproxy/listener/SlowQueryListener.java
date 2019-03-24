@@ -186,7 +186,7 @@ public class SlowQueryListener implements QueryExecutionListener {
      * Set {@link StopwatchFactory} which is used to calculate {@link ExecutionInfo#getElapsedTime()} for slow queries.
      *
      * @param stopwatchFactory factory to create {@link Stopwatch} used for calculating elapsed time for slow queries
-     * @since 1.6
+     * @since 1.5.1
      */
     public void setStopwatchFactory(StopwatchFactory stopwatchFactory) {
         this.stopwatchFactory = stopwatchFactory;

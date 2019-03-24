@@ -298,7 +298,7 @@ public class ProxyConfig {
      * Default implementation is {@link SystemStopwatchFactory}.
      *
      * @return stopwatchFactory
-     * @since 1.6
+     * @since 1.5.1
      */
     public StopwatchFactory getStopwatchFactory() {
         return this.stopwatchFactory;

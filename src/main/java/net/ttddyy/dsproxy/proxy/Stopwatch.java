@@ -11,7 +11,7 @@ import net.ttddyy.dsproxy.listener.MethodExecutionContext;
  * @see NanoTimeStopwatchFactory.NanoTimeStopwatch
  * @see ExecutionInfo#getElapsedTime()
  * @see MethodExecutionContext#getElapsedTime()
- * @since 1.6
+ * @since 1.5.1
  */
 public interface Stopwatch {
 

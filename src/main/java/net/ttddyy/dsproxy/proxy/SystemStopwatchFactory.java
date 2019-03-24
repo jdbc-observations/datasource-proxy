@@ -6,7 +6,7 @@ package net.ttddyy.dsproxy.proxy;
  * The unit of time is milliseconds.
  *
  * @author Tadaya Tsuyukubo
- * @since 1.6
+ * @since 1.5.1
  */
 public class SystemStopwatchFactory implements StopwatchFactory {
 
