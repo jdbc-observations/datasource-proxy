@@ -3,8 +3,6 @@
 
 :numbered!:
 
-include::changelog-1.6.adoc[]
-
 include::changelog-1.5.adoc[]
 
 include::changelog-1.4.10.adoc[]
