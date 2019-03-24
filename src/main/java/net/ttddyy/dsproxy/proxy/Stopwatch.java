@@ -8,7 +8,7 @@ package net.ttddyy.dsproxy.proxy;
  * @see NanoTimeStopwatchFactory.NanoTimeStopwatch
  * @see net.ttddyy.dsproxy.listener.QueryExecutionContext#getElapsedTime()
  * @see net.ttddyy.dsproxy.listener.MethodExecutionContext#getElapsedTime()
- * @since 1.6
+ * @since 1.5.1
  */
 public interface Stopwatch {
 

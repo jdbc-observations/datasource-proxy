@@ -210,14 +210,14 @@ public class QueryExecutionContext {
      *
      * @param key   key
      * @param value value
-     * @since 1.6
+     * @since 1.5.1
      */
     public void addCustomValue(String key, Object value) {
         this.customValues.put(key, value);
     }
 
     /**
-     * @since 1.6
+     * @since 1.5.1
      */
     public <T> T getCustomValue(String key, Class<T> type) {
         return type.cast(this.customValues.get(key));

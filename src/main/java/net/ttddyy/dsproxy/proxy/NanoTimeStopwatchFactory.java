@@ -4,7 +4,7 @@ package net.ttddyy.dsproxy.proxy;
  * Factory to create {@link NanoTimeStopwatch}.
  *
  * @author Tadaya Tsuyukubo
- * @since 1.6
+ * @since 1.5.1
  */
 public class NanoTimeStopwatchFactory implements StopwatchFactory {
 
