@@ -11,179 +11,167 @@ import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 public interface StatementMethodCallbacks {
 
     //
-    // Wrapper methods
-    //
-
-    void beforeIsWrapperForOnStatement(MethodExecutionContext executionContext);
-
-    void beforeUnwrapOnStatement(MethodExecutionContext executionContext);
-
-    void afterIsWrapperForOnStatement(MethodExecutionContext executionContext);
-
-    void afterUnwrapOnStatement(MethodExecutionContext executionContext);
-
-    //
     // Statement methods
     //
 
-    void beforeAddBatchOnStatement(MethodExecutionContext executionContext);
+    void beforeAddBatch(MethodExecutionContext executionContext);
 
-    void beforeCancelOnStatement(MethodExecutionContext executionContext);
+    void beforeCancel(MethodExecutionContext executionContext);
 
-    void beforeClearBatchOnStatement(MethodExecutionContext executionContext);
+    void beforeClearBatch(MethodExecutionContext executionContext);
 
-    void beforeClearWarningsOnStatement(MethodExecutionContext executionContext);
+    void beforeClearWarnings(MethodExecutionContext executionContext);
 
-    void beforeCloseOnStatement(MethodExecutionContext executionContext);
+    void beforeClose(MethodExecutionContext executionContext);
 
-    void beforeCloseOnCompletionOnStatement(MethodExecutionContext executionContext);
+    void beforeCloseOnCompletion(MethodExecutionContext executionContext);
 
-    void beforeExecuteOnStatement(MethodExecutionContext executionContext);
+    void beforeExecute(MethodExecutionContext executionContext);
 
-    void beforeExecuteBatchOnStatement(MethodExecutionContext executionContext);
+    void beforeExecuteBatch(MethodExecutionContext executionContext);
 
-    void beforeExecuteLargeBatchOnStatement(MethodExecutionContext executionContext);
+    void beforeExecuteLargeBatch(MethodExecutionContext executionContext);
 
-    void beforeExecuteLargeUpdateOnStatement(MethodExecutionContext executionContext);
+    void beforeExecuteLargeUpdate(MethodExecutionContext executionContext);
 
-    void beforeExecuteQueryOnStatement(MethodExecutionContext executionContext);
+    void beforeExecuteQuery(MethodExecutionContext executionContext);
 
-    void beforeExecuteUpdateOnStatement(MethodExecutionContext executionContext);
+    void beforeExecuteUpdate(MethodExecutionContext executionContext);
 
-    void beforeGetConnectionOnStatement(MethodExecutionContext executionContext);
+    void beforeGetConnection(MethodExecutionContext executionContext);
 
-    void beforeGetFetchDirectionOnStatement(MethodExecutionContext executionContext);
+    void beforeGetFetchDirection(MethodExecutionContext executionContext);
 
-    void beforeGetFetchSizeOnStatement(MethodExecutionContext executionContext);
+    void beforeGetFetchSize(MethodExecutionContext executionContext);
 
-    void beforeGetGeneratedKeysOnStatement(MethodExecutionContext executionContext);
+    void beforeGetGeneratedKeys(MethodExecutionContext executionContext);
 
-    void beforeGetLargeMaxRowsOnStatement(MethodExecutionContext executionContext);
+    void beforeGetLargeMaxRows(MethodExecutionContext executionContext);
 
-    void beforeGetLargeUpdateCountOnStatement(MethodExecutionContext executionContext);
+    void beforeGetLargeUpdateCount(MethodExecutionContext executionContext);
 
-    void beforeGetMaxFieldSizeOnStatement(MethodExecutionContext executionContext);
+    void beforeGetMaxFieldSize(MethodExecutionContext executionContext);
 
-    void beforeGetMaxRowsOnStatement(MethodExecutionContext executionContext);
+    void beforeGetMaxRows(MethodExecutionContext executionContext);
 
-    void beforeGetMoreResultsOnStatement(MethodExecutionContext executionContext);
+    void beforeGetMoreResults(MethodExecutionContext executionContext);
 
-    void beforeGetQueryTimeoutOnStatement(MethodExecutionContext executionContext);
+    void beforeGetQueryTimeout(MethodExecutionContext executionContext);
 
-    void beforeGetResultSetOnStatement(MethodExecutionContext executionContext);
+    void beforeGetResultSet(MethodExecutionContext executionContext);
 
-    void beforeGetResultSetConcurrencyOnStatement(MethodExecutionContext executionContext);
+    void beforeGetResultSetConcurrency(MethodExecutionContext executionContext);
 
-    void beforeGetResultSetHoldabilityOnStatement(MethodExecutionContext executionContext);
+    void beforeGetResultSetHoldability(MethodExecutionContext executionContext);
 
-    void beforeGetResultSetTypeOnStatement(MethodExecutionContext executionContext);
+    void beforeGetResultSetType(MethodExecutionContext executionContext);
 
-    void beforeGetUpdateCountOnStatement(MethodExecutionContext executionContext);
+    void beforeGetUpdateCount(MethodExecutionContext executionContext);
 
-    void beforeGetWarningsOnStatement(MethodExecutionContext executionContext);
+    void beforeGetWarnings(MethodExecutionContext executionContext);
 
-    void beforeIsClosedOnStatement(MethodExecutionContext executionContext);
+    void beforeIsClosed(MethodExecutionContext executionContext);
 
-    void beforeIsCloseOnCompletionOnStatement(MethodExecutionContext executionContext);
+    void beforeIsCloseOnCompletion(MethodExecutionContext executionContext);
 
-    void beforeIsPoolableOnStatement(MethodExecutionContext executionContext);
+    void beforeIsPoolable(MethodExecutionContext executionContext);
 
-    void beforeSetCursorNameOnStatement(MethodExecutionContext executionContext);
+    void beforeSetCursorName(MethodExecutionContext executionContext);
 
-    void beforeSetEscapeProcessingOnStatement(MethodExecutionContext executionContext);
+    void beforeSetEscapeProcessing(MethodExecutionContext executionContext);
 
-    void beforeSetFetchDirectionOnStatement(MethodExecutionContext executionContext);
+    void beforeSetFetchDirection(MethodExecutionContext executionContext);
 
-    void beforeSetFetchSizeOnStatement(MethodExecutionContext executionContext);
+    void beforeSetFetchSize(MethodExecutionContext executionContext);
 
-    void beforeSetLargeMaxRowsOnStatement(MethodExecutionContext executionContext);
+    void beforeSetLargeMaxRows(MethodExecutionContext executionContext);
 
-    void beforeSetMaxFieldSizeOnStatement(MethodExecutionContext executionContext);
+    void beforeSetMaxFieldSize(MethodExecutionContext executionContext);
 
-    void beforeSetMaxRowsOnStatement(MethodExecutionContext executionContext);
+    void beforeSetMaxRows(MethodExecutionContext executionContext);
 
-    void beforeSetPoolableOnStatement(MethodExecutionContext executionContext);
+    void beforeSetPoolable(MethodExecutionContext executionContext);
 
-    void beforeSetQueryTimeoutOnStatement(MethodExecutionContext executionContext);
+    void beforeSetQueryTimeout(MethodExecutionContext executionContext);
 
-    void afterAddBatchOnStatement(MethodExecutionContext executionContext);
+    void afterAddBatch(MethodExecutionContext executionContext);
 
-    void afterCancelOnStatement(MethodExecutionContext executionContext);
+    void afterCancel(MethodExecutionContext executionContext);
 
-    void afterClearBatchOnStatement(MethodExecutionContext executionContext);
+    void afterClearBatch(MethodExecutionContext executionContext);
 
-    void afterClearWarningsOnStatement(MethodExecutionContext executionContext);
+    void afterClearWarnings(MethodExecutionContext executionContext);
 
-    void afterCloseOnStatement(MethodExecutionContext executionContext);
+    void afterClose(MethodExecutionContext executionContext);
 
-    void afterCloseOnCompletionOnStatement(MethodExecutionContext executionContext);
+    void afterCloseOnCompletion(MethodExecutionContext executionContext);
 
-    void afterExecuteOnStatement(MethodExecutionContext executionContext);
+    void afterExecute(MethodExecutionContext executionContext);
 
-    void afterExecuteBatchOnStatement(MethodExecutionContext executionContext);
+    void afterExecuteBatch(MethodExecutionContext executionContext);
 
-    void afterExecuteLargeBatchOnStatement(MethodExecutionContext executionContext);
+    void afterExecuteLargeBatch(MethodExecutionContext executionContext);
 
-    void afterExecuteLargeUpdateOnStatement(MethodExecutionContext executionContext);
+    void afterExecuteLargeUpdate(MethodExecutionContext executionContext);
 
-    void afterExecuteQueryOnStatement(MethodExecutionContext executionContext);
+    void afterExecuteQuery(MethodExecutionContext executionContext);
 
-    void afterExecuteUpdateOnStatement(MethodExecutionContext executionContext);
+    void afterExecuteUpdate(MethodExecutionContext executionContext);
 
-    void afterGetConnectionOnStatement(MethodExecutionContext executionContext);
+    void afterGetConnection(MethodExecutionContext executionContext);
 
-    void afterGetFetchDirectionOnStatement(MethodExecutionContext executionContext);
+    void afterGetFetchDirection(MethodExecutionContext executionContext);
 
-    void afterGetFetchSizeOnStatement(MethodExecutionContext executionContext);
+    void afterGetFetchSize(MethodExecutionContext executionContext);
 
-    void afterGetGeneratedKeysOnStatement(MethodExecutionContext executionContext);
+    void afterGetGeneratedKeys(MethodExecutionContext executionContext);
 
-    void afterGetLargeMaxRowsOnStatement(MethodExecutionContext executionContext);
+    void afterGetLargeMaxRows(MethodExecutionContext executionContext);
 
-    void afterGetLargeUpdateCountOnStatement(MethodExecutionContext executionContext);
+    void afterGetLargeUpdateCount(MethodExecutionContext executionContext);
 
-    void afterGetMaxFieldSizeOnStatement(MethodExecutionContext executionContext);
+    void afterGetMaxFieldSize(MethodExecutionContext executionContext);
 
-    void afterGetMaxRowsOnStatement(MethodExecutionContext executionContext);
+    void afterGetMaxRows(MethodExecutionContext executionContext);
 
-    void afterGetMoreResultsOnStatement(MethodExecutionContext executionContext);
+    void afterGetMoreResults(MethodExecutionContext executionContext);
 
-    void afterGetQueryTimeoutOnStatement(MethodExecutionContext executionContext);
+    void afterGetQueryTimeout(MethodExecutionContext executionContext);
 
-    void afterGetResultSetOnStatement(MethodExecutionContext executionContext);
+    void afterGetResultSet(MethodExecutionContext executionContext);
 
-    void afterGetResultSetConcurrencyOnStatement(MethodExecutionContext executionContext);
+    void afterGetResultSetConcurrency(MethodExecutionContext executionContext);
 
-    void afterGetResultSetHoldabilityOnStatement(MethodExecutionContext executionContext);
+    void afterGetResultSetHoldability(MethodExecutionContext executionContext);
 
-    void afterGetResultSetTypeOnStatement(MethodExecutionContext executionContext);
+    void afterGetResultSetType(MethodExecutionContext executionContext);
 
-    void afterGetUpdateCountOnStatement(MethodExecutionContext executionContext);
+    void afterGetUpdateCount(MethodExecutionContext executionContext);
 
-    void afterGetWarningsOnStatement(MethodExecutionContext executionContext);
+    void afterGetWarnings(MethodExecutionContext executionContext);
 
-    void afterIsClosedOnStatement(MethodExecutionContext executionContext);
+    void afterIsClosed(MethodExecutionContext executionContext);
 
-    void afterIsCloseOnCompletionOnStatement(MethodExecutionContext executionContext);
+    void afterIsCloseOnCompletion(MethodExecutionContext executionContext);
 
-    void afterIsPoolableOnStatement(MethodExecutionContext executionContext);
+    void afterIsPoolable(MethodExecutionContext executionContext);
 
-    void afterSetCursorNameOnStatement(MethodExecutionContext executionContext);
+    void afterSetCursorName(MethodExecutionContext executionContext);
 
-    void afterSetEscapeProcessingOnStatement(MethodExecutionContext executionContext);
+    void afterSetEscapeProcessing(MethodExecutionContext executionContext);
 
-    void afterSetFetchDirectionOnStatement(MethodExecutionContext executionContext);
+    void afterSetFetchDirection(MethodExecutionContext executionContext);
 
-    void afterSetFetchSizeOnStatement(MethodExecutionContext executionContext);
+    void afterSetFetchSize(MethodExecutionContext executionContext);
 
-    void afterSetLargeMaxRowsOnStatement(MethodExecutionContext executionContext);
+    void afterSetLargeMaxRows(MethodExecutionContext executionContext);
 
-    void afterSetMaxFieldSizeOnStatement(MethodExecutionContext executionContext);
+    void afterSetMaxFieldSize(MethodExecutionContext executionContext);
 
-    void afterSetMaxRowsOnStatement(MethodExecutionContext executionContext);
+    void afterSetMaxRows(MethodExecutionContext executionContext);
 
-    void afterSetPoolableOnStatement(MethodExecutionContext executionContext);
+    void afterSetPoolable(MethodExecutionContext executionContext);
 
-    void afterSetQueryTimeoutOnStatement(MethodExecutionContext executionContext);
+    void afterSetQueryTimeout(MethodExecutionContext executionContext);
 
 }

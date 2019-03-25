@@ -17,7 +17,7 @@ import net.ttddyy.dsproxy.listener.QueryExecutionContext;
  * @see JdbcLifecycleEventListenerAdapter
  * @since 1.5
  */
-public interface JdbcLifecycleEventListener extends DataSourceMethodCallbacks, ConnectionMethodCallbacks,
+public interface JdbcLifecycleEventListener extends WrapperMethodCallbacks, DataSourceMethodCallbacks, ConnectionMethodCallbacks,
         StatementMethodCallbacks, PreparedStatementMethodCallbacks, CallableStatementMethodCallbacks,
         ResultSetMethodCallbacks {
 

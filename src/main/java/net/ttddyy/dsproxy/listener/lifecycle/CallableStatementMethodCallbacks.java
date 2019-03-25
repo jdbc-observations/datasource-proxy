@@ -11,231 +11,219 @@ import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 public interface CallableStatementMethodCallbacks {
 
     //
-    // Wrapper methods
-    //
-
-    void beforeIsWrapperForOnCallableStatement(MethodExecutionContext executionContext);
-
-    void beforeUnwrapOnCallableStatement(MethodExecutionContext executionContext);
-
-    void afterIsWrapperForOnCallableStatement(MethodExecutionContext executionContext);
-
-    void afterUnwrapOnCallableStatement(MethodExecutionContext executionContext);
-
-    //
     // CallableStatement methods
     //
 
-    void beforeGetArrayOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetArray(MethodExecutionContext executionContext);
 
-    void beforeGetBigDecimalOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetBigDecimal(MethodExecutionContext executionContext);
 
-    void beforeGetBlobOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetBlob(MethodExecutionContext executionContext);
 
-    void beforeGetBooleanOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetBoolean(MethodExecutionContext executionContext);
 
-    void beforeGetByteOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetByte(MethodExecutionContext executionContext);
 
-    void beforeGetBytesOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetBytes(MethodExecutionContext executionContext);
 
-    void beforeGetCharacterStreamOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetCharacterStream(MethodExecutionContext executionContext);
 
-    void beforeGetClobOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetClob(MethodExecutionContext executionContext);
 
-    void beforeGetDateOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetDate(MethodExecutionContext executionContext);
 
-    void beforeGetDoubleOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetDouble(MethodExecutionContext executionContext);
 
-    void beforeGetFloatOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetFloat(MethodExecutionContext executionContext);
 
-    void beforeGetIntOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetInt(MethodExecutionContext executionContext);
 
-    void beforeGetLongOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetLong(MethodExecutionContext executionContext);
 
-    void beforeGetNCharacterStreamOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetNCharacterStream(MethodExecutionContext executionContext);
 
-    void beforeGetNClobOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetNClob(MethodExecutionContext executionContext);
 
-    void beforeGetNStringOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetNString(MethodExecutionContext executionContext);
 
-    void beforeGetObjectOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetObject(MethodExecutionContext executionContext);
 
-    void beforeGetRefOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetRef(MethodExecutionContext executionContext);
 
-    void beforeGetRowIdOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetRowId(MethodExecutionContext executionContext);
 
-    void beforeGetShortOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetShort(MethodExecutionContext executionContext);
 
-    void beforeGetSQLXMLOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetSQLXML(MethodExecutionContext executionContext);
 
-    void beforeGetStringOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetString(MethodExecutionContext executionContext);
 
-    void beforeGetTimeOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetTime(MethodExecutionContext executionContext);
 
-    void beforeGetTimestampOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetTimestamp(MethodExecutionContext executionContext);
 
-    void beforeGetURLOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeGetURL(MethodExecutionContext executionContext);
 
-    void beforeRegisterOutParameterOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeRegisterOutParameter(MethodExecutionContext executionContext);
 
-    void beforeSetAsciiStreamOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetAsciiStream(MethodExecutionContext executionContext);
 
-    void beforeSetBigDecimalOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetBigDecimal(MethodExecutionContext executionContext);
 
-    void beforeSetBinaryStreamOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetBinaryStream(MethodExecutionContext executionContext);
 
-    void beforeSetBlobOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetBlob(MethodExecutionContext executionContext);
 
-    void beforeSetBooleanOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetBoolean(MethodExecutionContext executionContext);
 
-    void beforeSetByteOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetByte(MethodExecutionContext executionContext);
 
-    void beforeSetBytesOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetBytes(MethodExecutionContext executionContext);
 
-    void beforeSetCharacterStreamOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetCharacterStream(MethodExecutionContext executionContext);
 
-    void beforeSetClobOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetClob(MethodExecutionContext executionContext);
 
-    void beforeSetDateOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetDate(MethodExecutionContext executionContext);
 
-    void beforeSetDoubleOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetDouble(MethodExecutionContext executionContext);
 
-    void beforeSetFloatOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetFloat(MethodExecutionContext executionContext);
 
-    void beforeSetIntOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetInt(MethodExecutionContext executionContext);
 
-    void beforeSetLongOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetLong(MethodExecutionContext executionContext);
 
-    void beforeSetNCharacterStreamOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetNCharacterStream(MethodExecutionContext executionContext);
 
-    void beforeSetNClobOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetNClob(MethodExecutionContext executionContext);
 
-    void beforeSetNStringOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetNString(MethodExecutionContext executionContext);
 
-    void beforeSetNullOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetNull(MethodExecutionContext executionContext);
 
-    void beforeSetObjectOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetObject(MethodExecutionContext executionContext);
 
-    void beforeSetRowIdOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetRowId(MethodExecutionContext executionContext);
 
-    void beforeSetShortOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetShort(MethodExecutionContext executionContext);
 
-    void beforeSetSQLXMLOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetSQLXML(MethodExecutionContext executionContext);
 
-    void beforeSetStringOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetString(MethodExecutionContext executionContext);
 
-    void beforeSetTimeOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetTime(MethodExecutionContext executionContext);
 
-    void beforeSetTimestampOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetTimestamp(MethodExecutionContext executionContext);
 
-    void beforeSetURLOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeSetURL(MethodExecutionContext executionContext);
 
-    void beforeWasNullOnCallableStatement(MethodExecutionContext executionContext);
+    void beforeWasNull(MethodExecutionContext executionContext);
 
-    void afterGetArrayOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetArray(MethodExecutionContext executionContext);
 
-    void afterGetBigDecimalOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetBigDecimal(MethodExecutionContext executionContext);
 
-    void afterGetBlobOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetBlob(MethodExecutionContext executionContext);
 
-    void afterGetBooleanOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetBoolean(MethodExecutionContext executionContext);
 
-    void afterGetByteOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetByte(MethodExecutionContext executionContext);
 
-    void afterGetBytesOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetBytes(MethodExecutionContext executionContext);
 
-    void afterGetCharacterStreamOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetCharacterStream(MethodExecutionContext executionContext);
 
-    void afterGetClobOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetClob(MethodExecutionContext executionContext);
 
-    void afterGetDateOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetDate(MethodExecutionContext executionContext);
 
-    void afterGetDoubleOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetDouble(MethodExecutionContext executionContext);
 
-    void afterGetFloatOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetFloat(MethodExecutionContext executionContext);
 
-    void afterGetIntOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetInt(MethodExecutionContext executionContext);
 
-    void afterGetLongOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetLong(MethodExecutionContext executionContext);
 
-    void afterGetNCharacterStreamOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetNCharacterStream(MethodExecutionContext executionContext);
 
-    void afterGetNClobOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetNClob(MethodExecutionContext executionContext);
 
-    void afterGetNStringOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetNString(MethodExecutionContext executionContext);
 
-    void afterGetObjectOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetObject(MethodExecutionContext executionContext);
 
-    void afterGetRefOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetRef(MethodExecutionContext executionContext);
 
-    void afterGetRowIdOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetRowId(MethodExecutionContext executionContext);
 
-    void afterGetShortOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetShort(MethodExecutionContext executionContext);
 
-    void afterGetSQLXMLOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetSQLXML(MethodExecutionContext executionContext);
 
-    void afterGetStringOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetString(MethodExecutionContext executionContext);
 
-    void afterGetTimeOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetTime(MethodExecutionContext executionContext);
 
-    void afterGetTimestampOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetTimestamp(MethodExecutionContext executionContext);
 
-    void afterGetURLOnCallableStatement(MethodExecutionContext executionContext);
+    void afterGetURL(MethodExecutionContext executionContext);
 
-    void afterRegisterOutParameterOnCallableStatement(MethodExecutionContext executionContext);
+    void afterRegisterOutParameter(MethodExecutionContext executionContext);
 
-    void afterSetAsciiStreamOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetAsciiStream(MethodExecutionContext executionContext);
 
-    void afterSetBigDecimalOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetBigDecimal(MethodExecutionContext executionContext);
 
-    void afterSetBinaryStreamOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetBinaryStream(MethodExecutionContext executionContext);
 
-    void afterSetBlobOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetBlob(MethodExecutionContext executionContext);
 
-    void afterSetBooleanOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetBoolean(MethodExecutionContext executionContext);
 
-    void afterSetByteOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetByte(MethodExecutionContext executionContext);
 
-    void afterSetBytesOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetBytes(MethodExecutionContext executionContext);
 
-    void afterSetCharacterStreamOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetCharacterStream(MethodExecutionContext executionContext);
 
-    void afterSetClobOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetClob(MethodExecutionContext executionContext);
 
-    void afterSetDateOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetDate(MethodExecutionContext executionContext);
 
-    void afterSetDoubleOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetDouble(MethodExecutionContext executionContext);
 
-    void afterSetFloatOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetFloat(MethodExecutionContext executionContext);
 
-    void afterSetIntOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetInt(MethodExecutionContext executionContext);
 
-    void afterSetLongOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetLong(MethodExecutionContext executionContext);
 
-    void afterSetNCharacterStreamOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetNCharacterStream(MethodExecutionContext executionContext);
 
-    void afterSetNClobOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetNClob(MethodExecutionContext executionContext);
 
-    void afterSetNStringOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetNString(MethodExecutionContext executionContext);
 
-    void afterSetNullOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetNull(MethodExecutionContext executionContext);
 
-    void afterSetObjectOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetObject(MethodExecutionContext executionContext);
 
-    void afterSetRowIdOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetRowId(MethodExecutionContext executionContext);
 
-    void afterSetShortOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetShort(MethodExecutionContext executionContext);
 
-    void afterSetSQLXMLOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetSQLXML(MethodExecutionContext executionContext);
 
-    void afterSetStringOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetString(MethodExecutionContext executionContext);
 
-    void afterSetTimeOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetTime(MethodExecutionContext executionContext);
 
-    void afterSetTimestampOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetTimestamp(MethodExecutionContext executionContext);
 
-    void afterSetURLOnCallableStatement(MethodExecutionContext executionContext);
+    void afterSetURL(MethodExecutionContext executionContext);
 
-    void afterWasNullOnCallableStatement(MethodExecutionContext executionContext);
+    void afterWasNull(MethodExecutionContext executionContext);
 
 }

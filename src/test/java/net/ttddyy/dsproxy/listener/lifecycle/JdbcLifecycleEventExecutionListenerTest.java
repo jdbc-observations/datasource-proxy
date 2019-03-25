@@ -51,26 +51,12 @@ public class JdbcLifecycleEventExecutionListenerTest {
         for (Class<? extends Wrapper> proxyClass : proxyClasses) {
             Wrapper mock = mock(proxyClass);
 
-            boolean isStatementClasses = Statement.class.isAssignableFrom(proxyClass);
-
             Method[] methods = proxyClass.getMethods();
 
             for (Method method : methods) {
 
-                boolean isWrapperMethod = method.getDeclaringClass() == Wrapper.class;
-
-                String methodName = capitalize(method.getName());
-
-                String className = proxyClass.getSimpleName();
-                if (isStatementClasses && !isWrapperMethod) {
-                    // for Statement class hierarchy, callback method is based on the declaring class
-                    // for Wrapper methods, it is based on target class
-                    className = method.getDeclaringClass().getSimpleName();
-                }
-
-
-                String expectedBeforeName = "before" + methodName + "On" + className;  // beforeXxxOnYyy
-                String expectedAfterName = "after" + methodName + "On" + className;
+                String expectedBeforeName = "before" + capitalize(method.getName());
+                String expectedAfterName = "after" + capitalize(method.getName());
 
                 // create a listener
                 List<String> invokedMethodNames = new ArrayList<String>();
@@ -83,10 +69,11 @@ public class JdbcLifecycleEventExecutionListenerTest {
                 methodExecContext.setTarget(mock);
 
                 listener.beforeMethod(methodExecContext);
-                assertThat(invokedMethodNames).hasSize(2).containsExactly("beforeMethod", expectedBeforeName);
-                assertThat(invokedMethodArgs).hasSize(2);
-                assertThat(invokedMethodArgs.get(0)).hasSize(1).containsExactly(methodExecContext);
-                assertThat(invokedMethodArgs.get(1)).hasSize(1).containsExactly(methodExecContext);
+                String description = "method=" + method.getName();
+                assertThat(invokedMethodNames).describedAs(description).hasSize(2).containsExactly("beforeMethod", expectedBeforeName);
+                assertThat(invokedMethodArgs).describedAs(description).hasSize(2);
+                assertThat(invokedMethodArgs.get(0)).describedAs(description).hasSize(1).containsExactly(methodExecContext);
+                assertThat(invokedMethodArgs.get(1)).describedAs(description).hasSize(1).containsExactly(methodExecContext);
 
                 invokedMethodNames.clear();
                 invokedMethodArgs.clear();

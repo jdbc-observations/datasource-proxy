@@ -1,0 +1,28 @@
+[[changelog-1.6]]
+=== 1.6
+
+==== Improvements
+
+* On `JdbcLifecycleEventListener`, method names have updated to map invoked method name only
+  (classname has removed) in order to improve the interception for overloaded methods.
++
+--
+The callback method is determined by invoked method name.
+See the details on below _"Breaking Changes"_ section.
+--
+
+==== Breaking Changes
+
+* `JdbcLifecycleEventListener` method names have changed.  +
+  (e.g.: `beforeGetConnectionOnDataSource()` => `beforeGetConnection()`)
++
+--
+Previously, the method names on the listener had convention of:
+`[before|after]<MethodName>On<ClassName>`  +
+e.g.: `beforeGetConnectionOnDataSource()`  +
+This has changed to `[before|after]<MethodName>`  +
+e.g.: `beforeGetConnection()`
+
+For overloaded methods (e.g.: `Statement#execute` and `PreparedStatement#execute`), please reference the
+documentation: <<jdbclifecycleeventlistener-overloaded-methods>>
+--
