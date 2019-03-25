@@ -44,8 +44,6 @@ public class JdbcLifecycleEventListenerUtilsTest {
             for (Method method : methods) {
                 String methodName = method.getName();
 
-                System.out.println(proxyClass.getSimpleName() + ":" + methodName);
-
                 String expectedBeforeName = "before" + capitalize(methodName);
                 String expectedAfterName = "after" + capitalize(methodName);
 
