@@ -48,11 +48,11 @@ public class JdbcLifecycleEventExecutionListener implements MethodExecutionListe
     }
 
     private void methodCallback(MethodExecutionContext methodContext, boolean isBefore) {
-        Method method = methodContext.getMethod();
-        Object proxyTarget = methodContext.getTarget();
 
         // dynamically invoke corresponding callback method on JdbcLifecycleEventListener.
-        Method lifecycleMethod = JdbcLifecycleEventListenerUtils.getListenerMethod(method, proxyTarget, isBefore);
+
+        String methodName = methodContext.getMethod().getName();
+        Method lifecycleMethod = JdbcLifecycleEventListenerUtils.getListenerMethod(methodName, isBefore);
 
         if (lifecycleMethod == null) {
             // when there is no corresponding life cycle callback, just skip it.

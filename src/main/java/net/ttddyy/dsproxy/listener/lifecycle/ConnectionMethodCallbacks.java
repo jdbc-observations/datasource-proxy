@@ -11,174 +11,162 @@ import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 public interface ConnectionMethodCallbacks {
 
     //
-    // Wrapper methods
-    //
-
-    void beforeIsWrapperForOnConnection(MethodExecutionContext executionContext);
-
-    void beforeUnwrapOnConnection(MethodExecutionContext executionContext);
-
-    void afterIsWrapperForOnConnection(MethodExecutionContext executionContext);
-
-    void afterUnwrapOnConnection(MethodExecutionContext executionContext);
-
-    //
     // Connection methods
     //
 
-    void beforeAbortOnConnection(MethodExecutionContext executionContext);
+    void beforeAbort(MethodExecutionContext executionContext);
 
-    void beforeClearWarningsOnConnection(MethodExecutionContext executionContext);
+    void beforeClearWarnings(MethodExecutionContext executionContext);
 
-    void beforeCloseOnConnection(MethodExecutionContext executionContext);
+    void beforeClose(MethodExecutionContext executionContext);
 
-    void beforeCommitOnConnection(MethodExecutionContext executionContext);
+    void beforeCommit(MethodExecutionContext executionContext);
 
-    void beforeCreateArrayOfOnConnection(MethodExecutionContext executionContext);
+    void beforeCreateArrayOf(MethodExecutionContext executionContext);
 
-    void beforeCreateBlobOnConnection(MethodExecutionContext executionContext);
+    void beforeCreateBlob(MethodExecutionContext executionContext);
 
-    void beforeCreateClobOnConnection(MethodExecutionContext executionContext);
+    void beforeCreateClob(MethodExecutionContext executionContext);
 
-    void beforeCreateNClobOnConnection(MethodExecutionContext executionContext);
+    void beforeCreateNClob(MethodExecutionContext executionContext);
 
-    void beforeCreateSQLXMLOnConnection(MethodExecutionContext executionContext);
+    void beforeCreateSQLXML(MethodExecutionContext executionContext);
 
-    void beforeCreateStatementOnConnection(MethodExecutionContext executionContext);
+    void beforeCreateStatement(MethodExecutionContext executionContext);
 
-    void beforeCreateStructOnConnection(MethodExecutionContext executionContext);
+    void beforeCreateStruct(MethodExecutionContext executionContext);
 
-    void beforeGetAutoCommitOnConnection(MethodExecutionContext executionContext);
+    void beforeGetAutoCommit(MethodExecutionContext executionContext);
 
-    void beforeGetCatalogOnConnection(MethodExecutionContext executionContext);
+    void beforeGetCatalog(MethodExecutionContext executionContext);
 
-    void beforeGetClientInfoOnConnection(MethodExecutionContext executionContext);
+    void beforeGetClientInfo(MethodExecutionContext executionContext);
 
-    void beforeGetHoldabilityOnConnection(MethodExecutionContext executionContext);
+    void beforeGetHoldability(MethodExecutionContext executionContext);
 
-    void beforeGetMetaDataOnConnection(MethodExecutionContext executionContext);
+    void beforeGetMetaData(MethodExecutionContext executionContext);
 
-    void beforeGetNetworkTimeoutOnConnection(MethodExecutionContext executionContext);
+    void beforeGetNetworkTimeout(MethodExecutionContext executionContext);
 
-    void beforeGetSchemaOnConnection(MethodExecutionContext executionContext);
+    void beforeGetSchema(MethodExecutionContext executionContext);
 
-    void beforeGetTransactionIsolationOnConnection(MethodExecutionContext executionContext);
+    void beforeGetTransactionIsolation(MethodExecutionContext executionContext);
 
-    void beforeGetTypeMapOnConnection(MethodExecutionContext executionContext);
+    void beforeGetTypeMap(MethodExecutionContext executionContext);
 
-    void beforeGetWarningsOnConnection(MethodExecutionContext executionContext);
+    void beforeGetWarnings(MethodExecutionContext executionContext);
 
-    void beforeIsClosedOnConnection(MethodExecutionContext executionContext);
+    void beforeIsClosed(MethodExecutionContext executionContext);
 
-    void beforeIsReadOnlyOnConnection(MethodExecutionContext executionContext);
+    void beforeIsReadOnly(MethodExecutionContext executionContext);
 
-    void beforeIsValidOnConnection(MethodExecutionContext executionContext);
+    void beforeIsValid(MethodExecutionContext executionContext);
 
-    void beforeNativeSQLOnConnection(MethodExecutionContext executionContext);
+    void beforeNativeSQL(MethodExecutionContext executionContext);
 
-    void beforePrepareCallOnConnection(MethodExecutionContext executionContext);
+    void beforePrepareCall(MethodExecutionContext executionContext);
 
-    void beforePrepareStatementOnConnection(MethodExecutionContext executionContext);
+    void beforePrepareStatement(MethodExecutionContext executionContext);
 
-    void beforeReleaseSavepointOnConnection(MethodExecutionContext executionContext);
+    void beforeReleaseSavepoint(MethodExecutionContext executionContext);
 
-    void beforeRollbackOnConnection(MethodExecutionContext executionContext);
+    void beforeRollback(MethodExecutionContext executionContext);
 
-    void beforeSetAutoCommitOnConnection(MethodExecutionContext executionContext);
+    void beforeSetAutoCommit(MethodExecutionContext executionContext);
 
-    void beforeSetCatalogOnConnection(MethodExecutionContext executionContext);
+    void beforeSetCatalog(MethodExecutionContext executionContext);
 
-    void beforeSetClientInfoOnConnection(MethodExecutionContext executionContext);
+    void beforeSetClientInfo(MethodExecutionContext executionContext);
 
-    void beforeSetHoldabilityOnConnection(MethodExecutionContext executionContext);
+    void beforeSetHoldability(MethodExecutionContext executionContext);
 
-    void beforeSetNetworkTimeoutOnConnection(MethodExecutionContext executionContext);
+    void beforeSetNetworkTimeout(MethodExecutionContext executionContext);
 
-    void beforeSetReadOnlyOnConnection(MethodExecutionContext executionContext);
+    void beforeSetReadOnly(MethodExecutionContext executionContext);
 
-    void beforeSetSavepointOnConnection(MethodExecutionContext executionContext);
+    void beforeSetSavepoint(MethodExecutionContext executionContext);
 
-    void beforeSetSchemaOnConnection(MethodExecutionContext executionContext);
+    void beforeSetSchema(MethodExecutionContext executionContext);
 
-    void beforeSetTransactionIsolationOnConnection(MethodExecutionContext executionContext);
+    void beforeSetTransactionIsolation(MethodExecutionContext executionContext);
 
-    void beforeSetTypeMapOnConnection(MethodExecutionContext executionContext);
+    void beforeSetTypeMap(MethodExecutionContext executionContext);
 
-    void afterAbortOnConnection(MethodExecutionContext executionContext);
+    void afterAbort(MethodExecutionContext executionContext);
 
-    void afterClearWarningsOnConnection(MethodExecutionContext executionContext);
+    void afterClearWarnings(MethodExecutionContext executionContext);
 
-    void afterCloseOnConnection(MethodExecutionContext executionContext);
+    void afterClose(MethodExecutionContext executionContext);
 
-    void afterCommitOnConnection(MethodExecutionContext executionContext);
+    void afterCommit(MethodExecutionContext executionContext);
 
-    void afterCreateArrayOfOnConnection(MethodExecutionContext executionContext);
+    void afterCreateArrayOf(MethodExecutionContext executionContext);
 
-    void afterCreateBlobOnConnection(MethodExecutionContext executionContext);
+    void afterCreateBlob(MethodExecutionContext executionContext);
 
-    void afterCreateClobOnConnection(MethodExecutionContext executionContext);
+    void afterCreateClob(MethodExecutionContext executionContext);
 
-    void afterCreateNClobOnConnection(MethodExecutionContext executionContext);
+    void afterCreateNClob(MethodExecutionContext executionContext);
 
-    void afterCreateSQLXMLOnConnection(MethodExecutionContext executionContext);
+    void afterCreateSQLXML(MethodExecutionContext executionContext);
 
-    void afterCreateStatementOnConnection(MethodExecutionContext executionContext);
+    void afterCreateStatement(MethodExecutionContext executionContext);
 
-    void afterCreateStructOnConnection(MethodExecutionContext executionContext);
+    void afterCreateStruct(MethodExecutionContext executionContext);
 
-    void afterGetAutoCommitOnConnection(MethodExecutionContext executionContext);
+    void afterGetAutoCommit(MethodExecutionContext executionContext);
 
-    void afterGetCatalogOnConnection(MethodExecutionContext executionContext);
+    void afterGetCatalog(MethodExecutionContext executionContext);
 
-    void afterGetClientInfoOnConnection(MethodExecutionContext executionContext);
+    void afterGetClientInfo(MethodExecutionContext executionContext);
 
-    void afterGetHoldabilityOnConnection(MethodExecutionContext executionContext);
+    void afterGetHoldability(MethodExecutionContext executionContext);
 
-    void afterGetMetaDataOnConnection(MethodExecutionContext executionContext);
+    void afterGetMetaData(MethodExecutionContext executionContext);
 
-    void afterGetNetworkTimeoutOnConnection(MethodExecutionContext executionContext);
+    void afterGetNetworkTimeout(MethodExecutionContext executionContext);
 
-    void afterGetSchemaOnConnection(MethodExecutionContext executionContext);
+    void afterGetSchema(MethodExecutionContext executionContext);
 
-    void afterGetTransactionIsolationOnConnection(MethodExecutionContext executionContext);
+    void afterGetTransactionIsolation(MethodExecutionContext executionContext);
 
-    void afterGetTypeMapOnConnection(MethodExecutionContext executionContext);
+    void afterGetTypeMap(MethodExecutionContext executionContext);
 
-    void afterGetWarningsOnConnection(MethodExecutionContext executionContext);
+    void afterGetWarnings(MethodExecutionContext executionContext);
 
-    void afterIsClosedOnConnection(MethodExecutionContext executionContext);
+    void afterIsClosed(MethodExecutionContext executionContext);
 
-    void afterIsReadOnlyOnConnection(MethodExecutionContext executionContext);
+    void afterIsReadOnly(MethodExecutionContext executionContext);
 
-    void afterIsValidOnConnection(MethodExecutionContext executionContext);
+    void afterIsValid(MethodExecutionContext executionContext);
 
-    void afterNativeSQLOnConnection(MethodExecutionContext executionContext);
+    void afterNativeSQL(MethodExecutionContext executionContext);
 
-    void afterPrepareCallOnConnection(MethodExecutionContext executionContext);
+    void afterPrepareCall(MethodExecutionContext executionContext);
 
-    void afterPrepareStatementOnConnection(MethodExecutionContext executionContext);
+    void afterPrepareStatement(MethodExecutionContext executionContext);
 
-    void afterReleaseSavepointOnConnection(MethodExecutionContext executionContext);
+    void afterReleaseSavepoint(MethodExecutionContext executionContext);
 
-    void afterRollbackOnConnection(MethodExecutionContext executionContext);
+    void afterRollback(MethodExecutionContext executionContext);
 
-    void afterSetAutoCommitOnConnection(MethodExecutionContext executionContext);
+    void afterSetAutoCommit(MethodExecutionContext executionContext);
 
-    void afterSetCatalogOnConnection(MethodExecutionContext executionContext);
+    void afterSetCatalog(MethodExecutionContext executionContext);
 
-    void afterSetClientInfoOnConnection(MethodExecutionContext executionContext);
+    void afterSetClientInfo(MethodExecutionContext executionContext);
 
-    void afterSetHoldabilityOnConnection(MethodExecutionContext executionContext);
+    void afterSetHoldability(MethodExecutionContext executionContext);
 
-    void afterSetNetworkTimeoutOnConnection(MethodExecutionContext executionContext);
+    void afterSetNetworkTimeout(MethodExecutionContext executionContext);
 
-    void afterSetReadOnlyOnConnection(MethodExecutionContext executionContext);
+    void afterSetReadOnly(MethodExecutionContext executionContext);
 
-    void afterSetSavepointOnConnection(MethodExecutionContext executionContext);
+    void afterSetSavepoint(MethodExecutionContext executionContext);
 
-    void afterSetSchemaOnConnection(MethodExecutionContext executionContext);
+    void afterSetSchema(MethodExecutionContext executionContext);
 
-    void afterSetTransactionIsolationOnConnection(MethodExecutionContext executionContext);
+    void afterSetTransactionIsolation(MethodExecutionContext executionContext);
 
-    void afterSetTypeMapOnConnection(MethodExecutionContext executionContext);
+    void afterSetTypeMap(MethodExecutionContext executionContext);
 }

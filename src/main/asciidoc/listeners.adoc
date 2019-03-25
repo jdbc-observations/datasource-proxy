@@ -104,16 +104,28 @@ DataSource dataSource =
   ProxyDataSourceBuilder.create(actualDataSource)
     .listener(new JdbcLifecycleEventListenerAdapter() {
       @Override
-      public void beforeGetConnectionOnDataSource(MethodExecutionContext executionContext) {
+      public void beforeGetConnection(MethodExecutionContext executionContext) {
         // impl for before DataSource#getConnection();
       }
 
       @Override
-      public void afterRollbackOnConnection(MethodExecutionContext executionContext) {
+      public void afterRollback(MethodExecutionContext executionContext) {
         // impl for after Connection#rollback();
       }
     })
     .build();
 
 ```
+
+[[jdbclifecycleeventlistener-overloaded-methods]]
+==== Overloaded methods
+
+Since JDBC API classes are hierarchical (e.g.: `PreparedStatement` extends `Statement`) some
+of the methods are overloaded. For example, `PreparedStatement#execute` method is overloading `Statement#execute`. Another example is
+`PreparedStatement#setInt` and `CallableStatement#setInt`.
+
+`JdbcLifecycleEventListener` methods are called back by comparing the invoked method name.
+Therefore, in this example, `[before|after]Execute` and `[before|after]setInt` will be called.
+If you need to know exactly which of the method is called, you could check the invoked instance, method,
+or passed arguments to diagnose the actual invoked method when it is overloaded.
 

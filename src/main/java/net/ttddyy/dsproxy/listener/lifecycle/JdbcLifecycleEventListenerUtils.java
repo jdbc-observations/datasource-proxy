@@ -1,7 +1,5 @@
 package net.ttddyy.dsproxy.listener.lifecycle;
 
-import net.ttddyy.dsproxy.DataSourceProxyException;
-
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import java.lang.reflect.Method;
@@ -11,173 +9,94 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Wrapper;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Tadaya Tsuyukubo
  */
 public class JdbcLifecycleEventListenerUtils {
 
-    private static final Map<Method, Method> beforeMethods = new HashMap<Method, Method>();
-    private static final Map<Method, Method> afterMethods = new HashMap<Method, Method>();
-
-    // special handling for Wrapper methods
-    private static final Map<Class<?>, Method> beforeMethodForUnwrap = new HashMap<Class<?>, Method>();
-    private static final Map<Class<?>, Method> afterMethodForUnwrap = new HashMap<Class<?>, Method>();
-    private static final Map<Class<?>, Method> beforeMethodForIsWrapperFor = new HashMap<Class<?>, Method>();
-    private static final Map<Class<?>, Method> afterMethodForIsWrapperFor = new HashMap<Class<?>, Method>();
+    private static final Map<String, Method> beforeLifecycleMethodsByMethodName = new HashMap<String, Method>();
+    private static final Map<String, Method> afterLifecycleMethodsByMethodName = new HashMap<String, Method>();
 
     static {
-        init();
+
+        Set<String> methodNames = getDeclaredMethodNames(
+                Wrapper.class,
+                DataSource.class, CommonDataSource.class,
+                Connection.class,
+                Statement.class, PreparedStatement.class, CallableStatement.class,
+                ResultSet.class);
+
+        beforeLifecycleMethodsByMethodName.putAll(getLifecycleMethodByMethodName(methodNames, true));
+        afterLifecycleMethodsByMethodName.putAll(getLifecycleMethodByMethodName(methodNames, false));
     }
 
-    private static void init() {
-        List<Class<? extends Wrapper>> proxiedClasses = Arrays.asList(DataSource.class, Connection.class,
-                Statement.class, PreparedStatement.class, CallableStatement.class, ResultSet.class);
 
-
-        Map<String, Method> lifeCycleMethodByName = new HashMap<String, Method>();
-        // method defined in Object will not be part of this. (see getMethods() javadoc)
+    /**
+     * Retrieve corresponding lifecycle methods declared in {@link JdbcLifecycleEventListener}.
+     *
+     * <p>Format is {@code [before|after]<MethodName>}
+     *
+     * @param methodNames set of method names to find
+     * @param isBefore    whether to retrieve before methods or after methods
+     * @return a map that key is the method name string and value is lifecycle method
+     */
+    private static Map<String, Method> getLifecycleMethodByMethodName(Set<String> methodNames, boolean isBefore) {
+        Map<String, Method> lifecycleMethodByName = new HashMap<String, Method>();
         for (Method method : JdbcLifecycleEventListener.class.getMethods()) {
-            lifeCycleMethodByName.put(method.getName(), method);
+            lifecycleMethodByName.put(method.getName(), method);
         }
 
-        for (Class<? extends Wrapper> proxiedClass : proxiedClasses) {
-            for (Method method : proxiedClass.getMethods()) {
-                boolean isWrapperMethod = method.getDeclaringClass() == Wrapper.class;
-
-                String beforeMethodName = getTargetMethodName(method, proxiedClass, true);
-                String afterMethodName = getTargetMethodName(method, proxiedClass, false);
-
-                Method beforeMethod = lifeCycleMethodByName.get(beforeMethodName);
-                Method afterMethod = lifeCycleMethodByName.get(afterMethodName);
-
-                // populate method-to-method cache
-                if (isWrapperMethod) {
-                    if ("unwrap".equals(method.getName())) {
-                        beforeMethodForUnwrap.put(proxiedClass, beforeMethod);
-                        afterMethodForUnwrap.put(proxiedClass, afterMethod);
-                    } else {
-                        beforeMethodForIsWrapperFor.put(proxiedClass, beforeMethod);
-                        afterMethodForIsWrapperFor.put(proxiedClass, afterMethod);
-                    }
-                } else {
-                    beforeMethods.put(method, beforeMethod);
-                    afterMethods.put(method, afterMethod);
-                }
-            }
+        Map<String, Method> result = new HashMap<String, Method>();
+        for (String methodName : methodNames) {
+            String lifecycleMethodName = (isBefore ? "before" : "after") + capitalize(methodName);
+            Method targetLifecycleMethod = lifecycleMethodByName.get(lifecycleMethodName);
+            result.put(methodName, targetLifecycleMethod);
         }
+        return result;
     }
+
+    private static String capitalize(String methodName) {
+        StringBuilder sb = new StringBuilder(methodName.length());
+        sb.append(Character.toUpperCase(methodName.charAt(0)));
+        sb.append(methodName.substring(1));
+        return sb.toString();
+    }
+
+    private static Set<String> getDeclaredMethodNames(Class<?>... classes) {
+        Set<String> names = new HashSet<String>();
+        for (Class<?> clazz : classes) {
+            names.addAll(getDeclaredMethodNames(clazz));
+        }
+        return names;
+    }
+
+    private static Set<String> getDeclaredMethodNames(Class<?> clazz) {
+        Set<String> names = new HashSet<String>();
+        for (Method method : clazz.getDeclaredMethods()) {
+            names.add(method.getName());
+        }
+        return names;
+    }
+
 
     /**
      * Find corresponding callback method on {@link JdbcLifecycleEventListener}.
      *
-     * @param invokedMethod invoked method
-     * @param proxyTarget   proxy target
-     * @param isBefore      before method or not
-     * @return corresponding callback method
+     * @param invokedMethodName invoked method name
+     * @param isBefore          before method or not
+     * @return corresponding callback method or {@code null} if not found. (e.g.: toString, hashCode)
      */
-    public static Method getListenerMethod(Method invokedMethod, Object proxyTarget, boolean isBefore) {
-
-        Class<?> declaringClass = invokedMethod.getDeclaringClass();
-        boolean isWrapperMethod = declaringClass == Wrapper.class;
-
-        if (isWrapperMethod) {
-            Class<?> key;
-            if (proxyTarget instanceof DataSource) {
-                key = DataSource.class;
-            } else if (proxyTarget instanceof Connection) {
-                key = Connection.class;
-            } else if (proxyTarget instanceof CallableStatement) {
-                key = CallableStatement.class;
-            } else if (proxyTarget instanceof PreparedStatement) {
-                key = PreparedStatement.class;
-            } else if (proxyTarget instanceof Statement) {
-                key = Statement.class;
-            } else if (proxyTarget instanceof ResultSet) {
-                key = ResultSet.class;
-            } else {
-                throw new DataSourceProxyException("Unknown target type. proxyTarget=" + proxyTarget);
-            }
-
-            if ("unwrap".equals(invokedMethod.getName())) {
-                if (isBefore) {
-                    return beforeMethodForUnwrap.get(key);
-                } else {
-                    return afterMethodForUnwrap.get(key);
-                }
-            } else {
-                if (isBefore) {
-                    return beforeMethodForIsWrapperFor.get(key);
-                } else {
-                    return afterMethodForIsWrapperFor.get(key);
-                }
-            }
-        }
-
+    public static Method getListenerMethod(String invokedMethodName, boolean isBefore) {
         if (isBefore) {
-            return beforeMethods.get(invokedMethod);
+            return beforeLifecycleMethodsByMethodName.get(invokedMethodName);
         } else {
-            return afterMethods.get(invokedMethod);
+            return afterLifecycleMethodsByMethodName.get(invokedMethodName);
         }
-
     }
 
-    public static String getTargetMethodName(Method invokedMethod, Class<?> proxiedClass, boolean isBefore) {
-        String methodName = invokedMethod.getName();
-
-        // Generate "beforeXxxOnYyy" or "afterXxxOnYyy"
-
-        StringBuilder sb = new StringBuilder();
-        if (isBefore) {
-            sb.append("before");
-        } else {
-            sb.append("after");
-        }
-
-
-        if (isWrapperMethod(methodName)) {
-            // special handling for Wrapper methods
-            if ("unwrap".equals(methodName)) {
-                sb.append("UnwrapOn");
-            } else {
-                sb.append("IsWrapperForOn");
-            }
-            if (proxiedClass == DataSource.class) {
-                sb.append("DataSource");
-            } else if (proxiedClass == Connection.class) {
-                sb.append("Connection");
-            } else if (proxiedClass == CallableStatement.class) {
-                sb.append("CallableStatement");
-            } else if (proxiedClass == PreparedStatement.class) {
-                sb.append("PreparedStatement");
-            } else if (proxiedClass == Statement.class) {
-                sb.append("Statement");
-            } else if (proxiedClass == ResultSet.class) {
-                sb.append("ResultSet");
-            }
-            return sb.toString();
-        }
-
-
-        sb.append(Character.toUpperCase(methodName.charAt(0)));
-        sb.append(methodName.substring(1));
-        sb.append("On");
-
-        Class<?> declaringClass = invokedMethod.getDeclaringClass();
-        if (declaringClass == CommonDataSource.class) {
-            sb.append("DataSource");
-        } else {
-            sb.append(declaringClass.getSimpleName());
-        }
-
-        return sb.toString();
-    }
-
-    private static boolean isWrapperMethod(String methodName) {
-        return "unwrap".equals(methodName) || "isWrapperFor".equals(methodName);
-    }
 }

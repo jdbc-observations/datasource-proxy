@@ -11,167 +11,155 @@ import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 public interface PreparedStatementMethodCallbacks {
 
     //
-    // Wrapper methods
-    //
-
-    void beforeIsWrapperForOnPreparedStatement(MethodExecutionContext executionContext);
-
-    void beforeUnwrapOnPreparedStatement(MethodExecutionContext executionContext);
-
-    void afterIsWrapperForOnPreparedStatement(MethodExecutionContext executionContext);
-
-    void afterUnwrapOnPreparedStatement(MethodExecutionContext executionContext);
-
-    //
     // PreparedStatement methods
     //
 
-    void beforeAddBatchOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeAddBatch(MethodExecutionContext executionContext);
 
-    void beforeClearParametersOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeClearParameters(MethodExecutionContext executionContext);
 
-    void beforeExecuteOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeExecute(MethodExecutionContext executionContext);
 
-    void beforeExecuteLargeUpdateOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeExecuteLargeUpdate(MethodExecutionContext executionContext);
 
-    void beforeExecuteQueryOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeExecuteQuery(MethodExecutionContext executionContext);
 
-    void beforeExecuteUpdateOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeExecuteUpdate(MethodExecutionContext executionContext);
 
-    void beforeGetMetaDataOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeGetMetaData(MethodExecutionContext executionContext);
 
-    void beforeGetParameterMetaDataOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeGetParameterMetaData(MethodExecutionContext executionContext);
 
-    void beforeSetArrayOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetArray(MethodExecutionContext executionContext);
 
-    void beforeSetAsciiStreamOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetAsciiStream(MethodExecutionContext executionContext);
 
-    void beforeSetBigDecimalOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetBigDecimal(MethodExecutionContext executionContext);
 
-    void beforeSetBinaryStreamOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetBinaryStream(MethodExecutionContext executionContext);
 
-    void beforeSetBlobOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetBlob(MethodExecutionContext executionContext);
 
-    void beforeSetBooleanOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetBoolean(MethodExecutionContext executionContext);
 
-    void beforeSetByteOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetByte(MethodExecutionContext executionContext);
 
-    void beforeSetBytesOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetBytes(MethodExecutionContext executionContext);
 
-    void beforeSetCharacterStreamOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetCharacterStream(MethodExecutionContext executionContext);
 
-    void beforeSetClobOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetClob(MethodExecutionContext executionContext);
 
-    void beforeSetDateOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetDate(MethodExecutionContext executionContext);
 
-    void beforeSetDoubleOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetDouble(MethodExecutionContext executionContext);
 
-    void beforeSetFloatOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetFloat(MethodExecutionContext executionContext);
 
-    void beforeSetIntOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetInt(MethodExecutionContext executionContext);
 
-    void beforeSetLongOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetLong(MethodExecutionContext executionContext);
 
-    void beforeSetNCharacterStreamOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetNCharacterStream(MethodExecutionContext executionContext);
 
-    void beforeSetNClobOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetNClob(MethodExecutionContext executionContext);
 
-    void beforeSetNStringOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetNString(MethodExecutionContext executionContext);
 
-    void beforeSetNullOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetNull(MethodExecutionContext executionContext);
 
-    void beforeSetObjectOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetObject(MethodExecutionContext executionContext);
 
-    void beforeSetRefOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetRef(MethodExecutionContext executionContext);
 
-    void beforeSetRowIdOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetRowId(MethodExecutionContext executionContext);
 
-    void beforeSetShortOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetShort(MethodExecutionContext executionContext);
 
-    void beforeSetSQLXMLOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetSQLXML(MethodExecutionContext executionContext);
 
-    void beforeSetStringOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetString(MethodExecutionContext executionContext);
 
-    void beforeSetTimeOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetTime(MethodExecutionContext executionContext);
 
-    void beforeSetTimestampOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetTimestamp(MethodExecutionContext executionContext);
 
-    void beforeSetUnicodeStreamOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetUnicodeStream(MethodExecutionContext executionContext);
 
-    void beforeSetURLOnPreparedStatement(MethodExecutionContext executionContext);
+    void beforeSetURL(MethodExecutionContext executionContext);
 
-    void afterAddBatchOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterAddBatch(MethodExecutionContext executionContext);
 
-    void afterClearParametersOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterClearParameters(MethodExecutionContext executionContext);
 
-    void afterExecuteOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterExecute(MethodExecutionContext executionContext);
 
-    void afterExecuteLargeUpdateOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterExecuteLargeUpdate(MethodExecutionContext executionContext);
 
-    void afterExecuteQueryOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterExecuteQuery(MethodExecutionContext executionContext);
 
-    void afterExecuteUpdateOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterExecuteUpdate(MethodExecutionContext executionContext);
 
-    void afterGetMetaDataOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterGetMetaData(MethodExecutionContext executionContext);
 
-    void afterGetParameterMetaDataOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterGetParameterMetaData(MethodExecutionContext executionContext);
 
-    void afterSetArrayOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetArray(MethodExecutionContext executionContext);
 
-    void afterSetAsciiStreamOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetAsciiStream(MethodExecutionContext executionContext);
 
-    void afterSetBigDecimalOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetBigDecimal(MethodExecutionContext executionContext);
 
-    void afterSetBinaryStreamOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetBinaryStream(MethodExecutionContext executionContext);
 
-    void afterSetBlobOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetBlob(MethodExecutionContext executionContext);
 
-    void afterSetBooleanOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetBoolean(MethodExecutionContext executionContext);
 
-    void afterSetByteOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetByte(MethodExecutionContext executionContext);
 
-    void afterSetBytesOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetBytes(MethodExecutionContext executionContext);
 
-    void afterSetCharacterStreamOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetCharacterStream(MethodExecutionContext executionContext);
 
-    void afterSetClobOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetClob(MethodExecutionContext executionContext);
 
-    void afterSetDateOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetDate(MethodExecutionContext executionContext);
 
-    void afterSetDoubleOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetDouble(MethodExecutionContext executionContext);
 
-    void afterSetFloatOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetFloat(MethodExecutionContext executionContext);
 
-    void afterSetIntOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetInt(MethodExecutionContext executionContext);
 
-    void afterSetLongOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetLong(MethodExecutionContext executionContext);
 
-    void afterSetNCharacterStreamOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetNCharacterStream(MethodExecutionContext executionContext);
 
-    void afterSetNClobOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetNClob(MethodExecutionContext executionContext);
 
-    void afterSetNStringOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetNString(MethodExecutionContext executionContext);
 
-    void afterSetNullOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetNull(MethodExecutionContext executionContext);
 
-    void afterSetObjectOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetObject(MethodExecutionContext executionContext);
 
-    void afterSetRefOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetRef(MethodExecutionContext executionContext);
 
-    void afterSetRowIdOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetRowId(MethodExecutionContext executionContext);
 
-    void afterSetShortOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetShort(MethodExecutionContext executionContext);
 
-    void afterSetSQLXMLOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetSQLXML(MethodExecutionContext executionContext);
 
-    void afterSetStringOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetString(MethodExecutionContext executionContext);
 
-    void afterSetTimeOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetTime(MethodExecutionContext executionContext);
 
-    void afterSetTimestampOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetTimestamp(MethodExecutionContext executionContext);
 
-    void afterSetUnicodeStreamOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetUnicodeStream(MethodExecutionContext executionContext);
 
-    void afterSetURLOnPreparedStatement(MethodExecutionContext executionContext);
+    void afterSetURL(MethodExecutionContext executionContext);
 
 }

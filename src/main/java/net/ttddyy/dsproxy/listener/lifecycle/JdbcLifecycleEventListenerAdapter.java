@@ -32,2250 +32,1982 @@ public class JdbcLifecycleEventListenerAdapter implements JdbcLifecycleEventList
     }
 
     @Override
-    public void beforeIsWrapperForOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeUnwrapOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void afterIsWrapperForOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void afterUnwrapOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetArrayOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetBigDecimalOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetBlobOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetBooleanOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetByteOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetBytesOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetCharacterStreamOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetClobOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetDateOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetDoubleOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetFloatOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetIntOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetLongOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetNCharacterStreamOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetNClobOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetNStringOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetObjectOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetRefOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetRowIdOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetShortOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetSQLXMLOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetStringOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetTimeOnCallableStatement(MethodExecutionContext executionContext) {
-    }
-
-    @Override
-    public void beforeGetTimestampOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetArray(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeGetURLOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeRegisterOutParameterOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetBigDecimal(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetAsciiStreamOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetBigDecimalOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetBlob(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetBinaryStreamOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetBlobOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetBoolean(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetBooleanOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetByteOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetByte(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetBytesOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetCharacterStreamOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetBytes(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetClobOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetDateOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetCharacterStream(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetDoubleOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetFloatOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetClob(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetIntOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetLongOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetDate(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetNCharacterStreamOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetNClobOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetDouble(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetNStringOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetNullOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetFloat(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetObjectOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetRowIdOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetInt(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetShortOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetSQLXMLOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetLong(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetStringOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetTimeOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetNCharacterStream(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetTimestampOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetURLOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetNClob(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeWasNullOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetArrayOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetNString(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetBigDecimalOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetBlobOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetObject(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetBooleanOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetByteOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetRef(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetBytesOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetCharacterStreamOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetRowId(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetClobOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetDateOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetShort(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetDoubleOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetFloatOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetSQLXML(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetIntOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetLongOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetString(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetNCharacterStreamOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetNClobOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetTime(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetNStringOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetObjectOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetTimestamp(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetRefOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetRowIdOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetURL(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetShortOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetSQLXMLOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeRegisterOutParameter(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetStringOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetTimeOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeWasNull(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetTimestampOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetURLOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetArray(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterRegisterOutParameterOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetAsciiStreamOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetBigDecimal(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetBigDecimalOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetBinaryStreamOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetBlob(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetBlobOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetBooleanOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetBoolean(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetByteOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetBytesOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetByte(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetCharacterStreamOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetClobOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetBytes(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetDateOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetDoubleOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetCharacterStream(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetFloatOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetIntOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetClob(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetLongOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetNCharacterStreamOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetDate(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetNClobOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetNStringOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetDouble(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetNullOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetObjectOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetFloat(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetRowIdOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetShortOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetInt(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetSQLXMLOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetStringOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetLong(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetTimeOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetTimestampOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetNCharacterStream(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetURLOnCallableStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterWasNullOnCallableStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetNClob(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeIsWrapperForOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeUnwrapOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void afterGetNString(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterIsWrapperForOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterUnwrapOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void afterGetObject(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeAbortOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeClearWarningsOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void afterGetRef(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeCloseOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeCommitOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void afterGetRowId(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeCreateArrayOfOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeCreateBlobOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void afterGetShort(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeCreateClobOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeCreateNClobOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void afterGetSQLXML(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeCreateSQLXMLOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeCreateStatementOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void afterGetString(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeCreateStructOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeGetAutoCommitOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void afterGetTime(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeGetCatalogOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeGetClientInfoOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void afterGetTimestamp(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeGetHoldabilityOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeGetMetaDataOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void afterGetURL(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeGetNetworkTimeoutOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeGetSchemaOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void afterRegisterOutParameter(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeGetTransactionIsolationOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeGetTypeMapOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void afterWasNull(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeGetWarningsOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeIsClosedOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeAbort(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeIsReadOnlyOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeIsValidOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeClearWarnings(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeNativeSQLOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforePrepareCallOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeClose(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforePrepareStatementOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeReleaseSavepointOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeCommit(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeRollbackOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetAutoCommitOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeCreateArrayOf(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetCatalogOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetClientInfoOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeCreateBlob(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetHoldabilityOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetNetworkTimeoutOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeCreateClob(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetReadOnlyOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetSavepointOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeCreateNClob(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetSchemaOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetTransactionIsolationOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeCreateSQLXML(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetTypeMapOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterAbortOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeCreateStatement(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterClearWarningsOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterCloseOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeCreateStruct(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterCommitOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterCreateArrayOfOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetAutoCommit(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterCreateBlobOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterCreateClobOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetCatalog(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterCreateNClobOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterCreateSQLXMLOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetClientInfo(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterCreateStatementOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterCreateStructOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetHoldability(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetAutoCommitOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetCatalogOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetMetaData(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetClientInfoOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetHoldabilityOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetNetworkTimeout(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetMetaDataOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetNetworkTimeoutOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetSchema(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetSchemaOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetTransactionIsolationOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetTransactionIsolation(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetTypeMapOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetWarningsOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetTypeMap(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterIsClosedOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterIsReadOnlyOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetWarnings(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterIsValidOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterNativeSQLOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeIsClosed(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterPrepareCallOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterPrepareStatementOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeIsReadOnly(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterReleaseSavepointOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterRollbackOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeIsValid(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetAutoCommitOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetCatalogOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeNativeSQL(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetClientInfoOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetHoldabilityOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforePrepareCall(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetNetworkTimeoutOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetReadOnlyOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforePrepareStatement(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetSavepointOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetSchemaOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeReleaseSavepoint(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetTransactionIsolationOnConnection(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetTypeMapOnConnection(MethodExecutionContext executionContext) {
-    }
+    public void beforeRollback(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeIsWrapperForOnDataSource(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeUnwrapOnDataSource(MethodExecutionContext executionContext) {
-    }
+    public void beforeSetAutoCommit(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterIsWrapperForOnDataSource(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterUnwrapOnDataSource(MethodExecutionContext executionContext) {
-    }
+    public void beforeSetCatalog(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeGetLoginTimeoutOnDataSource(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeGetLogWriterOnDataSource(MethodExecutionContext executionContext) {
-    }
+    public void beforeSetClientInfo(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeGetParentLoggerOnDataSource(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetLoginTimeoutOnDataSource(MethodExecutionContext executionContext) {
-    }
+    public void beforeSetHoldability(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetLogWriterOnDataSource(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetLoginTimeoutOnDataSource(MethodExecutionContext executionContext) {
-    }
+    public void beforeSetNetworkTimeout(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetLogWriterOnDataSource(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetParentLoggerOnDataSource(MethodExecutionContext executionContext) {
-    }
+    public void beforeSetReadOnly(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetLoginTimeoutOnDataSource(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetLogWriterOnDataSource(MethodExecutionContext executionContext) {
-    }
+    public void beforeSetSavepoint(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeGetConnectionOnDataSource(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetConnectionOnDataSource(MethodExecutionContext executionContext) {
-    }
+    public void beforeSetSchema(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeIsWrapperForOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeUnwrapOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeSetTransactionIsolation(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterIsWrapperForOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterUnwrapOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void beforeSetTypeMap(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeAddBatchOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeClearParametersOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterAbort(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeExecuteOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeExecuteLargeUpdateOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterClearWarnings(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeExecuteQueryOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeExecuteUpdateOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterClose(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeGetMetaDataOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeGetParameterMetaDataOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterCommit(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetArrayOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetAsciiStreamOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterCreateArrayOf(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetBigDecimalOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetBinaryStreamOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterCreateBlob(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetBlobOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetBooleanOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterCreateClob(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetByteOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetBytesOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterCreateNClob(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetCharacterStreamOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetClobOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterCreateSQLXML(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetDateOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetDoubleOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterCreateStatement(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetFloatOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetIntOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterCreateStruct(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetLongOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetNCharacterStreamOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetAutoCommit(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetNClobOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetNStringOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetCatalog(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetNullOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetObjectOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetClientInfo(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetRefOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetRowIdOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetHoldability(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetShortOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetSQLXMLOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetMetaData(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetStringOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetTimeOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetNetworkTimeout(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetTimestampOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeSetUnicodeStreamOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetSchema(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeSetURLOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterAddBatchOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetTransactionIsolation(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterClearParametersOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterExecuteOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetTypeMap(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterExecuteLargeUpdateOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterExecuteQueryOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterGetWarnings(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterExecuteUpdateOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterGetMetaDataOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterIsClosed(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterGetParameterMetaDataOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetArrayOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterIsReadOnly(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetAsciiStreamOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetBigDecimalOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterIsValid(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetBinaryStreamOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetBlobOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterNativeSQL(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetBooleanOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetByteOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterPrepareCall(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetBytesOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetCharacterStreamOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterPrepareStatement(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetClobOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetDateOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterReleaseSavepoint(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetDoubleOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetFloatOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterRollback(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetIntOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetLongOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterSetAutoCommit(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetNCharacterStreamOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetNClobOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterSetCatalog(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetNStringOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetNullOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterSetClientInfo(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetObjectOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetRefOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterSetHoldability(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetRowIdOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetShortOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterSetNetworkTimeout(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetSQLXMLOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetStringOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterSetReadOnly(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetTimeOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetTimestampOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterSetSavepoint(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterSetUnicodeStreamOnPreparedStatement(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterSetURLOnPreparedStatement(MethodExecutionContext executionContext) {
-    }
+    public void afterSetSchema(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeIsWrapperForOnResultSet(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeUnwrapOnResultSet(MethodExecutionContext executionContext) {
-    }
+    public void afterSetTransactionIsolation(MethodExecutionContext executionContext) {
 
-    @Override
-    public void afterIsWrapperForOnResultSet(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void afterUnwrapOnResultSet(MethodExecutionContext executionContext) {
-    }
+    public void afterSetTypeMap(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeAbsoluteOnResultSet(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeAfterLastOnResultSet(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetLoginTimeout(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeBeforeFirstOnResultSet(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeCancelRowUpdatesOnResultSet(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetLogWriter(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeClearWarningsOnResultSet(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeCloseOnResultSet(MethodExecutionContext executionContext) {
-    }
+    public void beforeGetParentLogger(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeDeleteRowOnResultSet(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeFindColumnOnResultSet(MethodExecutionContext executionContext) {
-    }
+    public void beforeSetLoginTimeout(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeFirstOnResultSet(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeGetArrayOnResultSet(MethodExecutionContext executionContext) {
-    }
+    public void beforeSetLogWriter(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeGetAsciiStreamOnResultSet(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeGetBigDecimalOnResultSet(MethodExecutionContext executionContext) {
-    }
+    public void afterGetLoginTimeout(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeGetBinaryStreamOnResultSet(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeGetBlobOnResultSet(MethodExecutionContext executionContext) {
-    }
+    public void afterGetLogWriter(MethodExecutionContext executionContext) {
 
-    @Override
-    public void beforeGetBooleanOnResultSet(MethodExecutionContext executionContext) {
     }
 
     @Override
-    public void beforeGetByteOnResultSet(MethodExecutionContext executionContext) {
+    public void afterGetParentLogger(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetBytesOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetLoginTimeout(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetCharacterStreamOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetLogWriter(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetClobOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeGetConnection(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetConcurrencyOnResultSet(MethodExecutionContext executionContext) {
+    public void afterGetConnection(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetCursorNameOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeClearParameters(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetDateOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeGetParameterMetaData(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetDoubleOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetArray(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetFetchDirectionOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetAsciiStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetFetchSizeOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetBigDecimal(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetFloatOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetBinaryStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetHoldabilityOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetBlob(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetIntOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetBoolean(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetLongOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetByte(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetMetaDataOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetBytes(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetNCharacterStreamOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetCharacterStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetNClobOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetClob(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetNStringOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetDate(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetObjectOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetDouble(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetRefOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetFloat(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetRowOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetInt(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetRowIdOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetLong(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetShortOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetNCharacterStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetSQLXMLOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetNClob(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetStatementOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetNString(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetStringOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetNull(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetTimeOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetObject(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetTimestampOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetRef(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetTypeOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetRowId(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetUnicodeStreamOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetShort(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetURLOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetSQLXML(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetWarningsOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetString(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeInsertRowOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetTime(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeIsAfterLastOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetTimestamp(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeIsBeforeFirstOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetUnicodeStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeIsClosedOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeSetURL(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeIsFirstOnResultSet(MethodExecutionContext executionContext) {
+    public void afterClearParameters(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeIsLastOnResultSet(MethodExecutionContext executionContext) {
+    public void afterGetParameterMetaData(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeLastOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetArray(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeMoveToCurrentRowOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetAsciiStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeMoveToInsertRowOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetBigDecimal(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeNextOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetBinaryStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforePreviousOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetBlob(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeRefreshRowOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetBoolean(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeRelativeOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetByte(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeRowDeletedOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetBytes(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeRowInsertedOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetCharacterStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeRowUpdatedOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetClob(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeSetFetchDirectionOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetDate(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeSetFetchSizeOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetDouble(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateArrayOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetFloat(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateAsciiStreamOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetInt(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateBigDecimalOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetLong(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateBinaryStreamOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetNCharacterStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateBlobOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetNClob(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateBooleanOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetNString(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateByteOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetNull(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateBytesOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetObject(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateCharacterStreamOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetRef(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateClobOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetRowId(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateDateOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetShort(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateDoubleOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetSQLXML(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateFloatOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetString(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateIntOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetTime(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateLongOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetTimestamp(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateNCharacterStreamOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetUnicodeStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateNClobOnResultSet(MethodExecutionContext executionContext) {
+    public void afterSetURL(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateNStringOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeAbsolute(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateNullOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeAfterLast(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateObjectOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeBeforeFirst(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateRefOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeCancelRowUpdates(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateRowOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeDeleteRow(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateRowIdOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeFindColumn(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateShortOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeFirst(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateSQLXMLOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeGetAsciiStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateStringOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeGetBinaryStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateTimeOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeGetConcurrency(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUpdateTimestampOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeGetCursorName(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeWasNullOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeGetRow(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterAbsoluteOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeGetStatement(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterAfterLastOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeGetType(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterBeforeFirstOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeGetUnicodeStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterCancelRowUpdatesOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeInsertRow(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterClearWarningsOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeIsAfterLast(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterCloseOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeIsBeforeFirst(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterDeleteRowOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeIsFirst(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterFindColumnOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeIsLast(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterFirstOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeLast(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetArrayOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeMoveToCurrentRow(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetAsciiStreamOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeMoveToInsertRow(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetBigDecimalOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeNext(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetBinaryStreamOnResultSet(MethodExecutionContext executionContext) {
+    public void beforePrevious(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetBlobOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeRefreshRow(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetBooleanOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeRelative(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetByteOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeRowDeleted(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetBytesOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeRowInserted(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetCharacterStreamOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeRowUpdated(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetClobOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateArray(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetConcurrencyOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateAsciiStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetCursorNameOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateBigDecimal(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetDateOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateBinaryStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetDoubleOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateBlob(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetFetchDirectionOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateBoolean(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetFetchSizeOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateByte(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetFloatOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateBytes(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetHoldabilityOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateCharacterStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetIntOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateClob(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetLongOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateDate(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetMetaDataOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateDouble(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetNCharacterStreamOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateFloat(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetNClobOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateInt(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetNStringOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateLong(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetObjectOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateNCharacterStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetRefOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateNClob(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetRowOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateNString(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetRowIdOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateNull(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetShortOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateObject(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetSQLXMLOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateRef(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetStatementOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateRow(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetStringOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateRowId(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetTimeOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateShort(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetTimestampOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateSQLXML(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetTypeOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateString(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetUnicodeStreamOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateTime(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetURLOnResultSet(MethodExecutionContext executionContext) {
+    public void beforeUpdateTimestamp(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetWarningsOnResultSet(MethodExecutionContext executionContext) {
+    public void afterAbsolute(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterInsertRowOnResultSet(MethodExecutionContext executionContext) {
+    public void afterAfterLast(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterIsAfterLastOnResultSet(MethodExecutionContext executionContext) {
+    public void afterBeforeFirst(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterIsBeforeFirstOnResultSet(MethodExecutionContext executionContext) {
+    public void afterCancelRowUpdates(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterIsClosedOnResultSet(MethodExecutionContext executionContext) {
+    public void afterDeleteRow(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterIsFirstOnResultSet(MethodExecutionContext executionContext) {
+    public void afterFindColumn(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterIsLastOnResultSet(MethodExecutionContext executionContext) {
+    public void afterFirst(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterLastOnResultSet(MethodExecutionContext executionContext) {
+    public void afterGetAsciiStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterMoveToCurrentRowOnResultSet(MethodExecutionContext executionContext) {
+    public void afterGetBinaryStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterMoveToInsertRowOnResultSet(MethodExecutionContext executionContext) {
+    public void afterGetConcurrency(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterNextOnResultSet(MethodExecutionContext executionContext) {
+    public void afterGetCursorName(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterPreviousOnResultSet(MethodExecutionContext executionContext) {
+    public void afterGetRow(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterRefreshRowOnResultSet(MethodExecutionContext executionContext) {
+    public void afterGetStatement(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterRelativeOnResultSet(MethodExecutionContext executionContext) {
+    public void afterGetType(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterRowDeletedOnResultSet(MethodExecutionContext executionContext) {
+    public void afterGetUnicodeStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterRowInsertedOnResultSet(MethodExecutionContext executionContext) {
+    public void afterInsertRow(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterRowUpdatedOnResultSet(MethodExecutionContext executionContext) {
+    public void afterIsAfterLast(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterSetFetchDirectionOnResultSet(MethodExecutionContext executionContext) {
+    public void afterIsBeforeFirst(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterSetFetchSizeOnResultSet(MethodExecutionContext executionContext) {
+    public void afterIsFirst(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateArrayOnResultSet(MethodExecutionContext executionContext) {
+    public void afterIsLast(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateAsciiStreamOnResultSet(MethodExecutionContext executionContext) {
+    public void afterLast(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateBigDecimalOnResultSet(MethodExecutionContext executionContext) {
+    public void afterMoveToCurrentRow(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateBinaryStreamOnResultSet(MethodExecutionContext executionContext) {
+    public void afterMoveToInsertRow(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateBlobOnResultSet(MethodExecutionContext executionContext) {
+    public void afterNext(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateBooleanOnResultSet(MethodExecutionContext executionContext) {
+    public void afterPrevious(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateByteOnResultSet(MethodExecutionContext executionContext) {
+    public void afterRefreshRow(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateBytesOnResultSet(MethodExecutionContext executionContext) {
+    public void afterRelative(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateCharacterStreamOnResultSet(MethodExecutionContext executionContext) {
+    public void afterRowDeleted(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateClobOnResultSet(MethodExecutionContext executionContext) {
+    public void afterRowInserted(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateDateOnResultSet(MethodExecutionContext executionContext) {
+    public void afterRowUpdated(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateDoubleOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateArray(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateFloatOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateAsciiStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateIntOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateBigDecimal(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateLongOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateBinaryStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateNCharacterStreamOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateBlob(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateNClobOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateBoolean(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateNStringOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateByte(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateNullOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateBytes(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateObjectOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateCharacterStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateRefOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateClob(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateRowOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateDate(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateRowIdOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateDouble(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateShortOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateFloat(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateSQLXMLOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateInt(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateStringOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateLong(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateTimeOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateNCharacterStream(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUpdateTimestampOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateNClob(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterWasNullOnResultSet(MethodExecutionContext executionContext) {
+    public void afterUpdateNString(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeIsWrapperForOnStatement(MethodExecutionContext executionContext) {
+    public void afterUpdateNull(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeUnwrapOnStatement(MethodExecutionContext executionContext) {
+    public void afterUpdateObject(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterIsWrapperForOnStatement(MethodExecutionContext executionContext) {
+    public void afterUpdateRef(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterUnwrapOnStatement(MethodExecutionContext executionContext) {
+    public void afterUpdateRow(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeAddBatchOnStatement(MethodExecutionContext executionContext) {
+    public void afterUpdateRowId(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeCancelOnStatement(MethodExecutionContext executionContext) {
+    public void afterUpdateShort(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeClearBatchOnStatement(MethodExecutionContext executionContext) {
+    public void afterUpdateSQLXML(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeClearWarningsOnStatement(MethodExecutionContext executionContext) {
+    public void afterUpdateString(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeCloseOnStatement(MethodExecutionContext executionContext) {
+    public void afterUpdateTime(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeCloseOnCompletionOnStatement(MethodExecutionContext executionContext) {
+    public void afterUpdateTimestamp(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeExecuteOnStatement(MethodExecutionContext executionContext) {
+    public void beforeAddBatch(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeExecuteBatchOnStatement(MethodExecutionContext executionContext) {
+    public void beforeCancel(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeExecuteLargeBatchOnStatement(MethodExecutionContext executionContext) {
+    public void beforeClearBatch(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeExecuteLargeUpdateOnStatement(MethodExecutionContext executionContext) {
+    public void beforeCloseOnCompletion(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeExecuteQueryOnStatement(MethodExecutionContext executionContext) {
+    public void beforeExecute(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeExecuteUpdateOnStatement(MethodExecutionContext executionContext) {
+    public void beforeExecuteBatch(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetConnectionOnStatement(MethodExecutionContext executionContext) {
+    public void beforeExecuteLargeBatch(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetFetchDirectionOnStatement(MethodExecutionContext executionContext) {
+    public void beforeExecuteLargeUpdate(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetFetchSizeOnStatement(MethodExecutionContext executionContext) {
+    public void beforeExecuteQuery(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetGeneratedKeysOnStatement(MethodExecutionContext executionContext) {
+    public void beforeExecuteUpdate(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetLargeMaxRowsOnStatement(MethodExecutionContext executionContext) {
+    public void beforeGetFetchDirection(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetLargeUpdateCountOnStatement(MethodExecutionContext executionContext) {
+    public void beforeGetFetchSize(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetMaxFieldSizeOnStatement(MethodExecutionContext executionContext) {
+    public void beforeGetGeneratedKeys(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetMaxRowsOnStatement(MethodExecutionContext executionContext) {
+    public void beforeGetLargeMaxRows(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetMoreResultsOnStatement(MethodExecutionContext executionContext) {
+    public void beforeGetLargeUpdateCount(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetQueryTimeoutOnStatement(MethodExecutionContext executionContext) {
+    public void beforeGetMaxFieldSize(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetResultSetOnStatement(MethodExecutionContext executionContext) {
+    public void beforeGetMaxRows(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetResultSetConcurrencyOnStatement(MethodExecutionContext executionContext) {
+    public void beforeGetMoreResults(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetResultSetHoldabilityOnStatement(MethodExecutionContext executionContext) {
+    public void beforeGetQueryTimeout(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetResultSetTypeOnStatement(MethodExecutionContext executionContext) {
+    public void beforeGetResultSet(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetUpdateCountOnStatement(MethodExecutionContext executionContext) {
+    public void beforeGetResultSetConcurrency(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeGetWarningsOnStatement(MethodExecutionContext executionContext) {
+    public void beforeGetResultSetHoldability(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeIsClosedOnStatement(MethodExecutionContext executionContext) {
+    public void beforeGetResultSetType(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeIsCloseOnCompletionOnStatement(MethodExecutionContext executionContext) {
+    public void beforeGetUpdateCount(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeIsPoolableOnStatement(MethodExecutionContext executionContext) {
+    public void beforeIsCloseOnCompletion(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeSetCursorNameOnStatement(MethodExecutionContext executionContext) {
+    public void beforeIsPoolable(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeSetEscapeProcessingOnStatement(MethodExecutionContext executionContext) {
+    public void beforeSetCursorName(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeSetFetchDirectionOnStatement(MethodExecutionContext executionContext) {
+    public void beforeSetEscapeProcessing(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeSetFetchSizeOnStatement(MethodExecutionContext executionContext) {
+    public void beforeSetFetchDirection(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeSetLargeMaxRowsOnStatement(MethodExecutionContext executionContext) {
+    public void beforeSetFetchSize(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeSetMaxFieldSizeOnStatement(MethodExecutionContext executionContext) {
+    public void beforeSetLargeMaxRows(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeSetMaxRowsOnStatement(MethodExecutionContext executionContext) {
+    public void beforeSetMaxFieldSize(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeSetPoolableOnStatement(MethodExecutionContext executionContext) {
+    public void beforeSetMaxRows(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void beforeSetQueryTimeoutOnStatement(MethodExecutionContext executionContext) {
+    public void beforeSetPoolable(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterAddBatchOnStatement(MethodExecutionContext executionContext) {
+    public void beforeSetQueryTimeout(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterCancelOnStatement(MethodExecutionContext executionContext) {
+    public void afterAddBatch(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterClearBatchOnStatement(MethodExecutionContext executionContext) {
+    public void afterCancel(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterClearWarningsOnStatement(MethodExecutionContext executionContext) {
+    public void afterClearBatch(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterCloseOnStatement(MethodExecutionContext executionContext) {
+    public void afterCloseOnCompletion(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterCloseOnCompletionOnStatement(MethodExecutionContext executionContext) {
+    public void afterExecute(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterExecuteOnStatement(MethodExecutionContext executionContext) {
+    public void afterExecuteBatch(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterExecuteBatchOnStatement(MethodExecutionContext executionContext) {
+    public void afterExecuteLargeBatch(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterExecuteLargeBatchOnStatement(MethodExecutionContext executionContext) {
+    public void afterExecuteLargeUpdate(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterExecuteLargeUpdateOnStatement(MethodExecutionContext executionContext) {
+    public void afterExecuteQuery(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterExecuteQueryOnStatement(MethodExecutionContext executionContext) {
+    public void afterExecuteUpdate(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterExecuteUpdateOnStatement(MethodExecutionContext executionContext) {
+    public void afterGetFetchDirection(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetConnectionOnStatement(MethodExecutionContext executionContext) {
+    public void afterGetFetchSize(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetFetchDirectionOnStatement(MethodExecutionContext executionContext) {
+    public void afterGetGeneratedKeys(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetFetchSizeOnStatement(MethodExecutionContext executionContext) {
+    public void afterGetLargeMaxRows(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetGeneratedKeysOnStatement(MethodExecutionContext executionContext) {
+    public void afterGetLargeUpdateCount(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetLargeMaxRowsOnStatement(MethodExecutionContext executionContext) {
+    public void afterGetMaxFieldSize(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetLargeUpdateCountOnStatement(MethodExecutionContext executionContext) {
+    public void afterGetMaxRows(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetMaxFieldSizeOnStatement(MethodExecutionContext executionContext) {
+    public void afterGetMoreResults(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetMaxRowsOnStatement(MethodExecutionContext executionContext) {
+    public void afterGetQueryTimeout(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetMoreResultsOnStatement(MethodExecutionContext executionContext) {
+    public void afterGetResultSet(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetQueryTimeoutOnStatement(MethodExecutionContext executionContext) {
+    public void afterGetResultSetConcurrency(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetResultSetOnStatement(MethodExecutionContext executionContext) {
+    public void afterGetResultSetHoldability(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetResultSetConcurrencyOnStatement(MethodExecutionContext executionContext) {
+    public void afterGetResultSetType(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetResultSetHoldabilityOnStatement(MethodExecutionContext executionContext) {
+    public void afterGetUpdateCount(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetResultSetTypeOnStatement(MethodExecutionContext executionContext) {
+    public void afterIsCloseOnCompletion(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetUpdateCountOnStatement(MethodExecutionContext executionContext) {
+    public void afterIsPoolable(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterGetWarningsOnStatement(MethodExecutionContext executionContext) {
+    public void afterSetCursorName(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterIsClosedOnStatement(MethodExecutionContext executionContext) {
+    public void afterSetEscapeProcessing(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterIsCloseOnCompletionOnStatement(MethodExecutionContext executionContext) {
+    public void afterSetFetchDirection(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterIsPoolableOnStatement(MethodExecutionContext executionContext) {
+    public void afterSetFetchSize(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterSetCursorNameOnStatement(MethodExecutionContext executionContext) {
+    public void afterSetLargeMaxRows(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterSetEscapeProcessingOnStatement(MethodExecutionContext executionContext) {
+    public void afterSetMaxFieldSize(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterSetFetchDirectionOnStatement(MethodExecutionContext executionContext) {
+    public void afterSetMaxRows(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterSetFetchSizeOnStatement(MethodExecutionContext executionContext) {
+    public void afterSetPoolable(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterSetLargeMaxRowsOnStatement(MethodExecutionContext executionContext) {
+    public void afterSetQueryTimeout(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterSetMaxFieldSizeOnStatement(MethodExecutionContext executionContext) {
+    public void beforeIsWrapperFor(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterSetMaxRowsOnStatement(MethodExecutionContext executionContext) {
+    public void beforeUnwrap(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterSetPoolableOnStatement(MethodExecutionContext executionContext) {
+    public void afterIsWrapperFor(MethodExecutionContext executionContext) {
+
     }
 
     @Override
-    public void afterSetQueryTimeoutOnStatement(MethodExecutionContext executionContext) {
+    public void afterUnwrap(MethodExecutionContext executionContext) {
+
     }
 }

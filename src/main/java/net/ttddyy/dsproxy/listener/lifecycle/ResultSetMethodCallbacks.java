@@ -11,394 +11,383 @@ import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 public interface ResultSetMethodCallbacks {
 
     //
-    // Wrapper methods
-    //
-    void beforeIsWrapperForOnResultSet(MethodExecutionContext executionContext);
-
-    void beforeUnwrapOnResultSet(MethodExecutionContext executionContext);
-
-    void afterIsWrapperForOnResultSet(MethodExecutionContext executionContext);
-
-    void afterUnwrapOnResultSet(MethodExecutionContext executionContext);
-
-    //
     // ResultSet methods
     //
 
-    void beforeAbsoluteOnResultSet(MethodExecutionContext executionContext);
+    void beforeAbsolute(MethodExecutionContext executionContext);
 
-    void beforeAfterLastOnResultSet(MethodExecutionContext executionContext);
+    void beforeAfterLast(MethodExecutionContext executionContext);
 
-    void beforeBeforeFirstOnResultSet(MethodExecutionContext executionContext);
+    void beforeBeforeFirst(MethodExecutionContext executionContext);
 
-    void beforeCancelRowUpdatesOnResultSet(MethodExecutionContext executionContext);
+    void beforeCancelRowUpdates(MethodExecutionContext executionContext);
 
-    void beforeClearWarningsOnResultSet(MethodExecutionContext executionContext);
+    void beforeClearWarnings(MethodExecutionContext executionContext);
 
-    void beforeCloseOnResultSet(MethodExecutionContext executionContext);
+    void beforeClose(MethodExecutionContext executionContext);
 
-    void beforeDeleteRowOnResultSet(MethodExecutionContext executionContext);
+    void beforeDeleteRow(MethodExecutionContext executionContext);
 
-    void beforeFindColumnOnResultSet(MethodExecutionContext executionContext);
+    void beforeFindColumn(MethodExecutionContext executionContext);
 
-    void beforeFirstOnResultSet(MethodExecutionContext executionContext);
+    void beforeFirst(MethodExecutionContext executionContext);
 
-    void beforeGetArrayOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetArray(MethodExecutionContext executionContext);
 
-    void beforeGetAsciiStreamOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetAsciiStream(MethodExecutionContext executionContext);
 
-    void beforeGetBigDecimalOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetBigDecimal(MethodExecutionContext executionContext);
 
-    void beforeGetBinaryStreamOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetBinaryStream(MethodExecutionContext executionContext);
 
-    void beforeGetBlobOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetBlob(MethodExecutionContext executionContext);
 
-    void beforeGetBooleanOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetBoolean(MethodExecutionContext executionContext);
 
-    void beforeGetByteOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetByte(MethodExecutionContext executionContext);
 
-    void beforeGetBytesOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetBytes(MethodExecutionContext executionContext);
 
-    void beforeGetCharacterStreamOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetCharacterStream(MethodExecutionContext executionContext);
 
-    void beforeGetClobOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetClob(MethodExecutionContext executionContext);
 
-    void beforeGetConcurrencyOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetConcurrency(MethodExecutionContext executionContext);
 
-    void beforeGetCursorNameOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetCursorName(MethodExecutionContext executionContext);
 
-    void beforeGetDateOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetDate(MethodExecutionContext executionContext);
 
-    void beforeGetDoubleOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetDouble(MethodExecutionContext executionContext);
 
-    void beforeGetFetchDirectionOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetFetchDirection(MethodExecutionContext executionContext);
 
-    void beforeGetFetchSizeOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetFetchSize(MethodExecutionContext executionContext);
 
-    void beforeGetFloatOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetFloat(MethodExecutionContext executionContext);
 
-    void beforeGetHoldabilityOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetHoldability(MethodExecutionContext executionContext);
 
-    void beforeGetIntOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetInt(MethodExecutionContext executionContext);
 
-    void beforeGetLongOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetLong(MethodExecutionContext executionContext);
 
-    void beforeGetMetaDataOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetMetaData(MethodExecutionContext executionContext);
 
-    void beforeGetNCharacterStreamOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetNCharacterStream(MethodExecutionContext executionContext);
 
-    void beforeGetNClobOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetNClob(MethodExecutionContext executionContext);
 
-    void beforeGetNStringOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetNString(MethodExecutionContext executionContext);
 
-    void beforeGetObjectOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetObject(MethodExecutionContext executionContext);
 
-    void beforeGetRefOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetRef(MethodExecutionContext executionContext);
 
-    void beforeGetRowOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetRow(MethodExecutionContext executionContext);
 
-    void beforeGetRowIdOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetRowId(MethodExecutionContext executionContext);
 
-    void beforeGetShortOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetShort(MethodExecutionContext executionContext);
 
-    void beforeGetSQLXMLOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetSQLXML(MethodExecutionContext executionContext);
 
-    void beforeGetStatementOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetStatement(MethodExecutionContext executionContext);
 
-    void beforeGetStringOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetString(MethodExecutionContext executionContext);
 
-    void beforeGetTimeOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetTime(MethodExecutionContext executionContext);
 
-    void beforeGetTimestampOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetTimestamp(MethodExecutionContext executionContext);
 
-    void beforeGetTypeOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetType(MethodExecutionContext executionContext);
 
-    void beforeGetUnicodeStreamOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetUnicodeStream(MethodExecutionContext executionContext);
 
-    void beforeGetURLOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetURL(MethodExecutionContext executionContext);
 
-    void beforeGetWarningsOnResultSet(MethodExecutionContext executionContext);
+    void beforeGetWarnings(MethodExecutionContext executionContext);
 
-    void beforeInsertRowOnResultSet(MethodExecutionContext executionContext);
+    void beforeInsertRow(MethodExecutionContext executionContext);
 
-    void beforeIsAfterLastOnResultSet(MethodExecutionContext executionContext);
+    void beforeIsAfterLast(MethodExecutionContext executionContext);
 
-    void beforeIsBeforeFirstOnResultSet(MethodExecutionContext executionContext);
+    void beforeIsBeforeFirst(MethodExecutionContext executionContext);
 
-    void beforeIsClosedOnResultSet(MethodExecutionContext executionContext);
+    void beforeIsClosed(MethodExecutionContext executionContext);
 
-    void beforeIsFirstOnResultSet(MethodExecutionContext executionContext);
+    void beforeIsFirst(MethodExecutionContext executionContext);
 
-    void beforeIsLastOnResultSet(MethodExecutionContext executionContext);
+    void beforeIsLast(MethodExecutionContext executionContext);
 
-    void beforeLastOnResultSet(MethodExecutionContext executionContext);
+    void beforeLast(MethodExecutionContext executionContext);
 
-    void beforeMoveToCurrentRowOnResultSet(MethodExecutionContext executionContext);
+    void beforeMoveToCurrentRow(MethodExecutionContext executionContext);
 
-    void beforeMoveToInsertRowOnResultSet(MethodExecutionContext executionContext);
+    void beforeMoveToInsertRow(MethodExecutionContext executionContext);
 
-    void beforeNextOnResultSet(MethodExecutionContext executionContext);
+    void beforeNext(MethodExecutionContext executionContext);
 
-    void beforePreviousOnResultSet(MethodExecutionContext executionContext);
+    void beforePrevious(MethodExecutionContext executionContext);
 
-    void beforeRefreshRowOnResultSet(MethodExecutionContext executionContext);
+    void beforeRefreshRow(MethodExecutionContext executionContext);
 
-    void beforeRelativeOnResultSet(MethodExecutionContext executionContext);
+    void beforeRelative(MethodExecutionContext executionContext);
 
-    void beforeRowDeletedOnResultSet(MethodExecutionContext executionContext);
+    void beforeRowDeleted(MethodExecutionContext executionContext);
 
-    void beforeRowInsertedOnResultSet(MethodExecutionContext executionContext);
+    void beforeRowInserted(MethodExecutionContext executionContext);
 
-    void beforeRowUpdatedOnResultSet(MethodExecutionContext executionContext);
+    void beforeRowUpdated(MethodExecutionContext executionContext);
 
-    void beforeSetFetchDirectionOnResultSet(MethodExecutionContext executionContext);
+    void beforeSetFetchDirection(MethodExecutionContext executionContext);
 
-    void beforeSetFetchSizeOnResultSet(MethodExecutionContext executionContext);
+    void beforeSetFetchSize(MethodExecutionContext executionContext);
 
-    void beforeUpdateArrayOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateArray(MethodExecutionContext executionContext);
 
-    void beforeUpdateAsciiStreamOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateAsciiStream(MethodExecutionContext executionContext);
 
-    void beforeUpdateBigDecimalOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateBigDecimal(MethodExecutionContext executionContext);
 
-    void beforeUpdateBinaryStreamOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateBinaryStream(MethodExecutionContext executionContext);
 
-    void beforeUpdateBlobOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateBlob(MethodExecutionContext executionContext);
 
-    void beforeUpdateBooleanOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateBoolean(MethodExecutionContext executionContext);
 
-    void beforeUpdateByteOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateByte(MethodExecutionContext executionContext);
 
-    void beforeUpdateBytesOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateBytes(MethodExecutionContext executionContext);
 
-    void beforeUpdateCharacterStreamOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateCharacterStream(MethodExecutionContext executionContext);
 
-    void beforeUpdateClobOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateClob(MethodExecutionContext executionContext);
 
-    void beforeUpdateDateOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateDate(MethodExecutionContext executionContext);
 
-    void beforeUpdateDoubleOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateDouble(MethodExecutionContext executionContext);
 
-    void beforeUpdateFloatOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateFloat(MethodExecutionContext executionContext);
 
-    void beforeUpdateIntOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateInt(MethodExecutionContext executionContext);
 
-    void beforeUpdateLongOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateLong(MethodExecutionContext executionContext);
 
-    void beforeUpdateNCharacterStreamOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateNCharacterStream(MethodExecutionContext executionContext);
 
-    void beforeUpdateNClobOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateNClob(MethodExecutionContext executionContext);
 
-    void beforeUpdateNStringOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateNString(MethodExecutionContext executionContext);
 
-    void beforeUpdateNullOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateNull(MethodExecutionContext executionContext);
 
-    void beforeUpdateObjectOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateObject(MethodExecutionContext executionContext);
 
-    void beforeUpdateRefOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateRef(MethodExecutionContext executionContext);
 
-    void beforeUpdateRowOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateRow(MethodExecutionContext executionContext);
 
-    void beforeUpdateRowIdOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateRowId(MethodExecutionContext executionContext);
 
-    void beforeUpdateShortOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateShort(MethodExecutionContext executionContext);
 
-    void beforeUpdateSQLXMLOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateSQLXML(MethodExecutionContext executionContext);
 
-    void beforeUpdateStringOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateString(MethodExecutionContext executionContext);
 
-    void beforeUpdateTimeOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateTime(MethodExecutionContext executionContext);
 
-    void beforeUpdateTimestampOnResultSet(MethodExecutionContext executionContext);
+    void beforeUpdateTimestamp(MethodExecutionContext executionContext);
 
-    void beforeWasNullOnResultSet(MethodExecutionContext executionContext);
+    void beforeWasNull(MethodExecutionContext executionContext);
 
-    void afterAbsoluteOnResultSet(MethodExecutionContext executionContext);
+    void afterAbsolute(MethodExecutionContext executionContext);
 
-    void afterAfterLastOnResultSet(MethodExecutionContext executionContext);
+    void afterAfterLast(MethodExecutionContext executionContext);
 
-    void afterBeforeFirstOnResultSet(MethodExecutionContext executionContext);
+    void afterBeforeFirst(MethodExecutionContext executionContext);
 
-    void afterCancelRowUpdatesOnResultSet(MethodExecutionContext executionContext);
+    void afterCancelRowUpdates(MethodExecutionContext executionContext);
 
-    void afterClearWarningsOnResultSet(MethodExecutionContext executionContext);
+    void afterClearWarnings(MethodExecutionContext executionContext);
 
-    void afterCloseOnResultSet(MethodExecutionContext executionContext);
+    void afterClose(MethodExecutionContext executionContext);
 
-    void afterDeleteRowOnResultSet(MethodExecutionContext executionContext);
+    void afterDeleteRow(MethodExecutionContext executionContext);
 
-    void afterFindColumnOnResultSet(MethodExecutionContext executionContext);
+    void afterFindColumn(MethodExecutionContext executionContext);
 
-    void afterFirstOnResultSet(MethodExecutionContext executionContext);
+    void afterFirst(MethodExecutionContext executionContext);
 
-    void afterGetArrayOnResultSet(MethodExecutionContext executionContext);
+    void afterGetArray(MethodExecutionContext executionContext);
 
-    void afterGetAsciiStreamOnResultSet(MethodExecutionContext executionContext);
+    void afterGetAsciiStream(MethodExecutionContext executionContext);
 
-    void afterGetBigDecimalOnResultSet(MethodExecutionContext executionContext);
+    void afterGetBigDecimal(MethodExecutionContext executionContext);
 
-    void afterGetBinaryStreamOnResultSet(MethodExecutionContext executionContext);
+    void afterGetBinaryStream(MethodExecutionContext executionContext);
 
-    void afterGetBlobOnResultSet(MethodExecutionContext executionContext);
+    void afterGetBlob(MethodExecutionContext executionContext);
 
-    void afterGetBooleanOnResultSet(MethodExecutionContext executionContext);
+    void afterGetBoolean(MethodExecutionContext executionContext);
 
-    void afterGetByteOnResultSet(MethodExecutionContext executionContext);
+    void afterGetByte(MethodExecutionContext executionContext);
 
-    void afterGetBytesOnResultSet(MethodExecutionContext executionContext);
+    void afterGetBytes(MethodExecutionContext executionContext);
 
-    void afterGetCharacterStreamOnResultSet(MethodExecutionContext executionContext);
+    void afterGetCharacterStream(MethodExecutionContext executionContext);
 
-    void afterGetClobOnResultSet(MethodExecutionContext executionContext);
+    void afterGetClob(MethodExecutionContext executionContext);
 
-    void afterGetConcurrencyOnResultSet(MethodExecutionContext executionContext);
+    void afterGetConcurrency(MethodExecutionContext executionContext);
 
-    void afterGetCursorNameOnResultSet(MethodExecutionContext executionContext);
+    void afterGetCursorName(MethodExecutionContext executionContext);
 
-    void afterGetDateOnResultSet(MethodExecutionContext executionContext);
+    void afterGetDate(MethodExecutionContext executionContext);
 
-    void afterGetDoubleOnResultSet(MethodExecutionContext executionContext);
+    void afterGetDouble(MethodExecutionContext executionContext);
 
-    void afterGetFetchDirectionOnResultSet(MethodExecutionContext executionContext);
+    void afterGetFetchDirection(MethodExecutionContext executionContext);
 
-    void afterGetFetchSizeOnResultSet(MethodExecutionContext executionContext);
+    void afterGetFetchSize(MethodExecutionContext executionContext);
 
-    void afterGetFloatOnResultSet(MethodExecutionContext executionContext);
+    void afterGetFloat(MethodExecutionContext executionContext);
 
-    void afterGetHoldabilityOnResultSet(MethodExecutionContext executionContext);
+    void afterGetHoldability(MethodExecutionContext executionContext);
 
-    void afterGetIntOnResultSet(MethodExecutionContext executionContext);
+    void afterGetInt(MethodExecutionContext executionContext);
 
-    void afterGetLongOnResultSet(MethodExecutionContext executionContext);
+    void afterGetLong(MethodExecutionContext executionContext);
 
-    void afterGetMetaDataOnResultSet(MethodExecutionContext executionContext);
+    void afterGetMetaData(MethodExecutionContext executionContext);
 
-    void afterGetNCharacterStreamOnResultSet(MethodExecutionContext executionContext);
+    void afterGetNCharacterStream(MethodExecutionContext executionContext);
 
-    void afterGetNClobOnResultSet(MethodExecutionContext executionContext);
+    void afterGetNClob(MethodExecutionContext executionContext);
 
-    void afterGetNStringOnResultSet(MethodExecutionContext executionContext);
+    void afterGetNString(MethodExecutionContext executionContext);
 
-    void afterGetObjectOnResultSet(MethodExecutionContext executionContext);
+    void afterGetObject(MethodExecutionContext executionContext);
 
-    void afterGetRefOnResultSet(MethodExecutionContext executionContext);
+    void afterGetRef(MethodExecutionContext executionContext);
 
-    void afterGetRowOnResultSet(MethodExecutionContext executionContext);
+    void afterGetRow(MethodExecutionContext executionContext);
 
-    void afterGetRowIdOnResultSet(MethodExecutionContext executionContext);
+    void afterGetRowId(MethodExecutionContext executionContext);
 
-    void afterGetShortOnResultSet(MethodExecutionContext executionContext);
+    void afterGetShort(MethodExecutionContext executionContext);
 
-    void afterGetSQLXMLOnResultSet(MethodExecutionContext executionContext);
+    void afterGetSQLXML(MethodExecutionContext executionContext);
 
-    void afterGetStatementOnResultSet(MethodExecutionContext executionContext);
+    void afterGetStatement(MethodExecutionContext executionContext);
 
-    void afterGetStringOnResultSet(MethodExecutionContext executionContext);
+    void afterGetString(MethodExecutionContext executionContext);
 
-    void afterGetTimeOnResultSet(MethodExecutionContext executionContext);
+    void afterGetTime(MethodExecutionContext executionContext);
 
-    void afterGetTimestampOnResultSet(MethodExecutionContext executionContext);
+    void afterGetTimestamp(MethodExecutionContext executionContext);
 
-    void afterGetTypeOnResultSet(MethodExecutionContext executionContext);
+    void afterGetType(MethodExecutionContext executionContext);
 
-    void afterGetUnicodeStreamOnResultSet(MethodExecutionContext executionContext);
+    void afterGetUnicodeStream(MethodExecutionContext executionContext);
 
-    void afterGetURLOnResultSet(MethodExecutionContext executionContext);
+    void afterGetURL(MethodExecutionContext executionContext);
 
-    void afterGetWarningsOnResultSet(MethodExecutionContext executionContext);
+    void afterGetWarnings(MethodExecutionContext executionContext);
 
-    void afterInsertRowOnResultSet(MethodExecutionContext executionContext);
+    void afterInsertRow(MethodExecutionContext executionContext);
 
-    void afterIsAfterLastOnResultSet(MethodExecutionContext executionContext);
+    void afterIsAfterLast(MethodExecutionContext executionContext);
 
-    void afterIsBeforeFirstOnResultSet(MethodExecutionContext executionContext);
+    void afterIsBeforeFirst(MethodExecutionContext executionContext);
 
-    void afterIsClosedOnResultSet(MethodExecutionContext executionContext);
+    void afterIsClosed(MethodExecutionContext executionContext);
 
-    void afterIsFirstOnResultSet(MethodExecutionContext executionContext);
+    void afterIsFirst(MethodExecutionContext executionContext);
 
-    void afterIsLastOnResultSet(MethodExecutionContext executionContext);
+    void afterIsLast(MethodExecutionContext executionContext);
 
-    void afterLastOnResultSet(MethodExecutionContext executionContext);
+    void afterLast(MethodExecutionContext executionContext);
 
-    void afterMoveToCurrentRowOnResultSet(MethodExecutionContext executionContext);
+    void afterMoveToCurrentRow(MethodExecutionContext executionContext);
 
-    void afterMoveToInsertRowOnResultSet(MethodExecutionContext executionContext);
+    void afterMoveToInsertRow(MethodExecutionContext executionContext);
 
-    void afterNextOnResultSet(MethodExecutionContext executionContext);
+    void afterNext(MethodExecutionContext executionContext);
 
-    void afterPreviousOnResultSet(MethodExecutionContext executionContext);
+    void afterPrevious(MethodExecutionContext executionContext);
 
-    void afterRefreshRowOnResultSet(MethodExecutionContext executionContext);
+    void afterRefreshRow(MethodExecutionContext executionContext);
 
-    void afterRelativeOnResultSet(MethodExecutionContext executionContext);
+    void afterRelative(MethodExecutionContext executionContext);
 
-    void afterRowDeletedOnResultSet(MethodExecutionContext executionContext);
+    void afterRowDeleted(MethodExecutionContext executionContext);
 
-    void afterRowInsertedOnResultSet(MethodExecutionContext executionContext);
+    void afterRowInserted(MethodExecutionContext executionContext);
 
-    void afterRowUpdatedOnResultSet(MethodExecutionContext executionContext);
+    void afterRowUpdated(MethodExecutionContext executionContext);
 
-    void afterSetFetchDirectionOnResultSet(MethodExecutionContext executionContext);
+    void afterSetFetchDirection(MethodExecutionContext executionContext);
 
-    void afterSetFetchSizeOnResultSet(MethodExecutionContext executionContext);
+    void afterSetFetchSize(MethodExecutionContext executionContext);
 
-    void afterUpdateArrayOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateArray(MethodExecutionContext executionContext);
 
-    void afterUpdateAsciiStreamOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateAsciiStream(MethodExecutionContext executionContext);
 
-    void afterUpdateBigDecimalOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateBigDecimal(MethodExecutionContext executionContext);
 
-    void afterUpdateBinaryStreamOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateBinaryStream(MethodExecutionContext executionContext);
 
-    void afterUpdateBlobOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateBlob(MethodExecutionContext executionContext);
 
-    void afterUpdateBooleanOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateBoolean(MethodExecutionContext executionContext);
 
-    void afterUpdateByteOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateByte(MethodExecutionContext executionContext);
 
-    void afterUpdateBytesOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateBytes(MethodExecutionContext executionContext);
 
-    void afterUpdateCharacterStreamOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateCharacterStream(MethodExecutionContext executionContext);
 
-    void afterUpdateClobOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateClob(MethodExecutionContext executionContext);
 
-    void afterUpdateDateOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateDate(MethodExecutionContext executionContext);
 
-    void afterUpdateDoubleOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateDouble(MethodExecutionContext executionContext);
 
-    void afterUpdateFloatOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateFloat(MethodExecutionContext executionContext);
 
-    void afterUpdateIntOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateInt(MethodExecutionContext executionContext);
 
-    void afterUpdateLongOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateLong(MethodExecutionContext executionContext);
 
-    void afterUpdateNCharacterStreamOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateNCharacterStream(MethodExecutionContext executionContext);
 
-    void afterUpdateNClobOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateNClob(MethodExecutionContext executionContext);
 
-    void afterUpdateNStringOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateNString(MethodExecutionContext executionContext);
 
-    void afterUpdateNullOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateNull(MethodExecutionContext executionContext);
 
-    void afterUpdateObjectOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateObject(MethodExecutionContext executionContext);
 
-    void afterUpdateRefOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateRef(MethodExecutionContext executionContext);
 
-    void afterUpdateRowOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateRow(MethodExecutionContext executionContext);
 
-    void afterUpdateRowIdOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateRowId(MethodExecutionContext executionContext);
 
-    void afterUpdateShortOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateShort(MethodExecutionContext executionContext);
 
-    void afterUpdateSQLXMLOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateSQLXML(MethodExecutionContext executionContext);
 
-    void afterUpdateStringOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateString(MethodExecutionContext executionContext);
 
-    void afterUpdateTimeOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateTime(MethodExecutionContext executionContext);
 
-    void afterUpdateTimestampOnResultSet(MethodExecutionContext executionContext);
+    void afterUpdateTimestamp(MethodExecutionContext executionContext);
 
-    void afterWasNullOnResultSet(MethodExecutionContext executionContext);
+    void afterWasNull(MethodExecutionContext executionContext);
 
 }

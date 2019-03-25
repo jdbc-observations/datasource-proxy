@@ -20,7 +20,7 @@ import java.util.List;
  * @see JdbcLifecycleEventListenerAdapter
  * @since 1.5
  */
-public interface JdbcLifecycleEventListener extends DataSourceMethodCallbacks, ConnectionMethodCallbacks,
+public interface JdbcLifecycleEventListener extends WrapperMethodCallbacks, DataSourceMethodCallbacks, ConnectionMethodCallbacks,
         StatementMethodCallbacks, PreparedStatementMethodCallbacks, CallableStatementMethodCallbacks,
         ResultSetMethodCallbacks {
 

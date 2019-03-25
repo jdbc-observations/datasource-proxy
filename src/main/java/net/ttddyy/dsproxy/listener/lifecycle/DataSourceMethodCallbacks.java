@@ -13,49 +13,37 @@ import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 public interface DataSourceMethodCallbacks {
 
     //
-    // Wrapper methods
-    //
-
-    void beforeIsWrapperForOnDataSource(MethodExecutionContext executionContext);
-
-    void beforeUnwrapOnDataSource(MethodExecutionContext executionContext);
-
-    void afterIsWrapperForOnDataSource(MethodExecutionContext executionContext);
-
-    void afterUnwrapOnDataSource(MethodExecutionContext executionContext);
-
-    //
     // CommonDataSource methods
     //
 
-    void beforeGetLoginTimeoutOnDataSource(MethodExecutionContext executionContext);
+    void beforeGetLoginTimeout(MethodExecutionContext executionContext);
 
-    void beforeGetLogWriterOnDataSource(MethodExecutionContext executionContext);
+    void beforeGetLogWriter(MethodExecutionContext executionContext);
 
-    void beforeGetParentLoggerOnDataSource(MethodExecutionContext executionContext);
+    void beforeGetParentLogger(MethodExecutionContext executionContext);
 
-    void beforeSetLoginTimeoutOnDataSource(MethodExecutionContext executionContext);
+    void beforeSetLoginTimeout(MethodExecutionContext executionContext);
 
-    void beforeSetLogWriterOnDataSource(MethodExecutionContext executionContext);
+    void beforeSetLogWriter(MethodExecutionContext executionContext);
 
-    void afterGetLoginTimeoutOnDataSource(MethodExecutionContext executionContext);
+    void afterGetLoginTimeout(MethodExecutionContext executionContext);
 
-    void afterGetLogWriterOnDataSource(MethodExecutionContext executionContext);
+    void afterGetLogWriter(MethodExecutionContext executionContext);
 
-    void afterGetParentLoggerOnDataSource(MethodExecutionContext executionContext);
+    void afterGetParentLogger(MethodExecutionContext executionContext);
 
-    void afterSetLoginTimeoutOnDataSource(MethodExecutionContext executionContext);
+    void afterSetLoginTimeout(MethodExecutionContext executionContext);
 
-    void afterSetLogWriterOnDataSource(MethodExecutionContext executionContext);
+    void afterSetLogWriter(MethodExecutionContext executionContext);
 
 
     //
     // DataSource methods
     //
 
-    void beforeGetConnectionOnDataSource(MethodExecutionContext executionContext);
+    void beforeGetConnection(MethodExecutionContext executionContext);
 
-    void afterGetConnectionOnDataSource(MethodExecutionContext executionContext);
+    void afterGetConnection(MethodExecutionContext executionContext);
 
 
 }
