@@ -495,6 +495,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#changelog-2.0">2.0</a></li>
 <li><a href="#changelog-1.6">1.6</a></li>
+<li><a href="#changelog-1.5.1">1.5.1</a></li>
 <li><a href="#changelog-1.5">1.5</a></li>
 <li><a href="#changelog-1.4.10">1.4.10</a></li>
 <li><a href="#changelog-1.4.9">1.4.9</a></li>
@@ -1365,16 +1366,30 @@ interface methods with no-op, can be extended, and selectively overrides any cal
   ProxyDataSourceBuilder.create(actualDataSource)
     .listener(new JdbcLifecycleEventListenerAdapter() {
       @Override
-      public void beforeGetConnectionOnDataSource(MethodExecutionContext executionContext) {
+      public void beforeGetConnection(MethodExecutionContext executionContext) {
         // impl for before DataSource#getConnection();
       }
 
       @Override
-      public void afterRollbackOnConnection(MethodExecutionContext executionContext) {
+      public void afterRollback(MethodExecutionContext executionContext) {
         // impl for after Connection#rollback();
       }
     })
     .build();</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="jdbclifecycleeventlistener-overloaded-methods"><a class="anchor" href="#jdbclifecycleeventlistener-overloaded-methods"></a>4.3.1. Overloaded methods</h4>
+<div class="paragraph">
+<p>Since JDBC API classes are hierarchical (e.g.: <code>PreparedStatement</code> extends <code>Statement</code>) some
+of the methods are overloaded. For example, <code>PreparedStatement#execute</code> method is overloading <code>Statement#execute</code>. Another example is
+<code>PreparedStatement#setInt</code> and <code>CallableStatement#setInt</code>.</p>
+</div>
+<div class="paragraph">
+<p><code>JdbcLifecycleEventListener</code> methods are called back by comparing the invoked method name.
+Therefore, in this example, <code>[before|after]Execute</code> and <code>[before|after]setInt</code> will be called.
+If you need to know exactly which of the method is called, you could check the invoked instance, method,
+or passed arguments to diagnose the actual invoked method when it is overloaded.</p>
 </div>
 </div>
 </div>
@@ -2622,6 +2637,56 @@ Changed query listener signature from <code>(ExecutionInfo execInfo, List&lt;Que
 </div>
 <div class="sect2">
 <h3 id="changelog-1.6"><a class="anchor" href="#changelog-1.6"></a>1.6</h3>
+<div class="sect3">
+<h4 id="_improvements"><a class="anchor" href="#_improvements"></a>Improvements</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>On <code>JdbcLifecycleEventListener</code>, method names have updated to map invoked method name only
+(classname has removed) in order to improve the interception for overloaded methods.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The callback method is determined by invoked method name.
+See the details on below <em>"Breaking Changes"</em> section.</p>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a>Breaking Changes</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>JdbcLifecycleEventListener</code> method names have changed. <br>
+(e.g.: <code>beforeGetConnectionOnDataSource()</code> &#8658; <code>beforeGetConnection()</code>)</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Previously, the method names on the listener had convention of:
+<code>[before|after]&lt;MethodName&gt;On&lt;ClassName&gt;</code> <br>
+e.g.: <code>beforeGetConnectionOnDataSource()</code> <br>
+This has changed to <code>[before|after]&lt;MethodName&gt;</code> <br>
+e.g.: <code>beforeGetConnection()</code></p>
+</div>
+<div class="paragraph">
+<p>For overloaded methods (e.g.: <code>Statement#execute</code> and <code>PreparedStatement#execute</code>), please reference the
+documentation: <a href="#jdbclifecycleeventlistener-overloaded-methods">Overloaded methods</a></p>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="changelog-1.5.1"><a class="anchor" href="#changelog-1.5.1"></a>1.5.1</h3>
+<div class="sect3">
+<h4 id="_new_features_and_improvements"><a class="anchor" href="#_new_features_and_improvements"></a>New Features and Improvements</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2652,6 +2717,17 @@ elapsed time. Default is set to <code>SystemStopwatchFactory</code>.</p>
 </td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_bug_fixes"><a class="anchor" href="#_bug_fixes"></a>Bug Fixes</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Fix <code>NullPointerException</code> when <code>Object</code> methods(<code>toString()</code>, <code>hashCode()</code>, etc) is called on <code>JdbcLifecycleEventListener</code>.</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="sect2">
