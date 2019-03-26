@@ -23,10 +23,11 @@ public class ThreadQueryCountStrategy implements QueryCountStrategy {
 
     @Override
     public QueryCount getOrCreateQueryCount(String dataSourceName) {
-        QueryCount queryCount = this.queryCountMapHolder.get().get(dataSourceName);
+        ConcurrentMap<String, QueryCount> queryCountMap = this.queryCountMapHolder.get();
+        QueryCount queryCount = queryCountMap.get(dataSourceName);
         if (queryCount == null) {
-            queryCount = new QueryCount();
-            this.queryCountMapHolder.get().put(dataSourceName, queryCount);
+            queryCountMap.putIfAbsent(dataSourceName, new QueryCount());
+            return queryCountMap.get(dataSourceName);
         }
         return queryCount;
     }

@@ -21,8 +21,8 @@ public class SingleQueryCountStrategy implements QueryCountStrategy {
     public QueryCount getOrCreateQueryCount(String dataSourceName) {
         QueryCount queryCount = this.queryCountMap.get(dataSourceName);
         if (queryCount == null) {
-            queryCount = new QueryCount();
-            this.queryCountMap.put(dataSourceName, queryCount);
+            this.queryCountMap.putIfAbsent(dataSourceName, new QueryCount());
+            return this.queryCountMap.get(dataSourceName);
         }
         return queryCount;
     }

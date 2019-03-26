@@ -12,7 +12,7 @@ import net.ttddyy.dsproxy.listener.QueryUtils;
  * The {@link QueryCount} can be retrieved by {@link QueryCountHolder#getOrCreateQueryCount(String)} static method.
  *
  * <p>Default implementation uses {@link ThreadQueryCountStrategy} strategy that uses thread local to keep
- * {@link QueryCount}. {@link QueryCount} can be retrieved by {@link QueryCountHolder#getOrCreateQueryCount(String)}.
+ * {@link QueryCount}.
  *
  * <p>Alternatively, {@link SingleQueryCountStrategy} strategy may be used. This strategy uses single instance to keep
  * {@link QueryCount}; therefore, {@link QueryCount} holds accumulated total values from any threads until values are cleared.

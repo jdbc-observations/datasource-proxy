@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.listener.count.QueryCount;
 import net.ttddyy.dsproxy.listener.count.QueryCountHolder;
+import net.ttddyy.dsproxy.listener.count.SingleQueryCountStrategy;
 import net.ttddyy.dsproxy.listener.count.ThreadQueryCountStrategy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,9 @@ import org.junit.jupiter.api.Test;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -50,5 +54,28 @@ public class ThreadQueryCountStrategyTest {
 
     }
 
+    @Test
+    void getOrCreateQueryCountMultipleTimes() {
+        ThreadQueryCountStrategy strategy = new ThreadQueryCountStrategy();
+
+        QueryCount firstQueryCount = strategy.getOrCreateQueryCount("testDS-A");
+        assertNotNull(firstQueryCount);
+
+        QueryCount secondQueryCount = strategy.getOrCreateQueryCount("testDS-A");
+        QueryCount thirdQueryCount = strategy.getOrCreateQueryCount("testDS-A");
+
+        assertSame(firstQueryCount, secondQueryCount);
+        assertSame(firstQueryCount, thirdQueryCount);
+
+        QueryCount anotherFirstQueryCount = strategy.getOrCreateQueryCount("testDS-B");
+        QueryCount anotherSecondQueryCount = strategy.getOrCreateQueryCount("testDS-B");
+        QueryCount anotherThirdQueryCount = strategy.getOrCreateQueryCount("testDS-B");
+
+        assertNotSame(firstQueryCount, anotherSecondQueryCount);
+
+        assertSame(anotherFirstQueryCount, anotherSecondQueryCount);
+        assertSame(anotherFirstQueryCount, anotherThirdQueryCount);
+
+    }
 
 }
