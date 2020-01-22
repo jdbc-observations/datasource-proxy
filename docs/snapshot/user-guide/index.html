@@ -2642,8 +2642,12 @@ Changed query listener signature from <code>(ExecutionInfo execInfo, List&lt;Que
 <div class="ulist">
 <ul>
 <li>
-<p>On <code>JdbcLifecycleEventListener</code>, method names have updated to map invoked method name only
-(classname has removed) in order to improve the interception for overloaded methods.</p>
+<p><code>GlobalConnectionIdManager</code> is added. This id-manager generates unique connection ids(sequentially increasing number)
+across datasources within JVM.</p>
+</li>
+<li>
+<p>On <code>JdbcLifecycleEventListener</code>, method names have updated to map invoked method name only.
+Classname has removed in order to improve the interception for overloaded methods.</p>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
