@@ -5,6 +5,7 @@ import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.count.QueryCount;
 import net.ttddyy.dsproxy.listener.count.QueryCountHolder;
 import net.ttddyy.dsproxy.listener.count.SingleQueryCountStrategy;
+import net.ttddyy.dsproxy.listener.count.ThreadQueryCountStrategy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,23 +33,24 @@ public class DataSourceQueryCountListenerTest {
 
     @BeforeEach
     public void setUp() {
-        queryInfo = mock(QueryInfo.class);
+        this.queryInfo = mock(QueryInfo.class);
 
-        queryInfoList = new ArrayList<>();
-        queryInfoList.add(queryInfo);
+        this.queryInfoList = new ArrayList<>();
+        this.queryInfoList.add(this.queryInfo);
 
-        queryExecutionContext = mock(QueryExecutionContext.class);
-        given(queryExecutionContext.getDataSourceName()).willReturn("testDS");
-        given(queryExecutionContext.getElapsedTime()).willReturn(123L);
-        given(queryExecutionContext.getStatementType()).willReturn(StatementType.STATEMENT);
-        given(queryExecutionContext.getQueries()).willReturn(this.queryInfoList);
-
-        listener = new DataSourceQueryCountListener();
+        this.queryExecutionContext = mock(QueryExecutionContext.class);
+        given(this.queryExecutionContext.getDataSourceName()).willReturn("testDS");
+        given(this.queryExecutionContext.getElapsedTime()).willReturn(123L);
+        given(this.queryExecutionContext.getStatementType()).willReturn(StatementType.STATEMENT);
+        given(this.queryExecutionContext.getQueries()).willReturn(this.queryInfoList);
+        this.listener = new DataSourceQueryCountListener();
     }
 
     @AfterEach
     public void tearDown() {
         QueryCountHolder.clearAll();
+        // put back to default strategy
+        QueryCountHolder.setQueryCountStrategy(new ThreadQueryCountStrategy());
     }
 
 
@@ -134,12 +136,15 @@ public class DataSourceQueryCountListenerTest {
 
     @Test
     public void threadLocalHolderStrategy() throws Exception {
+        // set thread local strategy
+        QueryCountHolder.setQueryCountStrategy(new ThreadQueryCountStrategy());
+
         // perform on main thread
         QueryInfo queryInfo = mock(QueryInfo.class);
         given(queryInfo.getQuery()).willReturn("insert into emp (id) values (1)");
         given(this.queryExecutionContext.getQueries()).willReturn(Collections.singletonList(queryInfo));
-        // use default strategy
-        listener.afterQuery(queryExecutionContext);
+
+        this.listener.afterQuery(this.queryExecutionContext);
 
         // perform on separate thread
         final CountDownLatch latch = new CountDownLatch(1);
