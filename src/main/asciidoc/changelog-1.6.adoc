@@ -3,8 +3,11 @@
 
 ==== Improvements
 
-* On `JdbcLifecycleEventListener`, method names have updated to map invoked method name only
-  (classname has removed) in order to improve the interception for overloaded methods.
+* `GlobalConnectionIdManager` is added. This id-manager generates unique connection ids(sequentially increasing number)
+across datasources within JVM.
+
+* On `JdbcLifecycleEventListener`, method names have updated to map invoked method name only.
+  Classname has removed in order to improve the interception for overloaded methods.
 +
 --
 The callback method is determined by invoked method name.
