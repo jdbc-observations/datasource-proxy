@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 
@@ -15,7 +15,7 @@ import static org.mockito.Mockito.mock;
  */
 public class GlobalConnectionIdManagerTest {
 
-    @Before
+    @BeforeEach
     public void setUp() {
         GlobalConnectionIdManager.resetId();
     }
