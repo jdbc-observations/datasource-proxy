@@ -24,6 +24,8 @@ env:
   - secure: "N1TK5gAnL8WWWflDSNrwghfwaN/FjqyO1DX7vCwg5sl3DpAT70E6Ju9PJ1+FXb7wF95xMzSiHVk5haOR1FxIEX2l8aP//xHtpRcAz+RM143nDs6EhmMqmD9KlimLcApkjPupn4mx8e4BFOTGqkvK7eBoIm8jWt3zKXnz4Gwy1Ko="
   # GPG_PASSPHRASE
   - secure: "gRUj21Z0K8gOGrHXj2WuH4bww3XcRZk1iScRbVdQhhTw8SFlcVhOpXoUiM68YYZABeGNJJ9XxP8QBoKKEKV5rkxAUG5+huPTdu4bwbQgHoz71awuWsrSVWXodzbT+lBxYjXkKD/AckM69olV9ZYZ5IgsFAka3geA2tPjLCO3YjE="
+  # GITHUB_TOKEN
+  - secure: "XWyQXzoV1iwSvpFxwXzhCIB9Adlb8B5I2Y3M3EhPwHHMwSg0wrYxNkGeqqWaqvgn7l3RXGTEhWt81bB+q0X2VEIriUWfKJhGemSxkHko0iHLsEaB6HG4n/wvbD2ibsYtf9kr0IH5rZtuoLAYWw/+htSZ/bLYoNDdmCR8ypJlfjo="
 
 script:
   - ./mvnw test -P test-all-dbs -B
@@ -32,3 +34,10 @@ after_success:
   - bash ./src/build/publish-jar.sh
   - bash ./src/build/publish-doc-snapshot.sh
   - bash ./src/build/publish-doc-release.sh
+  - |
+    curl -i \
+         -X POST \
+         -H "Accept: application/vnd.github.everest-preview+json" \
+         -H "Authorization: token ${GITHUB_TOKEN}" \
+         --data '{"event_type": "invoke-tests"}' \
+         https://api.github.com/repos/ttddyy/datasource-proxy-tests-java6/dispatches
