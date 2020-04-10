@@ -6,16 +6,12 @@ package net.ttddyy.dsproxy.listener;
  */
 public interface ProxyDataSourceListener {
 
-    default void beforeMethod(MethodExecutionContext executionContext) {
-    }
+    void beforeMethod(MethodExecutionContext executionContext);
 
-    default void afterMethod(MethodExecutionContext executionContext) {
-    }
+    void afterMethod(MethodExecutionContext executionContext);
 
-    default void beforeQuery(QueryExecutionContext executionContext) {
-    }
+    void beforeQuery(QueryExecutionContext executionContext);
 
-    default void afterQuery(QueryExecutionContext executionContext) {
-    }
+    void afterQuery(QueryExecutionContext executionContext);
 
 }

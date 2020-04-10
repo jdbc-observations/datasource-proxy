@@ -1,11 +1,11 @@
 package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.function.DSProxyBooleanSupplier;
+import net.ttddyy.dsproxy.function.DSProxyConsumer;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 
 /**
  * Log all JDBC API interaction.
@@ -15,7 +15,7 @@ import java.util.function.Consumer;
  * @author Tadaya Tsuyukubo
  * @since 1.4.4
  */
-public class TracingMethodListener implements ProxyDataSourceListener {
+public class TracingMethodListener extends ProxyDataSourceListenerAdapter {
 
     private static final int DEFAULT_DISPLAY_PARAM_LENGTH = 50;
 
@@ -23,9 +23,9 @@ public class TracingMethodListener implements ProxyDataSourceListener {
 
     protected int parameterDisplayLength = DEFAULT_DISPLAY_PARAM_LENGTH;
 
-    protected BooleanSupplier tracingCondition = () -> true;  // enable tracing by default
+    protected DSProxyBooleanSupplier tracingCondition = () -> true;  // enable tracing by default
 
-    protected Consumer<String> tracingMessageConsumer = System.out::println;  // write to console by default
+    protected DSProxyConsumer<String> tracingMessageConsumer = System.out::println;  // write to console by default
 
     @Override
     public void afterMethod(MethodExecutionContext executionContext) {
@@ -232,19 +232,19 @@ public class TracingMethodListener implements ProxyDataSourceListener {
         this.parameterDisplayLength = parameterDisplayLength;
     }
 
-    public BooleanSupplier getTracingCondition() {
+    public DSProxyBooleanSupplier getTracingCondition() {
         return tracingCondition;
     }
 
-    public void setTracingCondition(BooleanSupplier tracingCondition) {
+    public void setTracingCondition(DSProxyBooleanSupplier tracingCondition) {
         this.tracingCondition = tracingCondition;
     }
 
-    public Consumer<String> getTracingMessageConsumer() {
+    public DSProxyConsumer<String> getTracingMessageConsumer() {
         return tracingMessageConsumer;
     }
 
-    public void setTracingMessageConsumer(Consumer<String> tracingMessageConsumer) {
+    public void setTracingMessageConsumer(DSProxyConsumer<String> tracingMessageConsumer) {
         this.tracingMessageConsumer = tracingMessageConsumer;
     }
 

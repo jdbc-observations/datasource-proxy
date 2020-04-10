@@ -1,12 +1,13 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.LastExecutionAwareListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListenerAdapter;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -722,7 +723,7 @@ public class StatementProxyLogicMockTest {
         AtomicReference<String> afterQueryThreadName = new AtomicReference<>();
 
 
-        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListenerAdapter() {
             @Override
             public void beforeQuery(QueryExecutionContext executionContext) {
                 beforeQueryThreadId.set(executionContext.getThreadId());
@@ -888,7 +889,7 @@ public class StatementProxyLogicMockTest {
     public void proxyResultSet() throws Throwable {
 
         final AtomicReference<Object> listenerReceivedResult = new AtomicReference<Object>();
-        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListenerAdapter() {
             @Override
             public void afterQuery(QueryExecutionContext executionContext) {
                 listenerReceivedResult.set(executionContext.getResult());
@@ -945,7 +946,7 @@ public class StatementProxyLogicMockTest {
     public void proxyGeneratedKeysResultSet() throws Throwable {
 
         final AtomicReference<Object> listenerReceivedResult = new AtomicReference<Object>();
-        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListenerAdapter() {
             @Override
             public void afterQuery(QueryExecutionContext executionContext) {
                 listenerReceivedResult.set(executionContext.getResult());
@@ -1094,7 +1095,7 @@ public class StatementProxyLogicMockTest {
 
         final AtomicLong elapsedTimeHolder = new AtomicLong(-1);
 
-        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListenerAdapter() {
             @Override
             public void afterQuery(QueryExecutionContext executionContext) {
                 elapsedTimeHolder.set(executionContext.getElapsedTime());

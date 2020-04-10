@@ -5,5 +5,3 @@ if [ "$TRAVIS_BRANCH" == 'master' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ]; th
 
     ./mvnw deploy --settings src/build/settings.xml -DskipTests=true
 fi
-
-

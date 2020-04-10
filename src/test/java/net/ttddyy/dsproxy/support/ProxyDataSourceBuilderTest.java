@@ -2,6 +2,8 @@ package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.DataSourceProxyException;
+import net.ttddyy.dsproxy.function.DSProxyBooleanSupplier;
+import net.ttddyy.dsproxy.function.DSProxyConsumer;
 import net.ttddyy.dsproxy.listener.CompositeProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionContext;
@@ -28,8 +30,6 @@ import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -93,7 +93,7 @@ public class ProxyDataSourceBuilderTest {
         DataSource ds;
         SlowQueryListener listener;
 
-        Consumer<QueryExecutionContext> consumer = executionContext -> {
+        DSProxyConsumer<QueryExecutionContext> consumer = executionContext -> {
         };
 
         ds = ProxyDataSourceBuilder.create(this.mockDs).onSlowQuery(10, TimeUnit.SECONDS, consumer).build();
@@ -170,7 +170,7 @@ public class ProxyDataSourceBuilderTest {
         assertThat(listener).as("default tracing listener").isNotNull();
 
         // with message consumer
-        Consumer<String> consumer = (str) -> {
+        DSProxyConsumer<String> consumer = (str) -> {
         };
 
         ds = ProxyDataSourceBuilder.create(this.mockDs).traceMethods(consumer).build();
@@ -180,7 +180,7 @@ public class ProxyDataSourceBuilderTest {
                 .isSameAs(consumer);
 
         // with tracing condition
-        BooleanSupplier condition = mock(BooleanSupplier.class);
+        DSProxyBooleanSupplier condition = mock(DSProxyBooleanSupplier.class);
 
         ds = ProxyDataSourceBuilder.create(this.mockDs).traceMethodsWhen(condition).build();
         listener = getAndVerifyMethodListener(ds, TracingMethodListener.class);

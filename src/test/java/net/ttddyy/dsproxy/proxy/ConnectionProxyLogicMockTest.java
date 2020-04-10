@@ -4,6 +4,7 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.LastExecutionAwareListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListenerAdapter;
 import net.ttddyy.dsproxy.proxy.jdk.PreparedStatementInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler;
 import org.junit.jupiter.api.Test;
@@ -328,7 +329,7 @@ public class ConnectionProxyLogicMockTest {
         final AtomicBoolean isClosedBeforeCalled = new AtomicBoolean();
         final AtomicBoolean isClosedAfterCalled = new AtomicBoolean();
 
-        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListenerAdapter() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {
                 isClosedBefore.set(executionContext.getConnectionInfo().isClosed());

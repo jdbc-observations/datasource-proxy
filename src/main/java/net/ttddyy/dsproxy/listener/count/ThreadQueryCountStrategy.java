@@ -19,7 +19,13 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class ThreadQueryCountStrategy implements QueryCountStrategy {
 
-    private ThreadLocal<ConcurrentMap<String, QueryCount>> queryCountMapHolder = ThreadLocal.withInitial(ConcurrentHashMap::new);
+    // ThreadLocal.withInitial(ConcurrentHashMap::new) is from java8
+    private ThreadLocal<ConcurrentMap<String, QueryCount>> queryCountMapHolder = new ThreadLocal<ConcurrentMap<String, QueryCount>>() {
+        @Override
+        protected ConcurrentMap<String, QueryCount> initialValue() {
+            return new ConcurrentHashMap<>();
+        }
+    };
 
     @Override
     public QueryCount getOrCreateQueryCount(String dataSourceName) {

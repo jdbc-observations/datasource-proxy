@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy;
 
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListenerAdapter;
 import net.ttddyy.dsproxy.listener.QueryExecutionContext;
-import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.jupiter.api.Test;
@@ -65,7 +65,7 @@ public class GeneratedKeysProxyTest {
         generatedKeys.close();
     }
 
-    private static class LoggingExecutionListener implements ProxyDataSourceListener {
+    private static class LoggingExecutionListener extends ProxyDataSourceListenerAdapter {
 
         private List<Integer> generatedKeys = new ArrayList<>();
 

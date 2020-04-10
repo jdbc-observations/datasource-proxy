@@ -4,6 +4,7 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.LastExecutionAwareListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListenerAdapter;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -208,7 +209,7 @@ public class ProxyLogicSupportProceedMethodExecutionTest {
         AtomicReference<String> beforeMethodThreadName = new AtomicReference<>();
         AtomicReference<String> afterMethodThreadName = new AtomicReference<>();
 
-        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListenerAdapter() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {
                 beforeMethodThreadId.set(executionContext.getThreadId());

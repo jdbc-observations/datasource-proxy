@@ -23,8 +23,4 @@ public class DataSourceProxyException extends RuntimeException {
         super(cause);
     }
 
-    public DataSourceProxyException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
-
 }

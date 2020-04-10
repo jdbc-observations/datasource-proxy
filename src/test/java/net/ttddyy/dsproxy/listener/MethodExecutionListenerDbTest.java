@@ -29,7 +29,7 @@ public class MethodExecutionListenerDbTest {
 
     @Test
     public void replaceMethodArgument() throws Throwable {
-        ProxyDataSourceListener methodListener = new ProxyDataSourceListener() {
+        ProxyDataSourceListener methodListener = new ProxyDataSourceListenerAdapter() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {
 

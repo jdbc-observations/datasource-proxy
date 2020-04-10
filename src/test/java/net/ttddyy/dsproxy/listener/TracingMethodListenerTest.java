@@ -1,13 +1,13 @@
 package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.function.DSProxyBooleanSupplier;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BooleanSupplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,7 +19,7 @@ public class TracingMethodListenerTest {
     @Test
     public void tracingCondition() {
 
-        BooleanSupplier falseCondition = () -> false;
+        DSProxyBooleanSupplier falseCondition = () -> false;
 
         final AtomicBoolean isCalled = new AtomicBoolean(false);
         TracingMethodListener listener = new TracingMethodListener() {

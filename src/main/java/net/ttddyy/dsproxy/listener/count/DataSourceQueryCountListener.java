@@ -2,7 +2,7 @@ package net.ttddyy.dsproxy.listener.count;
 
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.QueryType;
-import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListenerAdapter;
 import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.QueryUtils;
 
@@ -37,7 +37,7 @@ import net.ttddyy.dsproxy.listener.QueryUtils;
  * @see QueryCountHolder
  * @see QueryCountStrategy
  */
-public class DataSourceQueryCountListener implements ProxyDataSourceListener {
+public class DataSourceQueryCountListener extends ProxyDataSourceListenerAdapter {
 
     @Override
     public void afterQuery(QueryExecutionContext executionContext) {
