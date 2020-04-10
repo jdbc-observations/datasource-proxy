@@ -39,5 +39,5 @@ after_success:
          -X POST \
          -H "Accept: application/vnd.github.everest-preview+json" \
          -H "Authorization: token ${GITHUB_TOKEN}" \
-         --data '{"event_type": "invoke-tests"}' \
+         --data "{\"event_type\": \"invoke-tests\", \"client_payload\": {\"build\": \"travis build ${TRAVIS_BUILD_NUMBER}\"} }" \
          https://api.github.com/repos/ttddyy/datasource-proxy-tests-java6/dispatches
