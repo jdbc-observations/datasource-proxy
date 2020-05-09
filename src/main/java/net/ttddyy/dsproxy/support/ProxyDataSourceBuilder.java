@@ -1108,6 +1108,9 @@ public class ProxyDataSourceBuilder {
         if (this.slf4jSlowQueryLoggerName != null) {
             listener.setLogger(this.slf4jSlowQueryLoggerName);
         }
+        if (this.jsonFormat) {
+            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
+        }
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
@@ -1139,6 +1142,9 @@ public class ProxyDataSourceBuilder {
         if (this.julSlowQueryLoggerName != null) {
             listener.setLogger(this.julSlowQueryLoggerName);
         }
+        if (this.jsonFormat) {
+            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
+        }
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
@@ -1158,6 +1164,9 @@ public class ProxyDataSourceBuilder {
 
     private SystemOutSlowQueryListener buildSysOutSlowQueryListener() {
         SystemOutSlowQueryListener listener = new SystemOutSlowQueryListener(this.slowQueryThreshold, this.slowQueryTimeUnit);
+        if (this.jsonFormat) {
+            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
+        }
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
