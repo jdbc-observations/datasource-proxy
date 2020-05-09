@@ -1077,6 +1077,9 @@ public class ProxyDataSourceBuilder {
         if (this.commonsSlowQueryLogName != null) {
             listener.setLog(this.commonsSlowQueryLogName);
         }
+        if (this.jsonFormat) {
+            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
+        }
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
