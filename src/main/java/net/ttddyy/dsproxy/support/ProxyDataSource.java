@@ -7,6 +7,7 @@ import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.proxy.ReflectionUtils;
 import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
 import javax.sql.DataSource;
@@ -133,6 +134,17 @@ public class ProxyDataSource implements DataSource, Closeable {
     public void close() throws IOException {
         if (dataSource instanceof Closeable) {
             ((Closeable) dataSource).close();
+        } else {
+            // Support for connection pools with AutoCloseable interface, ex dbcp2
+            Class<? extends DataSource> dataSourceClass = dataSource.getClass();
+            Method closeMethod = ReflectionUtils.getMethodIfAvailable(dataSourceClass, "close");
+            if (closeMethod != null) {
+                try {
+                    closeMethod.invoke(dataSource);
+                } catch (Exception e) {
+                    throw new RuntimeException("Could not invoke \"close\" method", e);
+                }
+            }
         }
     }
 
