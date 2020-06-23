@@ -19,6 +19,9 @@ import java.sql.Statement;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.withSettings;
 
 
 /**
@@ -236,6 +239,18 @@ public class ProxyDataSourceTest {
         conn.rollback();
         assertThat(connInfo.getCommitCount()).isEqualTo(2);
         assertThat(connInfo.getRollbackCount()).isEqualTo(2);
+    }
+
+
+    @Test
+    public void autoCloseable() throws Exception {
+        // DS that implements AutoCloseable but not Closeable
+        DataSource ds = mock(DataSource.class, withSettings().extraInterfaces(AutoCloseable.class));
+        ProxyDataSource proxyDS = new ProxyDataSource(ds);
+
+        proxyDS.close();
+
+        verify((AutoCloseable) ds).close();
     }
 
 }

@@ -28,6 +28,7 @@ public class ProxyDataSource implements DataSource, Closeable {
 
     private static final Method GET_CONNECTION_WITH_NO_ARGS;
     private static final Method GET_CONNECTION_WITH_USER_PASS;
+    private static final boolean isAutoCloseablePresent = isAutoCloseablePresent();
 
     static {
         try {
@@ -38,6 +39,14 @@ public class ProxyDataSource implements DataSource, Closeable {
         }
     }
 
+    private static boolean isAutoCloseablePresent() {
+        try {
+            Class.forName("java.lang.AutoCloseable");  // jdk7+
+        } catch (ClassNotFoundException ex) {
+            return false;
+        }
+        return true;
+    }
 
     private DataSource dataSource;
     private ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();  // default
@@ -133,6 +142,12 @@ public class ProxyDataSource implements DataSource, Closeable {
     public void close() throws IOException {
         if (dataSource instanceof Closeable) {
             ((Closeable) dataSource).close();
+        } else if (isAutoCloseablePresent && dataSource instanceof AutoCloseable) {
+            try {
+                ((AutoCloseable) dataSource).close(); // (jdk7+)
+            } catch (Exception ex) {
+                throw new IOException(ex);
+            }
         }
     }
 

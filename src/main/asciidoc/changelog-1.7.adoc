@@ -5,3 +5,5 @@
 
 * When `asJson()` is called on `ProxyDataSourceBuilder`, slow listeners also write the output
   as json. (https://github.com/ttddyy/datasource-proxy/pull/66[Issue-66])
+
+* Support `DataSource` that implements `AutoCloseable`. (https://github.com/ttddyy/datasource-proxy/pull/68[Issue-68])
