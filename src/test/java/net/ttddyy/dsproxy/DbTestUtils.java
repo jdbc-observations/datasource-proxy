@@ -20,8 +20,8 @@ public class DbTestUtils {
     public static final String SYSTEM_PROPERTY_DB_TYPE = "dsproxy.dbtype";
     public static DatabaseType dbType;
 
-    private static PostgreSQLContainer POSTGRES_CONTAINER;
-    private static MySQLContainer MYSQL_CONTAINER;
+    private static PostgreSQLContainer<?> POSTGRES_CONTAINER;
+    private static MySQLContainer<?> MYSQL_CONTAINER;
 
     static {
 //        System.setProperty(SYSTEM_PROPERTY_DB_TYPE, DatabaseType.POSTGRES.name());
@@ -60,17 +60,12 @@ public class DbTestUtils {
     }
 
     private static void initializePostgres() {
-        POSTGRES_CONTAINER = new PostgreSQLContainer();
+        POSTGRES_CONTAINER = new PostgreSQLContainer<>(PostgreSQLContainer.IMAGE);
         POSTGRES_CONTAINER.start();
     }
 
     private static void initializeMysql() {
-        MYSQL_CONTAINER = new MySQLContainer() {
-            @Override
-            public String getDriverClassName() {
-                return "com.mysql.cj.jdbc.Driver";
-            }
-        };
+        MYSQL_CONTAINER = new MySQLContainer<>("mysql:5.7.22");
         MYSQL_CONTAINER.start();
     }
 
