@@ -14,6 +14,7 @@ import java.util.Map;
 public class ExecutionInfo {
     private String dataSourceName;
     private String connectionId;
+    private int isolationLevel;
     private Method method;
     private Object[] methodArgs;
     private Object result;
@@ -33,6 +34,7 @@ public class ExecutionInfo {
     public ExecutionInfo(ConnectionInfo connectionInfo, Statement statement, boolean isBatch, int batchSize, Method method, Object[] methodArgs) {
         this.dataSourceName = connectionInfo.getDataSourceName();
         this.connectionId = connectionInfo.getConnectionId();
+        this.isolationLevel = connectionInfo.getIsolationLevel();
         this.statement = statement;
         this.isBatch = isBatch;
         this.batchSize = batchSize;
@@ -78,6 +80,20 @@ public class ExecutionInfo {
      */
     public void setConnectionId(String connectionId) {
         this.connectionId = connectionId;
+    }
+
+    /**
+     * @since 1.8
+     */
+    public int getIsolationLevel() {
+        return isolationLevel;
+    }
+
+    /**
+     * @since 1.8
+     */
+    public void setIsolationLevel(int isolationLevel) {
+        this.isolationLevel = isolationLevel;
     }
 
     /**

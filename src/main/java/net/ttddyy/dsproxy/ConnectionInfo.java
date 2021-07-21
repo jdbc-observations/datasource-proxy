@@ -10,6 +10,7 @@ public class ConnectionInfo {
 
     private String dataSourceName;
     private String connectionId;
+    private int isolationLevel;
     private boolean isClosed;
     private int commitCount;
     private int rollbackCount;
@@ -28,6 +29,14 @@ public class ConnectionInfo {
 
     public void setConnectionId(String connectionId) {
         this.connectionId = connectionId;
+    }
+
+    public int getIsolationLevel() {
+        return isolationLevel;
+    }
+
+    public void setIsolationLevel(int isolationLevel) {
+        this.isolationLevel = isolationLevel;
     }
 
     /**

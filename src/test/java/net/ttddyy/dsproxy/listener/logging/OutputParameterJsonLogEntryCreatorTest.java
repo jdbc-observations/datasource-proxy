@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -71,6 +72,7 @@ public class OutputParameterJsonLogEntryCreatorTest {
                 .create()
                 .dataSourceName("foo")
                 .elapsedTime(100)
+                .isolationLevel(Connection.TRANSACTION_READ_COMMITTED)
                 .method(method)
                 .result(result)
                 .statementType(StatementType.CALLABLE)
@@ -83,7 +85,7 @@ public class OutputParameterJsonLogEntryCreatorTest {
 
         OutputParameterJsonLogEntryCreator creator = new OutputParameterJsonLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), false, true);
+        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), false, true, true);
         assertThat(jsonEntry).containsOnlyOnce("\"outParams\":[{\"1\":\"100\",\"foo\":\"101\"},{\"2\":\"200\",\"bar\":\"201\"}]");
 
 

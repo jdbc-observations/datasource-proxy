@@ -18,12 +18,13 @@ public abstract class AbstractSlowQueryLoggingListener extends SlowQueryListener
 
     protected boolean writeDataSourceName = true;
     protected boolean writeConnectionId = true;
+    protected boolean writeIsolation = true;
     protected QueryLogEntryCreator queryLogEntryCreator = new DefaultQueryLogEntryCreator();
     protected String prefix;
 
     @Override
     protected void onSlowQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, long startTimeInMills) {
-        String entry = this.queryLogEntryCreator.getLogEntry(execInfo, queryInfoList, this.writeDataSourceName, this.writeConnectionId);
+        String entry = this.queryLogEntryCreator.getLogEntry(execInfo, queryInfoList, this.writeDataSourceName, this.writeConnectionId, this.writeIsolation);
         if (this.prefix != null) {
             StringBuilder sb = new StringBuilder();
             sb.append(this.prefix);
@@ -56,5 +57,12 @@ public abstract class AbstractSlowQueryLoggingListener extends SlowQueryListener
      */
     public void setWriteConnectionId(boolean writeConnectionId) {
         this.writeConnectionId = writeConnectionId;
+    }
+
+    /**
+     * @since 1.8
+     */
+    public void setWriteIsolation(boolean writeIsolation) {
+        this.writeIsolation = writeIsolation;
     }
 }

@@ -18,7 +18,7 @@ import java.util.SortedMap;
 public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
 
     @Override
-    public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName, boolean writeConnectionId) {
+    public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName, boolean writeConnectionId, boolean writeIsolation) {
         StringBuilder sb = new StringBuilder();
 
         sb.append("{");
@@ -30,6 +30,9 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
             writeConnectionIdEntry(sb, execInfo, queryInfoList);
         }
 
+        if(writeIsolation) {
+            writeIsolationEntry(sb, execInfo, queryInfoList);
+        }
 
         // Time
         writeTimeEntry(sb, execInfo, queryInfoList);
@@ -88,6 +91,22 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
         sb.append("\"connection\":");
         sb.append(execInfo.getConnectionId());
         sb.append(", ");
+    }
+
+    /**
+     * Write transaction isolation when enabled as json.
+     *
+     * <p>default: "isolation":"READ_COMMITTED",
+     *
+     * @param sb            StringBuilder to write
+     * @param execInfo      execution info
+     * @param queryInfoList query info list
+     * @since 1.8
+     */
+    protected void writeIsolationEntry(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+        sb.append("\"isolation\":\"");
+        sb.append(getTransactionIsolation(execInfo.getIsolationLevel()));
+        sb.append("\", ");
     }
 
     /**

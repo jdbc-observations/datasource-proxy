@@ -88,6 +88,7 @@ public class ProxyDataSource implements DataSource, Closeable {
 
         final ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setConnectionId(connectionId);
+        connectionInfo.setIsolationLevel(conn.getTransactionIsolation());
         connectionInfo.setDataSourceName(dataSourceName);
 
         try {

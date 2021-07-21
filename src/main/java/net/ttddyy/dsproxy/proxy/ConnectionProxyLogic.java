@@ -85,6 +85,10 @@ public class ConnectionProxyLogic {
             return this.connection;
         }
 
+        if("setTransactionIsolation".equals(methodName)) {
+            connectionInfo.setIsolationLevel((Integer) args[0]);
+        }
+
         if (JDBC4_METHODS.contains(methodName)) {
             final Class<?> clazz = (Class<?>) args[0];
             if ("unwrap".equals(methodName)) {
