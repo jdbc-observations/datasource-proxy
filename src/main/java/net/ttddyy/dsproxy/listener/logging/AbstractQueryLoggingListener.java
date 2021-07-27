@@ -15,7 +15,7 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
     protected QueryLogEntryCreator queryLogEntryCreator = new DefaultQueryLogEntryCreator();
     protected boolean writeDataSourceName = true;
     protected boolean writeConnectionId = true;
-    protected boolean writeIsolation = true;
+    protected boolean writeIsolation;
     protected LoggingCondition loggingCondition;
 
     @Override

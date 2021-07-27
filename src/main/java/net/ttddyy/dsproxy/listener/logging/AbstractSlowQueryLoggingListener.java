@@ -18,7 +18,7 @@ public abstract class AbstractSlowQueryLoggingListener extends SlowQueryListener
 
     protected boolean writeDataSourceName = true;
     protected boolean writeConnectionId = true;
-    protected boolean writeIsolation = true;
+    protected boolean writeIsolation;
     protected QueryLogEntryCreator queryLogEntryCreator = new DefaultQueryLogEntryCreator();
     protected String prefix;
 
