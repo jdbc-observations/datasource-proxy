@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy.listener.logging;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 
+import java.sql.Connection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -67,6 +68,22 @@ public abstract class AbstractQueryLogEntryCreator implements QueryLogEntryCreat
         if (sb.charAt(lastCharIndex) == c) {
             sb.deleteCharAt(lastCharIndex);
         }
+    }
+
+    protected String getTransactionIsolation(int isolationLevel) {
+        switch (isolationLevel) {
+            case Connection.TRANSACTION_NONE:
+                return "NONE";
+            case Connection.TRANSACTION_READ_UNCOMMITTED:
+                return "READ_UNCOMMITTED";
+            case Connection.TRANSACTION_READ_COMMITTED:
+                return "READ_COMMITTED";
+            case Connection.TRANSACTION_REPEATABLE_READ:
+                return "REPEATABLE_READ";
+            case Connection.TRANSACTION_SERIALIZABLE:
+                return "SERIALIZABLE";
+        }
+        return "";
     }
 
     protected String getStatementType(StatementType statementType) {
