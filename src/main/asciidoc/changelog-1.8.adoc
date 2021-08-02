@@ -1,0 +1,20 @@
+[[changelog-1.8]]
+=== 1.8
+
+====  New Features
+
+* Add `Isolation level` in query logs.  (https://github.com/ttddyy/datasource-proxy/pull/74[Issue-74])
++
+Logging the isolation level is disabled by default.  +
+To enable, call `logIsolationLevel(true)` on `ProxyDataSourceBuilder`.
++
+[source,java]
+----
+ProxyDataSourceBuilder.create(datasource)
+      .logQueryBySlf4j(SLF4JLogLevel.INFO)
+      .logIsolationLevel(true)  // <==
+      .build();
+----
++
+Thanks _https://github.com/sleepo581[Alexei Brinza]_ for this contribution!!
+
