@@ -129,6 +129,7 @@ public class ProxyDataSourceBuilder {
 
     private boolean jsonFormat;
     private boolean multiline;
+    private boolean writeIsolation;
     private List<QueryExecutionListener> queryExecutionListeners = new ArrayList<QueryExecutionListener>();
 
     private ParameterTransformer parameterTransformer;
@@ -648,6 +649,17 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
+     * Add connection isolation to logging query.
+     *
+     * @return builder
+     * @since 1.8
+     */
+    public ProxyDataSourceBuilder writeIsolation() {
+        this.writeIsolation = true;
+        return this;
+    }
+
+    /**
      * Register {@link JdbcProxyFactory}.
      *
      * @param jdbcProxyFactory a JdbcProxyFactory to register
@@ -1066,6 +1078,9 @@ public class ProxyDataSourceBuilder {
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
+        if (this.writeIsolation) {
+            listener.setWriteIsolation(true);
+        }
         return listener;
     }
 
@@ -1082,6 +1097,9 @@ public class ProxyDataSourceBuilder {
         }
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
+        }
+        if (this.writeIsolation) {
+            listener.setWriteIsolation(true);
         }
         return listener;
     }
@@ -1100,6 +1118,9 @@ public class ProxyDataSourceBuilder {
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
+        if (this.writeIsolation) {
+            listener.setWriteIsolation(true);
+        }
         return listener;
     }
 
@@ -1116,6 +1137,9 @@ public class ProxyDataSourceBuilder {
         }
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
+        }
+        if (this.writeIsolation) {
+            listener.setWriteIsolation(true);
         }
         return listener;
     }
@@ -1134,6 +1158,9 @@ public class ProxyDataSourceBuilder {
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
+        if (this.writeIsolation) {
+            listener.setWriteIsolation(true);
+        }
         return listener;
     }
 
@@ -1151,6 +1178,9 @@ public class ProxyDataSourceBuilder {
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
+        if (this.writeIsolation) {
+            listener.setWriteIsolation(true);
+        }
         return listener;
     }
 
@@ -1162,6 +1192,9 @@ public class ProxyDataSourceBuilder {
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
+        if (this.writeIsolation) {
+            listener.setWriteIsolation(true);
+        }
         return listener;
     }
 
@@ -1172,6 +1205,9 @@ public class ProxyDataSourceBuilder {
         }
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
+        }
+        if (this.writeIsolation) {
+            listener.setWriteIsolation(true);
         }
         return listener;
     }

@@ -18,6 +18,7 @@ public class ExecutionInfoBuilder {
     private boolean batch;
     private int batchSize;
     private String connectionId;
+    private int isolationLevel;
 
     public static ExecutionInfoBuilder create() {
         return new ExecutionInfoBuilder();
@@ -78,6 +79,11 @@ public class ExecutionInfoBuilder {
         return this;
     }
 
+    public ExecutionInfoBuilder isolationLevel(int isolationLevel) {
+        this.isolationLevel = isolationLevel;
+        return this;
+    }
+
     public ExecutionInfo build() {
         ExecutionInfo executionInfo = new ExecutionInfo();
         executionInfo.setDataSourceName(dataSourceName);
@@ -91,6 +97,7 @@ public class ExecutionInfoBuilder {
         executionInfo.setBatch(batch);
         executionInfo.setBatchSize(batchSize);
         executionInfo.setConnectionId(this.connectionId);
+        executionInfo.setIsolationLevel(isolationLevel);
         return executionInfo;
     }
 }

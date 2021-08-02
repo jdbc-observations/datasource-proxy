@@ -20,7 +20,7 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
     private boolean multiline = false;
 
     @Override
-    public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName, boolean writeConnectionId) {
+    public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName, boolean writeConnectionId, boolean writeIsolation) {
         final StringBuilder sb = new StringBuilder();
 
         if (this.multiline) {
@@ -33,6 +33,10 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
 
         if (writeConnectionId) {
             writeConnectionIdEntry(sb, execInfo, queryInfoList);
+        }
+
+        if(writeIsolation) {
+            writeIsolationEntry(sb, execInfo, queryInfoList);
         }
 
         // Time
@@ -107,6 +111,22 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
     protected void writeConnectionIdEntry(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
         sb.append("Connection:");
         sb.append(execInfo.getConnectionId());
+        sb.append(", ");
+    }
+
+    /**
+     * Write transaction isolation when enabled.
+     *
+     * <p>default: Isolation: READ_COMMITTED,
+     *
+     * @param sb            StringBuilder to write
+     * @param execInfo      execution info
+     * @param queryInfoList query info list
+     * @since 1.8
+     */
+    protected void writeIsolationEntry(StringBuilder sb, ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+        sb.append("Isolation:");
+        sb.append(getTransactionIsolation(execInfo.getIsolationLevel()));
         sb.append(", ");
     }
 

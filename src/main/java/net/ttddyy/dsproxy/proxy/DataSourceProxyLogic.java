@@ -84,6 +84,7 @@ public class DataSourceProxyLogic {
                 String connId = connectionIdManager.getId(conn);
                 ConnectionInfo connectionInfo = new ConnectionInfo();
                 connectionInfo.setConnectionId(connId);
+                connectionInfo.setIsolationLevel(conn.getTransactionIsolation());
                 connectionInfo.setDataSourceName(dataSourceName);
 
                 return jdbcProxyFactory.createConnection((Connection) retVal, connectionInfo, this.proxyConfig);
