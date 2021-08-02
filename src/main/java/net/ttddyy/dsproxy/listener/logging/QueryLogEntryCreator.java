@@ -13,6 +13,6 @@ import java.util.List;
  */
 public interface QueryLogEntryCreator {
 
-    String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName, boolean writeConnectionId);
+    String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName, boolean writeConnectionId, boolean writeIsolation);
 
 }

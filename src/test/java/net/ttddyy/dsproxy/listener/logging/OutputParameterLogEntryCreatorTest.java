@@ -83,7 +83,7 @@ public class OutputParameterLogEntryCreatorTest {
 
         OutputParameterLogEntryCreator creator = new OutputParameterLogEntryCreator();
 
-        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), false, true);
+        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), false, true, false);
         assertThat(entry).containsOnlyOnce("OutParams:[(1=100,foo=101),(2=200,bar=201)]");
 
     }

@@ -15,6 +15,7 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
     protected QueryLogEntryCreator queryLogEntryCreator = new DefaultQueryLogEntryCreator();
     protected boolean writeDataSourceName = true;
     protected boolean writeConnectionId = true;
+    protected boolean writeIsolation;
     protected LoggingCondition loggingCondition;
 
     @Override
@@ -31,7 +32,7 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
     }
 
     protected String getEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        return this.queryLogEntryCreator.getLogEntry(execInfo, queryInfoList, this.writeDataSourceName, this.writeConnectionId);
+        return this.queryLogEntryCreator.getLogEntry(execInfo, queryInfoList, this.writeDataSourceName, this.writeConnectionId, this.writeIsolation);
     }
 
     protected abstract void writeLog(String message);
@@ -80,6 +81,13 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
      */
     public void setWriteConnectionId(boolean writeConnectionId) {
         this.writeConnectionId = writeConnectionId;
+    }
+
+    /**
+     * @since 1.8
+     */
+    public void setWriteIsolation(boolean writeIsolation) {
+        this.writeIsolation = writeIsolation;
     }
 
     /**

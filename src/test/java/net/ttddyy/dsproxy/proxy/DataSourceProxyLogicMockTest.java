@@ -40,8 +40,9 @@ public class DataSourceProxyLogicMockTest {
         verify(ds).getConnection();
     }
 
-    private DataSourceProxyLogic getProxyLogic(DataSource ds) {
+    private DataSourceProxyLogic getProxyLogic(DataSource ds) throws Throwable {
         QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        when(ds.getConnection()).thenReturn(mock(Connection.class));
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
                 .dataSourceName(DS_NAME)
@@ -146,6 +147,7 @@ public class DataSourceProxyLogicMockTest {
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
 
         DataSource ds = mock(DataSource.class);
+        when(ds.getConnection()).thenReturn(mock(Connection.class));
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
                 .dataSourceName(DS_NAME)
