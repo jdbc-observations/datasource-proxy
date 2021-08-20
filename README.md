@@ -12,11 +12,11 @@ Provide proxy classes for JDBC API to intercept executing queries and methods.
 ### Versions
 
 - 2.x _(Under development)_
-  - Java8 baseline.
+  - ~~Java8 baseline.~~
   - `master` branch
 
 - 1.x
-  - Works with JDK1.6+ (works well with Java8).
+  - Works with JDK1.6+ (works well with Java8 and above).
   - `1.x` branch
 
 ## User Guide
