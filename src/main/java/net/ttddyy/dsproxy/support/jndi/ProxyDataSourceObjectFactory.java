@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.support.jndi;
 
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.logging.Log4jLogLevel;
 import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
@@ -34,7 +35,7 @@ import java.util.Set;
  * <ul>
  * <li> <b>dataSource <i>(required)</i></b>: Reference to actual datasource resource.  ex: java:jdbc/global/myDS
  * <li> <b>proxyName</b>:             ProxyDataSource name
- * <li> <b>logLevel</b>:              Loglevel for commons-logging or slf4j. ex: DEBUG, INFO, etc.
+ * <li> <b>logLevel</b>:              Loglevel for commons-logging, slf4j or log4j. ex: DEBUG, INFO, etc.
  * <li> <b>listeners</b>:             Fully qualified class name of `QueryExecutionListener` implementation class,or predefined values below. Can be comma delimited.
  * <li> <b>queryTransformer</b>:      Fully qualified class name of `QueryTransformer` implementation class.
  * <li> <b>parameterTransformer</b>:  Fully qualified class name of `ParameterTransformer` implementation class.
@@ -45,6 +46,7 @@ import java.util.Set;
  * <li> <b>sysout</b>:   alias to `net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener`
  * <li> <b>commons</b>:  alias to `net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener`
  * <li> <b>slf4j</b>:    alias to `net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener`
+ * <li> <b>log4j</b>:    alias to `net.ttddyy.dsproxy.listener.logging.Log4jSlowQueryListener`
  * <li> <b>count</b>:    alias to `net.ttddyy.dsproxy.listener.DataSourceQueryCountListener`
  * <li> <b>x.y.z.MyQueryExecutionListener</b>: Fully qualified class name of `QueryExecutionListener` implementation
  * </ul>
@@ -117,6 +119,18 @@ public class ProxyDataSourceObjectFactory implements ObjectFactory {
                         builder.logQueryBySlf4j(loggerName);
                     } else {
                         builder.logQueryBySlf4j();
+                    }
+                } else if ("log4j".equalsIgnoreCase(listenerName)) {
+                    boolean hasLogLevel = logLevel != null;
+                    boolean hasLogName = loggerName != null;
+                    if (hasLogLevel && hasLogName) {
+                        builder.logQueryByLog4j(Log4jLogLevel.valueOf(logLevel.toUpperCase()), loggerName);
+                    } else if (hasLogLevel) {
+                        builder.logQueryByLog4j(Log4jLogLevel.valueOf(logLevel.toUpperCase()));
+                    } else if (hasLogName) {
+                        builder.logQueryByLog4j(loggerName);
+                    } else {
+                        builder.logQueryByLog4j();
                     }
                 } else if ("sysout".equalsIgnoreCase(listenerName)) {
                     builder.logQueryToSysOut();
