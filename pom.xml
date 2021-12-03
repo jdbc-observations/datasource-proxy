@@ -62,6 +62,7 @@
     <logback.versino>1.2.0</logback.versino>
     <asciidoctor.version>1.5.3</asciidoctor.version>
     <animal-sniffer-maven-plugin.version>1.15</animal-sniffer-maven-plugin.version>
+    <log4j2.version>2.14.1</log4j2.version>
   </properties>
 
   <profiles>
@@ -253,6 +254,26 @@
   </build>
 
   <dependencies>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>${log4j2.version}</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${log4j2.version}</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${log4j2.version}</version>
+      <type>test-jar</type>
+      <optional>true</optional>
+    </dependency>
 
     <dependency>
       <groupId>commons-logging</groupId>

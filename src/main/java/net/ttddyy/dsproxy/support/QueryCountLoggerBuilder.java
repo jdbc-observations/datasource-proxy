@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
+import net.ttddyy.dsproxy.listener.logging.Log4jLogLevel;
 import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
 
 import java.util.logging.Level;
@@ -25,6 +26,7 @@ public class QueryCountLoggerBuilder {
     private CommonsLogLevel commonsLogLevel = CommonsLogLevel.DEBUG;
     private SLF4JLogLevel slf4jLogLevel = SLF4JLogLevel.DEBUG;
     private Level julLogLevel = Level.FINE;
+    private Log4jLogLevel log4jLogLevel = Log4jLogLevel.DEBUG;
 
     public static QueryCountLoggerBuilder create() {
         return new QueryCountLoggerBuilder();
@@ -53,6 +55,17 @@ public class QueryCountLoggerBuilder {
     }
 
     /**
+     * Set log4j log level for query-count-logger.
+     *
+     * @param log4jLogLevel log4j log level
+     * @return builder
+     */
+    public QueryCountLoggerBuilder logLevel(Log4jLogLevel log4jLogLevel) {
+        this.log4jLogLevel = log4jLogLevel;
+        return this;
+    }
+
+    /**
      * Set query-count-logger format as JSON.
      *
      * @return builder
@@ -60,6 +73,62 @@ public class QueryCountLoggerBuilder {
     public QueryCountLoggerBuilder asJson() {
         this.writeAsJson = true;
         return this;
+    }
+
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.Log4jQueryCountLoggingServletFilter}.
+     *
+     * @return query-count-logger using log4j
+     */
+    public Log4jQueryCountLoggingServletFilter buildLog4jFilter() {
+        return buildLog4jFilter(null);
+    }
+
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.Log4jQueryCountLoggingServletFilter}.
+     *
+     * @param logLevel commons log level
+     * @return query-count-logger using log4j
+     */
+    public Log4jQueryCountLoggingServletFilter buildLog4jFilter(Log4jLogLevel logLevel) {
+        if (logLevel != null) {
+            this.log4jLogLevel = logLevel;
+        }
+
+        Log4jQueryCountLoggingServletFilter filter = new Log4jQueryCountLoggingServletFilter();
+        if (this.log4jLogLevel != null) {
+            filter.setLogLevel(this.log4jLogLevel);
+        }
+        filter.setWriteAsJson(this.writeAsJson);
+        return filter;
+    }
+
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.Log4jQueryCountLoggingHandlerInterceptor}.
+     *
+     * @return query-count-logger using commons
+     */
+    public Log4jQueryCountLoggingHandlerInterceptor buildLog4jHandlerInterceptor() {
+        return buildLog4jHandlerInterceptor(null);
+    }
+
+    /**
+     * Build {@link net.ttddyy.dsproxy.support.Log4jQueryCountLoggingHandlerInterceptor}.
+     *
+     * @param logLevel log4j log level
+     * @return query-count-logger using log4j
+     */
+    public Log4jQueryCountLoggingHandlerInterceptor buildLog4jHandlerInterceptor(Log4jLogLevel logLevel) {
+        if (logLevel != null) {
+            this.log4jLogLevel = logLevel;
+        }
+
+        Log4jQueryCountLoggingHandlerInterceptor handlerInterceptor = new Log4jQueryCountLoggingHandlerInterceptor();
+        if (this.log4jLogLevel != null) {
+            handlerInterceptor.setLogLevel(this.log4jLogLevel);
+        }
+        handlerInterceptor.setWriteAsJson(this.writeAsJson);
+        return handlerInterceptor;
     }
 
     /**
