@@ -253,4 +253,10 @@ public class ProxyDataSourceTest {
         verify((AutoCloseable) ds).close();
     }
 
+    @Test
+    public void getDataSource() {
+        DataSource original = mock(DataSource.class);
+        ProxyDataSource proxyDataSource = new ProxyDataSource(original);
+        assertThat(proxyDataSource.getDataSource()).isSameAs(original);
+    }
 }

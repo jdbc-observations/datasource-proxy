@@ -206,4 +206,13 @@ public class ProxyDataSource implements DataSource, Closeable {
         this.proxyConfig = proxyConfig;
     }
 
+    /**
+     * Return the original {@link DataSource}.
+     *
+     * @since 1.8
+     */
+    public DataSource getDataSource() {
+        return this.dataSource;
+    }
+
 }
