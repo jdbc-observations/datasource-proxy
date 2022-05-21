@@ -4,9 +4,12 @@ import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
+import org.assertj.core.api.ThrowableAssert;
+import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.jdbc.datasource.SmartDataSource;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
@@ -14,9 +17,11 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -31,30 +36,31 @@ import static org.mockito.Mockito.withSettings;
  */
 public class ProxyDataSourceTest {
 
+    private DataSource originalDataSource;
     private ProxyDataSource proxyDataSource;
     private TestListener listener;
     private CallCheckMethodExecutionListener methodListener;
 
     @Before
     public void setup() throws Exception {
-        DataSource dataSource = TestUtils.getDataSourceWithData();
+        this.originalDataSource = TestUtils.getDataSourceWithData();
 
-        listener = new TestListener();
-        methodListener = new CallCheckMethodExecutionListener();
+        this.listener = new TestListener();
+        this.methodListener = new CallCheckMethodExecutionListener();
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
                 .queryListener(this.listener)
                 .methodListener(this.methodListener)
                 .build();
 
-        proxyDataSource = new ProxyDataSource();
-        proxyDataSource.setDataSource(dataSource);
-        proxyDataSource.setProxyConfig(proxyConfig);
+        this.proxyDataSource = new ProxyDataSource();
+        this.proxyDataSource.setDataSource(this.originalDataSource);
+        this.proxyDataSource.setProxyConfig(proxyConfig);
     }
 
     @After
     public void teardown() throws Exception {
-        TestUtils.shutdown(proxyDataSource);
+        TestUtils.shutdown(this.proxyDataSource);
     }
 
     public void example() throws Exception {
@@ -241,7 +247,6 @@ public class ProxyDataSourceTest {
         assertThat(connInfo.getRollbackCount()).isEqualTo(2);
     }
 
-
     @Test
     public void autoCloseable() throws Exception {
         // DS that implements AutoCloseable but not Closeable
@@ -258,5 +263,28 @@ public class ProxyDataSourceTest {
         DataSource original = mock(DataSource.class);
         ProxyDataSource proxyDataSource = new ProxyDataSource(original);
         assertThat(proxyDataSource.getDataSource()).isSameAs(original);
+    }
+
+    @Test
+    public void isWrapperFor() throws Exception {
+        assertThat(this.proxyDataSource.isWrapperFor(ProxyDataSource.class)).isTrue();
+        assertThat(this.proxyDataSource.isWrapperFor(JDBCDataSource.class)).isTrue();
+        assertThat(this.proxyDataSource.isWrapperFor(DataSource.class)).isTrue();
+
+        assertThat(this.proxyDataSource.isWrapperFor(SmartDataSource.class)).isFalse();
+    }
+
+    @Test
+    public void unwrap() throws Exception {
+        assertThat(this.proxyDataSource.unwrap(ProxyDataSource.class)).isSameAs(this.proxyDataSource);
+        assertThat(this.proxyDataSource.unwrap(JDBCDataSource.class)).isSameAs(this.originalDataSource);
+        assertThat(this.proxyDataSource.unwrap(DataSource.class)).isSameAs(this.proxyDataSource);
+
+        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
+            @Override
+            public void call() throws Throwable {
+                ProxyDataSourceTest.this.proxyDataSource.unwrap(SmartDataSource.class);
+            }
+        }).isInstanceOf(SQLException.class);
     }
 }

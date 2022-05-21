@@ -124,19 +124,26 @@ public class ProxyDataSource implements DataSource, Closeable {
     }
 
     @Override
-    public <T> T unwrap(Class<T> tClass) throws SQLException {
-        return dataSource.unwrap(tClass);
+    @SuppressWarnings("unchecked")
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        if (iface.isInstance(this)) {
+            return (T) this;
+        }
+        return dataSource.unwrap(iface);
     }
 
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return dataSource.isWrapperFor(iface);
+        if (iface.isInstance(this)) {
+            return true;
+        }
+        return this.dataSource.isWrapperFor(iface);
     }
 
     @IgnoreJRERequirement
     @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        return dataSource.getParentLogger();  // JDBC4.1 (jdk7+)
+        return this.dataSource.getParentLogger();  // JDBC4.1 (jdk7+)
     }
 
     @Override
