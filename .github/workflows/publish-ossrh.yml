@@ -1,8 +1,8 @@
-name: Stage release to Maven Central
+name: Release to Maven Central (Deploy Snapshot or Stage Release)
 
 on:
   push:
-    branches: [ release ]
+    branches: [master, 1.x, release]
 
 jobs:
   release:
