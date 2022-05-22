@@ -1,0 +1,29 @@
+name: Release to Maven Central (Deploy Snapshot or Stage Release)
+
+on:
+  push:
+    branches: [master, 1.x, release]
+
+jobs:
+  release:
+    if: github.repository == 'ttddyy/datasource-proxy'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Maven Central Repository
+        uses: actions/setup-java@v3
+        with:
+          java-version: 8
+          distribution: temurin
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+      - name: Publish package
+        run: ./mvnw --batch-mode deploy -DskipTests=true
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+
