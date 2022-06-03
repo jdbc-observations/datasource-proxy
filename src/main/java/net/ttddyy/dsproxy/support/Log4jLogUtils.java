@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * @author Ivan Jose Sanchez Pagador
+ * @since 1.8
  */
 public class Log4jLogUtils {
 

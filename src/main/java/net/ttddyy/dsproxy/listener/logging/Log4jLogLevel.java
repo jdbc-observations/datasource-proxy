@@ -4,6 +4,7 @@ package net.ttddyy.dsproxy.listener.logging;
  * Apache Commons Logging log4j log level representation.
  *
  * @author Ivan Jose Sanchez Pagador
+ * @since 1.8
  */
 public enum Log4jLogLevel {
     // least serious to most serious

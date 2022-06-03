@@ -9,6 +9,7 @@ import javax.servlet.ServletRequestEvent;
 
 /**
  * @author Ivan Jose Sanchez Pagador
+ * @since 1.8
  */
 public class Log4jQueryCountLoggingRequestListener extends AbstractQueryCountLoggingRequestListener {
 
@@ -33,7 +34,6 @@ public class Log4jQueryCountLoggingRequestListener extends AbstractQueryCountLog
      * Override {@link Logger} instance.
      *
      * @param logger new log instance
-     * @since 1.4.8
      */
     public void setLogger(Logger logger) {
         this.log = logger;

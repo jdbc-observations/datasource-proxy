@@ -59,6 +59,7 @@ public class QueryCountLoggerBuilder {
      *
      * @param log4jLogLevel log4j log level
      * @return builder
+     * @since 1.8
      */
     public QueryCountLoggerBuilder logLevel(Log4jLogLevel log4jLogLevel) {
         this.log4jLogLevel = log4jLogLevel;
@@ -79,6 +80,7 @@ public class QueryCountLoggerBuilder {
      * Build {@link net.ttddyy.dsproxy.support.Log4jQueryCountLoggingServletFilter}.
      *
      * @return query-count-logger using log4j
+     * @since 1.8
      */
     public Log4jQueryCountLoggingServletFilter buildLog4jFilter() {
         return buildLog4jFilter(null);
@@ -89,6 +91,7 @@ public class QueryCountLoggerBuilder {
      *
      * @param logLevel commons log level
      * @return query-count-logger using log4j
+     * @since 1.8
      */
     public Log4jQueryCountLoggingServletFilter buildLog4jFilter(Log4jLogLevel logLevel) {
         if (logLevel != null) {
@@ -107,6 +110,7 @@ public class QueryCountLoggerBuilder {
      * Build {@link net.ttddyy.dsproxy.support.Log4jQueryCountLoggingHandlerInterceptor}.
      *
      * @return query-count-logger using commons
+     * @since 1.8
      */
     public Log4jQueryCountLoggingHandlerInterceptor buildLog4jHandlerInterceptor() {
         return buildLog4jHandlerInterceptor(null);
@@ -117,6 +121,7 @@ public class QueryCountLoggerBuilder {
      *
      * @param logLevel log4j log level
      * @return query-count-logger using log4j
+     * @since 1.8
      */
     public Log4jQueryCountLoggingHandlerInterceptor buildLog4jHandlerInterceptor(Log4jLogLevel logLevel) {
         if (logLevel != null) {

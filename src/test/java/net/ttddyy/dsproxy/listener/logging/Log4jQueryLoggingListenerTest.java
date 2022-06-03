@@ -7,12 +7,8 @@ import net.ttddyy.dsproxy.QueryInfoBuilder;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.junit.LoggerContextRule;
-import org.apache.logging.log4j.junit.LoggerContextSource;
-import org.apache.logging.log4j.junit.Named;
-import org.apache.logging.log4j.junit.ReconfigurationPolicy;
 import org.apache.logging.log4j.test.appender.ListAppender;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -26,7 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Ivan Jose Sanchez Pagador
  */
-
 public class Log4jQueryLoggingListenerTest {
 
     Logger logger;

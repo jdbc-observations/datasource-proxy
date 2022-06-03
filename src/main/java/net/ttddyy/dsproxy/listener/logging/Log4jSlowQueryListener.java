@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
  * Log slow query using Apache Commons Logging log4j.
  *
  * @author Ivan Jose Sanchez Pagador
+ * @since 1.8
  */
 public class Log4jSlowQueryListener extends AbstractSlowQueryLoggingListener {
 

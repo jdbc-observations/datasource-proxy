@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
  * Log executed query information using Apache Commons Logging log4j..
  *
  * @author Ivan Jose Sanchez Pagador
+ * @since 1.8
  */
 public class Log4jQueryLoggingListener extends AbstractQueryLoggingListener {
 
@@ -57,7 +58,6 @@ public class Log4jQueryLoggingListener extends AbstractQueryLoggingListener {
      * Override {@link Logger} instance that has specified logger name.
      *
      * @param log log name
-     * @since 1.4.8
      */
     public void setLogger(String log) {
         this.log = LogManager.getLogger(log);
@@ -67,7 +67,6 @@ public class Log4jQueryLoggingListener extends AbstractQueryLoggingListener {
      * Override {@link Logger} instance.
      *
      * @param log new LogManager instance
-     * @since 1.4.8
      */
     public void setLogger(Logger log) {
         this.log = log;
@@ -75,7 +74,6 @@ public class Log4jQueryLoggingListener extends AbstractQueryLoggingListener {
 
     /**
      * @return logger
-     * @since 1.4.8
      */
     public Logger getLogger() {
         return log;
@@ -83,7 +81,6 @@ public class Log4jQueryLoggingListener extends AbstractQueryLoggingListener {
 
     /**
      * @return log level to write
-     * @since 1.4.8
      */
     public Log4jLogLevel getLogLevel() {
         return logLevel;

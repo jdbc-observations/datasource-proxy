@@ -490,7 +490,7 @@ public class ProxyDataSourceBuilder {
      * Register {@link Log4jQueryLoggingListener}.
      *
      * @return builder
-     * @since 1.4
+     * @since 1.8
      */
     public ProxyDataSourceBuilder logQueryByLog4j() {
         return logQueryByLog4j(null, null);
@@ -501,7 +501,7 @@ public class ProxyDataSourceBuilder {
      *
      * @param log4jLogLevel log level for log4j
      * @return builder
-     * @since 1.4
+     * @since 1.8
      */
     public ProxyDataSourceBuilder logQueryByLog4j(Log4jLogLevel log4jLogLevel) {
         return logQueryByLog4j(log4jLogLevel, null);
@@ -512,7 +512,7 @@ public class ProxyDataSourceBuilder {
      *
      * @param loggerName log4j logger name
      * @return builder
-     * @since 1.4
+     * @since 1.8
      */
     public ProxyDataSourceBuilder logQueryByLog4j(String loggerName) {
         return logQueryByLog4j(null, loggerName);
@@ -524,7 +524,7 @@ public class ProxyDataSourceBuilder {
      * @param logLevel   log level for log4j
      * @param loggerName log4j logger name
      * @return builder
-     * @since 1.4
+     * @since 1.8
      */
     public ProxyDataSourceBuilder logQueryByLog4j(Log4jLogLevel logLevel, String loggerName) {
         this.createLog4jQueryListener = true;
@@ -539,7 +539,7 @@ public class ProxyDataSourceBuilder {
      * @param thresholdTime slow query threshold time
      * @param timeUnit      slow query threshold time unit
      * @return builder
-     * @since 1.4.1
+     * @since 1.8
      */
     public ProxyDataSourceBuilder logSlowQueryByLog4j(long thresholdTime, TimeUnit timeUnit) {
         return logSlowQueryByLog4j(thresholdTime, timeUnit, null, null);
@@ -552,7 +552,7 @@ public class ProxyDataSourceBuilder {
      * @param timeUnit      slow query threshold time unit
      * @param logLevel      log level for log4j
      * @return builder
-     * @since 1.4.1
+     * @since 1.8
      */
     public ProxyDataSourceBuilder logSlowQueryByLog4j(long thresholdTime, TimeUnit timeUnit, Log4jLogLevel logLevel) {
         return logSlowQueryByLog4j(thresholdTime, timeUnit, logLevel, null);
@@ -565,7 +565,7 @@ public class ProxyDataSourceBuilder {
      * @param timeUnit      slow query threshold time unit
      * @param loggerName    Log4j logger name
      * @return builder
-     * @since 1.4.1
+     * @since 1.8
      */
     public ProxyDataSourceBuilder logSlowQueryByLog4j(long thresholdTime, TimeUnit timeUnit, String loggerName) {
         return logSlowQueryByLog4j(thresholdTime, timeUnit, null, loggerName);
@@ -579,7 +579,7 @@ public class ProxyDataSourceBuilder {
      * @param logLevel      log level for JUL
      * @param loggerName    Log4j logger name
      * @return builder
-     * @since 1.4.1
+     * @since 1.8
      */
     public ProxyDataSourceBuilder logSlowQueryByLog4j(long thresholdTime, TimeUnit timeUnit, Log4jLogLevel logLevel, String loggerName) {
         this.createLog4jSlowQueryListener = true;

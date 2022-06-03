@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * @author Ivan Jose Sanchez Pagador
+ * @since 1.8
  */
 public class Log4jQueryCountLoggingServletFilter extends AbstractQueryCountLoggingServletFilter {
 
@@ -38,7 +39,6 @@ public class Log4jQueryCountLoggingServletFilter extends AbstractQueryCountLoggi
      * Override {@link Logger} instance.
      *
      * @param log new log instance
-     * @since 1.4.8
      */
     public void setLogger(Logger log) {
         this.log = log;
