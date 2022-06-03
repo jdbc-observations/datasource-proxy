@@ -13,18 +13,7 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.listener.TracingMethodListener;
 import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventExecutionListener;
 import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventListener;
-import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
-import net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener;
-import net.ttddyy.dsproxy.listener.logging.CommonsSlowQueryListener;
-import net.ttddyy.dsproxy.listener.logging.DefaultJsonQueryLogEntryCreator;
-import net.ttddyy.dsproxy.listener.logging.DefaultQueryLogEntryCreator;
-import net.ttddyy.dsproxy.listener.logging.JULQueryLoggingListener;
-import net.ttddyy.dsproxy.listener.logging.JULSlowQueryListener;
-import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
-import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
-import net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener;
-import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
-import net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener;
+import net.ttddyy.dsproxy.listener.logging.*;
 import net.ttddyy.dsproxy.proxy.DefaultConnectionIdManager;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -97,6 +86,11 @@ public class ProxyDataSourceBuilder {
     private Level julLogLevel;
     private String julLoggerName;
 
+    // for Log4jQueryLoggingListener
+    private boolean createLog4jQueryListener;
+    private Log4jLogLevel log4jLogLevel;
+    private String log4jLoggerName;
+
     // for SystemOutQueryLoggingListener
     private boolean createSysOutQueryListener;
 
@@ -120,6 +114,11 @@ public class ProxyDataSourceBuilder {
     private boolean createJulSlowQueryListener;
     private Level julSlowQueryLogLevel;
     private String julSlowQueryLoggerName;
+
+    // for Log4jSlowQueryListener
+    private boolean createLog4jSlowQueryListener;
+    private Log4jLogLevel log4jSlowQueryLogLevel;
+    private String log4jSlowQueryLoggerName;
 
     // for SystemOutSlowQueryListener
     private boolean createSysOutSlowQueryListener;
@@ -486,6 +485,110 @@ public class ProxyDataSourceBuilder {
         return this;
     }
 
+
+    /**
+     * Register {@link Log4jQueryLoggingListener}.
+     *
+     * @return builder
+     * @since 1.8
+     */
+    public ProxyDataSourceBuilder logQueryByLog4j() {
+        return logQueryByLog4j(null, null);
+    }
+
+    /**
+     * Register {@link Log4jQueryLoggingListener}.
+     *
+     * @param log4jLogLevel log level for log4j
+     * @return builder
+     * @since 1.8
+     */
+    public ProxyDataSourceBuilder logQueryByLog4j(Log4jLogLevel log4jLogLevel) {
+        return logQueryByLog4j(log4jLogLevel, null);
+    }
+
+    /**
+     * Register {@link Log4jQueryLoggingListener}.
+     *
+     * @param loggerName log4j logger name
+     * @return builder
+     * @since 1.8
+     */
+    public ProxyDataSourceBuilder logQueryByLog4j(String loggerName) {
+        return logQueryByLog4j(null, loggerName);
+    }
+
+    /**
+     * Register {@link Log4jQueryLoggingListener}.
+     *
+     * @param logLevel   log level for log4j
+     * @param loggerName log4j logger name
+     * @return builder
+     * @since 1.8
+     */
+    public ProxyDataSourceBuilder logQueryByLog4j(Log4jLogLevel logLevel, String loggerName) {
+        this.createLog4jQueryListener = true;
+        this.log4jLogLevel = logLevel;
+        this.log4jLoggerName = loggerName;
+        return this;
+    }
+
+    /**
+     * Register {@link Log4jSlowQueryListener}.
+     *
+     * @param thresholdTime slow query threshold time
+     * @param timeUnit      slow query threshold time unit
+     * @return builder
+     * @since 1.8
+     */
+    public ProxyDataSourceBuilder logSlowQueryByLog4j(long thresholdTime, TimeUnit timeUnit) {
+        return logSlowQueryByLog4j(thresholdTime, timeUnit, null, null);
+    }
+
+    /**
+     * Register {@link Log4jSlowQueryListener}.
+     *
+     * @param thresholdTime slow query threshold time
+     * @param timeUnit      slow query threshold time unit
+     * @param logLevel      log level for log4j
+     * @return builder
+     * @since 1.8
+     */
+    public ProxyDataSourceBuilder logSlowQueryByLog4j(long thresholdTime, TimeUnit timeUnit, Log4jLogLevel logLevel) {
+        return logSlowQueryByLog4j(thresholdTime, timeUnit, logLevel, null);
+    }
+
+    /**
+     * Register {@link Log4jSlowQueryListener}.
+     *
+     * @param thresholdTime slow query threshold time
+     * @param timeUnit      slow query threshold time unit
+     * @param loggerName    Log4j logger name
+     * @return builder
+     * @since 1.8
+     */
+    public ProxyDataSourceBuilder logSlowQueryByLog4j(long thresholdTime, TimeUnit timeUnit, String loggerName) {
+        return logSlowQueryByLog4j(thresholdTime, timeUnit, null, loggerName);
+    }
+
+    /**
+     * Register {@link Log4jSlowQueryListener}.
+     *
+     * @param thresholdTime slow query threshold time
+     * @param timeUnit      slow query threshold time unit
+     * @param logLevel      log level for JUL
+     * @param loggerName    Log4j logger name
+     * @return builder
+     * @since 1.8
+     */
+    public ProxyDataSourceBuilder logSlowQueryByLog4j(long thresholdTime, TimeUnit timeUnit, Log4jLogLevel logLevel, String loggerName) {
+        this.createLog4jSlowQueryListener = true;
+        this.slowQueryThreshold = thresholdTime;
+        this.slowQueryTimeUnit = timeUnit;
+        this.log4jSlowQueryLogLevel = logLevel;
+        this.log4jSlowQueryLoggerName = loggerName;
+        return this;
+    }
 
     /**
      * Register {@link SystemOutQueryLoggingListener}.
@@ -963,6 +1066,9 @@ public class ProxyDataSourceBuilder {
         if (this.createSysOutQueryListener) {
             listeners.add(buildSysOutQueryListener());
         }
+        if (this.createLog4jQueryListener) {
+            listeners.add(buildLog4jQueryListener());
+        }
 
         // slow query logging listeners
         if (this.createCommonsSlowQueryListener) {
@@ -976,6 +1082,9 @@ public class ProxyDataSourceBuilder {
         }
         if (this.createSysOutSlowQueryListener) {
             listeners.add(buildSysOutSlowQueryListener());
+        }
+        if (this.createLog4jSlowQueryListener) {
+            listeners.add(buildLog4jSlowQueryListener());
         }
 
 
@@ -1131,6 +1240,46 @@ public class ProxyDataSourceBuilder {
         }
         if (this.slf4jSlowQueryLoggerName != null) {
             listener.setLogger(this.slf4jSlowQueryLoggerName);
+        }
+        if (this.jsonFormat) {
+            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
+        }
+        if (this.multiline) {
+            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
+        }
+        if (this.writeIsolation) {
+            listener.setWriteIsolation(true);
+        }
+        return listener;
+    }
+
+    private Log4jQueryLoggingListener buildLog4jQueryListener() {
+        Log4jQueryLoggingListener listener = new Log4jQueryLoggingListener();
+        if (this.log4jLogLevel != null) {
+            listener.setLogLevel(this.log4jLogLevel);
+        }
+        if (this.log4jLoggerName != null && !this.log4jLoggerName.isEmpty()) {
+            listener.setLogger(this.log4jLoggerName);
+        }
+        if (this.jsonFormat) {
+            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
+        }
+        if (this.multiline) {
+            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
+        }
+        if (this.writeIsolation) {
+            listener.setWriteIsolation(true);
+        }
+        return listener;
+    }
+
+    private Log4jSlowQueryListener buildLog4jSlowQueryListener() {
+        Log4jSlowQueryListener listener = new Log4jSlowQueryListener(this.slowQueryThreshold, this.slowQueryTimeUnit);
+        if (this.log4jSlowQueryLogLevel != null) {
+            listener.setLogLevel(this.log4jSlowQueryLogLevel);
+        }
+        if (this.log4jSlowQueryLoggerName != null) {
+            listener.setLogger(this.log4jSlowQueryLoggerName);
         }
         if (this.jsonFormat) {
             listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
