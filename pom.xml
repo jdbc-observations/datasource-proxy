@@ -3,7 +3,7 @@
 
   <groupId>net.ttddyy</groupId>
   <artifactId>datasource-proxy</artifactId>
-  <version>1.8-SNAPSHOT</version>
+  <version>1.8</version>
   <packaging>jar</packaging>
 
   <name>datasource-proxy</name>
