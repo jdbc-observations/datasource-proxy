@@ -22,7 +22,6 @@
     <connection>scm:git:git@github.com:ttddyy/datasource-proxy.git</connection>
     <developerConnection>scm:git:git@github.com:ttddyy/datasource-proxy.git</developerConnection>
     <url>git@github.com:ttddyy/datasource-proxy.git</url>
-    <tag>HEAD</tag>
   </scm>
 
   <distributionManagement>
