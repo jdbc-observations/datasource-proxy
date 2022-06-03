@@ -18,8 +18,8 @@ ProxyDataSourceBuilder.create(datasource)
 +
 Thanks _https://github.com/sleepo581[Alexei Brinza]_ for this contribution!!
 
-* Add support for Log4j2.  (https://github.com/ttddyy/datasource-proxy/pull/78[Issue-78])
-Thanks _https://github.com/ivasanpag[Ivan Jose Sanchez Pagador]_ for this contribution!!
+* Add support for Log4j2.  (https://github.com/ttddyy/datasource-proxy/pull/78[Issue-78]) +
+  Thanks _https://github.com/ivasanpag[Ivan Jose Sanchez Pagador]_ for this contribution!!
 
 ==== Improvements
 * Add `ProxyDataSource#getDataSource()` method to return the original data source.  (https://github.com/ttddyy/datasource-proxy/issues/81[Issue-81])
