@@ -1,0 +1,72 @@
+name: Publish documentation to the project page
+
+on:
+  push:
+    branches: [ 1.x, release ]
+
+jobs:
+  publish:
+    if: github.repository == 'ttddyy/datasource-proxy'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up code
+        uses: actions/setup-java@v3
+        with:
+          java-version: 8
+          distribution: temurin
+
+      - name: Get project version
+        run: |
+            VERSION=$( ./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout )
+            echo "project_version=$VERSION" >> $GITHUB_ENV
+
+      - name: Process asciidoc and javadoc
+        run: ./mvnw -Ppublish-doc asciidoctor:process-asciidoc@output-html javadoc:javadoc
+
+        #
+        # construct a directory to be copied to "gh-pages" branch
+        #    target/deploy-documents/             -- map to "docs" dir in "gh-pages"
+        #                 `-- <PROJECT_VERSION>   -- e.g. "1.7", "1.8-SNAPSHOT"
+        #                       `-- user-guide/
+        #                       `-- api/
+        #                 `-- snapshot            -- for latest snapshot from main
+        #                       `-- user-guide/
+        #                       `-- api/
+        #                 `-- current             -- for latest release version
+        #                       `-- user-guide/
+        #                       `-- api/
+
+      - name: Prepare "snapshot" documents
+        if: "github.ref == 'refs/heads/1.x' && contains(env.project_version, 'snapshot')"
+        run: |
+          mkdir -p target/deploy-documents/snapshot/user-guide/
+          mkdir -p target/deploy-documents/snapshot/api/
+          cp -Rf target/generated-docs/index.html target/deploy-documents/snapshot/user-guide/
+          cp -Rf target/site/apidocs/* target/deploy-documents/snapshot/api/
+
+      - name: Prepare "project-version" documents
+        run: |
+          mkdir -p target/deploy-documents/${{ env.project_version }}/user-guide/
+          mkdir -p target/deploy-documents/${{ env.project_version }}/api/
+          cp -Rf target/generated-docs/* target/deploy-documents/${{ env.project_version }}/user-guide/
+          cp -Rf target/site/apidocs/* target/deploy-documents/${{ env.project_version }}/api/
+
+      - name: Prepare "current" documents
+        if: "github.ref == 'refs/heads/release'"
+        run: |
+          mkdir -p target/deploy-documents/current/user-guide/
+          mkdir -p target/deploy-documents/current/api/
+          cp -Rf target/generated-docs/index.html target/deploy-documents/current/user-guide/
+          cp -Rf target/site/apidocs/* target/deploy-documents/current/api/
+
+
+      - name: Deploy documents
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: target/deploy-documents
+          destination_dir: docs
+          keep_files: true
+          full_commit_message: "Deploying documents(${{ env.project_version}}) to ${{ github.ref }} from ${{ github.repository }}@${{ github.sha }}"
