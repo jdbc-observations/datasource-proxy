@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: net.ttddyy.dsproxy.listener.logging.JULQueryLoggingListenerTest
--------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 sec - in net.ttddyy.dsproxy.listener.logging.JULQueryLoggingListenerTest

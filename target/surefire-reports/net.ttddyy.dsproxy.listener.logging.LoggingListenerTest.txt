@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: net.ttddyy.dsproxy.listener.logging.LoggingListenerTest
--------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.077 sec - in net.ttddyy.dsproxy.listener.logging.LoggingListenerTest
