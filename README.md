@@ -21,7 +21,7 @@ Provide proxy classes for JDBC API to intercept executing queries and methods.
 
 - [Current Release Version][user-guide-current]
 - [Snapshot Version][user-guide-snapshot]
-- [Older Version](https://github.com/ttddyy/datasource-proxy/wiki/User-Guide)
+- [Older Version](https://github.com/jdbc-observations/datasource-proxy/wiki/User-Guide)
 
 ## Maven
 
@@ -53,15 +53,15 @@ Snapshot is available via [oss sonatype snapshot repository](https://oss.sonatyp
 
 - [Current Release Version][javadoc-current]
 - [Snapshot Version][javadoc-snapshot]
-- [Older Version](https://github.com/ttddyy/datasource-proxy/wiki/Javadoc)
+- [Older Version](https://github.com/jdbc-observations/datasource-proxy/wiki/Javadoc)
 
 
 ----
 
 [maven-central_badge]: https://maven-badges.herokuapp.com/maven-central/net.ttddyy/datasource-proxy/
-[user-guide-current]: http://ttddyy.github.io/datasource-proxy/docs/current/user-guide/
-[user-guide-snapshot]: http://ttddyy.github.io/datasource-proxy/docs/snapshot/user-guide/
-[javadoc-current]: http://ttddyy.github.io/datasource-proxy/docs/current/api/
-[javadoc-snapshot]: http://ttddyy.github.io/datasource-proxy/docs/snapshot/api/
+[user-guide-current]: http://jdbc-observations.github.io/datasource-proxy/docs/current/user-guide/
+[user-guide-snapshot]: http://jdbc-observations.github.io/datasource-proxy/docs/snapshot/user-guide/
+[javadoc-current]: http://jdbc-observations.github.io/datasource-proxy/docs/current/api/
+[javadoc-snapshot]: http://jdbc-observations.github.io/datasource-proxy/docs/snapshot/api/
 [datasource-proxy-examples]: https://github.com/ttddyy/datasource-proxy-examples
 [datasource-assert]: https://github.com/ttddyy/datasource-assert

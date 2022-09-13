@@ -1,8 +1,8 @@
 # Changelog
 
 
-**Changelog is moved to [datasource-proxy User Guide(Current)](http://ttddyy.github.io/datasource-proxy/docs/current/user-guide/index.html#changelog).**
-_[(Snapshot documentation is here)](http://ttddyy.github.io/datasource-proxy/docs/snapshot/user-guide/index.html#changelog)_
+**Changelog is moved to [datasource-proxy User Guide(Current)](http://jdbc-observations.github.io/datasource-proxy/docs/current/user-guide/index.html#changelog).**
+_[(Snapshot documentation is here)](http://jdbc-observations.github.io/datasource-proxy/docs/snapshot/user-guide/index.html#changelog)_
 
 ----
 
