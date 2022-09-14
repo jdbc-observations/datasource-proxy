@@ -1,6 +1,11 @@
 [[changelog-2.0]]
 === 2.0
 
+* `JdbcLifecycleEventListener`
+  The interface now implements `JdbcLifecycleEventListener`.
+  To properly invoke all the callbacks, the implementation of this class needs to be wrapped by `JdbcLifecycleEventExecutionListener`.
+ It automatically happens when the listener is registered by `ProxyDataSourceBuilder`.
+
 * `QueryCount` cleanup
   - Removed following methods on `QueryCountHolder`
     - `getDataSourceNamesAsList()`

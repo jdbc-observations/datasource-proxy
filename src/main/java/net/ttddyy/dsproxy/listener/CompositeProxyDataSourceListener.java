@@ -1,5 +1,8 @@
 package net.ttddyy.dsproxy.listener;
 
+import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventExecutionListener;
+import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventListener;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,12 +45,31 @@ public class CompositeProxyDataSourceListener implements ProxyDataSourceListener
     }
 
 
+    /**
+     * Add a {@link ProxyDataSourceListener}.
+     *
+     * @param listener a listener
+     * @return {@code true} as specified by {@link List#add(Object)}
+     */
     public boolean addListener(ProxyDataSourceListener listener) {
+        if (listener instanceof JdbcLifecycleEventListener) {
+            return this.listeners.add(new JdbcLifecycleEventExecutionListener((JdbcLifecycleEventListener) listener));
+        }
         return this.listeners.add(listener);
     }
 
+    /**
+     * Adda collection of {@link ProxyDataSourceListener}s.
+     *
+     * @param listeners collection of listeners
+     * @return {@code true} if this list changed as a result of the call
+     */
     public boolean addListeners(Collection<ProxyDataSourceListener> listeners) {
-        return this.listeners.addAll(listeners);
+        boolean result = false;
+        for (ProxyDataSourceListener listener : listeners) {
+            result |= addListener(listener);  // perform "JdbcLifecycleEventExecutionListener" conversion
+        }
+        return result;
     }
 
     public List<ProxyDataSourceListener> getListeners() {

@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.listener.lifecycle;
 
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 
 /**
@@ -11,22 +12,19 @@ import net.ttddyy.dsproxy.listener.QueryExecutionContext;
  * {@link java.sql.CallableStatement}, {@link java.sql.ResultSet}), as well as
  * callbacks for any method calls ({@link #beforeMethod(MethodExecutionContext)}, {@link #afterMethod(MethodExecutionContext)})
  * and query executions({@link #beforeQuery(QueryExecutionContext)}, {@link #afterQuery(QueryExecutionContext)}).
+ * <p>
+ * Since 2.0, this interface is a child of {@link ProxyDataSourceListener}.
+ * To properly invoke all the callbacks, the implementation of this class needs to be wrapped by {@link JdbcLifecycleEventExecutionListener}.
+ * It automatically happens if the listener instance is registered via {@link net.ttddyy.dsproxy.support.ProxyDataSourceBuilder}.
  *
  * @author Tadaya Tsuyukubo
  * @see JdbcLifecycleEventExecutionListener
  * @see JdbcLifecycleEventListenerAdapter
  * @since 1.5
  */
-public interface JdbcLifecycleEventListener extends WrapperMethodCallbacks, DataSourceMethodCallbacks, ConnectionMethodCallbacks,
+public interface JdbcLifecycleEventListener extends ProxyDataSourceListener,
+        WrapperMethodCallbacks, DataSourceMethodCallbacks, ConnectionMethodCallbacks,
         StatementMethodCallbacks, PreparedStatementMethodCallbacks, CallableStatementMethodCallbacks,
         ResultSetMethodCallbacks {
-
-    void beforeMethod(MethodExecutionContext executionContext);
-
-    void afterMethod(MethodExecutionContext executionContext);
-
-    void beforeQuery(QueryExecutionContext executionContext);
-
-    void afterQuery(QueryExecutionContext executionContext);
 
 }
