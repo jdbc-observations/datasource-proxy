@@ -65,7 +65,7 @@ public abstract class AbstractQueryLogEntryCreator implements QueryLogEntryCreat
 
     protected void chompIfEndWith(StringBuilder sb, char c) {
         final int lastCharIndex = sb.length() - 1;
-        if (sb.charAt(lastCharIndex) == c) {
+        if (lastCharIndex >= 0 && sb.charAt(lastCharIndex) == c) {
             sb.deleteCharAt(lastCharIndex);
         }
     }
