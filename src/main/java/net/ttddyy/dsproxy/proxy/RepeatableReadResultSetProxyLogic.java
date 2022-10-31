@@ -17,6 +17,7 @@ import static java.lang.String.format;
  * Allows {@link java.sql.ResultSet} to be consumed more than once.
  *
  * @author Liam Williams
+ * @author Réda Housni Alaoui
  * @see net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler
  * @since 1.4
  */
@@ -96,6 +97,7 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
     private Object[] currentResult;
     private final List<Object[]> cachedResults = new ArrayList<Object[]>();
 
+    private boolean wasNull;
 
     @Override
     public Object invoke(Method method, Object[] args) throws Throwable {
@@ -143,6 +145,9 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
             throw new SQLException("Already closed");
         }
         if (this.resultSetConsumed) {
+            if (isWasNullMethod(method)) {
+                return wasNull;
+            }
             if (isGetMethod(method)) {
                 return handleGetMethodUsingCache(args);
             }
@@ -150,6 +155,9 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
                 return handleNextMethodUsingCache();
             }
         } else {
+            if (isWasNullMethod(method)) {
+                return method.invoke(resultSet, args);
+            }
             if (isGetMethod(method)) {
                 return handleGetMethodByDelegating(method, args);
             }
@@ -218,7 +226,9 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
             throw new SQLException("Result set not advanced. Call next before any get method!");
         } else if (resultPointer < cachedResults.size()) {
             int columnIndex = determineColumnIndex(args);
-            return currentResult[columnIndex];
+            Object value = currentResult[columnIndex];
+            wasNull = value == null;
+            return value;
         } else {
             throw new SQLException(format("Result set exhausted. There were %d result(s) only", cachedResults.size()));
         }
@@ -234,6 +244,10 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
 
     private boolean isBeforeFirstMethod(Method method) {
         return method.getName().equals("beforeFirst");
+    }
+
+    private boolean isWasNullMethod(Method method) {
+        return method.getName().equals("wasNull");
     }
 
     private int determineColumnIndex(Object[] args) throws SQLException {
