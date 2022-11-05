@@ -7,7 +7,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static java.lang.Boolean.TRUE;
 import static java.lang.String.format;
@@ -109,6 +115,7 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
     private Object[] currentResult;
     private final List<Object[]> cachedResults = new ArrayList<Object[]>();
 
+    private boolean wasNull;
 
     @Override
     public Object invoke(Method method, Object[] args) throws Throwable {
@@ -156,13 +163,19 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
             throw new SQLException("Already closed");
         }
         if (this.resultSetConsumed) {
+            if (isWasNullMethod(method)) {
+                return this.wasNull;
+            }
             if (isGetMethod(method)) {
-                return handleGetMethodUsingCache(methodName, args);
+                return handleGetMethodUsingCache(method, args);
             }
             if (isNextMethod(method)) {
                 return handleNextMethodUsingCache();
             }
         } else {
+            if (isWasNullMethod(method)) {
+                return method.invoke(this.resultSet, args);
+            }
             if (isGetMethod(method)) {
                 return handleGetMethodByDelegating(method, args);
             }
@@ -226,19 +239,33 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
         }
     }
 
-    private Object handleGetMethodUsingCache(String methodName, Object[] args) throws SQLException, InvocationTargetException, IllegalAccessException {
+    private Object handleGetMethodUsingCache(Method method, Object[] args) throws SQLException {
         if (resultPointer == -1) {
             throw new SQLException("Result set not advanced. Call next before any get method!");
         } else if (resultPointer < cachedResults.size()) {
             int columnIndex = determineColumnIndex(args);
             Object columnValue = currentResult[columnIndex];
+            this.wasNull = isNullValue(columnValue, method, args);
             if (!(columnValue instanceof Number)) {
                 return columnValue;
             }
-            return convertNumberToExpectedType(methodName, (Number) columnValue);
+            return convertNumberToExpectedType(method.getName(), (Number) columnValue);
         } else {
             throw new SQLException(format("Result set exhausted. There were %d result(s) only", cachedResults.size()));
         }
+    }
+
+    /**
+     * Determine whether the retrieved value is {@code null} for {@link #wasNull}.
+     * <p> Subclass may override this method to provide more sophisticated wasNull check.
+     *
+     * @param value  result value
+     * @param method getX method
+     * @param args   method arguments
+     * @return {@code true} if value is considered as {@code null}.
+     */
+    protected boolean isNullValue(Object value, Method method, Object[] args) {
+        return value == null;
     }
 
     private Object convertNumberToExpectedType(String getMethodName, Number value) throws InvocationTargetException, IllegalAccessException {
@@ -260,6 +287,10 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
 
     private boolean isBeforeFirstMethod(Method method) {
         return method.getName().equals("beforeFirst");
+    }
+
+    private boolean isWasNullMethod(Method method) {
+        return method.getName().equals("wasNull");
     }
 
     private int determineColumnIndex(Object[] args) throws SQLException {

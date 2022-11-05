@@ -294,6 +294,11 @@ public class RepeatableReadResultSetProxyLogicTest {
         return (Boolean) resultSetProxyLogic.invoke(next, null);
     }
 
+    private boolean invokeWasNull(RepeatableReadResultSetProxyLogic resultSetProxyLogic) throws Throwable {
+        Method next = ResultSet.class.getMethod("wasNull");
+        return (Boolean) resultSetProxyLogic.invoke(next, null);
+    }
+
     private String invokeGetString(RepeatableReadResultSetProxyLogic resultSetProxyLogic, int columnIndex) throws Throwable {
         Method getString = ResultSet.class.getMethod("getString", int.class);
         return (String) resultSetProxyLogic.invoke(getString, new Object[]{columnIndex});
@@ -413,6 +418,45 @@ public class RepeatableReadResultSetProxyLogicTest {
     }
 
     @Test
+    public void wasNullIsSupportedBeforeRepeatedRead() throws Throwable {
+        ResultSet resultSet = exampleResultSet();
+        RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
+
+        when(resultSet.next()).thenReturn(true);
+
+        assertThat(invokeNext(resultSetProxyLogic)).isTrue();
+
+        invokeGetString(resultSetProxyLogic, 1);
+        when(resultSet.wasNull()).thenReturn(true);
+        assertThat(invokeWasNull(resultSetProxyLogic)).isTrue();
+
+        invokeGetString(resultSetProxyLogic, 2);
+        when(resultSet.wasNull()).thenReturn(false);
+        assertThat(invokeWasNull(resultSetProxyLogic)).isFalse();
+    }
+
+    @Test
+    public void wasNullIsSupportedAfterRepeatedRead() throws Throwable {
+        ResultSet resultSet = exampleResultSet();
+        RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
+
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getObject(1)).thenReturn(null);
+        when(resultSet.getObject(2)).thenReturn("foo");
+
+        assertThat(invokeNext(resultSetProxyLogic)).isTrue();
+
+        invokeBeforeFirst(resultSetProxyLogic);
+        invokeNext(resultSetProxyLogic);
+
+        invokeGetString(resultSetProxyLogic, 1);
+        assertThat(invokeWasNull(resultSetProxyLogic)).isTrue();
+
+        invokeGetString(resultSetProxyLogic, 2);
+        assertThat(invokeWasNull(resultSetProxyLogic)).isFalse();
+    }
+
+    @Test
     public void getIntThenGetLong() throws Throwable {
         ResultSet resultSet = exampleResultSet();
         RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
@@ -430,5 +474,4 @@ public class RepeatableReadResultSetProxyLogicTest {
 
         assertThat(result).isEqualTo(5L);
     }
-
 }
