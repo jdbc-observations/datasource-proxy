@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
+import java.util.HashMap;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
 
@@ -239,7 +240,7 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
         }
     }
 
-    private Object handleGetMethodUsingCache(Method method, Object[] args) throws SQLException {
+    private Object handleGetMethodUsingCache(Method method, Object[] args) throws SQLException, InvocationTargetException, IllegalAccessException {
         if (resultPointer == -1) {
             throw new SQLException("Result set not advanced. Call next before any get method!");
         } else if (resultPointer < cachedResults.size()) {
