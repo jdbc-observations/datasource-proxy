@@ -309,6 +309,11 @@ public class RepeatableReadResultSetProxyLogicTest {
         return (Integer) resultSetProxyLogic.invoke(getInt, new Object[]{columnIndex});
     }
 
+    private long invokeGetLong(RepeatableReadResultSetProxyLogic resultSetProxyLogic, int columnIndex) throws Throwable {
+        Method getInt = ResultSet.class.getMethod("getLong", int.class);
+        return (Long) resultSetProxyLogic.invoke(getInt, new Object[]{columnIndex});
+    }
+
     private Timestamp invokeGetTimestamp(RepeatableReadResultSetProxyLogic resultSetProxyLogic, int columnIndex) throws Throwable {
         Method getTimestamp = ResultSet.class.getMethod("getTimestamp", int.class);
         return (Timestamp) resultSetProxyLogic.invoke(getTimestamp, new Object[]{columnIndex});
@@ -449,5 +454,24 @@ public class RepeatableReadResultSetProxyLogicTest {
 
         invokeGetString(resultSetProxyLogic, 2);
         assertThat(invokeWasNull(resultSetProxyLogic)).isFalse();
+    }
+
+    @Test
+    public void getIntThenGetLong() throws Throwable {
+        ResultSet resultSet = exampleResultSet();
+        RepeatableReadResultSetProxyLogic resultSetProxyLogic = createProxyLogic(resultSet);
+
+        when(resultSet.next()).thenReturn(true);
+
+        when(resultSet.getObject(1)).thenReturn(5);
+
+        assertThat(invokeNext(resultSetProxyLogic)).isTrue();
+
+        invokeBeforeFirst(resultSetProxyLogic);
+        invokeNext(resultSetProxyLogic);
+
+        long result = invokeGetLong(resultSetProxyLogic, 1);
+
+        assertThat(result).isEqualTo(5L);
     }
 }
