@@ -1,3 +1,14 @@
+[[changelog-1.8.1]]
+=== 1.8.1
+==== Improvements
+* Improve `RepeatableReadResultSetProxyLogic`
+** Support `wasNull` (https://github.com/ttddyy/datasource-proxy/pull/87[Issue-87])
+** Support calling different numeric type get methods on the same index (https://github.com/ttddyy/datasource-proxy/pull/88[Issue-88])
+
++
+Thanks _https://github.com/reda-alaoui[Réda Housni Alaoui]_ for this contribution!!
+
+
 [[changelog-1.8]]
 === 1.8
 
