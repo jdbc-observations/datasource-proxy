@@ -128,6 +128,8 @@ public class ProxyDataSourceBuilder {
 
     private boolean jsonFormat;
     private boolean multiline;
+
+    private boolean formatSql;
     private boolean writeIsolation;
     private List<QueryExecutionListener> queryExecutionListeners = new ArrayList<QueryExecutionListener>();
 
@@ -752,6 +754,17 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
+     * Use formatted output for logging query.
+     *
+     * @return builder
+     * @since
+     */
+    public ProxyDataSourceBuilder formatSql() {
+        this.formatSql = true;
+        return this;
+    }
+
+    /**
      * Add connection isolation to logging query.
      *
      * @return builder
@@ -1187,6 +1200,9 @@ public class ProxyDataSourceBuilder {
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
+        if (this.formatSql) {
+            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
+        }
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
@@ -1206,6 +1222,9 @@ public class ProxyDataSourceBuilder {
         }
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
+        }
+        if (this.formatSql) {
+            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
         }
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
@@ -1227,6 +1246,9 @@ public class ProxyDataSourceBuilder {
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
+        if (this.formatSql) {
+            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
+        }
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
@@ -1246,6 +1268,9 @@ public class ProxyDataSourceBuilder {
         }
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
+        }
+        if (this.formatSql) {
+            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
         }
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
@@ -1267,6 +1292,9 @@ public class ProxyDataSourceBuilder {
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
+        if (this.formatSql) {
+            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
+        }
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
@@ -1286,6 +1314,9 @@ public class ProxyDataSourceBuilder {
         }
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
+        }
+        if (this.formatSql) {
+            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
         }
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
@@ -1307,6 +1338,9 @@ public class ProxyDataSourceBuilder {
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
+        if (this.formatSql) {
+            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
+        }
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
@@ -1327,6 +1361,9 @@ public class ProxyDataSourceBuilder {
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
+        if (this.formatSql) {
+            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
+        }
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
@@ -1340,6 +1377,9 @@ public class ProxyDataSourceBuilder {
         }
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
+        }
+        if (this.formatSql) {
+            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
         }
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
@@ -1355,6 +1395,9 @@ public class ProxyDataSourceBuilder {
         if (this.multiline) {
             listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
         }
+        if (this.formatSql) {
+            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
+        }
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
@@ -1367,6 +1410,11 @@ public class ProxyDataSourceBuilder {
         return entryCreator;
     }
 
+    private FormattedQueryLogEntryCreator buildFormattedQueryLogEntryCreator(boolean multiline) {
+        FormattedQueryLogEntryCreator entryCreator = new FormattedQueryLogEntryCreator();
+        entryCreator.setMultiline(multiline);
+        return entryCreator;
+    }
     private TracingMethodListener buildTracingMethodListenr() {
         TracingMethodListener listener = new TracingMethodListener();
         if (this.tracingMessageConsumer != null) {
