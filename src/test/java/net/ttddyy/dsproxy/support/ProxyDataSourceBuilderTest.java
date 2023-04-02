@@ -35,6 +35,7 @@ import net.ttddyy.dsproxy.proxy.RepeatableReadResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -338,6 +339,34 @@ public class ProxyDataSourceBuilderTest {
         assertThat(target).isInstanceOf(listenerClass);
 
         return (T) target;
+    }
+
+    @Test
+    public void formatQuery() {
+        AtomicBoolean formatCalled = new AtomicBoolean();
+        ProxyDataSourceBuilder.FormatQueryCallback formatCallback = query -> {
+            formatCalled.set(true);
+            return query + "-formatted";
+        };
+
+        ProxyDataSource ds = ProxyDataSourceBuilder.create().logQueryToSysOut().formatQuery(formatCallback).build();
+        ChainListener chainListener = ds.getProxyConfig().getQueryListener();
+        assertThat(chainListener.getListeners()).hasSize(1).first().isInstanceOf(AbstractQueryLoggingListener.class);
+        AbstractQueryLoggingListener listener = (AbstractQueryLoggingListener) chainListener.getListeners().get(0);
+        QueryLogEntryCreator logEntryCreator = listener.getQueryLogEntryCreator();
+        assertThat(logEntryCreator).isNotNull().isInstanceOf(DefaultQueryLogEntryCreator.class);
+        DefaultQueryLogEntryCreator defaultQueryLogEntryCreator = (DefaultQueryLogEntryCreator) logEntryCreator;
+        assertThat(defaultQueryLogEntryCreator.isMultiline()).isFalse();
+
+        ExecutionInfo executionInfo = new ExecutionInfo();
+        QueryInfo queryInfo = new QueryInfo();
+        queryInfo.setQuery("SELECT 1");
+        List<QueryInfo> queryInfoList = new ArrayList<>();
+        queryInfoList.add(queryInfo);
+        String result = logEntryCreator.getLogEntry(executionInfo, queryInfoList, false, false, false);
+
+        assertThat(formatCalled).isTrue();
+        assertThat(result).contains("SELECT 1-formatted");
     }
 
     @Test

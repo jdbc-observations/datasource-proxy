@@ -13,7 +13,22 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.listener.TracingMethodListener;
 import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventExecutionListener;
 import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventListener;
-import net.ttddyy.dsproxy.listener.logging.*;
+import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
+import net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener;
+import net.ttddyy.dsproxy.listener.logging.CommonsSlowQueryListener;
+import net.ttddyy.dsproxy.listener.logging.DefaultJsonQueryLogEntryCreator;
+import net.ttddyy.dsproxy.listener.logging.DefaultQueryLogEntryCreator;
+import net.ttddyy.dsproxy.listener.logging.JULQueryLoggingListener;
+import net.ttddyy.dsproxy.listener.logging.JULSlowQueryListener;
+import net.ttddyy.dsproxy.listener.logging.Log4jLogLevel;
+import net.ttddyy.dsproxy.listener.logging.Log4jQueryLoggingListener;
+import net.ttddyy.dsproxy.listener.logging.Log4jSlowQueryListener;
+import net.ttddyy.dsproxy.listener.logging.QueryLogEntryCreator;
+import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
+import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
+import net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener;
+import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
+import net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener;
 import net.ttddyy.dsproxy.proxy.DefaultConnectionIdManager;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -59,6 +74,16 @@ public class ProxyDataSourceBuilder {
     // TODO: add @FunctionalInterface once codebase is java8
     public interface SingleQueryExecution {
         void execute(ExecutionInfo execInfo, List<QueryInfo> queryInfoList);
+    }
+
+    /**
+     * Functional interface to be called for formatting a query.
+     *
+     * @since 1.9
+     */
+    // TODO: add @FunctionalInterface once codebase is java8
+    public interface FormatQueryCallback {
+        String format(String query);
     }
 
     private DataSource dataSource;
@@ -128,8 +153,7 @@ public class ProxyDataSourceBuilder {
 
     private boolean jsonFormat;
     private boolean multiline;
-
-    private boolean formatSql;
+    private FormatQueryCallback formatQueryCallback;
     private boolean writeIsolation;
     private List<QueryExecutionListener> queryExecutionListeners = new ArrayList<QueryExecutionListener>();
 
@@ -701,6 +725,8 @@ public class ProxyDataSourceBuilder {
 
     /**
      * Format logging output as JSON.
+     * <p>
+     * This method is mutually exclusive to {@link #formatQuery(FormatQueryCallback)}.
      *
      * @return builder
      */
@@ -754,13 +780,16 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Use formatted output for logging query.
+     * Take an callback that can format a query.
+     * <p>
+     * This method is mutually exclusive to {@link #asJson()}.
      *
+     * @param formatQueryCallback A callback to format the query
      * @return builder
-     * @since
+     * @since 1.9
      */
-    public ProxyDataSourceBuilder formatSql() {
-        this.formatSql = true;
+    public ProxyDataSourceBuilder formatQuery(FormatQueryCallback formatQueryCallback) {
+        this.formatQueryCallback = formatQueryCallback;
         return this;
     }
 
@@ -1114,7 +1143,7 @@ public class ProxyDataSourceBuilder {
 
         // tracing listener
         if (this.createTracingMethodListener) {
-            this.methodExecutionListeners.add(buildTracingMethodListenr());
+            this.methodExecutionListeners.add(buildTracingMethodListener());
         }
 
         // explicitly added listeners
@@ -1194,15 +1223,7 @@ public class ProxyDataSourceBuilder {
         if (this.commonsLoggerName != null && !this.commonsLoggerName.isEmpty()) {
             listener.setLog(this.commonsLoggerName);
         }
-        if (this.jsonFormat) {
-            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
-        }
-        if (this.multiline) {
-            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
-        }
-        if (this.formatSql) {
-            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
-        }
+        listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
@@ -1217,15 +1238,7 @@ public class ProxyDataSourceBuilder {
         if (this.commonsSlowQueryLogName != null) {
             listener.setLog(this.commonsSlowQueryLogName);
         }
-        if (this.jsonFormat) {
-            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
-        }
-        if (this.multiline) {
-            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
-        }
-        if (this.formatSql) {
-            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
-        }
+        listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
@@ -1240,15 +1253,7 @@ public class ProxyDataSourceBuilder {
         if (this.slf4jLoggerName != null && !this.slf4jLoggerName.isEmpty()) {
             listener.setLogger(this.slf4jLoggerName);
         }
-        if (this.jsonFormat) {
-            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
-        }
-        if (this.multiline) {
-            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
-        }
-        if (this.formatSql) {
-            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
-        }
+        listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
@@ -1263,15 +1268,7 @@ public class ProxyDataSourceBuilder {
         if (this.slf4jSlowQueryLoggerName != null) {
             listener.setLogger(this.slf4jSlowQueryLoggerName);
         }
-        if (this.jsonFormat) {
-            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
-        }
-        if (this.multiline) {
-            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
-        }
-        if (this.formatSql) {
-            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
-        }
+        listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
@@ -1286,15 +1283,7 @@ public class ProxyDataSourceBuilder {
         if (this.log4jLoggerName != null && !this.log4jLoggerName.isEmpty()) {
             listener.setLogger(this.log4jLoggerName);
         }
-        if (this.jsonFormat) {
-            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
-        }
-        if (this.multiline) {
-            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
-        }
-        if (this.formatSql) {
-            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
-        }
+        listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
@@ -1309,15 +1298,7 @@ public class ProxyDataSourceBuilder {
         if (this.log4jSlowQueryLoggerName != null) {
             listener.setLogger(this.log4jSlowQueryLoggerName);
         }
-        if (this.jsonFormat) {
-            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
-        }
-        if (this.multiline) {
-            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
-        }
-        if (this.formatSql) {
-            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
-        }
+        listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
@@ -1332,15 +1313,7 @@ public class ProxyDataSourceBuilder {
         if (this.julLoggerName != null && !this.julLoggerName.isEmpty()) {
             listener.setLogger(this.julLoggerName);
         }
-        if (this.jsonFormat) {
-            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
-        }
-        if (this.multiline) {
-            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
-        }
-        if (this.formatSql) {
-            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
-        }
+        listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
@@ -1355,15 +1328,7 @@ public class ProxyDataSourceBuilder {
         if (this.julSlowQueryLoggerName != null) {
             listener.setLogger(this.julSlowQueryLoggerName);
         }
-        if (this.jsonFormat) {
-            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
-        }
-        if (this.multiline) {
-            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
-        }
-        if (this.formatSql) {
-            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
-        }
+        listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
@@ -1372,15 +1337,7 @@ public class ProxyDataSourceBuilder {
 
     private SystemOutQueryLoggingListener buildSysOutQueryListener() {
         SystemOutQueryLoggingListener listener = new SystemOutQueryLoggingListener();
-        if (this.jsonFormat) {
-            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
-        }
-        if (this.multiline) {
-            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
-        }
-        if (this.formatSql) {
-            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
-        }
+        listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
@@ -1389,33 +1346,45 @@ public class ProxyDataSourceBuilder {
 
     private SystemOutSlowQueryListener buildSysOutSlowQueryListener() {
         SystemOutSlowQueryListener listener = new SystemOutSlowQueryListener(this.slowQueryThreshold, this.slowQueryTimeUnit);
-        if (this.jsonFormat) {
-            listener.setQueryLogEntryCreator(new DefaultJsonQueryLogEntryCreator());
-        }
-        if (this.multiline) {
-            listener.setQueryLogEntryCreator(buildMultilineQueryLogEntryCreator());
-        }
-        if (this.formatSql) {
-            listener.setQueryLogEntryCreator(buildFormattedQueryLogEntryCreator(this.multiline));
-        }
+        listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
         if (this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
         return listener;
     }
 
-    private DefaultQueryLogEntryCreator buildMultilineQueryLogEntryCreator() {
-        DefaultQueryLogEntryCreator entryCreator = new DefaultQueryLogEntryCreator();
-        entryCreator.setMultiline(true);
-        return entryCreator;
+    private QueryLogEntryCreator buildQueryLogEntryCreator() {
+        boolean createLogEntryCreator = this.jsonFormat || this.multiline || this.formatQueryCallback != null;
+        if (!createLogEntryCreator) {
+            return new DefaultQueryLogEntryCreator();  // default
+        }
+
+        if (this.jsonFormat) {
+            return new DefaultJsonQueryLogEntryCreator();
+        }
+
+
+        DefaultQueryLogEntryCreator creator;
+        if (this.formatQueryCallback != null) {
+            final FormatQueryCallback queryFormatter = this.formatQueryCallback;
+            creator = new DefaultQueryLogEntryCreator() {
+                @Override
+                protected String formatQuery(String query) {
+                    return queryFormatter.format(query);
+                }
+
+            };
+        } else {
+            creator = new DefaultQueryLogEntryCreator();
+        }
+
+        if (this.multiline) {
+            creator.setMultiline(true);
+        }
+        return creator;
     }
 
-    private FormattedQueryLogEntryCreator buildFormattedQueryLogEntryCreator(boolean multiline) {
-        FormattedQueryLogEntryCreator entryCreator = new FormattedQueryLogEntryCreator();
-        entryCreator.setMultiline(multiline);
-        return entryCreator;
-    }
-    private TracingMethodListener buildTracingMethodListenr() {
+    private TracingMethodListener buildTracingMethodListener() {
         TracingMethodListener listener = new TracingMethodListener();
         if (this.tracingMessageConsumer != null) {
             listener.setTracingMessageConsumer(this.tracingMessageConsumer);
