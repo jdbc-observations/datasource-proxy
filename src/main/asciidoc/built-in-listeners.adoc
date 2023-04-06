@@ -52,25 +52,40 @@ a log over multiple lines. Also, `json()` option prints out log in json format.
 
 Here is another example printing multiline log with formatting query with formatter from Hibernate.
 
+The datasource-proxy `v1.9` added `formatQuery()` method on `ProxyDataSourceBuilder` which you can specify a callback to modify the query for logging.
 
 ```java
-    QueryLogEntryCreator logEntryCreator = new DefaultQueryLogEntryCreator() {
-        @Override
-        protected String formatQuery(String query) {
-            return FormatStyle.BASIC.getFormatter().format(query);  // use Hibernte formatter
-        }
-    };
-    creator.setMultiline(true);  // enable multiline output
-
-    // print out to system.out
-    SystemOutQueryLoggingListener listener = new SystemOutQueryLoggingListener();
-    listener.setQueryLogEntryCreator(creator);
-
-    return ProxyDataSourceBuilder
-                .create(actualDataSource)
-                .listener(listener)
-                .build()
+// v1.9 or above
+Formatter formatter = FormatStyle.BASIC.getFormatter();
+DataSource ds = ProxyDataSourceBuilder
+                  .create(actualDataSource)
+                  .formatQuery(formatter::format)
+                  .multiline()
+                  .logQueryToSysOut()
+                  .build()
 ```
+
+[source,java]
+----
+// prior to v1.9
+QueryLogEntryCreator logEntryCreator = new DefaultQueryLogEntryCreator() {
+  @Override
+  protected String formatQuery(String query) {
+    return FormatStyle.BASIC.getFormatter().format(query);  // use Hibernte formatter
+  }
+};
+
+creator.setMultiline(true);  // enable multiline output
+
+// print out to system.out
+SystemOutQueryLoggingListener listener = new SystemOutQueryLoggingListener();
+listener.setQueryLogEntryCreator(creator);
+
+return ProxyDataSourceBuilder
+            .create(actualDataSource)
+            .listener(listener)
+            .build()
+----
 
 === Slow Query Logging Listener
 

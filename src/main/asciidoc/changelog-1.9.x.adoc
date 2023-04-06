@@ -1,0 +1,18 @@
+[[changelog-1.9]]
+=== 1.9
+
+====  New Features
+
+* Add `formatQuery()` method on `ProxyDataSourceBuilder`, which you can specify a callback to modify the query for logging. For example, apply a query formatter.  (https://github.com/jdbc-observations/datasource-proxy/pull/94[Issue-94])
++
+[source,java]
+----
+Formatter formatter = FormatStyle.BASIC.getFormatter();
+DataSource ds = ProxyDataSourceBuilder
+                  .create(actualDataSource)
+                  .formatQuery(formatter::format)
+                  .logQueryToSysOut()
+                  .build()
+----
++
+Thanks _https://github.com/rvullriede[Raphael Vullriede]_ for this contribution!!
