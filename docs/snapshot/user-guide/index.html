@@ -493,6 +493,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#changelog">8. Changelog</a>
 <ul class="sectlevel2">
+<li><a href="#changelog-1.9">1.9</a></li>
 <li><a href="#changelog-1.8.1">1.8.1</a></li>
 <li><a href="#changelog-1.8">1.8</a></li>
 <li><a href="#changelog-1.7">1.7</a></li>
@@ -1503,24 +1504,41 @@ a log over multiple lines. Also, <code>json()</code> option prints out log in js
 <div class="paragraph">
 <p>Here is another example printing multiline log with formatting query with formatter from Hibernate.</p>
 </div>
+<div class="paragraph">
+<p>The datasource-proxy <code>v1.9</code> added <code>formatQuery()</code> method on <code>ProxyDataSourceBuilder</code> which you can specify a callback to modify the query for logging.</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">    QueryLogEntryCreator logEntryCreator = new DefaultQueryLogEntryCreator() {
-        @Override
-        protected String formatQuery(String query) {
-            return FormatStyle.BASIC.getFormatter().format(query);  // use Hibernte formatter
-        }
-    };
-    creator.setMultiline(true);  // enable multiline output
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">// v1.9 or above
+Formatter formatter = FormatStyle.BASIC.getFormatter();
+DataSource ds = ProxyDataSourceBuilder
+                  .create(actualDataSource)
+                  .formatQuery(formatter::format)
+                  .multiline()
+                  .logQueryToSysOut()
+                  .build()</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">// prior to v1.9
+QueryLogEntryCreator logEntryCreator = new DefaultQueryLogEntryCreator() {
+  @Override
+  protected String formatQuery(String query) {
+    return FormatStyle.BASIC.getFormatter().format(query);  // use Hibernte formatter
+  }
+};
 
-    // print out to system.out
-    SystemOutQueryLoggingListener listener = new SystemOutQueryLoggingListener();
-    listener.setQueryLogEntryCreator(creator);
+creator.setMultiline(true);  // enable multiline output
 
-    return ProxyDataSourceBuilder
-                .create(actualDataSource)
-                .listener(listener)
-                .build()</code></pre>
+// print out to system.out
+SystemOutQueryLoggingListener listener = new SystemOutQueryLoggingListener();
+listener.setQueryLogEntryCreator(creator);
+
+return ProxyDataSourceBuilder
+            .create(actualDataSource)
+            .listener(listener)
+            .build()</code></pre>
 </div>
 </div>
 </div>
@@ -2157,6 +2175,32 @@ public class MyController {
 <h2 id="changelog"><a class="anchor" href="#changelog"></a>8. Changelog</h2>
 <div class="sectionbody">
 <div class="sect2">
+<h3 id="changelog-1.9"><a class="anchor" href="#changelog-1.9"></a>1.9</h3>
+<div class="sect3">
+<h4 id="_new_features"><a class="anchor" href="#_new_features"></a>New Features</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Add <code>formatQuery()</code> method on <code>ProxyDataSourceBuilder</code>, which you can specify a callback to modify the query for logging. For example, apply a query formatter.  (<a href="https://github.com/jdbc-observations/datasource-proxy/pull/94">Issue-94</a>)</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">Formatter formatter = FormatStyle.BASIC.getFormatter();
+DataSource ds = ProxyDataSourceBuilder
+                  .create(actualDataSource)
+                  .formatQuery(formatter::format)
+                  .logQueryToSysOut()
+                  .build()</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Thanks <em><a href="https://github.com/rvullriede">Raphael Vullriede</a></em> for this contribution!!</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="changelog-1.8.1"><a class="anchor" href="#changelog-1.8.1"></a>1.8.1</h3>
 <div class="sect3">
 <h4 id="_improvements"><a class="anchor" href="#_improvements"></a>Improvements</h4>
@@ -2185,7 +2229,7 @@ public class MyController {
 <div class="sect2">
 <h3 id="changelog-1.8"><a class="anchor" href="#changelog-1.8"></a>1.8</h3>
 <div class="sect3">
-<h4 id="_new_features"><a class="anchor" href="#_new_features"></a>New Features</h4>
+<h4 id="_new_features_2"><a class="anchor" href="#_new_features_2"></a>New Features</h4>
 <div class="ulist">
 <ul>
 <li>
