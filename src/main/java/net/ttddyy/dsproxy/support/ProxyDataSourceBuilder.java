@@ -780,7 +780,7 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Take an callback that can format a query.
+     * Take a callback that could format a query for logging.
      * <p>
      * This method is mutually exclusive to {@link #asJson()}.
      *
