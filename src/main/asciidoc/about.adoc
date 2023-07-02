@@ -64,6 +64,15 @@ Intercept JDBC API interactions such as getting connection, creating prepared st
 executing query, etc.
 
 
+=== Jakarta Namespace
+
+The `javax.sql.*` are part of the Java SE APIs. So, they are not affected by the namespace change in the Java EE APIs to Jakarta. For example, the `javax.sql.DataSource` class will not change its package.
+
+In the datasource-proxy, there are a few usages of the javax namespace in JNDI and query count support by `ServletRequestListener`.
+They are not frequently used and expected to either be removed or separated in the next major version release.
+
+If you require those functionalities in the Jakarta namespace, it is recommended to create your own classes based on the existing classes.
+
 
 === Sample Log Output
 
