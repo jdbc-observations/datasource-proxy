@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Factory to create {@link SimpleResultSetProxyLogic}.
+ * Factory to create {@link SpringSqlRowSetProxyLogic}.
  *
  * @author a-simeshin
  * @since 1.10
