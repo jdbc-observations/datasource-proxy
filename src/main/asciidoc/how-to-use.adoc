@@ -328,3 +328,9 @@ builder
   .build();
 ```
 
+[[using-a-custom-resultset-proxy]]
+==== Using a custom ResultSet proxy
+
+The `proxyResultSet` and `autoRetrieveGeneratedKeys` methods on the `ProxyDataSourceBuilder` can take a `ResultSetProxyLogicFactory` factory implementation. If you want to provide custom logic for handling the `ResultSet` object, you can provide a custom implementation by providing a custom factory implementation.
+
+For example, https://github.com/jdbc-observations/datasource-proxy/pull/98/files[this code in the datasource-proxy pull request #98] provides a Spring's `SqlRowSet` based `ResultSet` proxy implementation to cover some shortcomings from the `com.sun.rowset.CachedRowSetImpl`.
