@@ -1213,6 +1213,15 @@ which you can change via <code>RowSetFactory</code> (please see details on JDK d
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="using-a-custom-resultset-proxy"><a class="anchor" href="#using-a-custom-resultset-proxy"></a>3.3.3. Using a custom ResultSet proxy</h4>
+<div class="paragraph">
+<p>The <code>proxyResultSet</code> and <code>autoRetrieveGeneratedKeys</code> methods on the <code>ProxyDataSourceBuilder</code> can take a <code>ResultSetProxyLogicFactory</code> factory implementation. If you want to provide custom logic for handling the <code>ResultSet</code> object, you can provide a custom implementation by providing a custom factory implementation.</p>
+</div>
+<div class="paragraph">
+<p>For example, <a href="https://github.com/jdbc-observations/datasource-proxy/pull/98/files">this code in the datasource-proxy pull request #98</a> provides a Spring&#8217;s <code>SqlRowSet</code> based <code>ResultSet</code> proxy implementation to cover some shortcomings from the <code>com.sun.rowset.CachedRowSetImpl</code>.</p>
+</div>
+</div>
 </div>
 </div>
 </div>
