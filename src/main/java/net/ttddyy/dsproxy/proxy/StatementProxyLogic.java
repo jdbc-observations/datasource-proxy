@@ -132,16 +132,8 @@ public class StatementProxyLogic extends ProxyLogicSupport {
         QueryExecutionListener queryListener = this.proxyConfig.getQueryListener();
         JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
-        if (isToStringMethod(methodName)) {
-            // special treat for toString method
-            return handleToStringMethod(this.statement);  // Statement, PreparedStatement, or CallableStatement
-        } else if (isGetDataSourceName(methodName)) {
-            return this.connectionInfo.getDataSourceName();
-        } else if (isGetTargetMethod(methodName)) {
-            return this.statement;  // ProxyJdbcObject interface has a method to return original object.
-        } else if (isWrapperMethods(methodName)) {
-            // "unwrap", "isWrapperFor"
-            return handleWrapperMethods(methodName, this.statement, args);
+        if (isCommonMethod(methodName)) {
+            return handleCommonMethod(methodName, this.statement, this.connectionInfo, args);
         }
 
         // "getConnection"

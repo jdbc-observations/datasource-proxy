@@ -23,57 +23,39 @@ public abstract class ProxyLogicSupport {
     // TODO: think about ProxyLogic interface
     //public abstract class ProxyLogicSupport implements ProxyLogic {
 
-    protected static final Set<String> WRAPPER_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("unwrap", "isWrapperFor"))
+    protected static final Set<String> COMMON_METHOD_NAMES = Collections.unmodifiableSet(
+            new HashSet<String>(Arrays.asList("toString", "getTarget", "getDataSourceName", "unwrap", "isWrapperFor"))
     );
 
-    protected static final String TO_STRING_METHOD = "toString";
-    protected static final String GET_TARGET_METHOD = "getTarget";
 
-    protected static final String GET_DATASOURCE_NAME = "getDataSourceName";
-
-
-    // handle wrapper methods
-    protected boolean isWrapperMethods(String methodName) {
-        return WRAPPER_METHODS.contains(methodName);
+    protected boolean isCommonMethod(String methodName) {
+        return COMMON_METHOD_NAMES.contains(methodName);
     }
 
-    /**
-     * Handling for {@link Wrapper#unwrap(Class)} and {@link Wrapper#isWrapperFor(Class)}.
-     */
-    protected Object handleWrapperMethods(String methodName, Wrapper wrapper, Object[] args) throws SQLException {
-        final Class<?> clazz = (Class<?>) args[0];
-        if ("unwrap".equals(methodName)) {
-            return wrapper.unwrap(clazz);
-        } else {
-            return wrapper.isWrapperFor(clazz);
+    protected Object handleCommonMethod(String methodName, Object original, ConnectionInfo connectionInfo, Object[] args) throws SQLException {
+        if ("toString".equals(methodName)) {
+            // special treat for toString method
+            final StringBuilder sb = new StringBuilder();
+            sb.append(original.getClass().getSimpleName());
+            sb.append(" [");
+            sb.append(original);
+            sb.append("]");
+            return sb.toString(); // differentiate toString message.
+        } else if ("getDataSourceName".equals(methodName)) {
+            return connectionInfo.getDataSourceName();
+        } else if ("getTarget".equals(methodName)) {
+            return original;  // ProxyJdbcObject interface has a method to return original object.
+        } else if ("unwrap".equals(methodName) || "isWrapperFor".equals(methodName)) {
+            // "unwrap", "isWrapperFor"
+            final Class<?> clazz = (Class<?>) args[0];
+            if ("unwrap".equals(methodName)) {
+                return ((Wrapper) original).unwrap(clazz);
+            } else {
+                return ((Wrapper) original).isWrapperFor(clazz);
+            }
         }
+        throw new IllegalStateException(methodName + " does not match with " + COMMON_METHOD_NAMES);
     }
-
-    protected boolean isToStringMethod(String methodName) {
-        return TO_STRING_METHOD.contains(methodName);
-    }
-
-    protected boolean isGetDataSourceName(String methodName) {
-        return GET_DATASOURCE_NAME.contains(methodName);
-    }
-
-    protected String handleToStringMethod(Object target) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(target.getClass().getSimpleName());
-        sb.append(" [");
-        sb.append(target.toString());
-        sb.append("]");
-        return sb.toString(); // differentiate toString message.
-    }
-
-    /**
-     * {@link ProxyJdbcObject} interface has a method to return original object.
-     */
-    protected boolean isGetTargetMethod(String methodName) {
-        return GET_TARGET_METHOD.contains(methodName);
-    }
-
 
     /**
      * Invoke the method on target object.

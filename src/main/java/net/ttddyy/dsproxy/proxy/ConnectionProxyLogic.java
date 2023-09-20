@@ -41,19 +41,11 @@ public class ConnectionProxyLogic extends ProxyLogicSupport {
         QueryTransformer queryTransformer = this.proxyConfig.getQueryTransformer();
         JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
-        if (isToStringMethod(methodName)) {
-            // special treat for toString method
-            return handleToStringMethod(this.connection);
-        } else if (isGetDataSourceName(methodName)) {
-            return this.connectionInfo.getDataSourceName();
-        } else if (isGetTargetMethod(methodName)) {
-            return this.connection;  // ProxyJdbcObject interface has a method to return original object.
-        } else if (isWrapperMethods(methodName)) {
-            // "unwrap", "isWrapperFor"
-            return handleWrapperMethods(methodName, this.connection, args);
+        if (isCommonMethod(methodName)) {
+            return handleCommonMethod(methodName, this.connection, this.connectionInfo, args);
         }
 
-        if("setTransactionIsolation".equals(methodName)) {
+        if ("setTransactionIsolation".equals(methodName)) {
             connectionInfo.setIsolationLevel((Integer) args[0]);
         }
 
