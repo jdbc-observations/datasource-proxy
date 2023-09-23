@@ -90,7 +90,7 @@ public abstract class ProxyLogicSupport {
         Method methodToInvoke = methodContext.getMethod();
         Object[] methodArgsToInvoke = methodContext.getMethodArgs();
 
-        long beforeTime = System.currentTimeMillis();
+        final Stopwatch stopwatch = proxyConfig.getStopwatchFactory().create().start();
         Object result = null;
         Throwable thrown = null;
         try {
@@ -99,8 +99,7 @@ public abstract class ProxyLogicSupport {
             thrown = throwable;
             throw throwable;
         } finally {
-            long afterTime = System.currentTimeMillis();
-            long elapsedTime = afterTime - beforeTime;
+            final long elapsedTime = stopwatch.getElapsedTime();
 
             methodContext.setElapsedTime(elapsedTime);
             methodContext.setResult(result);
