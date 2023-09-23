@@ -43,12 +43,8 @@ public class DataSourceProxyLogic extends ProxyLogicSupport {
         ConnectionIdManager connectionIdManager = this.proxyConfig.getConnectionIdManager();
 
         final String methodName = method.getName();
-
-        if ("getDataSourceName".equals(methodName)) {
-            // handle "getDataSourceName" since we pass null for datasource name in handleCommonMethod.
-            return dataSourceName;
-        } else if (isCommonMethod(methodName)) {
-            return handleCommonMethod(methodName, this.dataSource, null, args);
+        if (isCommonMethod(methodName)) {
+            return handleCommonMethod(methodName, this.dataSource, dataSourceName, args);
         }
 
         final Object retVal = proceedExecution(method, this.dataSource, args);

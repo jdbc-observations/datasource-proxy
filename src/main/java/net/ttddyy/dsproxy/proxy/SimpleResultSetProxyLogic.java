@@ -33,7 +33,7 @@ public class SimpleResultSetProxyLogic extends ProxyLogicSupport implements Resu
     protected Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable {
         final String methodName = method.getName();
         if (isCommonMethod(methodName)) {
-            return handleCommonMethod(methodName, this.resultSet, this.connectionInfo, args);
+            return handleCommonMethod(methodName, this.resultSet, this.connectionInfo.getDataSourceName(), args);
         }
         return proceedExecution(method, this.resultSet, args);
     }

@@ -133,7 +133,7 @@ public class StatementProxyLogic extends ProxyLogicSupport {
         JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
         if (isCommonMethod(methodName)) {
-            return handleCommonMethod(methodName, this.statement, this.connectionInfo, args);
+            return handleCommonMethod(methodName, this.statement, this.connectionInfo.getDataSourceName(), args);
         }
 
         // "getConnection"

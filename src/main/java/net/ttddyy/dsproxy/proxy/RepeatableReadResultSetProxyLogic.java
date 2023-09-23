@@ -1,7 +1,5 @@
 package net.ttddyy.dsproxy.proxy;
 
-import java.util.HashMap;
-
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 
@@ -12,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -134,7 +133,7 @@ public class RepeatableReadResultSetProxyLogic extends ProxyLogicSupport impleme
         }
 
         if (isCommonMethod(methodName)) {
-            return handleCommonMethod(methodName, this.resultSet, this.connectionInfo, args);
+            return handleCommonMethod(methodName, this.resultSet, this.connectionInfo.getDataSourceName(), args);
         } else if (methodName.equals("getMetaData")) {
             return proceedExecution(method, this.resultSet, args);
         } else if (methodName.equals("close")) {

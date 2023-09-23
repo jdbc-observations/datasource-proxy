@@ -32,7 +32,7 @@ public abstract class ProxyLogicSupport {
         return COMMON_METHOD_NAMES.contains(methodName);
     }
 
-    protected Object handleCommonMethod(String methodName, Object original, ConnectionInfo connectionInfo, Object[] args) throws SQLException {
+    protected Object handleCommonMethod(String methodName, Object original, String dataSourceName, Object[] args) throws SQLException {
         if ("toString".equals(methodName)) {
             // special treat for toString method
             final StringBuilder sb = new StringBuilder();
@@ -46,7 +46,7 @@ public abstract class ProxyLogicSupport {
         } else if ("hashCode".equals(methodName)) {
             return original.hashCode();
         } else if ("getDataSourceName".equals(methodName)) {
-            return connectionInfo.getDataSourceName();
+            return dataSourceName;
         } else if ("getTarget".equals(methodName)) {
             return original;  // ProxyJdbcObject interface has a method to return original object.
         } else if ("unwrap".equals(methodName) || "isWrapperFor".equals(methodName)) {

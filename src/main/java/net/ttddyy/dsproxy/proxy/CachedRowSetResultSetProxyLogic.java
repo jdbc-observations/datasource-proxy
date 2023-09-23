@@ -48,7 +48,7 @@ public class CachedRowSetResultSetProxyLogic extends ProxyLogicSupport implement
         String methodName = method.getName();
 
         if (isCommonMethod(methodName)) {
-            return handleCommonMethod(methodName, this.resultSet, this.connectionInfo, args);
+            return handleCommonMethod(methodName, this.resultSet, this.connectionInfo.getDataSourceName(), args);
         }
 
         if ("close".equals(methodName)) {
