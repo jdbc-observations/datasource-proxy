@@ -10,6 +10,6 @@ import java.lang.reflect.Method;
  */
 public interface ResultSetProxyLogic {
 
-    Object invoke(Method method, Object[] args) throws Throwable;
+    Object invoke(Object proxy, Method method, Object[] args) throws Throwable;
 
 }

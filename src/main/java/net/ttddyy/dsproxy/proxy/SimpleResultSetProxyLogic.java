@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
@@ -12,7 +12,7 @@ import java.sql.ResultSet;
  * @author Tadaya Tsuyukubo
  * @since 1.4.3
  */
-public class SimpleResultSetProxyLogic implements ResultSetProxyLogic {
+public class SimpleResultSetProxyLogic extends ProxyLogicSupport implements ResultSetProxyLogic {
 
     private ResultSet resultSet;
     private ConnectionInfo connectionInfo;
@@ -25,32 +25,17 @@ public class SimpleResultSetProxyLogic implements ResultSetProxyLogic {
     }
 
     @Override
-    public Object invoke(Method method, Object[] args) throws Throwable {
-        return MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
-            @Override
-            public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
-                return performQueryExecutionListener(method, args);
-            }
-        }, this.proxyConfig, this.resultSet, this.connectionInfo, method, args);
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        return proceedMethodExecution(this.proxyConfig, this.resultSet, this.connectionInfo, proxy, method, args);
     }
 
-    private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {
-
+    @Override
+    protected Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable {
         final String methodName = method.getName();
-
-        // special treat for toString method
-        if ("toString".equals(methodName)) {
-            final StringBuilder sb = new StringBuilder();
-            sb.append(this.resultSet.getClass().getSimpleName());
-            sb.append(" [");
-            sb.append(this.resultSet.toString());
-            sb.append("]");
-            return sb.toString(); // differentiate toString message.
-        } else if ("getTarget".equals(methodName)) {
-            // ProxyJdbcObject interface has a method to return original object.
-            return this.resultSet;
+        if (isCommonMethod(methodName)) {
+            return handleCommonMethod(methodName, this.resultSet, this.connectionInfo, args);
         }
-
-        return MethodUtils.proceedExecution(method, this.resultSet, args);
+        return proceedExecution(method, this.resultSet, args);
     }
+
 }

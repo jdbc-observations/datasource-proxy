@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
@@ -20,7 +20,7 @@ import java.sql.SQLException;
  * @see CachedRowSetResultSetProxyLogicFactory
  * @since 1.4.7
  */
-public class CachedRowSetResultSetProxyLogic implements ResultSetProxyLogic {
+public class CachedRowSetResultSetProxyLogic extends ProxyLogicSupport implements ResultSetProxyLogic {
 
     private ResultSet resultSet;  // original resultset
     private ResultSet cachedRowSet;
@@ -39,30 +39,16 @@ public class CachedRowSetResultSetProxyLogic implements ResultSetProxyLogic {
     }
 
     @Override
-    public Object invoke(Method method, Object[] args) throws Throwable {
-        return MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
-            @Override
-            public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
-                return performQueryExecutionListener(method, args);
-            }
-        }, this.proxyConfig, this.cachedRowSet, this.connectionInfo, method, args);
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        return proceedMethodExecution(this.proxyConfig, this.resultSet, this.connectionInfo, proxy, method, args);
     }
 
-    private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {
-
+    @Override
+    protected Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable {
         String methodName = method.getName();
 
-        if ("toString".equals(methodName)) {
-            final StringBuilder sb = new StringBuilder();
-            sb.append(this.resultSet.getClass().getSimpleName());
-            sb.append(" [");
-            sb.append(this.resultSet.toString());
-            sb.append("]");
-            return sb.toString(); // differentiate toString message.
-        } else if ("hashCode".equals(methodName)) {
-            return this.resultSet.hashCode();  // returns original resultset hashcode
-        } else if ("equals".equals(methodName)) {
-            return this.resultSet.equals(args[0]);  // compare with original resultset
+        if (isCommonMethod(methodName)) {
+            return handleCommonMethod(methodName, this.resultSet, this.connectionInfo, args);
         }
 
         if ("close".equals(methodName)) {
@@ -79,7 +65,7 @@ public class CachedRowSetResultSetProxyLogic implements ResultSetProxyLogic {
         // TODO: handle getStatement() method to return proxied statement
 
         try {
-            return MethodUtils.proceedExecution(method, this.cachedRowSet, args);
+            return proceedExecution(method, this.cachedRowSet, args);
         } catch (Throwable throwable) {
             if (throwable instanceof SQLException) {
                 throw throwable;

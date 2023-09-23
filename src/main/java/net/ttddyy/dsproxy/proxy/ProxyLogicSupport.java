@@ -24,7 +24,7 @@ public abstract class ProxyLogicSupport {
     //public abstract class ProxyLogicSupport implements ProxyLogic {
 
     protected static final Set<String> COMMON_METHOD_NAMES = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("toString", "getTarget", "getDataSourceName", "unwrap", "isWrapperFor"))
+            new HashSet<String>(Arrays.asList("toString", "getTarget", "getDataSourceName", "unwrap", "isWrapperFor", "equals", "hashCode"))
     );
 
 
@@ -41,6 +41,10 @@ public abstract class ProxyLogicSupport {
             sb.append(original);
             sb.append("]");
             return sb.toString(); // differentiate toString message.
+        } else if ("equals".equals(methodName)) {
+            return original.equals(args[0]);
+        } else if ("hashCode".equals(methodName)) {
+            return original.hashCode();
         } else if ("getDataSourceName".equals(methodName)) {
             return connectionInfo.getDataSourceName();
         } else if ("getTarget".equals(methodName)) {
