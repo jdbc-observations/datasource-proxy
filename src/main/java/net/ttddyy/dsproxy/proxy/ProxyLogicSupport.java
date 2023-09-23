@@ -20,8 +20,6 @@ import java.util.Set;
  * @since 1.10
  */
 public abstract class ProxyLogicSupport {
-    // TODO: think about ProxyLogic interface
-    //public abstract class ProxyLogicSupport implements ProxyLogic {
 
     protected static final Set<String> COMMON_METHOD_NAMES = Collections.unmodifiableSet(
             new HashSet<String>(Arrays.asList("toString", "getTarget", "getDataSourceName", "unwrap", "isWrapperFor", "equals", "hashCode"))
