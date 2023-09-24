@@ -47,14 +47,12 @@ public abstract class ProxyLogicSupport {
             return dataSourceName;
         } else if ("getTarget".equals(methodName)) {
             return original;  // ProxyJdbcObject interface has a method to return original object.
-        } else if ("unwrap".equals(methodName) || "isWrapperFor".equals(methodName)) {
-            // "unwrap", "isWrapperFor"
+        } else if ("unwrap".equals(methodName)) {
             final Class<?> clazz = (Class<?>) args[0];
-            if ("unwrap".equals(methodName)) {
-                return ((Wrapper) original).unwrap(clazz);
-            } else {
-                return ((Wrapper) original).isWrapperFor(clazz);
-            }
+            return ((Wrapper) original).unwrap(clazz);
+        } else if ("isWrapperFor".equals(methodName)) {
+            final Class<?> clazz = (Class<?>) args[0];
+            return ((Wrapper) original).isWrapperFor(clazz);
         }
         throw new IllegalStateException(methodName + " does not match with " + COMMON_METHOD_NAMES);
     }
