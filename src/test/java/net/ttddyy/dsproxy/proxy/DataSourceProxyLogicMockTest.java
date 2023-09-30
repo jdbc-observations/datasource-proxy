@@ -167,7 +167,7 @@ public class DataSourceProxyLogicMockTest {
                 DataSource.class, executionContext.getMethod().getDeclaringClass());
         assertSame("getConnection", executionContext.getMethod().getName());
         assertSame(ds, executionContext.getTarget());
-        assertNull(executionContext.getConnectionInfo());
+        assertThat(executionContext.getConnectionInfo()).isNotNull();
     }
 
 }

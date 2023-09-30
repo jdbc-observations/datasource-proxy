@@ -159,7 +159,7 @@ public class ProxyDataSourceTest {
         assertTrue("methodListener should be called for getConnection", this.methodListener.isAfterMethodCalled());
 
         MethodExecutionContext context = this.methodListener.getAfterMethodContext();
-        assertThat(context.getTarget()).isSameAs(proxyDataSource);
+        assertThat(context.getTarget()).isSameAs(this.originalDataSource);
         assertThat(context.getResult()).isSameAs(connection);
         assertThat(context.getMethod().getDeclaringClass()).isSameAs(DataSource.class);
         assertThat(context.getMethod().getName()).isEqualTo("getConnection");

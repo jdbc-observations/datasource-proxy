@@ -7,10 +7,6 @@ import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import javax.sql.DataSource;
 import java.lang.reflect.Method;
 import java.sql.Connection;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Proxy Logic implementation for {@link DataSource} methods.
@@ -19,10 +15,6 @@ import java.util.Set;
  * @since 1.2
  */
 public class DataSourceProxyLogic extends ProxyLogicSupport {
-
-    private static final Set<String> JDBC4_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("unwrap", "isWrapperFor"))
-    );
 
     private DataSource dataSource;
     private ProxyConfig proxyConfig;
@@ -56,6 +48,10 @@ public class DataSourceProxyLogic extends ProxyLogicSupport {
             connectionInfo.setConnectionId(connId);
             connectionInfo.setIsolationLevel(conn.getTransactionIsolation());
             connectionInfo.setDataSourceName(dataSourceName);
+
+            // make ConnectionInfo available in afterMethod() callback
+            methodContext.setConnectionInfo(connectionInfo);
+
             return jdbcProxyFactory.createConnection((Connection) retVal, connectionInfo, this.proxyConfig);
         }
 
