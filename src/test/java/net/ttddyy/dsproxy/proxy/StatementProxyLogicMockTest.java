@@ -60,7 +60,7 @@ public class StatementProxyLogicMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("executeUpdate", String.class);
-        Object result = logic.invoke(method, new Object[]{query});
+        Object result = logic.invoke(null, method, new Object[]{query});
 
         assertThat(result).isEqualTo(100);
         verify(stat).executeUpdate(query);
@@ -79,7 +79,7 @@ public class StatementProxyLogicMockTest {
 
         try {
             Method method = Statement.class.getMethod("executeUpdate", String.class);
-            logic.invoke(method, new Object[]{query});
+            logic.invoke(null, method, new Object[]{query});
             fail();
         } catch (SQLException e) {
         }
@@ -99,7 +99,7 @@ public class StatementProxyLogicMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("executeUpdate", String.class, int.class);
-        Object result = logic.invoke(method, new Object[]{query, Statement.RETURN_GENERATED_KEYS});
+        Object result = logic.invoke(null, method, new Object[]{query, Statement.RETURN_GENERATED_KEYS});
 
         assertThat(result).isEqualTo(100);
         verify(stat).executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
@@ -118,7 +118,7 @@ public class StatementProxyLogicMockTest {
 
         try {
             Method method = Statement.class.getMethod("executeUpdate", String.class, int.class);
-            logic.invoke(method, new Object[]{query, Statement.RETURN_GENERATED_KEYS});
+            logic.invoke(null, method, new Object[]{query, Statement.RETURN_GENERATED_KEYS});
             fail();
         } catch (SQLException e) {
         }
@@ -139,7 +139,7 @@ public class StatementProxyLogicMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("executeUpdate", String.class, int[].class);
-        Object result = logic.invoke(method, new Object[]{query, columnIndexes});
+        Object result = logic.invoke(null, method, new Object[]{query, columnIndexes});
 
         assertThat(result).isEqualTo(100);
         verify(stat).executeUpdate(query, columnIndexes);
@@ -159,7 +159,7 @@ public class StatementProxyLogicMockTest {
 
         try {
             Method method = Statement.class.getMethod("executeUpdate", String.class, int[].class);
-            logic.invoke(method, new Object[]{query, columnIndexes});
+            logic.invoke(null, method, new Object[]{query, columnIndexes});
             fail();
         } catch (SQLException e) {
 
@@ -181,7 +181,7 @@ public class StatementProxyLogicMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("executeUpdate", String.class, String[].class);
-        Object result = logic.invoke(method, new Object[]{query, columnNames});
+        Object result = logic.invoke(null, method, new Object[]{query, columnNames});
 
         assertThat(result).isEqualTo(100);
         verify(stat).executeUpdate(query, columnNames);
@@ -201,7 +201,7 @@ public class StatementProxyLogicMockTest {
 
         try {
             Method method = Statement.class.getMethod("executeUpdate", String.class, String[].class);
-            logic.invoke(method, new Object[]{query, columnNames});
+            logic.invoke(null, method, new Object[]{query, columnNames});
             fail();
         } catch (SQLException e) {
         }
@@ -221,7 +221,7 @@ public class StatementProxyLogicMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("execute", String.class);
-        Object result = logic.invoke(method, new Object[]{query});
+        Object result = logic.invoke(null, method, new Object[]{query});
 
         assertThat(result).isEqualTo(true);
         verify(stat).execute(query);
@@ -239,7 +239,7 @@ public class StatementProxyLogicMockTest {
 
         try {
             Method method = Statement.class.getMethod("execute", String.class);
-            logic.invoke(method, new Object[]{query});
+            logic.invoke(null, method, new Object[]{query});
             fail();
         } catch (SQLException e) {
         }
@@ -259,7 +259,7 @@ public class StatementProxyLogicMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("execute", String.class, int.class);
-        Object result = logic.invoke(method, new Object[]{query, Statement.RETURN_GENERATED_KEYS});
+        Object result = logic.invoke(null, method, new Object[]{query, Statement.RETURN_GENERATED_KEYS});
 
         assertThat(result).isEqualTo(true);
         verify(stat).execute(query, Statement.RETURN_GENERATED_KEYS);
@@ -278,7 +278,7 @@ public class StatementProxyLogicMockTest {
 
         try {
             Method method = Statement.class.getMethod("execute", String.class, int.class);
-            logic.invoke(method, new Object[]{query, Statement.RETURN_GENERATED_KEYS});
+            logic.invoke(null, method, new Object[]{query, Statement.RETURN_GENERATED_KEYS});
             fail();
         } catch (SQLException e) {
         }
@@ -299,7 +299,7 @@ public class StatementProxyLogicMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("execute", String.class, int[].class);
-        Object result = logic.invoke(method, new Object[]{query, columnIndexes});
+        Object result = logic.invoke(null, method, new Object[]{query, columnIndexes});
 
         assertThat(result).isEqualTo(true);
         verify(stat).execute(query, columnIndexes);
@@ -319,7 +319,7 @@ public class StatementProxyLogicMockTest {
 
         try {
             Method method = Statement.class.getMethod("execute", String.class, int[].class);
-            logic.invoke(method, new Object[]{query, columnIndexes});
+            logic.invoke(null, method, new Object[]{query, columnIndexes});
             fail();
         } catch (SQLException e) {
         }
@@ -340,7 +340,7 @@ public class StatementProxyLogicMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("execute", String.class, String[].class);
-        Object result = logic.invoke(method, new Object[]{query, columnNames});
+        Object result = logic.invoke(null, method, new Object[]{query, columnNames});
 
         assertThat(result).isEqualTo(true);
         verify(stat).execute(query, columnNames);
@@ -361,7 +361,7 @@ public class StatementProxyLogicMockTest {
 
         try {
             Method method = Statement.class.getMethod("execute", String.class, String[].class);
-            logic.invoke(method, new Object[]{query, columnNames});
+            logic.invoke(null, method, new Object[]{query, columnNames});
             fail();
         } catch (SQLException e) {
         }
@@ -383,7 +383,7 @@ public class StatementProxyLogicMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("executeQuery", String.class);
-        Object result = logic.invoke(method, new Object[]{query});
+        Object result = logic.invoke(null, method, new Object[]{query});
 
         assertThat(result).isEqualTo(rs);
         verify(stat).executeQuery(query);
@@ -402,7 +402,7 @@ public class StatementProxyLogicMockTest {
 
         try {
             Method method = Statement.class.getMethod("executeQuery", String.class);
-            logic.invoke(method, new Object[]{query});
+            logic.invoke(null, method, new Object[]{query});
             fail();
         } catch (SQLException e) {
         }
@@ -422,7 +422,7 @@ public class StatementProxyLogicMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("executeLargeUpdate", String.class);
-        Object result = logic.invoke(method, new Object[]{query});
+        Object result = logic.invoke(null, method, new Object[]{query});
 
         assertThat(result).isEqualTo(100L);
         verify(stat).executeLargeUpdate(query);
@@ -515,10 +515,10 @@ public class StatementProxyLogicMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, listener, null);
 
         Method method = Statement.class.getMethod("addBatch", String.class);
-        logic.invoke(method, new Object[]{queryA});
+        logic.invoke(null, method, new Object[]{queryA});
 
         try {
-            logic.invoke(method, new Object[]{queryB});
+            logic.invoke(null, method, new Object[]{queryB});
             fail();
         } catch (SQLException e) {
         }
@@ -539,12 +539,12 @@ public class StatementProxyLogicMockTest {
 
         // run
         Method method = Statement.class.getMethod("addBatch", String.class);
-        logic.invoke(method, new Object[]{queryA});
-        logic.invoke(method, new Object[]{queryB});
-        logic.invoke(method, new Object[]{queryC});
+        logic.invoke(null, method, new Object[]{queryA});
+        logic.invoke(null, method, new Object[]{queryB});
+        logic.invoke(null, method, new Object[]{queryC});
 
         method = Statement.class.getMethod("executeBatch");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isNull();
         verify(stat).addBatch(queryA);
@@ -569,13 +569,13 @@ public class StatementProxyLogicMockTest {
 
         // run
         Method method = Statement.class.getMethod("addBatch", String.class);
-        logic.invoke(method, new Object[]{queryA});
-        logic.invoke(method, new Object[]{queryB});
-        logic.invoke(method, new Object[]{queryC});
+        logic.invoke(null, method, new Object[]{queryA});
+        logic.invoke(null, method, new Object[]{queryB});
+        logic.invoke(null, method, new Object[]{queryC});
 
         try {
             method = Statement.class.getMethod("executeBatch");
-            logic.invoke(method, null);
+            logic.invoke(null, method, null);
             fail();
         } catch (SQLException e) {
         }
@@ -603,11 +603,11 @@ public class StatementProxyLogicMockTest {
         Method clearBatch = Statement.class.getMethod("clearBatch");
         Method executeBatch = Statement.class.getMethod("executeBatch");
 
-        logic.invoke(addBatch, new Object[]{queryA});
-        logic.invoke(clearBatch, null);
-        logic.invoke(addBatch, new Object[]{queryB});
-        logic.invoke(addBatch, new Object[]{queryC});
-        Object result = logic.invoke(executeBatch, null);
+        logic.invoke(null, addBatch, new Object[]{queryA});
+        logic.invoke(null, clearBatch, null);
+        logic.invoke(null, addBatch, new Object[]{queryB});
+        logic.invoke(null, addBatch, new Object[]{queryC});
+        Object result = logic.invoke(null, executeBatch, null);
 
         assertThat(result).isNull();
         verify(stat).addBatch(queryA);
@@ -631,12 +631,12 @@ public class StatementProxyLogicMockTest {
 
         // run
         Method method = Statement.class.getMethod("addBatch", String.class);
-        logic.invoke(method, new Object[]{queryA});
-        logic.invoke(method, new Object[]{queryB});
-        logic.invoke(method, new Object[]{queryC});
+        logic.invoke(null, method, new Object[]{queryA});
+        logic.invoke(null, method, new Object[]{queryB});
+        logic.invoke(null, method, new Object[]{queryC});
 
         method = Statement.class.getMethod("executeLargeBatch");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isNull();
         verify(stat).addBatch(queryA);
@@ -710,7 +710,7 @@ public class StatementProxyLogicMockTest {
         StatementProxyLogic logic = getProxyLogic(stmt, null, null);
 
         Method method = ProxyJdbcObject.class.getMethod("getTarget");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isNotNull();
         assertThat(result).isSameAs(stmt);
@@ -728,7 +728,7 @@ public class StatementProxyLogicMockTest {
         StatementProxyLogic logic = getProxyLogic(stmt, null, null);
 
         Method method = Statement.class.getMethod("unwrap", Class.class);
-        Object result = logic.invoke(method, new Object[]{String.class});
+        Object result = logic.invoke(null, method, new Object[]{String.class});
 
         verify(stmt).unwrap(String.class);
         assertThat(result).isEqualTo("called");
@@ -743,7 +743,7 @@ public class StatementProxyLogicMockTest {
         StatementProxyLogic logic = getProxyLogic(stmt, null, null);
 
         Method method = Statement.class.getMethod("isWrapperFor", Class.class);
-        Object result = logic.invoke(method, new Object[]{String.class});
+        Object result = logic.invoke(null, method, new Object[]{String.class});
 
         verify(stmt).isWrapperFor(String.class);
         assertThat(result).isEqualTo(true);
@@ -758,7 +758,7 @@ public class StatementProxyLogicMockTest {
         StatementProxyLogic logic = getProxyLogic(stmt, null, conn);
 
         Method method = Statement.class.getMethod("getConnection");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isSameAs(conn);
 
@@ -772,7 +772,7 @@ public class StatementProxyLogicMockTest {
         StatementProxyLogic logic = getProxyLogic(stmt, null, null);
 
         Method method = Object.class.getMethod("toString");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isEqualTo(stmt.getClass().getSimpleName() + " [my ds]");
 
@@ -784,7 +784,7 @@ public class StatementProxyLogicMockTest {
         StatementProxyLogic logic = getProxyLogic(stmt, null, null);
 
         Method method = Object.class.getMethod("hashCode");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isEqualTo(stmt.hashCode());
 
@@ -798,11 +798,11 @@ public class StatementProxyLogicMockTest {
         Method method = Object.class.getMethod("equals", Object.class);
 
         // equals(null)
-        Object result = logic.invoke(method, new Object[]{null});
+        Object result = logic.invoke(null, method, new Object[]{null});
         assertThat(result).isEqualTo(false);
 
         // equals(true)
-        result = logic.invoke(method, new Object[]{stmt});
+        result = logic.invoke(null, method, new Object[]{stmt});
         assertThat(result).isEqualTo(true);
     }
 
@@ -838,7 +838,7 @@ public class StatementProxyLogicMockTest {
         Object result;
 
         // check "executeQuery"
-        result = logic.invoke(executeQueryMethod, new Object[]{"SELECT *"});
+        result = logic.invoke(null, executeQueryMethod, new Object[]{"SELECT *"});
         assertThat(result).isInstanceOf(ResultSet.class);
         assertTrue(Proxy.isProxyClass(result.getClass()));
         assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
@@ -847,7 +847,7 @@ public class StatementProxyLogicMockTest {
         listenerReceivedResult.set(null);
 
         // check "getResultSet"
-        result = logic.invoke(getResultSetMethod, null);
+        result = logic.invoke(null, getResultSetMethod, null);
         assertThat(result).isInstanceOf(ResultSet.class);
         assertTrue(Proxy.isProxyClass(result.getClass()));
         assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
@@ -856,7 +856,7 @@ public class StatementProxyLogicMockTest {
         listenerReceivedResult.set(null);
 
         // check "getGeneratedKeys". generated keys has separate configuration
-        result = logic.invoke(getGeneratedKeysMethod, null);
+        result = logic.invoke(null, getGeneratedKeysMethod, null);
         assertThat(result).isInstanceOf(ResultSet.class);
         assertFalse(Proxy.isProxyClass(result.getClass()));
 
@@ -895,7 +895,7 @@ public class StatementProxyLogicMockTest {
         Object result;
 
         // check "getGeneratedKeys"
-        result = logic.invoke(getGeneratedKeysMethod, null);
+        result = logic.invoke(null, getGeneratedKeysMethod, null);
         assertThat(result).isInstanceOf(ResultSet.class);
         assertTrue(Proxy.isProxyClass(result.getClass()));
         assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
@@ -904,14 +904,14 @@ public class StatementProxyLogicMockTest {
         listenerReceivedResult.set(null);
 
         // check "executeQuery"
-        result = logic.invoke(executeQueryMethod, new Object[]{"SELECT *"});
+        result = logic.invoke(null, executeQueryMethod, new Object[]{"SELECT *"});
         assertThat(result).isInstanceOf(ResultSet.class);
         assertFalse(Proxy.isProxyClass(result.getClass()));
 
         listenerReceivedResult.set(null);
 
         // check "getResultSet"
-        result = logic.invoke(getResultSetMethod, null);
+        result = logic.invoke(null, getResultSetMethod, null);
         assertThat(result).isInstanceOf(ResultSet.class);
         assertFalse(Proxy.isProxyClass(result.getClass()));
 
@@ -941,7 +941,7 @@ public class StatementProxyLogicMockTest {
 
         // execute
         Method execute = Statement.class.getMethod("execute", String.class, int.class);
-        logic.invoke(execute, new Object[]{"SELECT *", Statement.RETURN_GENERATED_KEYS});
+        logic.invoke(null, execute, new Object[]{"SELECT *", Statement.RETURN_GENERATED_KEYS});
 
         verify(resultSet).close();
 
@@ -962,7 +962,7 @@ public class StatementProxyLogicMockTest {
 
 
         // execute
-        logic.invoke(execute, new Object[]{"SELECT *", Statement.RETURN_GENERATED_KEYS});
+        logic.invoke(null, execute, new Object[]{"SELECT *", Statement.RETURN_GENERATED_KEYS});
 
         verify(resultSet, never()).close();
 
@@ -988,7 +988,7 @@ public class StatementProxyLogicMockTest {
                 .build();
 
         Method method = Statement.class.getMethod("executeUpdate", String.class);
-        logic.invoke(method, new Object[]{query});
+        logic.invoke(null, method, new Object[]{query});
 
         assertTrue(listener.isBeforeMethodCalled());
         assertTrue(listener.isAfterMethodCalled());
@@ -1031,7 +1031,7 @@ public class StatementProxyLogicMockTest {
 
         try {
             Method method = Statement.class.getMethod("executeUpdate", String.class);
-            logic.invoke(method, new Object[]{query});
+            logic.invoke(null, method, new Object[]{query});
             fail();
         } catch (SQLException e) {
         }
@@ -1048,7 +1048,7 @@ public class StatementProxyLogicMockTest {
 
         Method getGeneratedKeysMethod = Statement.class.getMethod("getGeneratedKeys");
 
-        logic.invoke(getGeneratedKeysMethod, null);
+        logic.invoke(null, getGeneratedKeysMethod, null);
 
         // beforeQuery()/afterQuery() should not be called
         verify(listener, never()).beforeQuery(any(ExecutionInfo.class), ArgumentMatchers.<QueryInfo>anyList());
@@ -1064,7 +1064,7 @@ public class StatementProxyLogicMockTest {
 
         Method getResultSet = Statement.class.getMethod("getResultSet");
 
-        logic.invoke(getResultSet, null);
+        logic.invoke(null, getResultSet, null);
 
         // beforeQuery()/afterQuery() should not be called
         verify(listener, never()).beforeQuery(any(ExecutionInfo.class), ArgumentMatchers.<QueryInfo>anyList());

@@ -40,7 +40,7 @@ public class RepeatableReadResultSetProxyLogicTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                resultSetProxyLogic.invoke(getCursorName, null);
+                resultSetProxyLogic.invoke(null, getCursorName, null);
             }
         }).isInstanceOf(UnsupportedOperationException.class).hasMessage("Method 'public abstract java.lang.String java.sql.ResultSet.getCursorName() throws java.sql.SQLException' is not supported by this proxy");
     }
@@ -52,7 +52,7 @@ public class RepeatableReadResultSetProxyLogicTest {
 
         Method getTarget = ProxyJdbcObject.class.getMethod("getTarget");
 
-        Object result = resultSetProxyLogic.invoke(getTarget, null);
+        Object result = resultSetProxyLogic.invoke(null, getTarget, null);
 
         assertThat(result).isSameAs(resultSet);
     }
@@ -64,7 +64,7 @@ public class RepeatableReadResultSetProxyLogicTest {
 
         Method getMetaData = ResultSet.class.getMethod("getMetaData");
 
-        Object result = resultSetProxyLogic.invoke(getMetaData, null);
+        Object result = resultSetProxyLogic.invoke(null, getMetaData, null);
 
         assertThat(result).isSameAs(resultSet.getMetaData());
     }
@@ -281,57 +281,57 @@ public class RepeatableReadResultSetProxyLogicTest {
 
     private void invokeClose(RepeatableReadResultSetProxyLogic resultSetProxyLogic) throws Throwable {
         Method next = ResultSet.class.getMethod("close");
-        resultSetProxyLogic.invoke(next, null);
+        resultSetProxyLogic.invoke(null, next, null);
     }
 
     private void invokeBeforeFirst(RepeatableReadResultSetProxyLogic resultSetProxyLogic) throws Throwable {
         Method beforeFirst = ResultSet.class.getMethod("beforeFirst");
-        resultSetProxyLogic.invoke(beforeFirst, null);
+        resultSetProxyLogic.invoke(null, beforeFirst, null);
     }
 
     private boolean invokeNext(RepeatableReadResultSetProxyLogic resultSetProxyLogic) throws Throwable {
         Method next = ResultSet.class.getMethod("next");
-        return (Boolean) resultSetProxyLogic.invoke(next, null);
+        return (Boolean) resultSetProxyLogic.invoke(null, next, null);
     }
 
     private boolean invokeWasNull(RepeatableReadResultSetProxyLogic resultSetProxyLogic) throws Throwable {
         Method next = ResultSet.class.getMethod("wasNull");
-        return (Boolean) resultSetProxyLogic.invoke(next, null);
+        return (Boolean) resultSetProxyLogic.invoke(null, next, null);
     }
 
     private String invokeGetString(RepeatableReadResultSetProxyLogic resultSetProxyLogic, int columnIndex) throws Throwable {
         Method getString = ResultSet.class.getMethod("getString", int.class);
-        return (String) resultSetProxyLogic.invoke(getString, new Object[]{columnIndex});
+        return (String) resultSetProxyLogic.invoke(null, getString, new Object[]{columnIndex});
     }
 
     private int invokeGetInt(RepeatableReadResultSetProxyLogic resultSetProxyLogic, int columnIndex) throws Throwable {
         Method getInt = ResultSet.class.getMethod("getInt", int.class);
-        return (Integer) resultSetProxyLogic.invoke(getInt, new Object[]{columnIndex});
+        return (Integer) resultSetProxyLogic.invoke(null, getInt, new Object[]{columnIndex});
     }
 
     private long invokeGetLong(RepeatableReadResultSetProxyLogic resultSetProxyLogic, int columnIndex) throws Throwable {
         Method getInt = ResultSet.class.getMethod("getLong", int.class);
-        return (Long) resultSetProxyLogic.invoke(getInt, new Object[]{columnIndex});
+        return (Long) resultSetProxyLogic.invoke(null, getInt, new Object[]{columnIndex});
     }
 
     private Timestamp invokeGetTimestamp(RepeatableReadResultSetProxyLogic resultSetProxyLogic, int columnIndex) throws Throwable {
         Method getTimestamp = ResultSet.class.getMethod("getTimestamp", int.class);
-        return (Timestamp) resultSetProxyLogic.invoke(getTimestamp, new Object[]{columnIndex});
+        return (Timestamp) resultSetProxyLogic.invoke(null, getTimestamp, new Object[]{columnIndex});
     }
 
     private String invokeGetString(RepeatableReadResultSetProxyLogic resultSetProxyLogic, String columnLabel) throws Throwable {
         Method getString = ResultSet.class.getMethod("getString", String.class);
-        return (String) resultSetProxyLogic.invoke(getString, new Object[]{columnLabel});
+        return (String) resultSetProxyLogic.invoke(null, getString, new Object[]{columnLabel});
     }
 
     private int invokeGetInt(RepeatableReadResultSetProxyLogic resultSetProxyLogic, String columnLabel) throws Throwable {
         Method getInt = ResultSet.class.getMethod("getInt", String.class);
-        return (Integer) resultSetProxyLogic.invoke(getInt, new Object[]{columnLabel});
+        return (Integer) resultSetProxyLogic.invoke(null, getInt, new Object[]{columnLabel});
     }
 
     private Timestamp invokeGetTimestamp(RepeatableReadResultSetProxyLogic resultSetProxyLogic, String columnLabel) throws Throwable {
         Method getTimestamp = ResultSet.class.getMethod("getTimestamp", String.class);
-        return (Timestamp) resultSetProxyLogic.invoke(getTimestamp, new Object[]{columnLabel});
+        return (Timestamp) resultSetProxyLogic.invoke(null, getTimestamp, new Object[]{columnLabel});
     }
 
     private ResultSet exampleResultSet() throws SQLException {
@@ -359,7 +359,7 @@ public class RepeatableReadResultSetProxyLogicTest {
         when(rs.toString()).thenReturn("my rs");
 
         Method method = Object.class.getMethod("toString");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isInstanceOf(String.class).isEqualTo(rs.getClass().getSimpleName() + " [my rs]");
     }
@@ -370,7 +370,7 @@ public class RepeatableReadResultSetProxyLogicTest {
         RepeatableReadResultSetProxyLogic logic = createProxyLogic(rs);
 
         Method method = Object.class.getMethod("hashCode");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isInstanceOf(Integer.class).isEqualTo(rs.hashCode());
     }
@@ -383,11 +383,11 @@ public class RepeatableReadResultSetProxyLogicTest {
         Method method = Object.class.getMethod("equals", Object.class);
 
         // equals(null)
-        Object result = logic.invoke(method, new Object[]{null});
+        Object result = logic.invoke(null, method, new Object[]{null});
         assertThat(result).isEqualTo(false);
 
         // equals(true)
-        result = logic.invoke(method, new Object[]{rs});
+        result = logic.invoke(null, method, new Object[]{rs});
         assertThat(result).isEqualTo(true);
     }
 
@@ -404,7 +404,7 @@ public class RepeatableReadResultSetProxyLogicTest {
         RepeatableReadResultSetProxyLogic logic = (RepeatableReadResultSetProxyLogic) factory.create(rs, connectionInfo, proxyConfig);
 
         Method method = ResultSet.class.getMethod("close");
-        logic.invoke(method, new Object[]{});
+        logic.invoke(null, method, new Object[]{});
 
         assertTrue(listener.isBeforeMethodCalled());
         assertTrue(listener.isAfterMethodCalled());

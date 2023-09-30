@@ -4,7 +4,7 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
-import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.transform.ParameterReplacer;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
@@ -34,7 +34,7 @@ import static net.ttddyy.dsproxy.proxy.StatementMethodNames.METHODS_TO_RETURN_RE
  * @author Tadaya Tsuyukubo
  * @since 1.2
  */
-public class StatementProxyLogic {
+public class StatementProxyLogic extends ProxyLogicSupport {
 
     /**
      * Builder for {@link StatementProxyLogic}.
@@ -115,23 +115,16 @@ public class StatementProxyLogic {
     private ResultSet generatedKeys;
     private boolean generateKey;  // set true if auto-generate keys is enabled at "Connection#prepareStatement()"
 
-    public Object invoke(Method method, Object[] args) throws Throwable {
-
-        return MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
-            @Override
-            public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
-                return performQueryExecutionListener(method, args);
-            }
-        }, this.proxyConfig, this.statement, this.connectionInfo, method, args);
-
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        return proceedMethodExecution(this.proxyConfig, this.statement, this.connectionInfo, proxy, method, args);
     }
 
-    private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {
-
+    @Override
+    protected Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable {
         final String methodName = method.getName();
 
         if (!StatementMethodNames.METHODS_TO_INTERCEPT.contains(methodName)) {
-            return MethodUtils.proceedExecution(method, statement, args);
+            return proceedExecution(method, this.statement, args);
         }
 
         QueryTransformer queryTransformer = this.proxyConfig.getQueryTransformer();
@@ -139,30 +132,8 @@ public class StatementProxyLogic {
         QueryExecutionListener queryListener = this.proxyConfig.getQueryListener();
         JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
-
-        // special treat for toString method
-        if ("toString".equals(methodName)) {
-            final StringBuilder sb = new StringBuilder();
-            sb.append(statement.getClass().getSimpleName());   // Statement, PreparedStatement, or CallableStatement
-            sb.append(" [");
-            sb.append(statement.toString());
-            sb.append("]");
-            return sb.toString(); // differentiate toString message.
-        } else if ("getDataSourceName".equals(methodName)) {
-            return this.connectionInfo.getDataSourceName();
-        } else if ("getTarget".equals(methodName)) {
-            // ProxyJdbcObject interface has a method to return original object.
-            return statement;
-        }
-
-        // "unwrap", "isWrapperFor"
-        if (StatementMethodNames.JDBC4_METHODS.contains(methodName)) {
-            final Class<?> clazz = (Class<?>) args[0];
-            if ("unwrap".equals(methodName)) {
-                return statement.unwrap(clazz);
-            } else if ("isWrapperFor".equals(methodName)) {
-                return statement.isWrapperFor(clazz);
-            }
+        if (isCommonMethod(methodName)) {
+            return handleCommonMethod(methodName, this.statement, this.connectionInfo.getDataSourceName(), args);
         }
 
         // "getConnection"
@@ -186,7 +157,7 @@ public class StatementProxyLogic {
                 }
 
                 // proceed execution, no need to call listener
-                return MethodUtils.proceedExecution(method, statement, args);
+                return proceedExecution(method, this.statement, args);
             }
 
         } else {
@@ -208,7 +179,7 @@ public class StatementProxyLogic {
                         } else if (args[0] instanceof String) {
                             parameterKey = new ParameterKey((String) args[0]);
                         } else {
-                            return MethodUtils.proceedExecution(method, ps, args);
+                            return proceedExecution(method, ps, args);
                         }
 
                         // when same key is specified, old value will be overridden
@@ -234,7 +205,7 @@ public class StatementProxyLogic {
                 }
 
                 // proceed execution, no need to call listener
-                return MethodUtils.proceedExecution(method, ps, args);
+                return proceedExecution(method, ps, args);
             }
 
         }

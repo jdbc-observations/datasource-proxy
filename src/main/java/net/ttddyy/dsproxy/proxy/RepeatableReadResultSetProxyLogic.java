@@ -1,8 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
-import java.util.HashMap;
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +27,7 @@ import static java.lang.String.format;
  * @see net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler
  * @since 1.4
  */
-public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
+public class RepeatableReadResultSetProxyLogic extends ProxyLogicSupport implements ResultSetProxyLogic {
 
     private static final Set<String> METHODS_TO_INTERCEPT = Collections.unmodifiableSet(
             new HashSet<String>() {
@@ -44,6 +44,7 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
 
     private static final Map<String, Method> NUMBER_X_VALUE_METHOD_PER_NUMERIC_TYPE = Collections.unmodifiableMap(new HashMap<String, Method>() {
         private static final String METHOD_SUFFIX = "Value";
+
         {
             for (Method method : Number.class.getDeclaredMethods()) {
                 String methodName = method.getName();
@@ -119,45 +120,27 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
     private boolean wasNull;
 
     @Override
-    public Object invoke(Method method, Object[] args) throws Throwable {
-        return MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
-            @Override
-            public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
-                return performQueryExecutionListener(method, args);
-            }
-        }, this.proxyConfig, this.resultSet, this.connectionInfo, method, args);
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        return proceedMethodExecution(this.proxyConfig, this.resultSet, this.connectionInfo, proxy, method, args);
     }
 
-    private Object performQueryExecutionListener(Method method, Object[] args) throws Throwable {
-
-
+    @Override
+    protected Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable {
         final String methodName = method.getName();
 
         if (!METHODS_TO_INTERCEPT.contains(methodName)) {
-            return MethodUtils.proceedExecution(method, this.resultSet, args);
+            return proceedExecution(method, this.resultSet, args);
         }
 
-        // special treat for toString method
-        if ("toString".equals(methodName)) {
-            final StringBuilder sb = new StringBuilder();
-            sb.append(this.resultSet.getClass().getSimpleName());
-            sb.append(" [");
-            sb.append(this.resultSet.toString());
-            sb.append("]");
-            return sb.toString(); // differentiate toString message.
-        } else if ("getTarget".equals(methodName)) {
-            // ProxyJdbcObject interface has a method to return original object.
-            return this.resultSet;
-        }
-
-
-        if (methodName.equals("getMetaData")) {
-            return method.invoke(this.resultSet, args);
+        if (isCommonMethod(methodName)) {
+            return handleCommonMethod(methodName, this.resultSet, this.connectionInfo.getDataSourceName(), args);
+        } else if (methodName.equals("getMetaData")) {
+            return proceedExecution(method, this.resultSet, args);
         } else if (methodName.equals("close")) {
             this.closed = true;
-            return method.invoke(this.resultSet, args);
+            return proceedExecution(method, this.resultSet, args);
         } else if (methodName.equals("isClosed")) {
-            return method.invoke(this.resultSet, args);
+            return proceedExecution(method, this.resultSet, args);
         }
 
         if (this.closed) {
@@ -175,7 +158,7 @@ public class RepeatableReadResultSetProxyLogic implements ResultSetProxyLogic {
             }
         } else {
             if (isWasNullMethod(method)) {
-                return method.invoke(this.resultSet, args);
+                return proceedExecution(method, this.resultSet, args);
             }
             if (isGetMethod(method)) {
                 return handleGetMethodByDelegating(method, args);

@@ -61,7 +61,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
         Method method = CallableStatement.class.getMethod("execute");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isEqualTo(Boolean.TRUE);
         verifyListenerWithNoParam(listener, "execute", query);
@@ -80,7 +80,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
 
         setParameterByPosition(logic);
         Method method = CallableStatement.class.getMethod("execute");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isEqualTo(Boolean.TRUE);
         verifyParametersByPosition(stat);
@@ -101,7 +101,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
 
         setParameterByName(logic);
         Method method = CallableStatement.class.getMethod("execute");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isEqualTo(true);
         verifyParametersByName(stat);
@@ -121,7 +121,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
         Method method = CallableStatement.class.getMethod("executeUpdate");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isEqualTo(100);
         verifyListenerWithNoParam(listener, "executeUpdate", query);
@@ -140,7 +140,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
 
         setParameterByPosition(logic);
         Method method = CallableStatement.class.getMethod("executeUpdate");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isEqualTo(100);
         verifyParametersByPosition(stat);
@@ -161,7 +161,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
 
         setParameterByName(logic);
         Method method = CallableStatement.class.getMethod("executeUpdate");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isEqualTo(100);
         verifyParametersByName(stat);
@@ -181,7 +181,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
 
         StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
         Method method = CallableStatement.class.getMethod("executeQuery");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isEqualTo(mockResultSet);
         verifyListenerWithNoParam(listener, "executeQuery", query);
@@ -200,7 +200,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
         setParameterByPosition(logic);
         Method method = CallableStatement.class.getMethod("executeQuery");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isEqualTo(mockResultSet);
         verifyParametersByPosition(stat);
@@ -222,7 +222,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
 
         setParameterByName(logic);
         Method method = CallableStatement.class.getMethod("executeQuery");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isEqualTo(mockResultSet);
         verifyParametersByName(stat);
@@ -245,20 +245,20 @@ public class StatementProxyLogicForCallableStatementMockTest {
         Method addBatch = CallableStatement.class.getMethod("addBatch");
         Method executeBatch = CallableStatement.class.getMethod("executeBatch");
 
-        logic.invoke(setString, new Object[]{1, "foo"});
-        logic.invoke(setInt, new Object[]{2, 10});
-        logic.invoke(addBatch, null);
+        logic.invoke(null, setString, new Object[]{1, "foo"});
+        logic.invoke(null, setInt, new Object[]{2, 10});
+        logic.invoke(null, addBatch, null);
 
-        logic.invoke(setString, new Object[]{1, "bar"});
-        logic.invoke(setInt, new Object[]{2, 20});
-        logic.invoke(addBatch, null);
+        logic.invoke(null, setString, new Object[]{1, "bar"});
+        logic.invoke(null, setInt, new Object[]{2, 20});
+        logic.invoke(null, addBatch, null);
 
-        logic.invoke(setString, new Object[]{1, "baz"});
-        logic.invoke(setInt, new Object[]{2, 30});
-        logic.invoke(addBatch, null);
+        logic.invoke(null, setString, new Object[]{1, "baz"});
+        logic.invoke(null, setInt, new Object[]{2, 30});
+        logic.invoke(null, addBatch, null);
 
 
-        logic.invoke(executeBatch, null);
+        logic.invoke(null, executeBatch, null);
 
         Map<String, Object> expectedArgs1 = new LinkedHashMap<String, Object>();
         expectedArgs1.put("1", "foo");
@@ -292,18 +292,18 @@ public class StatementProxyLogicForCallableStatementMockTest {
         Method executeBatch = CallableStatement.class.getMethod("executeBatch");
         Method clearBatch = CallableStatement.class.getMethod("clearBatch");
 
-        logic.invoke(setString, new Object[]{1, "foo"});
-        logic.invoke(setInt, new Object[]{2, 10});
-        logic.invoke(addBatch, null);
+        logic.invoke(null, setString, new Object[]{1, "foo"});
+        logic.invoke(null, setInt, new Object[]{2, 10});
+        logic.invoke(null, addBatch, null);
 
-        logic.invoke(clearBatch, null);
+        logic.invoke(null, clearBatch, null);
 
 
-        logic.invoke(setString, new Object[]{1, "FOO"});
-        logic.invoke(setInt, new Object[]{2, 20});
-        logic.invoke(addBatch, null);
+        logic.invoke(null, setString, new Object[]{1, "FOO"});
+        logic.invoke(null, setInt, new Object[]{2, 20});
+        logic.invoke(null, addBatch, null);
 
-        logic.invoke(executeBatch, null);
+        logic.invoke(null, executeBatch, null);
 
         verify(stat).setString(1, "foo");
         verify(stat).setInt(2, 10);
@@ -335,15 +335,15 @@ public class StatementProxyLogicForCallableStatementMockTest {
         Method executeBatch = CallableStatement.class.getMethod("executeBatch");
         Method clearParameters = CallableStatement.class.getMethod("clearParameters");
 
-        logic.invoke(setString, new Object[]{1, "foo"});
+        logic.invoke(null, setString, new Object[]{1, "foo"});
 
-        logic.invoke(clearParameters, null);
+        logic.invoke(null, clearParameters, null);
 
-        logic.invoke(setString, new Object[]{1, "FOO"});
-        logic.invoke(setInt, new Object[]{2, 10});
-        logic.invoke(addBatch, null);
+        logic.invoke(null, setString, new Object[]{1, "FOO"});
+        logic.invoke(null, setInt, new Object[]{2, 10});
+        logic.invoke(null, addBatch, null);
 
-        logic.invoke(executeBatch, null);
+        logic.invoke(null, executeBatch, null);
 
         verify(stat).setString(1, "foo");
         verify(stat).clearParameters();
@@ -373,12 +373,12 @@ public class StatementProxyLogicForCallableStatementMockTest {
         Method executeBatch = CallableStatement.class.getMethod("executeBatch");
         Method clearParameters = CallableStatement.class.getMethod("clearParameters");
 
-        logic.invoke(setString, new Object[]{1, "foo"});
-        logic.invoke(setInt, new Object[]{2, 10});
-        logic.invoke(clearParameters, new Object[]{});
-        logic.invoke(addBatch, new Object[]{});
+        logic.invoke(null, setString, new Object[]{1, "foo"});
+        logic.invoke(null, setInt, new Object[]{2, 10});
+        logic.invoke(null, clearParameters, new Object[]{});
+        logic.invoke(null, addBatch, new Object[]{});
 
-        logic.invoke(executeBatch, new Object[]{});
+        logic.invoke(null, executeBatch, new Object[]{});
 
         verify(stat).setString(1, "foo");
         verify(stat).setInt(2, 10);
@@ -515,27 +515,27 @@ public class StatementProxyLogicForCallableStatementMockTest {
         Method setTimestamp = CallableStatement.class.getMethod("setTimestamp", int.class, Timestamp.class);
         Method setURL = CallableStatement.class.getMethod("setURL", int.class, URL.class);
 
-        logic.invoke(setArray, new Object[]{PARAM_ARRAY.index, PARAM_ARRAY.value});
-        logic.invoke(setAsciiStream, new Object[]{PARAM_ASCIISTREAM.index, PARAM_ASCIISTREAM.value});
-        logic.invoke(setBigDecimal, new Object[]{PARAM_BIGDECIMAL.index, PARAM_BIGDECIMAL.value});
-        logic.invoke(setBinaryStream, new Object[]{PARAM_BINARYSTREAM.index, PARAM_BINARYSTREAM.value});
-        logic.invoke(setBlob, new Object[]{PARAM_BLOB.index, PARAM_BLOB.value});
-        logic.invoke(setBoolean, new Object[]{PARAM_BOOLEAN.index, PARAM_BOOLEAN.value});
-        logic.invoke(setCharacterStream, new Object[]{PARAM_CHARACTERSTREAM.index, PARAM_CHARACTERSTREAM.value});
-        logic.invoke(setClob, new Object[]{PARAM_CLOB.index, PARAM_CLOB.value});
-        logic.invoke(setDate, new Object[]{PARAM_DATE.index, PARAM_DATE.value});
-        logic.invoke(setDouble, new Object[]{PARAM_DOUBLE.index, PARAM_DOUBLE.value});
-        logic.invoke(setFloat, new Object[]{PARAM_FLOAT.index, PARAM_FLOAT.value});
-        logic.invoke(setInt, new Object[]{PARAM_INT.index, PARAM_INT.value});
-        logic.invoke(setLong, new Object[]{PARAM_LONG.index, PARAM_LONG.value});
-        logic.invoke(setNull, new Object[]{PARAM_NULL.index, PARAM_NULL.value});
-        logic.invoke(setObject, new Object[]{PARAM_OBJECT.index, PARAM_OBJECT.value});
-        logic.invoke(setRef, new Object[]{PARAM_REF.index, PARAM_REF.value});
-        logic.invoke(setShort, new Object[]{PARAM_SHORT.index, PARAM_SHORT.value});
-        logic.invoke(setString, new Object[]{PARAM_STRING.index, PARAM_STRING.value});
-        logic.invoke(setTime, new Object[]{PARAM_TIME.index, PARAM_TIME.value});
-        logic.invoke(setTimestamp, new Object[]{PARAM_TIMESTAMP.index, PARAM_TIMESTAMP.value});
-        logic.invoke(setURL, new Object[]{PARAM_URL.index, PARAM_URL.value});
+        logic.invoke(null, setArray, new Object[]{PARAM_ARRAY.index, PARAM_ARRAY.value});
+        logic.invoke(null, setAsciiStream, new Object[]{PARAM_ASCIISTREAM.index, PARAM_ASCIISTREAM.value});
+        logic.invoke(null, setBigDecimal, new Object[]{PARAM_BIGDECIMAL.index, PARAM_BIGDECIMAL.value});
+        logic.invoke(null, setBinaryStream, new Object[]{PARAM_BINARYSTREAM.index, PARAM_BINARYSTREAM.value});
+        logic.invoke(null, setBlob, new Object[]{PARAM_BLOB.index, PARAM_BLOB.value});
+        logic.invoke(null, setBoolean, new Object[]{PARAM_BOOLEAN.index, PARAM_BOOLEAN.value});
+        logic.invoke(null, setCharacterStream, new Object[]{PARAM_CHARACTERSTREAM.index, PARAM_CHARACTERSTREAM.value});
+        logic.invoke(null, setClob, new Object[]{PARAM_CLOB.index, PARAM_CLOB.value});
+        logic.invoke(null, setDate, new Object[]{PARAM_DATE.index, PARAM_DATE.value});
+        logic.invoke(null, setDouble, new Object[]{PARAM_DOUBLE.index, PARAM_DOUBLE.value});
+        logic.invoke(null, setFloat, new Object[]{PARAM_FLOAT.index, PARAM_FLOAT.value});
+        logic.invoke(null, setInt, new Object[]{PARAM_INT.index, PARAM_INT.value});
+        logic.invoke(null, setLong, new Object[]{PARAM_LONG.index, PARAM_LONG.value});
+        logic.invoke(null, setNull, new Object[]{PARAM_NULL.index, PARAM_NULL.value});
+        logic.invoke(null, setObject, new Object[]{PARAM_OBJECT.index, PARAM_OBJECT.value});
+        logic.invoke(null, setRef, new Object[]{PARAM_REF.index, PARAM_REF.value});
+        logic.invoke(null, setShort, new Object[]{PARAM_SHORT.index, PARAM_SHORT.value});
+        logic.invoke(null, setString, new Object[]{PARAM_STRING.index, PARAM_STRING.value});
+        logic.invoke(null, setTime, new Object[]{PARAM_TIME.index, PARAM_TIME.value});
+        logic.invoke(null, setTimestamp, new Object[]{PARAM_TIMESTAMP.index, PARAM_TIMESTAMP.value});
+        logic.invoke(null, setURL, new Object[]{PARAM_URL.index, PARAM_URL.value});
     }
 
     private void setParameterByName(StatementProxyLogic logic) throws Throwable {
@@ -561,25 +561,25 @@ public class StatementProxyLogicForCallableStatementMockTest {
         Method setURL = CallableStatement.class.getMethod("setURL", String.class, URL.class);
 
 
-        logic.invoke(setAsciiStream, new Object[]{PARAM_ASCIISTREAM.strIndex, PARAM_ASCIISTREAM.value});
-        logic.invoke(setBigDecimal, new Object[]{PARAM_BIGDECIMAL.strIndex, PARAM_BIGDECIMAL.value});
-        logic.invoke(setBinaryStream, new Object[]{PARAM_BINARYSTREAM.strIndex, PARAM_BINARYSTREAM.value});
-        logic.invoke(setBlob, new Object[]{PARAM_BLOB.strIndex, PARAM_BLOB.value});
-        logic.invoke(setBoolean, new Object[]{PARAM_BOOLEAN.strIndex, PARAM_BOOLEAN.value});
-        logic.invoke(setCharacterStream, new Object[]{PARAM_CHARACTERSTREAM.strIndex, PARAM_CHARACTERSTREAM.value});
-        logic.invoke(setClob, new Object[]{PARAM_CLOB.strIndex, PARAM_CLOB.value});
-        logic.invoke(setDate, new Object[]{PARAM_DATE.strIndex, PARAM_DATE.value});
-        logic.invoke(setDouble, new Object[]{PARAM_DOUBLE.strIndex, PARAM_DOUBLE.value});
-        logic.invoke(setFloat, new Object[]{PARAM_FLOAT.strIndex, PARAM_FLOAT.value});
-        logic.invoke(setInt, new Object[]{PARAM_INT.strIndex, PARAM_INT.value});
-        logic.invoke(setLong, new Object[]{PARAM_LONG.strIndex, PARAM_LONG.value});
-        logic.invoke(setNull, new Object[]{PARAM_NULL.strIndex, PARAM_NULL.value});
-        logic.invoke(setObject, new Object[]{PARAM_OBJECT.strIndex, PARAM_OBJECT.value});
-        logic.invoke(setShort, new Object[]{PARAM_SHORT.strIndex, PARAM_SHORT.value});
-        logic.invoke(setString, new Object[]{PARAM_STRING.strIndex, PARAM_STRING.value});
-        logic.invoke(setTime, new Object[]{PARAM_TIME.strIndex, PARAM_TIME.value});
-        logic.invoke(setTimestamp, new Object[]{PARAM_TIMESTAMP.strIndex, PARAM_TIMESTAMP.value});
-        logic.invoke(setURL, new Object[]{PARAM_URL.strIndex, PARAM_URL.value});
+        logic.invoke(null, setAsciiStream, new Object[]{PARAM_ASCIISTREAM.strIndex, PARAM_ASCIISTREAM.value});
+        logic.invoke(null, setBigDecimal, new Object[]{PARAM_BIGDECIMAL.strIndex, PARAM_BIGDECIMAL.value});
+        logic.invoke(null, setBinaryStream, new Object[]{PARAM_BINARYSTREAM.strIndex, PARAM_BINARYSTREAM.value});
+        logic.invoke(null, setBlob, new Object[]{PARAM_BLOB.strIndex, PARAM_BLOB.value});
+        logic.invoke(null, setBoolean, new Object[]{PARAM_BOOLEAN.strIndex, PARAM_BOOLEAN.value});
+        logic.invoke(null, setCharacterStream, new Object[]{PARAM_CHARACTERSTREAM.strIndex, PARAM_CHARACTERSTREAM.value});
+        logic.invoke(null, setClob, new Object[]{PARAM_CLOB.strIndex, PARAM_CLOB.value});
+        logic.invoke(null, setDate, new Object[]{PARAM_DATE.strIndex, PARAM_DATE.value});
+        logic.invoke(null, setDouble, new Object[]{PARAM_DOUBLE.strIndex, PARAM_DOUBLE.value});
+        logic.invoke(null, setFloat, new Object[]{PARAM_FLOAT.strIndex, PARAM_FLOAT.value});
+        logic.invoke(null, setInt, new Object[]{PARAM_INT.strIndex, PARAM_INT.value});
+        logic.invoke(null, setLong, new Object[]{PARAM_LONG.strIndex, PARAM_LONG.value});
+        logic.invoke(null, setNull, new Object[]{PARAM_NULL.strIndex, PARAM_NULL.value});
+        logic.invoke(null, setObject, new Object[]{PARAM_OBJECT.strIndex, PARAM_OBJECT.value});
+        logic.invoke(null, setShort, new Object[]{PARAM_SHORT.strIndex, PARAM_SHORT.value});
+        logic.invoke(null, setString, new Object[]{PARAM_STRING.strIndex, PARAM_STRING.value});
+        logic.invoke(null, setTime, new Object[]{PARAM_TIME.strIndex, PARAM_TIME.value});
+        logic.invoke(null, setTimestamp, new Object[]{PARAM_TIMESTAMP.strIndex, PARAM_TIMESTAMP.value});
+        logic.invoke(null, setURL, new Object[]{PARAM_URL.strIndex, PARAM_URL.value});
     }
 
     private void verifyParametersByPosition(CallableStatement mockStatement) throws Exception {
@@ -732,7 +732,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         StatementProxyLogic logic = getProxyLogic(orig, null, null, null);
 
         Method method = ProxyJdbcObject.class.getMethod("getTarget");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isSameAs(orig);
     }
@@ -744,7 +744,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
 
         StatementProxyLogic logic = getProxyLogic(mock, null, null, null);
         Method method = CallableStatement.class.getMethod("unwrap", Class.class);
-        Object result = logic.invoke(method, new Object[]{String.class});
+        Object result = logic.invoke(null, method, new Object[]{String.class});
 
         verify(mock).unwrap(String.class);
         assertThat(result).isEqualTo("called");
@@ -758,7 +758,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         StatementProxyLogic logic = getProxyLogic(mock, null, null, null);
 
         Method method = CallableStatement.class.getMethod("isWrapperFor", Class.class);
-        Object result = logic.invoke(method, new Object[]{String.class});
+        Object result = logic.invoke(null, method, new Object[]{String.class});
 
         verify(mock).isWrapperFor(String.class);
         assertThat(result).isEqualTo(true);
@@ -773,7 +773,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         StatementProxyLogic logic = getProxyLogic(stat, null, null, conn);
 
         Method method = CallableStatement.class.getMethod("getConnection");
-        Object result = logic.invoke(method, null);
+        Object result = logic.invoke(null, method, null);
 
         assertThat(result).isSameAs(conn);
     }
@@ -795,7 +795,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
                 .build();
 
         Method method = CallableStatement.class.getMethod("wasNull");
-        logic.invoke(method, new Object[]{});
+        logic.invoke(null, method, new Object[]{});
 
         assertTrue(listener.isBeforeMethodCalled());
         assertTrue(listener.isAfterMethodCalled());

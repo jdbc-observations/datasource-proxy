@@ -3,10 +3,11 @@ package net.ttddyy.dsproxy.support;
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.DataSourceProxyException;
-import net.ttddyy.dsproxy.listener.MethodExecutionListenerUtils;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.proxy.ProxyLogicSupport;
 import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
 import javax.sql.DataSource;
@@ -24,7 +25,7 @@ import java.util.logging.Logger;
  *
  * @author Tadaya Tsuyukubo
  */
-public class ProxyDataSource implements DataSource, Closeable {
+public class ProxyDataSource extends ProxyLogicSupport implements DataSource, Closeable {
 
     private static final Method GET_CONNECTION_WITH_NO_ARGS;
     private static final Method GET_CONNECTION_WITH_USER_PASS;
@@ -69,35 +70,17 @@ public class ProxyDataSource implements DataSource, Closeable {
 
     @Override
     public Connection getConnection() throws SQLException {
-        final Connection conn = dataSource.getConnection();
-        return getConnectionProxy(conn, GET_CONNECTION_WITH_NO_ARGS, null);
+        return getConnectionProxy(GET_CONNECTION_WITH_NO_ARGS, null);
     }
 
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
-        final Connection conn = dataSource.getConnection(username, password);
-        return getConnectionProxy(conn, GET_CONNECTION_WITH_USER_PASS, new Object[]{username, password});
+        return getConnectionProxy(GET_CONNECTION_WITH_USER_PASS, new Object[]{username, password});
     }
 
-    private Connection getConnectionProxy(final Connection conn, Method method, Object[] args) throws SQLException {
-        String dataSourceName = this.proxyConfig.getDataSourceName();
-        ConnectionIdManager connectionIdManager = this.proxyConfig.getConnectionIdManager();
-        final JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
-
-        String connectionId = connectionIdManager.getId(conn);
-
-        final ConnectionInfo connectionInfo = new ConnectionInfo();
-        connectionInfo.setConnectionId(connectionId);
-        connectionInfo.setIsolationLevel(conn.getTransactionIsolation());
-        connectionInfo.setDataSourceName(dataSourceName);
-
+    private Connection getConnectionProxy(Method method, Object[] args) throws SQLException {
         try {
-            return (Connection) MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
-                @Override
-                public Object execute(Object proxy, Method method, Object[] args) throws Throwable {
-                    return jdbcProxyFactory.createConnection(conn, connectionInfo, ProxyDataSource.this.proxyConfig);
-                }
-            }, this.proxyConfig, this, connectionInfo, method, args);
+            return (Connection) proceedMethodExecution(this.proxyConfig, this.dataSource, null, null, method, args);
         } catch (Throwable throwable) {
             if (throwable instanceof SQLException) {
                 throw (SQLException) throwable;
@@ -105,7 +88,27 @@ public class ProxyDataSource implements DataSource, Closeable {
                 throw new DataSourceProxyException("Failed to perform getConnection", throwable);
             }
         }
+    }
 
+    @Override
+    protected Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable {
+        String dataSourceName = this.proxyConfig.getDataSourceName();
+        ConnectionIdManager connectionIdManager = this.proxyConfig.getConnectionIdManager();
+        final JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
+
+        Connection connection = (Connection) proceedExecution(method, this.dataSource, args);
+
+        String connectionId = connectionIdManager.getId(connection);
+
+        final ConnectionInfo connectionInfo = new ConnectionInfo();
+        connectionInfo.setConnectionId(connectionId);
+        connectionInfo.setIsolationLevel(connection.getTransactionIsolation());
+        connectionInfo.setDataSourceName(dataSourceName);
+
+        // make ConnectionInfo available in afterMethod() callback
+        methodContext.setConnectionInfo(connectionInfo);
+
+        return jdbcProxyFactory.createConnection(connection, connectionInfo, this.proxyConfig);
     }
 
     @Override

@@ -1,7 +1,8 @@
-package net.ttddyy.dsproxy.listener;
+package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -15,11 +16,10 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class MethodExecutionListenerUtilsTest {
+public class ProxyLogicSupportTest {
 
     @Test
-    public void invokeNormal() throws Throwable {
-
+    public void proceedMethodExecution() throws Throwable {
         final Object target = new Object();
         final Method method = Statement.class.getMethod("getConnection");
         final Object[] methodArgs = new Object[]{};
@@ -63,12 +63,8 @@ public class MethodExecutionListenerUtilsTest {
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
 
-        Object result = MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
-            @Override
-            public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
-                return returnObj;
-            }
-        }, proxyConfig, target, connectionInfo, method, methodArgs);
+        Custom custom = new Custom((proxyTarget, m, args) -> returnObj);
+        Object result = custom.proceedMethodExecution(proxyConfig, target, connectionInfo, null, method, methodArgs);
 
         assertSame(returnObj, result);
         assertTrue(listener.isBeforeMethodCalled());
@@ -81,9 +77,9 @@ public class MethodExecutionListenerUtilsTest {
         assertThat(beforeMethodContext.getProxyConfig()).isSameAs(proxyConfig);
     }
 
-    @Test
-    public void invokeWithException() throws Throwable {
 
+    @Test
+    public void proceedMethodExecutionWithException() throws Throwable {
         final Object target = new Object();
         final Method method = Statement.class.getMethod("getConnection");
         final Object[] methodArgs = new Object[]{};
@@ -107,18 +103,16 @@ public class MethodExecutionListenerUtilsTest {
             }
         };
 
-
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+
+        Custom custom = new Custom((proxyTarget, m, args) -> {
+            throw exception;
+        });
 
         // when callback throws exception
         Throwable thrownException = null;
         try {
-            MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
-                @Override
-                public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
-                    throw exception;
-                }
-            }, proxyConfig, target, connectionInfo, method, methodArgs);
+            custom.proceedMethodExecution(proxyConfig, target, connectionInfo, null, method, methodArgs);
         } catch (Throwable throwable) {
             thrownException = throwable;
         }
@@ -129,14 +123,12 @@ public class MethodExecutionListenerUtilsTest {
     }
 
     @Test
-    public void methodAndParameterUpdate() throws Throwable {
+    public void proceedMethodExecutionWithMethodAndParameterUpdate() throws Throwable {
         final Object target = new Object();
         final Method method = Statement.class.getMethod("execute", String.class);
         final Object[] methodArgs = new Object[]{};
         final Method replacedMethod = Statement.class.getMethod("execute", String.class, int.class);
         final Object[] replacedMethodArgs = new Object[]{Statement.RETURN_GENERATED_KEYS};
-
-
         final ConnectionInfo connectionInfo = new ConnectionInfo();
 
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener() {
@@ -164,18 +156,35 @@ public class MethodExecutionListenerUtilsTest {
         final AtomicReference<Method> invokedMethod = new AtomicReference<Method>();
         final AtomicReference<Object[]> invokedMethodArgs = new AtomicReference<Object[]>();
 
-        MethodExecutionListenerUtils.invoke(new MethodExecutionListenerUtils.MethodExecutionCallback() {
-            @Override
-            public Object execute(Object proxyTarget, Method method, Object[] args) throws Throwable {
-                invokedMethod.set(method);
-                invokedMethodArgs.set(args);
-                return null;
-            }
-        }, proxyConfig, target, connectionInfo, method, methodArgs);
+        Custom custom = new Custom((proxyTarget, m, args) -> {
+            invokedMethod.set(m);
+            invokedMethodArgs.set(args);
+            return null;
+        });
+
+        custom.proceedMethodExecution(proxyConfig, target, connectionInfo, null, method, methodArgs);
 
         assertThat(invokedMethod.get()).isSameAs(replacedMethod);
         assertThat(invokedMethodArgs.get()).isSameAs(replacedMethodArgs);
+    }
 
+    private static class Custom extends ProxyLogicSupport {
+
+        private final CustomCallback callback;
+
+        public Custom(CustomCallback callback) {
+            this.callback = callback;
+        }
+
+        @Override
+        protected Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable {
+            return this.callback.invoke(proxy, method, args);
+        }
+    }
+
+    private interface CustomCallback {
+        Object invoke(Object proxyTarget, Method method, Object[] args) throws Exception;
     }
 
 }
+
