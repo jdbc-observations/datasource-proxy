@@ -12,7 +12,8 @@ Once `ProxyDataSource` is setup, you can pass it as a datasource to your applica
 `ProxyDataSourceBuilder` provides fluent API to construct `ProxyDataSource` instance.
 Also, it provides builder methods to register built-in or custom listeners.
 
-```java
+[source,java]
+----
 DataSource dataSource =
     ProxyDataSourceBuilder.create(actualDataSource)  // pass original datasource
         .logQueryByCommons(INFO)    // logQueryBySlf4j(), logQueryByJUL(), logQueryToSysOut()
@@ -23,8 +24,27 @@ DataSource dataSource =
         .afterMethod(executionContext -> {    // register a custom listener with lambda
             ...
         })
-        .build();
-```
+        .build();  // returns ProxyDataSource instance
+----
+
+[[creating-a-proxied-datasource]]
+=== Creating a proxied DataSource
+Starting from datasource-proxy v1.10, the newly added `buildProxy()` method returns a pure `DataSource` proxy instance.
+
+The difference between `ProxyDataSource` returned by `build()` and the `DataSource` proxy returned by `buildProxy()` is as follows:
+
+* `ProxyDataSource` is a concrete implementation class.
+  This class provides method callback only for the `getConnection` methods.
+* The `DataSource` proxy is a pure proxy instance. It provides method callbacks for all methods.
+
+[source,java]
+----
+DataSource dataSource =
+    ProxyDataSourceBuilder.create(actualDataSource)  // pass original datasource
+        ...
+        .buildProxy();  // returns DataSource
+----
+
 
 ==== DriverManager and Connection Support
 

@@ -31,10 +31,12 @@ import net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
 import net.ttddyy.dsproxy.proxy.RepeatableReadResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 import org.junit.Test;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -734,4 +736,14 @@ public class ProxyDataSourceBuilderTest {
         assertThat(ds.getProxyConfig().isRetrieveGeneratedKeysForBatchPreparedOrCallable()).isFalse();
 
     }
+
+    @Test
+    public void buildProxy() {
+        DataSource original = mock(DataSource.class);
+        DataSource proxy = ProxyDataSourceBuilder.create(original).buildProxy();
+        assertThat(proxy).isInstanceOf(ProxyJdbcObject.class);
+        Object target = ((ProxyJdbcObject) proxy).getTarget();
+        assertThat(target).isInstanceOf(DataSource.class).isSameAs(original);
+    }
+
 }

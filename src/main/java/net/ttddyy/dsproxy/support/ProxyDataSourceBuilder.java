@@ -1089,8 +1089,50 @@ public class ProxyDataSourceBuilder {
         return this;
     }
 
+    /**
+     * Create a proxy {@link DataSource}.
+     *
+     * <p>The difference between {@link #build()} and this method is that the former returns a {@link ProxyDataSource}
+     * instance, while the latter (this method) returns a pure proxy {@link DataSource} instance.
+     * The {@link ProxyDataSource} instance is a concrete {@link DataSource} implementation that provides method
+     * callbacks only for the {@code getConnection} methods.
+     * On the other hand, the {@link DataSource} returned by this method is a pure proxy instance that triggers
+     * method callbacks on all of its methods.
+     *
+     * @return a proxy {@link DataSource}
+     * @see net.ttddyy.dsproxy.proxy.DataSourceProxyLogic
+     * @see ProxyDataSource
+     * @since 1.10
+     */
+    public DataSource buildProxy() {
+        ProxyConfig proxyConfig = buildProxyConfig();
+        return proxyConfig.getJdbcProxyFactory().createDataSource(this.dataSource, proxyConfig);
+    }
 
+    /**
+     * Create a {@link ProxyDataSource}.
+     *
+     * <p>The returned {@link ProxyDataSource} is a concrete {@link DataSource} implementation that provides method
+     * callbacks only for {@code getConnection} methods.
+     * <p>Starting from v1.10, the newly added {@link #buildProxy()} method returns a pure {@link DataSource} proxy
+     * that invokes method callbacks on all methods.
+     *
+     * @return a {@link ProxyDataSource}
+     * @see #buildProxy()
+     */
     public ProxyDataSource build() {
+        ProxyConfig proxyConfig = buildProxyConfig();
+
+        // build ProxyDataSource
+        ProxyDataSource proxyDataSource = new ProxyDataSource();
+        if (this.dataSource != null) {
+            proxyDataSource.setDataSource(dataSource);
+        }
+        proxyDataSource.setProxyConfig(proxyConfig);
+        return proxyDataSource;
+    }
+
+    private ProxyConfig buildProxyConfig() {
 
         // Query Logging Listeners
         List<QueryExecutionListener> listeners = new ArrayList<QueryExecutionListener>();
@@ -1203,16 +1245,7 @@ public class ProxyDataSourceBuilder {
         // this can be null if creation of generated keys proxy is disabled
         proxyConfigBuilder.generatedKeysProxyLogicFactory(this.generatedKeysProxyLogicFactory);
 
-
-        // build ProxyDataSource
-        ProxyDataSource proxyDataSource = new ProxyDataSource();
-        if (this.dataSource != null) {
-            proxyDataSource.setDataSource(dataSource);
-        }
-        ProxyConfig proxyConfig = proxyConfigBuilder.build();
-        proxyDataSource.setProxyConfig(proxyConfig);
-
-        return proxyDataSource;
+        return proxyConfigBuilder.build();
     }
 
     private CommonsQueryLoggingListener buildCommonsQueryListener() {
