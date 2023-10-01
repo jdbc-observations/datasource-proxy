@@ -1,6 +1,0 @@
-[[changelog-1.4.8]]
-=== 1.4.8
-
-* Populate `ExecutionInfo#elapsedTime` when query execution has failed.
-
-* Change `ConnectionIdManager#getId()` to return `String` instead of `long`.

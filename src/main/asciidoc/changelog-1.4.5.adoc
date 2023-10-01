@@ -1,8 +1,0 @@
-[[changelog-1.4.5]]
-=== 1.4.5
-
-* `ConnectionInfo` now has information whether the connection is closed or not.
-
-* Generated keys support.   +
-  `ResultSet` for `getGeneratedKeys()` now has own configuration. See details on <<generated-keys>>  +
-  Thanks _Réda Housni Alaoui_(@reda-alaoui) for this contribution!!

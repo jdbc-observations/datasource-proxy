@@ -13,27 +13,7 @@ include::changelog-1.6.adoc[]
 
 include::changelog-1.5.adoc[]
 
-include::changelog-1.4.10.adoc[]
-
-include::changelog-1.4.9.adoc[]
-
-include::changelog-1.4.8.adoc[]
-
-include::changelog-1.4.7.adoc[]
-
-include::changelog-1.4.6.adoc[]
-
-include::changelog-1.4.5.adoc[]
-
-include::changelog-1.4.4.adoc[]
-
-include::changelog-1.4.3.adoc[]
-
-include::changelog-1.4.2.adoc[]
-
-include::changelog-1.4.1.adoc[]
-
-include::changelog-1.4.adoc[]
+include::changelog-1.4.x.adoc[]
 
 include::changelog-1.3.x.adoc[]
 

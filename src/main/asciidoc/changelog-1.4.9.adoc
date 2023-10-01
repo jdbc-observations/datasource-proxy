@@ -1,6 +1,0 @@
-[[changelog-1.4.9]]
-=== 1.4.9
-
-* Fix memory leak in slow query listener. (https://github.com/ttddyy/datasource-proxy/pull/53[Issue-53])  +
-Thanks _wuwen (https://github.com/wuwen5)_ for this contribution!!
-
