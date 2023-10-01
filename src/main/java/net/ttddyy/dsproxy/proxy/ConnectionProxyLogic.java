@@ -42,7 +42,7 @@ public class ConnectionProxyLogic extends ProxyLogicSupport {
         JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
         if (isCommonMethod(methodName)) {
-            return handleCommonMethod(methodName, this.connection, this.connectionInfo.getDataSourceName(), args);
+            return handleCommonMethod(methodName, this.connection, this.proxyConfig, args);
         }
 
         if ("setTransactionIsolation".equals(methodName)) {

@@ -396,4 +396,14 @@ public class ConnectionProxyLogicMockTest {
         assertThat(connectionInfo.getRollbackCount()).isEqualTo(2);
     }
 
+    @Test
+    public void proxyConfig() throws Throwable {
+        Connection connection = mock(Connection.class);
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
+        ConnectionProxyLogic logic = new ConnectionProxyLogic(connection, null, proxyConfig);
+        Method method = ProxyJdbcObject.class.getMethod("getProxyConfig");
+        Object result = logic.invoke(null, method, null);
+        assertThat(result).isSameAs(proxyConfig);
+    }
+
 }

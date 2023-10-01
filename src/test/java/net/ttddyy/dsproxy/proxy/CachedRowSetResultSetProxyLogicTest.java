@@ -374,4 +374,15 @@ public class CachedRowSetResultSetProxyLogicTest {
         assertSame(connectionInfo, executionContext.getConnectionInfo());
     }
 
+    @Test
+    public void proxyConfig() throws Throwable {
+        ResultSet rs = exampleResultSet();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
+        CachedRowSetResultSetProxyLogicFactory factory = new CachedRowSetResultSetProxyLogicFactory();
+        CachedRowSetResultSetProxyLogic logic = (CachedRowSetResultSetProxyLogic) factory.create(rs, null, proxyConfig);
+        Method method = ProxyJdbcObject.class.getMethod("getProxyConfig");
+        Object result = logic.invoke(null, method, null);
+        assertThat(result).isSameAs(proxyConfig);
+    }
+
 }

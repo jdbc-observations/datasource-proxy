@@ -1071,4 +1071,17 @@ public class StatementProxyLogicMockTest {
         verify(listener, never()).afterQuery(any(ExecutionInfo.class), ArgumentMatchers.<QueryInfo>anyList());
     }
 
+    @Test
+    public void proxyConfig() throws Throwable {
+        Statement statement = mock(Statement.class);
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
+        StatementProxyLogic logic = StatementProxyLogic.Builder.create()
+                .statement(statement, StatementType.STATEMENT)
+                .proxyConfig(proxyConfig)
+                .build();
+        Method method = ProxyJdbcObject.class.getMethod("getProxyConfig");
+        Object result = logic.invoke(null, method, null);
+        assertThat(result).isSameAs(proxyConfig);
+    }
+
 }

@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.Ref;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -807,6 +808,19 @@ public class StatementProxyLogicForCallableStatementMockTest {
         assertSame(cs, executionContext.getTarget());
         assertSame(connectionInfo, executionContext.getConnectionInfo());
 
+    }
+
+    @Test
+    public void proxyConfig() throws Throwable {
+        CallableStatement cs = mock(CallableStatement.class);
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
+        StatementProxyLogic logic = StatementProxyLogic.Builder.create()
+                .statement(cs, StatementType.CALLABLE)
+                .proxyConfig(proxyConfig)
+                .build();
+        Method method = ProxyJdbcObject.class.getMethod("getProxyConfig");
+        Object result = logic.invoke(null, method, null);
+        assertThat(result).isSameAs(proxyConfig);
     }
 
 }

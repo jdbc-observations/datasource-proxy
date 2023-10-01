@@ -21,4 +21,11 @@ public interface ProxyJdbcObject {
      * @return source object
      */
     Object getTarget();
+
+    /**
+     * Retrieve an associated {@link ProxyConfig}.
+     * @return an associated {@link ProxyConfig}
+     * @since 1.10
+     */
+    ProxyConfig getProxyConfig();
 }

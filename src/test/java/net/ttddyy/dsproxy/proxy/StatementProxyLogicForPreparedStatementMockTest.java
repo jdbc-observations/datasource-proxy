@@ -719,4 +719,17 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         assertSame(connectionInfo, executionContext.getConnectionInfo());
     }
 
+    @Test
+    public void proxyConfig() throws Throwable {
+        PreparedStatement ps = mock(PreparedStatement.class);
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
+        StatementProxyLogic logic = StatementProxyLogic.Builder.create()
+                .statement(ps, StatementType.PREPARED)
+                .proxyConfig(proxyConfig)
+                .build();
+        Method method = ProxyJdbcObject.class.getMethod("getProxyConfig");
+        Object result = logic.invoke(null, method, null);
+        assertThat(result).isSameAs(proxyConfig);
+    }
+
 }

@@ -474,4 +474,16 @@ public class RepeatableReadResultSetProxyLogicTest {
 
         assertThat(result).isEqualTo(5L);
     }
+
+    @Test
+    public void proxyConfig() throws Throwable {
+        ResultSet rs = exampleResultSet();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
+        RepeatableReadResultSetProxyLogicFactory factory = new RepeatableReadResultSetProxyLogicFactory();
+        RepeatableReadResultSetProxyLogic logic = (RepeatableReadResultSetProxyLogic) factory.create(rs, null, proxyConfig);
+        Method method = ProxyJdbcObject.class.getMethod("getProxyConfig");
+        Object result = logic.invoke(null, method, null);
+        assertThat(result).isSameAs(proxyConfig);
+    }
+
 }

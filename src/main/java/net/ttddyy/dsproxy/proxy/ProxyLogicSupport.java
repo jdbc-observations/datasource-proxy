@@ -22,7 +22,11 @@ import java.util.Set;
 public abstract class ProxyLogicSupport {
 
     protected static final Set<String> COMMON_METHOD_NAMES = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("toString", "getTarget", "getDataSourceName", "unwrap", "isWrapperFor", "equals", "hashCode"))
+            new HashSet<String>(Arrays.asList(
+                    "getTarget", "getProxyConfig",
+                    "getDataSourceName",
+                    "unwrap", "isWrapperFor",
+                    "toString", "equals", "hashCode"))
     );
 
 
@@ -30,7 +34,7 @@ public abstract class ProxyLogicSupport {
         return COMMON_METHOD_NAMES.contains(methodName);
     }
 
-    protected Object handleCommonMethod(String methodName, Object original, String dataSourceName, Object[] args) throws SQLException {
+    protected Object handleCommonMethod(String methodName, Object original, ProxyConfig proxyConfig, Object[] args) throws SQLException {
         if ("toString".equals(methodName)) {
             // special treat for toString method
             final StringBuilder sb = new StringBuilder();
@@ -44,9 +48,11 @@ public abstract class ProxyLogicSupport {
         } else if ("hashCode".equals(methodName)) {
             return original.hashCode();
         } else if ("getDataSourceName".equals(methodName)) {
-            return dataSourceName;
+            return proxyConfig.getDataSourceName();
         } else if ("getTarget".equals(methodName)) {
             return original;  // ProxyJdbcObject interface has a method to return original object.
+        } else if ("getProxyConfig".equals(methodName)) {
+            return proxyConfig;
         } else if ("unwrap".equals(methodName)) {
             final Class<?> clazz = (Class<?>) args[0];
             return ((Wrapper) original).unwrap(clazz);

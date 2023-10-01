@@ -30,13 +30,12 @@ public class DataSourceProxyLogic extends ProxyLogicSupport {
 
     @Override
     protected Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable {
-        String dataSourceName = this.proxyConfig.getDataSourceName();
         JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
         ConnectionIdManager connectionIdManager = this.proxyConfig.getConnectionIdManager();
 
         final String methodName = method.getName();
         if (isCommonMethod(methodName)) {
-            return handleCommonMethod(methodName, this.dataSource, dataSourceName, args);
+            return handleCommonMethod(methodName, this.dataSource, this.proxyConfig, args);
         }
 
         final Object retVal = proceedExecution(method, this.dataSource, args);
@@ -47,7 +46,7 @@ public class DataSourceProxyLogic extends ProxyLogicSupport {
             ConnectionInfo connectionInfo = new ConnectionInfo();
             connectionInfo.setConnectionId(connId);
             connectionInfo.setIsolationLevel(conn.getTransactionIsolation());
-            connectionInfo.setDataSourceName(dataSourceName);
+            connectionInfo.setDataSourceName(this.proxyConfig.getDataSourceName());
 
             // make ConnectionInfo available in afterMethod() callback
             methodContext.setConnectionInfo(connectionInfo);

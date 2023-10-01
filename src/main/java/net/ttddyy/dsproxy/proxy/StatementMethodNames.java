@@ -83,6 +83,7 @@ public interface StatementMethodNames {
                     add("getDataSourceName");
                     add("toString");
                     add("getTarget"); // from ProxyJdbcObject
+                    add("getProxyConfig"); // from ProxyJdbcObject
                 }
             }
     );

@@ -170,4 +170,16 @@ public class DataSourceProxyLogicMockTest {
         assertThat(executionContext.getConnectionInfo()).isNotNull();
     }
 
+    @Test
+    public void proxyConfig() throws Throwable {
+        DataSource ds = mock(DataSource.class);
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
+        DataSourceProxyLogic logic = new DataSourceProxyLogic(ds, proxyConfig);
+
+        Method method = ProxyJdbcObject.class.getMethod("getProxyConfig");
+        Object result = logic.invoke(null, method, null);
+
+        assertThat(result).isSameAs(proxyConfig);
+    }
+
 }

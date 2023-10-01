@@ -83,4 +83,14 @@ public class SimpleResultSetProxyLogicTest {
         assertSame(connectionInfo, executionContext.getConnectionInfo());
     }
 
+    @Test
+    public void proxyConfig() throws Throwable {
+        ResultSet rs = mock(ResultSet.class);
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
+        SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, null, proxyConfig);
+        Method method = ProxyJdbcObject.class.getMethod("getProxyConfig");
+        Object result = logic.invoke(null, method, null);
+        assertThat(result).isSameAs(proxyConfig);
+    }
+
 }
