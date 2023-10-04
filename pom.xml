@@ -60,7 +60,7 @@
     <assertj.version>2.8.0</assertj.version>
     <logback.versino>1.2.0</logback.versino>
     <asciidoctor.version>1.5.3</asciidoctor.version>
-    <animal-sniffer-maven-plugin.version>1.15</animal-sniffer-maven-plugin.version>
+    <animal-sniffer-maven-plugin.version>1.23</animal-sniffer-maven-plugin.version>
     <log4j2.version>2.17.2</log4j2.version>
   </properties>
 
@@ -228,7 +228,18 @@
             <artifactId>java16</artifactId>
             <version>1.0</version>
           </signature>
+          <ignores>
+            <ignore>java.lang.AutoCloseable</ignore>
+          </ignores>
         </configuration>
+        <executions>
+          <execution>
+            <phase>test</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
