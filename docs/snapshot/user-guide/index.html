@@ -455,8 +455,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#how-to-use">3. How to use</a>
 <ul class="sectlevel2">
 <li><a href="#creating-proxydatasource">3.1. Creating ProxyDataSource</a></li>
-<li><a href="#generated-keys">3.2. Generated Keys</a></li>
-<li><a href="#_proxying_resultset">3.3. Proxying ResultSet</a></li>
+<li><a href="#creating-a-proxied-datasource">3.2. Creating a proxied DataSource</a></li>
+<li><a href="#generated-keys">3.3. Generated Keys</a></li>
+<li><a href="#_proxying_resultset">3.4. Proxying ResultSet</a></li>
 </ul>
 </li>
 <li><a href="#listeners">4. Listeners</a>
@@ -765,11 +766,39 @@ Also, it provides builder methods to register built-in or custom listeners.</p>
         .afterMethod(executionContext -&gt; {    // register a custom listener with lambda
             ...
         })
-        .build();</code></pre>
+        .build();  // returns ProxyDataSource instance</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="creating-a-proxied-datasource"><a class="anchor" href="#creating-a-proxied-datasource"></a>3.2. Creating a proxied DataSource</h3>
+<div class="paragraph">
+<p>Starting from datasource-proxy v1.10, the newly added <code>buildProxy()</code> method returns a pure <code>DataSource</code> proxy instance.</p>
+</div>
+<div class="paragraph">
+<p>The difference between <code>ProxyDataSource</code> returned by <code>build()</code> and the <code>DataSource</code> proxy returned by <code>buildProxy()</code> is as follows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ProxyDataSource</code> is a concrete implementation class.
+This class provides method callback only for the <code>getConnection</code> methods.</p>
+</li>
+<li>
+<p>The <code>DataSource</code> proxy is a pure proxy instance. It provides method callbacks for all methods.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">DataSource dataSource =
+    ProxyDataSourceBuilder.create(actualDataSource)  // pass original datasource
+        ...
+        .buildProxy();  // returns DataSource</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_drivermanager_and_connection_support"><a class="anchor" href="#_drivermanager_and_connection_support"></a>3.1.1. DriverManager and Connection Support</h4>
+<h4 id="_drivermanager_and_connection_support"><a class="anchor" href="#_drivermanager_and_connection_support"></a>3.2.1. DriverManager and Connection Support</h4>
 <div class="paragraph">
 <p>From instance of <code>java.sql.Connection</code>, you can create a proxy that is same as what <code>ProxyDataSource</code> returns.</p>
 </div>
@@ -790,7 +819,7 @@ Connection proxyConnection = jdbcProxyFactory.createConnection(realConnection, p
 </div>
 </div>
 <div class="sect3">
-<h4 id="_spring_xml_configuration_support"><a class="anchor" href="#_spring_xml_configuration_support"></a>3.1.2. Spring XML Configuration Support</h4>
+<h4 id="_spring_xml_configuration_support"><a class="anchor" href="#_spring_xml_configuration_support"></a>3.2.2. Spring XML Configuration Support</h4>
 <div class="paragraph">
 <p>Since <code>ProxyConfig</code> uses builder style instance creation, it is difficult to directly create
 its bean in XML based spring config. <code>ProxyConfigSpringXmlSupport</code> class provides setters to
@@ -838,7 +867,7 @@ build <code>ProxyConfig</code> aiming to support bean creation in XML based spri
 </div>
 </div>
 <div class="sect3">
-<h4 id="_jndi_support"><a class="anchor" href="#_jndi_support"></a>3.1.3. JNDI Support</h4>
+<h4 id="_jndi_support"><a class="anchor" href="#_jndi_support"></a>3.2.3. JNDI Support</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;Resource name="jdbc/global/myProxy"
@@ -971,9 +1000,9 @@ build <code>ProxyConfig</code> aiming to support bean creation in XML based spri
 </div>
 </div>
 <div class="sect2">
-<h3 id="generated-keys"><a class="anchor" href="#generated-keys"></a>3.2. Generated Keys</h3>
+<h3 id="generated-keys"><a class="anchor" href="#generated-keys"></a>3.3. Generated Keys</h3>
 <div class="sect3">
-<h4 id="auto-retrieve-generated-keys"><a class="anchor" href="#auto-retrieve-generated-keys"></a>3.2.1. Auto retrieve generated keys</h4>
+<h4 id="auto-retrieve-generated-keys"><a class="anchor" href="#auto-retrieve-generated-keys"></a>3.3.1. Auto retrieve generated keys</h4>
 <div class="paragraph">
 <p>When 1) generated-keys are available(e.g.: <code>Statement#RETURN_GENERATED_KEYS</code> is specified at execution of statement
 or at creation of prepared/callable statement) and 2) query execution methods(<code>execute</code>, <code>executeUpdate</code>, <code>executeBatch</code>,
@@ -1070,7 +1099,7 @@ executeBatch or executeLargeBatch methods.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="auto-close-generated-keys"><a class="anchor" href="#auto-close-generated-keys"></a>3.2.2. Auto close generated keys</h4>
+<h4 id="auto-close-generated-keys"><a class="anchor" href="#auto-close-generated-keys"></a>3.3.2. Auto close generated keys</h4>
 <div class="paragraph">
 <p>When auto-close is enabled, close the <a href="#auto-retrieve-generated-keys">auto-retrieved generated-keys</a> after
 all <code>QueryExecutionListener#afterQuery()</code> are performed.</p>
@@ -1107,7 +1136,7 @@ not auto-retrieved generated-keys.
 </div>
 </div>
 <div class="sect3">
-<h4 id="proxying-generated-keys"><a class="anchor" href="#proxying-generated-keys"></a>3.2.3. Proxying generated keys</h4>
+<h4 id="proxying-generated-keys"><a class="anchor" href="#proxying-generated-keys"></a>3.3.3. Proxying generated keys</h4>
 <div class="paragraph">
 <p>Create a proxy for generated-keys' <code>ResultSet</code>.
 This applies to both <a href="#auto-retrieve-generated-keys">auto-retrieved generated-keys</a> and result of
@@ -1141,7 +1170,7 @@ the <code>ResultSet</code> may not allow the repeated read.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_proxying_resultset"><a class="anchor" href="#_proxying_resultset"></a>3.3. Proxying ResultSet</h3>
+<h3 id="_proxying_resultset"><a class="anchor" href="#_proxying_resultset"></a>3.4. Proxying ResultSet</h3>
 <div class="paragraph">
 <p>By default, datasource-proxy does <strong>NOT</strong> proxy <code>ResultSet</code>. However, in some case, you want to return a proxied
 <code>ResultSet</code> - for example, apply <code>MethodExecutionListener</code> on <code>ResultSet</code>.</p>
@@ -1175,7 +1204,7 @@ This proxying does NOT apply to the <code>ResultSet</code> from <code>getGenerat
 </table>
 </div>
 <div class="sect3">
-<h4 id="repeatable-read-resultset"><a class="anchor" href="#repeatable-read-resultset"></a>3.3.1. Repeatable read ResultSet</h4>
+<h4 id="repeatable-read-resultset"><a class="anchor" href="#repeatable-read-resultset"></a>3.4.1. Repeatable read ResultSet</h4>
 <div class="paragraph">
 <p><code>RepeatableReadResultSetProxyLogic</code> allows <code>ResultSet</code> to be consumed more than once.</p>
 </div>
@@ -1190,7 +1219,7 @@ This proxying does NOT apply to the <code>ResultSet</code> from <code>getGenerat
 </div>
 </div>
 <div class="sect3">
-<h4 id="repeatable-read-resultset-with-cachedrowsetresultsetproxylogic"><a class="anchor" href="#repeatable-read-resultset-with-cachedrowsetresultsetproxylogic"></a>3.3.2. Repeatable read ResultSet with CachedRowSetResultSetProxyLogic</h4>
+<h4 id="repeatable-read-resultset-with-cachedrowsetresultsetproxylogic"><a class="anchor" href="#repeatable-read-resultset-with-cachedrowsetresultsetproxylogic"></a>3.4.2. Repeatable read ResultSet with CachedRowSetResultSetProxyLogic</h4>
 <div class="paragraph">
 <p>New result set proxy, <code>CachedRowSetResultSetProxyLogic</code> is introduced at version <code>1.4.7</code>.
 <code>CachedRowSetResultSetProxyLogic</code> uses <code>javax.sql.rowset.CachedRowSet</code> as underlying implementation, which is a
@@ -1214,7 +1243,7 @@ which you can change via <code>RowSetFactory</code> (please see details on JDK d
 </div>
 </div>
 <div class="sect3">
-<h4 id="using-a-custom-resultset-proxy"><a class="anchor" href="#using-a-custom-resultset-proxy"></a>3.3.3. Using a custom ResultSet proxy</h4>
+<h4 id="using-a-custom-resultset-proxy"><a class="anchor" href="#using-a-custom-resultset-proxy"></a>3.4.3. Using a custom ResultSet proxy</h4>
 <div class="paragraph">
 <p>The <code>proxyResultSet</code> and <code>autoRetrieveGeneratedKeys</code> methods on the <code>ProxyDataSourceBuilder</code> can take a <code>ResultSetProxyLogicFactory</code> factory implementation. If you want to provide custom logic for handling the <code>ResultSet</code> object, you can provide a custom implementation by providing a custom factory implementation.</p>
 </div>
@@ -2597,7 +2626,7 @@ simply decides whether to skip entire logging logic based on the current log lev
 <div class="content">
 <div class="paragraph">
 <p>e.g.: when <code>SLF4JQueryLoggingListener</code> writes SQL in DEBUG level, but the logger is set to INFO(more serious
-      than DEBUG), then it will NOT perform logging logic including constructing log statement, etc.</p>
+than DEBUG), then it will NOT perform logging logic including constructing log statement, etc.</p>
 </div>
 </div>
 </div>
