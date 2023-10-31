@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static net.ttddyy.dsproxy.proxy.ProxyLogicSupport.COMMON_METHOD_NAMES;
+
 /**
  * Method names that proxy logic classes have interested in.
  *
@@ -79,11 +81,8 @@ public interface StatementMethodNames {
                     addAll(EXEC_METHODS);
                     addAll(JDBC4_METHODS);
                     addAll(METHODS_TO_RETURN_RESULTSET);
+                    addAll(COMMON_METHOD_NAMES);
                     add(GET_CONNECTION_METHOD);
-                    add("getDataSourceName");
-                    add("toString");
-                    add("getTarget"); // from ProxyJdbcObject
-                    add("getProxyConfig"); // from ProxyJdbcObject
                 }
             }
     );

@@ -44,7 +44,8 @@ public abstract class ProxyLogicSupport {
             sb.append("]");
             return sb.toString(); // differentiate toString message.
         } else if ("equals".equals(methodName)) {
-            return original.equals(args[0]);
+            // when target is a proxy, also compares the proxied object
+            return original.equals(args[0]) || ((args[0] instanceof ProxyJdbcObject) && (original.equals(((ProxyJdbcObject)args[0]).getTarget())));
         } else if ("hashCode".equals(methodName)) {
             return original.hashCode();
         } else if ("getDataSourceName".equals(methodName)) {
