@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public class MethodExecutionContext {
         private long elapsedTime;
         private ConnectionInfo connectionInfo;
         private ProxyConfig proxyConfig;
+        private Object proxy;
 
         public static Builder create() {
             return new Builder();
@@ -40,6 +42,7 @@ public class MethodExecutionContext {
             context.elapsedTime = this.elapsedTime;
             context.connectionInfo = this.connectionInfo;
             context.proxyConfig = this.proxyConfig;
+            context.proxy = this.proxy;
             return context;
         }
 
@@ -82,6 +85,11 @@ public class MethodExecutionContext {
             this.proxyConfig = proxyConfig;
             return this;
         }
+
+        public Builder proxy(Object proxy) {
+            this.proxy = proxy;
+            return this;
+        }
     }
 
 
@@ -93,6 +101,7 @@ public class MethodExecutionContext {
     private long elapsedTime;
     private ConnectionInfo connectionInfo;
     private ProxyConfig proxyConfig;
+    private Object proxy;
     private Map<String, Object> customValues = new HashMap<String, Object>();
 
     public Object getTarget() {
@@ -188,6 +197,20 @@ public class MethodExecutionContext {
 
     public void setProxyConfig(ProxyConfig proxyConfig) {
         this.proxyConfig = proxyConfig;
+    }
+
+    /**
+     * Get the proxy object.
+     *
+     * @return proxy object
+     * @since 1.10
+     */
+    public Object getProxy() {
+        return this.proxy;
+    }
+
+    public void setProxy(Object proxy) {
+        this.proxy = proxy;
     }
 
     /**

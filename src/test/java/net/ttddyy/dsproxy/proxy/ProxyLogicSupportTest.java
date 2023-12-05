@@ -21,6 +21,7 @@ public class ProxyLogicSupportTest {
     @Test
     public void proceedMethodExecution() throws Throwable {
         final Object target = new Object();
+        final Object proxy = new Object();
         final Method method = Statement.class.getMethod("getConnection");
         final Object[] methodArgs = new Object[]{};
         final Object returnObj = new Object();
@@ -41,6 +42,7 @@ public class ProxyLogicSupportTest {
 
                 assertThat(executionContext.getConnectionInfo()).isSameAs(connectionInfo);
                 assertThat(executionContext.getProxyConfig()).isNotNull();
+                assertThat(executionContext.getProxy()).isSameAs(proxy);
             }
 
             @Override
@@ -57,6 +59,7 @@ public class ProxyLogicSupportTest {
 
                 assertThat(executionContext.getConnectionInfo()).isSameAs(connectionInfo);
                 assertThat(executionContext.getProxyConfig()).isNotNull();
+                assertThat(executionContext.getProxy()).isSameAs(proxy);
             }
         };
 
@@ -64,7 +67,7 @@ public class ProxyLogicSupportTest {
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
 
         Custom custom = new Custom((proxyTarget, m, args) -> returnObj);
-        Object result = custom.proceedMethodExecution(proxyConfig, target, connectionInfo, null, method, methodArgs);
+        Object result = custom.proceedMethodExecution(proxyConfig, target, connectionInfo, proxy, method, methodArgs);
 
         assertSame(returnObj, result);
         assertTrue(listener.isBeforeMethodCalled());

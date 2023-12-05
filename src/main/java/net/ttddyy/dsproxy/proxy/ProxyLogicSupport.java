@@ -82,6 +82,7 @@ public abstract class ProxyLogicSupport {
                                             Object proxy, Method method, Object[] args) throws Throwable {
         MethodExecutionContext methodContext = MethodExecutionContext.Builder.create()
                 .target(original)
+                .proxy(proxy)
                 .method(method)
                 .methodArgs(args)
                 .connectionInfo(connectionInfo)
