@@ -28,7 +28,7 @@ DataSource dataSource =
 ----
 
 [[creating-a-proxied-datasource]]
-=== Creating a proxied DataSource
+==== Creating a proxied DataSource
 Starting from datasource-proxy v1.10, the newly added `buildProxy()` method returns a pure `DataSource` proxy instance.
 
 The difference between `ProxyDataSource` returned by `build()` and the `DataSource` proxy returned by `buildProxy()` is as follows:
@@ -43,6 +43,19 @@ DataSource dataSource =
     ProxyDataSourceBuilder.create(actualDataSource)  // pass original datasource
         ...
         .buildProxy();  // returns DataSource
+----
+
+[[retrieving-the-original-jdbc-object]]
+==== Retrieving the original JDBC object
+
+All proxied JDBC objects implement the `ProxyJdbcObject` interface, which defines `getTarget()` to retrieve the original JDBC object.
+
+[source,java]
+----
+if (connection instanceof ProxyJdbcObject) {
+    Connection original = (Connection) ((ProxyJdbcObject) connection).getTarget();
+    ....
+}
 ----
 
 
