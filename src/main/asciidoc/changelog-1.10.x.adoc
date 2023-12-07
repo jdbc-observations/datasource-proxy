@@ -1,0 +1,37 @@
+[[changelog-1.10]]
+=== 1.10
+
+====  New Features
+
+* Added the ability to create a pure proxy `DataSource` object (https://github.com/jdbc-observations/datasource-proxy/issues/102[Issue-102]).
++
+The `ProxyDataSource` is a concrete implementation of the `DataSource` class, not a proxy object.
+To create pure proxies all the way from `DataSource` to `ResultSet`, a new method `ProxyDataSourceBuilder#buildProxy()` has been introduced.
+This `buildProxy()` method returns a proxy `DataSource` object and utilizes `DataSourceProxyLogic` to handle the proxy calls.
+
+====  Improvements
+
+* Proxy instance is now retrievable from `MethodExecutionContext#getProxy()` (https://github.com/jdbc-observations/datasource-proxy/issues/108[Issue-108]).
+
+* Improved handling of `equals` for proxy objects (https://github.com/jdbc-observations/datasource-proxy/issues/105[Issue-105]).
+
+* Added `Automatic-Module-Name` (https://github.com/jdbc-observations/datasource-proxy/issues/101[Issue-101]).
+
+* Added `ProxyJdbcObject#getProxyConfig` (https://github.com/jdbc-observations/datasource-proxy/issues/103[Issue-103]).
+
+* Isolation level retrieval from the connection is now an opt-in feature (https://github.com/jdbc-observations/datasource-proxy/issues/109[Issue-109]).
+ +
+It is disabled by default and does not call `Connection#getTransactionIsolation()`.
+To enable isolation level retrieval, use `ProxyDataSourceBuilder#retrieveIsolation()`.
+`ProxyDataSourceBuilder#writeIsolation()` is effective only when `ProxyDataSourceBuilder#retrieveIsolation()` is called.
++
+[source,java]
+----
+ProxyDataSourceBuilder.create(ds).retrieveIsolation().writeIsolation().build();
+----
+
+* Documentation about the Jakarta namespace (https://github.com/jdbc-observations/datasource-proxy/issues/96[Issue-96]).
+
+====  Bug Fixes
+
+* Properly call the before/after method callback on `ProxyDataSource#getConnection()` (https://github.com/jdbc-observations/datasource-proxy/issues/100[Issue-100]).
