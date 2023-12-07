@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy;
 
+import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
+
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -83,6 +85,10 @@ public class ExecutionInfo {
     }
 
     /**
+     * Isolation level on the {@link java.sql.Connection}.
+     * <p>Since 1.10, this value is only available when the isolation level retrieval is enabled.
+     *
+     * @see ProxyDataSourceBuilder#retrieveIsolation()
      * @since 1.8
      */
     public int getIsolationLevel() {

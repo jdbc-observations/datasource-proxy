@@ -31,8 +31,10 @@ public class ProxyConnectionAdvice implements MethodInterceptor {
         String connId = this.proxyConfig.getConnectionIdManager().getId(conn);
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setConnectionId(connId);
-        connectionInfo.setIsolationLevel(conn.getTransactionIsolation());
         connectionInfo.setDataSourceName("");
+        if (this.proxyConfig.isRetrieveIsolationLevel()) {
+            connectionInfo.setIsolationLevel(conn.getTransactionIsolation());
+        }
 
         return this.proxyConfig.getJdbcProxyFactory().createConnection((Connection) retVal, connectionInfo, this.proxyConfig);
     }

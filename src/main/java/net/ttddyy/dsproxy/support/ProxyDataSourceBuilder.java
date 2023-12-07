@@ -155,6 +155,7 @@ public class ProxyDataSourceBuilder {
     private boolean multiline;
     private FormatQueryCallback formatQueryCallback;
     private boolean writeIsolation;
+    private boolean retrieveIsolation;
     private List<QueryExecutionListener> queryExecutionListeners = new ArrayList<QueryExecutionListener>();
 
     private ParameterTransformer parameterTransformer;
@@ -795,12 +796,24 @@ public class ProxyDataSourceBuilder {
 
     /**
      * Add connection isolation to logging query.
+     * <p>Since v1.10, this option is only meaningful when {@link #retrieveIsolation()} is called..
      *
      * @return builder
      * @since 1.8
      */
     public ProxyDataSourceBuilder writeIsolation() {
         this.writeIsolation = true;
+        return this;
+    }
+
+    /**
+     * Retrieve the isolation level from the connection.
+     *
+     * @return builder
+     * @since 1.10
+     */
+    public ProxyDataSourceBuilder retrieveIsolation() {
+        this.retrieveIsolation = true;
         return this;
     }
 
@@ -1245,6 +1258,8 @@ public class ProxyDataSourceBuilder {
         // this can be null if creation of generated keys proxy is disabled
         proxyConfigBuilder.generatedKeysProxyLogicFactory(this.generatedKeysProxyLogicFactory);
 
+        proxyConfigBuilder.retrieveIsolationLevel(this.retrieveIsolation);
+
         return proxyConfigBuilder.build();
     }
 
@@ -1257,7 +1272,7 @@ public class ProxyDataSourceBuilder {
             listener.setLog(this.commonsLoggerName);
         }
         listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
-        if (this.writeIsolation) {
+        if (this.retrieveIsolation && this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
         return listener;
@@ -1272,7 +1287,7 @@ public class ProxyDataSourceBuilder {
             listener.setLog(this.commonsSlowQueryLogName);
         }
         listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
-        if (this.writeIsolation) {
+        if (this.retrieveIsolation && this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
         return listener;
@@ -1287,7 +1302,7 @@ public class ProxyDataSourceBuilder {
             listener.setLogger(this.slf4jLoggerName);
         }
         listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
-        if (this.writeIsolation) {
+        if (this.retrieveIsolation && this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
         return listener;
@@ -1302,7 +1317,7 @@ public class ProxyDataSourceBuilder {
             listener.setLogger(this.slf4jSlowQueryLoggerName);
         }
         listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
-        if (this.writeIsolation) {
+        if (this.retrieveIsolation && this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
         return listener;
@@ -1317,7 +1332,7 @@ public class ProxyDataSourceBuilder {
             listener.setLogger(this.log4jLoggerName);
         }
         listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
-        if (this.writeIsolation) {
+        if (this.retrieveIsolation && this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
         return listener;
@@ -1332,7 +1347,7 @@ public class ProxyDataSourceBuilder {
             listener.setLogger(this.log4jSlowQueryLoggerName);
         }
         listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
-        if (this.writeIsolation) {
+        if (this.retrieveIsolation && this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
         return listener;
@@ -1347,7 +1362,7 @@ public class ProxyDataSourceBuilder {
             listener.setLogger(this.julLoggerName);
         }
         listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
-        if (this.writeIsolation) {
+        if (this.retrieveIsolation && this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
         return listener;
@@ -1362,7 +1377,7 @@ public class ProxyDataSourceBuilder {
             listener.setLogger(this.julSlowQueryLoggerName);
         }
         listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
-        if (this.writeIsolation) {
+        if (this.retrieveIsolation && this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
         return listener;
@@ -1371,7 +1386,7 @@ public class ProxyDataSourceBuilder {
     private SystemOutQueryLoggingListener buildSysOutQueryListener() {
         SystemOutQueryLoggingListener listener = new SystemOutQueryLoggingListener();
         listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
-        if (this.writeIsolation) {
+        if (this.retrieveIsolation && this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
         return listener;
@@ -1380,7 +1395,7 @@ public class ProxyDataSourceBuilder {
     private SystemOutSlowQueryListener buildSysOutSlowQueryListener() {
         SystemOutSlowQueryListener listener = new SystemOutSlowQueryListener(this.slowQueryThreshold, this.slowQueryTimeUnit);
         listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
-        if (this.writeIsolation) {
+        if (this.retrieveIsolation && this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
         return listener;

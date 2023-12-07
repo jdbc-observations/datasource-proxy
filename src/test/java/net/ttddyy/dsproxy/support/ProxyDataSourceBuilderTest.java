@@ -31,6 +31,7 @@ import net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
 import net.ttddyy.dsproxy.proxy.RepeatableReadResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
@@ -744,6 +745,22 @@ public class ProxyDataSourceBuilderTest {
         assertThat(proxy).isInstanceOf(ProxyJdbcObject.class);
         Object target = ((ProxyJdbcObject) proxy).getTarget();
         assertThat(target).isInstanceOf(DataSource.class).isSameAs(original);
+    }
+
+    @Test
+    public void isolationRetrieval() {
+        DataSource proxy = ProxyDataSourceBuilder.create().buildProxy();
+        assertThat(proxy).isInstanceOf(ProxyJdbcObject.class);
+        ProxyConfig proxyConfig = ((ProxyJdbcObject) proxy).getProxyConfig();
+        assertThat(proxyConfig.isRetrieveIsolationLevel()).as("Default isolation retrieval").isFalse();
+
+        proxy = ProxyDataSourceBuilder.create().writeIsolation().buildProxy();
+        proxyConfig = ((ProxyJdbcObject) proxy).getProxyConfig();
+        assertThat(proxyConfig.isRetrieveIsolationLevel()).as("writeIsolation() does not enable retrieval").isFalse();
+
+        proxy = ProxyDataSourceBuilder.create().retrieveIsolation().buildProxy();
+        proxyConfig = ((ProxyJdbcObject) proxy).getProxyConfig();
+        assertThat(proxyConfig.isRetrieveIsolationLevel()).isTrue();
     }
 
 }

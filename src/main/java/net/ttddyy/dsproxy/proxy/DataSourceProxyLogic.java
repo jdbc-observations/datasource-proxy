@@ -45,8 +45,10 @@ public class DataSourceProxyLogic extends ProxyLogicSupport {
             String connId = connectionIdManager.getId(conn);
             ConnectionInfo connectionInfo = new ConnectionInfo();
             connectionInfo.setConnectionId(connId);
-            connectionInfo.setIsolationLevel(conn.getTransactionIsolation());
             connectionInfo.setDataSourceName(this.proxyConfig.getDataSourceName());
+            if (this.proxyConfig.isRetrieveIsolationLevel()) {
+                connectionInfo.setIsolationLevel(conn.getTransactionIsolation());
+            }
 
             // make ConnectionInfo available in afterMethod() callback
             methodContext.setConnectionInfo(connectionInfo);

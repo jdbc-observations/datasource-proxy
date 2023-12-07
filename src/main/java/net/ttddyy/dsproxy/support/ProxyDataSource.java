@@ -102,8 +102,10 @@ public class ProxyDataSource extends ProxyLogicSupport implements DataSource, Cl
 
         final ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setConnectionId(connectionId);
-        connectionInfo.setIsolationLevel(connection.getTransactionIsolation());
         connectionInfo.setDataSourceName(dataSourceName);
+        if (this.proxyConfig.isRetrieveIsolationLevel()) {
+            connectionInfo.setIsolationLevel(connection.getTransactionIsolation());
+        }
 
         // make ConnectionInfo available in afterMethod() callback
         methodContext.setConnectionInfo(connectionInfo);

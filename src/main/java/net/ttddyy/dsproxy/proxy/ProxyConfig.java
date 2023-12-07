@@ -40,6 +40,7 @@ public class ProxyConfig {
         private CompositeMethodListener methodListener = new CompositeMethodListener();  // empty default
         private GeneratedKeysConfig generatedKeysConfig = new GeneratedKeysConfig();
         private StopwatchFactory stopwatchFactory = new SystemStopwatchFactory();
+        private boolean retrieveIsolationLevel;
 
         public static Builder create() {
             return new Builder();
@@ -61,6 +62,7 @@ public class ProxyConfig {
                     .retrieveGeneratedKeysForBatchStatement(proxyConfig.generatedKeysConfig.retrieveForBatchStatement)
                     .retrieveGeneratedKeysForBatchPreparedOrCallable(proxyConfig.generatedKeysConfig.retrieveForBatchPreparedOrCallable)
                     .autoCloseGeneratedKeys(proxyConfig.generatedKeysConfig.autoClose)
+                    .retrieveIsolationLevel(proxyConfig.retrieveIsolationLevel)
                     ;
         }
 
@@ -75,6 +77,7 @@ public class ProxyConfig {
             proxyConfig.connectionIdManager = this.connectionIdManager;
             proxyConfig.methodListener = this.methodListener;
             proxyConfig.stopwatchFactory = this.stopwatchFactory;
+            proxyConfig.retrieveIsolationLevel = this.retrieveIsolationLevel;
 
             // generated keys
             proxyConfig.generatedKeysConfig.proxyLogicFactory = this.generatedKeysConfig.proxyLogicFactory;
@@ -167,6 +170,19 @@ public class ProxyConfig {
             this.stopwatchFactory = stopwatchFactory;
             return this;
         }
+
+        /**
+         * When set to {@code true}, retrieve the isolation level from the connection.
+         *
+         * @param retrieveIsolationLevel whether to retrieve the isolation level
+         * @return builder
+         * @since 1.10
+         */
+        public Builder retrieveIsolationLevel(boolean retrieveIsolationLevel) {
+            this.retrieveIsolationLevel = retrieveIsolationLevel;
+            return this;
+        }
+
     }
 
     private String dataSourceName;
@@ -179,6 +195,7 @@ public class ProxyConfig {
     private CompositeMethodListener methodListener;
     private GeneratedKeysConfig generatedKeysConfig = new GeneratedKeysConfig();
     private StopwatchFactory stopwatchFactory;
+    private boolean retrieveIsolationLevel;
 
     public String getDataSourceName() {
         return dataSourceName;
@@ -302,5 +319,25 @@ public class ProxyConfig {
      */
     public StopwatchFactory getStopwatchFactory() {
         return this.stopwatchFactory;
+    }
+
+    /**
+     * Whether to retrieve the isolation level from the connection.
+     *
+     * @return {@code true} to retrieve the isolation level from the connection
+     * @since 1.10
+     */
+    public boolean isRetrieveIsolationLevel() {
+        return this.retrieveIsolationLevel;
+    }
+
+    /**
+     * Set whether to retrieve the isolation level from the connection.
+     *
+     * @param retrieveIsolationLevel {@code true} to retrieve
+     * @since 1.10
+     */
+    public void setRetrieveIsolationLevel(boolean retrieveIsolationLevel) {
+        this.retrieveIsolationLevel = retrieveIsolationLevel;
     }
 }

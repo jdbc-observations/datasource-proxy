@@ -46,7 +46,7 @@ public class ConnectionProxyLogic extends ProxyLogicSupport {
         }
 
         if ("setTransactionIsolation".equals(methodName)) {
-            connectionInfo.setIsolationLevel((Integer) args[0]);
+            this.connectionInfo.setIsolationLevel((Integer) args[0]);
         }
 
         // replace query for PreparedStatement and CallableStatement
