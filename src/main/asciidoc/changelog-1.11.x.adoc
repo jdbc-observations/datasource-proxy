@@ -5,7 +5,7 @@
 
 ====  Improvements
 
-* Use monotonic time to measure the elapsed time (https://github.com/jdbc-observations/datasource-proxy/issues/110[Issue-110]).
+* Use monotonic time to calculate the elapsed time (https://github.com/jdbc-observations/datasource-proxy/issues/110[Issue-110]).
 
 
 ====  Bug Fixes
