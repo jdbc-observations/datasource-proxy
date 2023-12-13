@@ -1,9 +1,10 @@
 package net.ttddyy.dsproxy.proxy;
 
+import java.util.concurrent.TimeUnit;
+
 /**
- * Factory to create {@link SystemStopwatch} which uses {@code System.currentTimeMillis()}.
- *
- * The unit of time is milliseconds.
+ * Factory to create {@link SystemStopwatch} which uses monotonic time.
+ * <p> The unit of time is milliseconds.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.5.1
@@ -16,9 +17,8 @@ public class SystemStopwatchFactory implements StopwatchFactory {
     }
 
     /**
-     * Uses {@code System.currentTimeMillis()} to calculate elapsed time.
-     *
-     * The unit of time is milliseconds
+     * Uses monotonic time to calculate elapsed time.
+     * <p>The unit of time is milliseconds.
      */
     public static class SystemStopwatch implements Stopwatch {
 
@@ -26,7 +26,7 @@ public class SystemStopwatchFactory implements StopwatchFactory {
 
         @Override
         public Stopwatch start() {
-            this.startTime = System.currentTimeMillis();
+            this.startTime = System.nanoTime();
             return this;
         }
 
@@ -37,7 +37,7 @@ public class SystemStopwatchFactory implements StopwatchFactory {
          */
         @Override
         public long getElapsedTime() {
-            return System.currentTimeMillis() - this.startTime;
+            return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - this.startTime);
         }
 
     }

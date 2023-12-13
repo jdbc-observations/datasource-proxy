@@ -1,0 +1,11 @@
+[[changelog-1.11]]
+=== 1.11
+
+====  New Features
+
+====  Improvements
+
+* Use monotonic time to measure the elapsed time (https://github.com/jdbc-observations/datasource-proxy/issues/110[Issue-110]).
+
+
+====  Bug Fixes
