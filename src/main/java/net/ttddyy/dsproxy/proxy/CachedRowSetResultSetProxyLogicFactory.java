@@ -30,6 +30,16 @@ import java.sql.SQLException;
 @IgnoreJRERequirement
 public class CachedRowSetResultSetProxyLogicFactory implements ResultSetProxyLogicFactory {
 
+    private final RowSetFactory rowSetFactory;
+
+    public CachedRowSetResultSetProxyLogicFactory() {
+        try {
+            this.rowSetFactory = RowSetProvider.newFactory();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
     @Override
     public ResultSetProxyLogic create(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
         ResultSet cachedRowSet = getCachedRowSet(resultSet);
@@ -40,8 +50,7 @@ public class CachedRowSetResultSetProxyLogicFactory implements ResultSetProxyLog
         try {
             // CachedRowSet only works with non-null ResultSet
             if (resultSet.getMetaData().getColumnCount() > 0) {
-                RowSetFactory rowSetFactory = RowSetProvider.newFactory();
-                CachedRowSet cachedRowSet = rowSetFactory.createCachedRowSet();
+                CachedRowSet cachedRowSet = this.rowSetFactory.createCachedRowSet();
                 cachedRowSet.populate(resultSet);
                 return cachedRowSet;
             } else {
