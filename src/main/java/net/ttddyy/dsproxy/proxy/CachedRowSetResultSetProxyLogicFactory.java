@@ -34,9 +34,9 @@ public class CachedRowSetResultSetProxyLogicFactory implements ResultSetProxyLog
 
     public CachedRowSetResultSetProxyLogicFactory() {
         try {
-           this.rowSetFactory = RowSetProvider.newFactory();
-        } catch (SQLException e) {
-           throw new RuntimeException(e);
+            this.rowSetFactory = RowSetProvider.newFactory();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
@@ -50,7 +50,7 @@ public class CachedRowSetResultSetProxyLogicFactory implements ResultSetProxyLog
         try {
             // CachedRowSet only works with non-null ResultSet
             if (resultSet.getMetaData().getColumnCount() > 0) {
-                CachedRowSet cachedRowSet = rowSetFactory.createCachedRowSet();
+                CachedRowSet cachedRowSet = this.rowSetFactory.createCachedRowSet();
                 cachedRowSet.populate(resultSet);
                 return cachedRowSet;
             } else {
