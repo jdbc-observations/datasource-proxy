@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.proxy.jdk;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
@@ -9,6 +10,7 @@ import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 import javax.sql.DataSource;
 import java.lang.reflect.Proxy;
 import java.sql.*;
+import java.util.List;
 
 /**
  * Dynamic Proxy Class(Jdk Proxy) based {@link net.ttddyy.dsproxy.proxy.JdbcProxyFactory} implementation.
@@ -60,20 +62,19 @@ public class JdkJdbcProxyFactory implements JdbcProxyFactory {
     }
 
     @Override
-    public ResultSet createResultSet(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
+    public ResultSet createResultSet(ResultSet resultSet, List<QueryInfo> queries, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
         ResultSetProxyLogicFactory factory = proxyConfig.getResultSetProxyLogicFactory();
         return (ResultSet) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
                 new Class[]{ProxyJdbcObject.class, ResultSet.class},
-                new ResultSetInvocationHandler(factory, resultSet, connectionInfo, proxyConfig));
+                new ResultSetInvocationHandler(factory, resultSet, connectionInfo, queries, proxyConfig));
     }
 
     @Override
-    public ResultSet createGeneratedKeys(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
+    public ResultSet createGeneratedKeys(ResultSet resultSet, List<QueryInfo> queries, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
         ResultSetProxyLogicFactory factory = proxyConfig.getGeneratedKeysProxyLogicFactory();
         return (ResultSet) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
                 new Class[]{ProxyJdbcObject.class, ResultSet.class},
-                new ResultSetInvocationHandler(factory, resultSet, connectionInfo, proxyConfig));
+                new ResultSetInvocationHandler(factory, resultSet, connectionInfo, queries, proxyConfig));
     }
-
 
 }

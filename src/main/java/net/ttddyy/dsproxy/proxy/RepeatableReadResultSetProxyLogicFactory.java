@@ -2,11 +2,13 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.DataSourceProxyException;
+import net.ttddyy.dsproxy.QueryInfo;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,7 +21,7 @@ import java.util.Map;
 public class RepeatableReadResultSetProxyLogicFactory implements ResultSetProxyLogicFactory {
 
     @Override
-    public ResultSetProxyLogic create(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
+    public ResultSetProxyLogic create(ResultSet resultSet, List<QueryInfo> queries, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
         Map<String, Integer> columnNameToIndex = columnNameToIndex(resultSet);
         return RepeatableReadResultSetProxyLogic.Builder.create()
                 .resultSet(resultSet)

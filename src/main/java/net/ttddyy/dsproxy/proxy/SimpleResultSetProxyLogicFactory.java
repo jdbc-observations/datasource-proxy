@@ -1,8 +1,10 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.QueryInfo;
 
 import java.sql.ResultSet;
+import java.util.List;
 
 /**
  * Factory to create {@link SimpleResultSetProxyLogic}.
@@ -13,7 +15,7 @@ import java.sql.ResultSet;
 public class SimpleResultSetProxyLogicFactory implements ResultSetProxyLogicFactory {
 
     @Override
-    public ResultSetProxyLogic create(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
+    public ResultSetProxyLogic create(ResultSet resultSet, List<QueryInfo> queries, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
         return new SimpleResultSetProxyLogic(resultSet, connectionInfo, proxyConfig);
     }
 

@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -125,9 +126,9 @@ public class ProxyObjectEqualityTest {
         assertThat(rs1.equals(rs2)).isEqualTo(false);
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().resultSetProxyLogicFactory(ResultSetProxyLogicFactory.DEFAULT).build();
-        ResultSet proxy1 = proxyFactory.createResultSet(rs1, null, proxyConfig);
-        ResultSet proxy2 = proxyFactory.createResultSet(rs1, null, proxyConfig);
-        ResultSet proxy3 = proxyFactory.createResultSet(rs2, null, proxyConfig);
+        ResultSet proxy1 = proxyFactory.createResultSet(rs1, Collections.emptyList(),null, proxyConfig);
+        ResultSet proxy2 = proxyFactory.createResultSet(rs1, Collections.emptyList(), null, proxyConfig);
+        ResultSet proxy3 = proxyFactory.createResultSet(rs2, Collections.emptyList(), null, proxyConfig);
 
         return new Object[]{"ResultSet", proxy1, proxy2, proxy3, rs1, rs2};
     }

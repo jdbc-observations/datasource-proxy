@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -246,7 +247,7 @@ public class CachedRowSetResultSetProxyLogicTest {
 
     private CachedRowSetResultSetProxyLogic createProxyLogic(ResultSet resultSet) {
         CachedRowSetResultSetProxyLogicFactory factory = new CachedRowSetResultSetProxyLogicFactory();
-        return (CachedRowSetResultSetProxyLogic) factory.create(resultSet, new ConnectionInfo(), ProxyConfig.Builder.create().build());
+        return (CachedRowSetResultSetProxyLogic) factory.create(resultSet, Collections.emptyList(), new ConnectionInfo(), ProxyConfig.Builder.create().build());
     }
 
     private void consumeResultSetAndCallBeforeFirst(CachedRowSetResultSetProxyLogic resultSetProxyLogic) throws Throwable {
@@ -358,7 +359,7 @@ public class CachedRowSetResultSetProxyLogicTest {
         ConnectionInfo connectionInfo = new ConnectionInfo();
 
         CachedRowSetResultSetProxyLogicFactory factory = new CachedRowSetResultSetProxyLogicFactory();
-        CachedRowSetResultSetProxyLogic logic = (CachedRowSetResultSetProxyLogic) factory.create(rs, connectionInfo, proxyConfig);
+        CachedRowSetResultSetProxyLogic logic = (CachedRowSetResultSetProxyLogic) factory.create(rs, Collections.emptyList(), connectionInfo, proxyConfig);
 
         Method method = ResultSet.class.getMethod("close");
         logic.invoke(null, method, new Object[]{});
@@ -379,7 +380,7 @@ public class CachedRowSetResultSetProxyLogicTest {
         ResultSet rs = exampleResultSet();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
         CachedRowSetResultSetProxyLogicFactory factory = new CachedRowSetResultSetProxyLogicFactory();
-        CachedRowSetResultSetProxyLogic logic = (CachedRowSetResultSetProxyLogic) factory.create(rs, null, proxyConfig);
+        CachedRowSetResultSetProxyLogic logic = (CachedRowSetResultSetProxyLogic) factory.create(rs, Collections.emptyList(), null, proxyConfig);
         Method method = ProxyJdbcObject.class.getMethod("getProxyConfig");
         Object result = logic.invoke(null, method, null);
         assertThat(result).isSameAs(proxyConfig);

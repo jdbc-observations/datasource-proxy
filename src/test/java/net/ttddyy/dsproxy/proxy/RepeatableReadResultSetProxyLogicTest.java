@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -241,7 +242,7 @@ public class RepeatableReadResultSetProxyLogicTest {
 
     private RepeatableReadResultSetProxyLogic createProxyLogic(ResultSet resultSet) {
         RepeatableReadResultSetProxyLogicFactory factory = new RepeatableReadResultSetProxyLogicFactory();
-        return (RepeatableReadResultSetProxyLogic) factory.create(resultSet, new ConnectionInfo(), ProxyConfig.Builder.create().build());
+        return (RepeatableReadResultSetProxyLogic) factory.create(resultSet, Collections.emptyList(), new ConnectionInfo(), ProxyConfig.Builder.create().build());
     }
 
     private void consumeResultSetAndCallBeforeFirst(ResultSet resultSet, RepeatableReadResultSetProxyLogic resultSetProxyLogic) throws Throwable {
@@ -401,7 +402,7 @@ public class RepeatableReadResultSetProxyLogicTest {
         ConnectionInfo connectionInfo = new ConnectionInfo();
 
         RepeatableReadResultSetProxyLogicFactory factory = new RepeatableReadResultSetProxyLogicFactory();
-        RepeatableReadResultSetProxyLogic logic = (RepeatableReadResultSetProxyLogic) factory.create(rs, connectionInfo, proxyConfig);
+        RepeatableReadResultSetProxyLogic logic = (RepeatableReadResultSetProxyLogic) factory.create(rs, Collections.emptyList(), connectionInfo, proxyConfig);
 
         Method method = ResultSet.class.getMethod("close");
         logic.invoke(null, method, new Object[]{});
@@ -480,7 +481,7 @@ public class RepeatableReadResultSetProxyLogicTest {
         ResultSet rs = exampleResultSet();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
         RepeatableReadResultSetProxyLogicFactory factory = new RepeatableReadResultSetProxyLogicFactory();
-        RepeatableReadResultSetProxyLogic logic = (RepeatableReadResultSetProxyLogic) factory.create(rs, null, proxyConfig);
+        RepeatableReadResultSetProxyLogic logic = (RepeatableReadResultSetProxyLogic) factory.create(rs, Collections.emptyList(), null, proxyConfig);
         Method method = ProxyJdbcObject.class.getMethod("getProxyConfig");
         Object result = logic.invoke(null, method, null);
         assertThat(result).isSameAs(proxyConfig);

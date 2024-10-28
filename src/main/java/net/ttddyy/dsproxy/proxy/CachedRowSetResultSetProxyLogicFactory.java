@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.DataSourceProxyException;
+import net.ttddyy.dsproxy.QueryInfo;
 import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
 import javax.sql.rowset.CachedRowSet;
@@ -9,6 +10,7 @@ import javax.sql.rowset.RowSetFactory;
 import javax.sql.rowset.RowSetProvider;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Factory to create {@link CachedRowSetResultSetProxyLogic}.
@@ -41,7 +43,7 @@ public class CachedRowSetResultSetProxyLogicFactory implements ResultSetProxyLog
     }
 
     @Override
-    public ResultSetProxyLogic create(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
+    public ResultSetProxyLogic create(ResultSet resultSet, List<QueryInfo> queries, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
         ResultSet cachedRowSet = getCachedRowSet(resultSet);
         return new CachedRowSetResultSetProxyLogic(resultSet, cachedRowSet, connectionInfo, proxyConfig);
     }

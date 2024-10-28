@@ -297,9 +297,9 @@ public class StatementProxyLogic extends ProxyLogicSupport {
 
             // create proxy for returned ResultSet
             if (isCreateGeneratedKeysProxy) {
-                retVal = proxyFactory.createGeneratedKeys((ResultSet) retVal, this.connectionInfo, this.proxyConfig);
+                retVal = proxyFactory.createGeneratedKeys((ResultSet) retVal, queries, this.connectionInfo, this.proxyConfig);
             } else if (isCreateResultSetProxy) {
-                retVal = proxyFactory.createResultSet((ResultSet) retVal, this.connectionInfo, this.proxyConfig);
+                retVal = proxyFactory.createResultSet((ResultSet) retVal, queries, this.connectionInfo, this.proxyConfig);
             }
 
 
@@ -339,7 +339,7 @@ public class StatementProxyLogic extends ProxyLogicSupport {
                         if (retrieveGeneratedKey) {
                             ResultSet generatedKeysResultSet = this.statement.getGeneratedKeys();  // auto retrieve generated-keys
                             if (this.proxyConfig.isGeneratedKeysProxyEnabled()) {
-                                generatedKeysResultSet = proxyFactory.createGeneratedKeys(generatedKeysResultSet, this.connectionInfo, this.proxyConfig);
+                                generatedKeysResultSet = proxyFactory.createGeneratedKeys(generatedKeysResultSet, queries, this.connectionInfo, this.proxyConfig);
                             }
                             this.generatedKeys = generatedKeysResultSet;  // cache generated-keys
                         }
