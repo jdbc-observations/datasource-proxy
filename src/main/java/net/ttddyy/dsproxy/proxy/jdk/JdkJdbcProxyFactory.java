@@ -61,6 +61,9 @@ public class JdkJdbcProxyFactory implements JdbcProxyFactory {
 
     @Override
     public ResultSet createResultSet(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
+        if (resultSet == null) {
+            return null;
+        }
         ResultSetProxyLogicFactory factory = proxyConfig.getResultSetProxyLogicFactory();
         return (ResultSet) Proxy.newProxyInstance(ProxyJdbcObject.class.getClassLoader(),
                 new Class[]{ProxyJdbcObject.class, ResultSet.class},

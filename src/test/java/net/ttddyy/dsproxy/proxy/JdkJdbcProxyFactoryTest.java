@@ -5,10 +5,7 @@ import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.junit.Test;
 
 import javax.sql.DataSource;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
+import java.sql.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -70,6 +67,33 @@ public class JdkJdbcProxyFactoryTest {
         DataSource result = factory.createDataSource(ds, proxyConfig);
 
         assertThat(result).isNotNull().isNotSameAs(ds).isInstanceOf(ProxyJdbcObject.class);
+    }
+
+    @Test
+    public void shouldCreateResultSet() {
+        ResultSet originalResultSet = mock(ResultSet.class);
+        ConnectionInfo connectionInfo = new ConnectionInfo();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .resultSetProxyLogicFactory(new SimpleResultSetProxyLogicFactory())
+                .dataSourceName("my-ds")
+                .build();
+
+        ResultSet proxiedResult = factory.createResultSet(originalResultSet, connectionInfo, proxyConfig);
+
+        assertThat(proxiedResult).isNotNull().isNotSameAs(originalResultSet).isInstanceOf(ProxyJdbcObject.class);
+    }
+
+    @Test
+    public void shouldNotCreateResultSetIfTheOriginalOneIsNull() {
+        ConnectionInfo connectionInfo = new ConnectionInfo();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create()
+                .resultSetProxyLogicFactory(new SimpleResultSetProxyLogicFactory())
+                .dataSourceName("my-ds")
+                .build();
+
+        ResultSet proxiedResult = factory.createResultSet(null, connectionInfo, proxyConfig);
+
+        assertThat(proxiedResult).isNull();
     }
 
 
