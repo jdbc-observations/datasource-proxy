@@ -293,7 +293,7 @@ public class StatementProxyLogic extends ProxyLogicSupport {
             final boolean isResultSetReturningMethod = !isGetGeneratedKeysMethod && METHODS_TO_RETURN_RESULTSET.contains(methodName);
 
             final boolean isCreateGeneratedKeysProxy = isGetGeneratedKeysMethod && this.proxyConfig.isGeneratedKeysProxyEnabled();
-            final boolean isCreateResultSetProxy = isResultSetReturningMethod && this.proxyConfig.isResultSetProxyEnabled();
+            final boolean isCreateResultSetProxy = (retVal != null && isResultSetReturningMethod && this.proxyConfig.isResultSetProxyEnabled());
 
             // create proxy for returned ResultSet
             if (isCreateGeneratedKeysProxy) {

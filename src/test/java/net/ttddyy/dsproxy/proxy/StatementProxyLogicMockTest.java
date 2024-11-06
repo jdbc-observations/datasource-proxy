@@ -808,7 +808,6 @@ public class StatementProxyLogicMockTest {
 
     @Test
     public void proxyResultSet() throws Throwable {
-
         final AtomicReference<Object> listenerReceivedResult = new AtomicReference<Object>();
         QueryExecutionListener listener = new NoOpQueryExecutionListener() {
             @Override
@@ -817,12 +816,10 @@ public class StatementProxyLogicMockTest {
             }
         };
 
-
         ResultSetMetaData metaData = mock(ResultSetMetaData.class);
 
         ResultSet resultSet = mock(ResultSet.class);
         when(resultSet.getMetaData()).thenReturn(metaData);
-
 
         Statement stmt = mock(Statement.class);
         when(stmt.executeQuery(anyString())).thenReturn(resultSet);
@@ -859,8 +856,18 @@ public class StatementProxyLogicMockTest {
         result = logic.invoke(null, getGeneratedKeysMethod, null);
         assertThat(result).isInstanceOf(ResultSet.class);
         assertFalse(Proxy.isProxyClass(result.getClass()));
+    }
 
+    @Test
+    public void resultSetIsNull() throws Throwable {
+        Statement stmt = mock(Statement.class);
+        when(stmt.getResultSet()).thenReturn(null);
+        Method getResultSetMethod = Statement.class.getMethod("getResultSet");
 
+        StatementProxyLogic logic = getProxyLogic(stmt, null, null, true, false);
+        Object result = logic.invoke(null, getResultSetMethod, null);
+
+        assertThat(result).isNull();
     }
 
     @Test
