@@ -494,6 +494,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#changelog">8. Changelog</a>
 <ul class="sectlevel2">
+<li><a href="#changelog-1.10.1">1.10.1</a></li>
 <li><a href="#changelog-1.10">1.10</a></li>
 <li><a href="#changelog-1.9">1.9</a></li>
 <li><a href="#changelog-1.8.1">1.8.1</a></li>
@@ -2241,6 +2242,33 @@ public class MyController {
 <h2 id="changelog"><a class="anchor" href="#changelog"></a>8. Changelog</h2>
 <div class="sectionbody">
 <div class="sect2">
+<h3 id="changelog-1.10.1"><a class="anchor" href="#changelog-1.10.1"></a>1.10.1</h3>
+<div class="sect3">
+<h4 id="_improvements"><a class="anchor" href="#_improvements"></a>Improvements</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Use monotonic time to calculate the elapsed time (<a href="https://github.com/jdbc-observations/datasource-proxy/issues/110">Issue-110</a>).</p>
+</li>
+<li>
+<p>Create <code>RowSetFactory</code> only at initialization  (<a href="https://github.com/jdbc-observations/datasource-proxy/issues/115">Issue-115</a>).<br>
+Thanks <em><a href="https://github.com/reda-alaoui">Réda Housni Alaoui</a></em> for this contribution!!</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_bug_fixes"><a class="anchor" href="#_bug_fixes"></a>Bug Fixes</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Do not create a proxy when <code>ResultSet</code> is <code>null</code>  (<a href="https://github.com/jdbc-observations/datasource-proxy/issues/117">Issue-117</a>).</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="changelog-1.10"><a class="anchor" href="#changelog-1.10"></a>1.10</h3>
 <div class="sect3">
 <h4 id="_new_features"><a class="anchor" href="#_new_features"></a>New Features</h4>
@@ -2258,7 +2286,7 @@ This <code>buildProxy()</code> method returns a proxy <code>DataSource</code> ob
 </div>
 </div>
 <div class="sect3">
-<h4 id="_improvements"><a class="anchor" href="#_improvements"></a>Improvements</h4>
+<h4 id="_improvements_2"><a class="anchor" href="#_improvements_2"></a>Improvements</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2292,7 +2320,7 @@ To enable isolation level retrieval, use <code>ProxyDataSourceBuilder#retrieveIs
 </div>
 </div>
 <div class="sect3">
-<h4 id="_bug_fixes"><a class="anchor" href="#_bug_fixes"></a>Bug Fixes</h4>
+<h4 id="_bug_fixes_2"><a class="anchor" href="#_bug_fixes_2"></a>Bug Fixes</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2331,7 +2359,7 @@ DataSource ds = ProxyDataSourceBuilder
 <div class="sect2">
 <h3 id="changelog-1.8.1"><a class="anchor" href="#changelog-1.8.1"></a>1.8.1</h3>
 <div class="sect3">
-<h4 id="_improvements_2"><a class="anchor" href="#_improvements_2"></a>Improvements</h4>
+<h4 id="_improvements_3"><a class="anchor" href="#_improvements_3"></a>Improvements</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2386,7 +2414,7 @@ Thanks <em><a href="https://github.com/ivasanpag">Ivan Jose Sanchez Pagador</a><
 </div>
 </div>
 <div class="sect3">
-<h4 id="_improvements_3"><a class="anchor" href="#_improvements_3"></a>Improvements</h4>
+<h4 id="_improvements_4"><a class="anchor" href="#_improvements_4"></a>Improvements</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2396,7 +2424,7 @@ Thanks <em><a href="https://github.com/ivasanpag">Ivan Jose Sanchez Pagador</a><
 </div>
 </div>
 <div class="sect3">
-<h4 id="_bug_fixes_2"><a class="anchor" href="#_bug_fixes_2"></a>Bug Fixes</h4>
+<h4 id="_bug_fixes_3"><a class="anchor" href="#_bug_fixes_3"></a>Bug Fixes</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2409,7 +2437,7 @@ Thanks <em><a href="https://github.com/ivasanpag">Ivan Jose Sanchez Pagador</a><
 <div class="sect2">
 <h3 id="changelog-1.7"><a class="anchor" href="#changelog-1.7"></a>1.7</h3>
 <div class="sect3">
-<h4 id="_improvements_4"><a class="anchor" href="#_improvements_4"></a>Improvements</h4>
+<h4 id="_improvements_5"><a class="anchor" href="#_improvements_5"></a>Improvements</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2426,7 +2454,7 @@ as json. (<a href="https://github.com/ttddyy/datasource-proxy/pull/66">Issue-66<
 <div class="sect2">
 <h3 id="changelog-1.6"><a class="anchor" href="#changelog-1.6"></a>1.6</h3>
 <div class="sect3">
-<h4 id="_improvements_5"><a class="anchor" href="#_improvements_5"></a>Improvements</h4>
+<h4 id="_improvements_6"><a class="anchor" href="#_improvements_6"></a>Improvements</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2512,7 +2540,7 @@ elapsed time. Default is set to <code>SystemStopwatchFactory</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_bug_fixes_3"><a class="anchor" href="#_bug_fixes_3"></a>Bug Fixes</h4>
+<h4 id="_bug_fixes_4"><a class="anchor" href="#_bug_fixes_4"></a>Bug Fixes</h4>
 <div class="ulist">
 <ul>
 <li>
