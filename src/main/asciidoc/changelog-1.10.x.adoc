@@ -1,3 +1,14 @@
+[[changelog-1.10.1]]
+=== 1.10.1
+====  Improvements
+* Use monotonic time to calculate the elapsed time (https://github.com/jdbc-observations/datasource-proxy/issues/110[Issue-110]).
+* Create `RowSetFactory` only at initialization  (https://github.com/jdbc-observations/datasource-proxy/issues/115[Issue-115]). +
+ Thanks _https://github.com/reda-alaoui[Réda Housni Alaoui]_ for this contribution!!
+
+====  Bug Fixes
+* Do not create a proxy when `ResultSet` is `null`  (https://github.com/jdbc-observations/datasource-proxy/issues/117[Issue-117]).
+
+
 [[changelog-1.10]]
 === 1.10
 
