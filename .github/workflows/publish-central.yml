@@ -1,4 +1,4 @@
-name: Release to Maven Central (Deploy Snapshot or Stage Release)
+name: Release to Maven Central (Deploy Snapshot)
 
 on:
   push:
@@ -15,13 +15,13 @@ jobs:
         with:
           java-version: 8
           distribution: temurin
-          server-id: ossrh
+          server-id: central
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - name: Publish package
-        run: ./mvnw --batch-mode deploy -DskipTests=true -Pgithub-ossrh
+        run: ./mvnw --batch-mode deploy -DskipTests=true -Pgithub-central
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}

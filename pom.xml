@@ -24,17 +24,6 @@
     <url>git@github.com:jdbc-observations/datasource-proxy.git</url>
   </scm>
 
-  <distributionManagement>
-    <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>
-
   <developers>
     <developer>
       <id>tadaya</id>
@@ -62,13 +51,14 @@
     <asciidoctor.version>1.5.3</asciidoctor.version>
     <animal-sniffer-maven-plugin.version>1.23</animal-sniffer-maven-plugin.version>
     <log4j2.version>2.17.2</log4j2.version>
+    <central-publishing-maven-plugin.version>0.7.0</central-publishing-maven-plugin.version>
   </properties>
 
   <profiles>
 
-    <!-- This profile is activated by "publish-ossrh.yml" github action -->
+    <!-- This profile is activated by "publish-central.yml" github action -->
     <profile>
-      <id>github-ossrh</id>
+      <id>github-central</id>
       <build>
         <plugins>
           <plugin>
@@ -90,6 +80,16 @@
                 </configuration>
               </execution>
             </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>${central-publishing-maven-plugin.version}</version>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+              <autoPublish>true</autoPublish>
+            </configuration>
           </plugin>
         </plugins>
       </build>

@@ -38,7 +38,9 @@ Provide proxy classes for JDBC API to intercept executing queries and methods.
     - For example, if you want to use slf4j logger with `SLF4JQueryLoggingListener`, then you need slf4j library.
 - requires jdk1.6+
 
-Snapshot is available via [oss sonatype snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/net/ttddyy/datasource-proxy/).
+Snapshots are available via the Maven Central repository.
+For instructions on how to consume snapshot releases, please refer to [the official documentation](https://central.sonatype.org/publish/publish-portal-snapshots/#consuming-snapshot-releases-for-your-project).
+
 
 ## Related Projects
 
