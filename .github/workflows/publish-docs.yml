@@ -2,7 +2,7 @@ name: Publish documentation to the project page
 
 on:
   push:
-    branches: [ 1.x, release ]
+    branches: [ main, release ]
 
 jobs:
   publish:
@@ -38,7 +38,7 @@ jobs:
         #                       `-- api/
 
       - name: Prepare "snapshot" documents
-        if: "github.ref == 'refs/heads/1.x' && contains(env.project_version, 'snapshot')"
+        if: "github.ref == 'refs/heads/main' && contains(env.project_version, 'snapshot')"
         run: |
           mkdir -p target/deploy-documents/snapshot/user-guide/
           mkdir -p target/deploy-documents/snapshot/api/

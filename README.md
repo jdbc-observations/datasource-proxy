@@ -7,16 +7,6 @@
 
 Provide proxy classes for JDBC API to intercept executing queries and methods.
 
-### Versions
-
-- 2.x _(Under development)_
-  - ~~Java8 baseline.~~
-  - `master` branch
-
-- 1.x
-  - Works with JDK1.6+ (works well with Java8 and above).
-  - `1.x` branch
-
 ## User Guide
 
 - [Current Release Version][user-guide-current]
@@ -36,7 +26,7 @@ Provide proxy classes for JDBC API to intercept executing queries and methods.
 - latest version is: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.ttddyy/datasource-proxy/badge.svg)][maven-central_badge]
 - No dependencies to other libraries, everything is optional.
     - For example, if you want to use slf4j logger with `SLF4JQueryLoggingListener`, then you need slf4j library.
-- requires jdk1.6+
+- requires jdk1.6+ (works well with Java8 and above).
 
 Snapshots are available via the Maven Central repository.
 For instructions on how to consume snapshot releases, please refer to [the official documentation](https://central.sonatype.org/publish/publish-portal-snapshots/#consuming-snapshot-releases-for-your-project).
@@ -46,9 +36,6 @@ For instructions on how to consume snapshot releases, please refer to [the offic
 
 *Examples:*
 - [datasource-proxy-examples][datasource-proxy-examples]
-
-*Unit test support:*
-- [datasource-assert][datasource-assert]
 
 
 ## Javadoc
@@ -66,4 +53,3 @@ For instructions on how to consume snapshot releases, please refer to [the offic
 [javadoc-current]: http://jdbc-observations.github.io/datasource-proxy/docs/current/api/
 [javadoc-snapshot]: http://jdbc-observations.github.io/datasource-proxy/docs/snapshot/api/
 [datasource-proxy-examples]: https://github.com/ttddyy/datasource-proxy-examples
-[datasource-assert]: https://github.com/ttddyy/datasource-assert

@@ -2,7 +2,7 @@ name: Release to Maven Central (Deploy Snapshot)
 
 on:
   push:
-    branches: [master, 1.x, release]
+    branches: [main, release]
 
 jobs:
   release:
