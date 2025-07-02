@@ -23,6 +23,7 @@ import net.ttddyy.dsproxy.listener.logging.JULSlowQueryListener;
 import net.ttddyy.dsproxy.listener.logging.Log4jLogLevel;
 import net.ttddyy.dsproxy.listener.logging.Log4jQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.Log4jSlowQueryListener;
+import net.ttddyy.dsproxy.listener.logging.LoggingFilter;
 import net.ttddyy.dsproxy.listener.logging.QueryLogEntryCreator;
 import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
 import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
@@ -95,6 +96,7 @@ public class ProxyDataSourceBuilder {
     private TracingMethodListener.TracingMessageConsumer tracingMessageConsumer;
 
     // For building QueryLoggingListeners
+    private LoggingFilter loggingFilter;
 
     // CommonsQueryLoggingListener
     private boolean createCommonsQueryListener;
@@ -781,6 +783,18 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
+     * Register a {@link LoggingFilter}.
+     *
+     * @param loggingFilter a logging filter to register
+     * @return builder
+     * @since 1.11
+     */
+    public ProxyDataSourceBuilder loggingFilter(LoggingFilter loggingFilter) {
+        this.loggingFilter = loggingFilter;
+        return this;
+    }
+
+    /**
      * Take a callback that could format a query for logging.
      * <p>
      * This method is mutually exclusive to {@link #asJson()}.
@@ -1275,6 +1289,9 @@ public class ProxyDataSourceBuilder {
         if (this.retrieveIsolation && this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
+        if (this.loggingFilter != null) {
+            listener.setLoggingFilter(this.loggingFilter);
+        }
         return listener;
     }
 
@@ -1304,6 +1321,9 @@ public class ProxyDataSourceBuilder {
         listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
         if (this.retrieveIsolation && this.writeIsolation) {
             listener.setWriteIsolation(true);
+        }
+        if (this.loggingFilter != null) {
+            listener.setLoggingFilter(this.loggingFilter);
         }
         return listener;
     }
@@ -1335,6 +1355,9 @@ public class ProxyDataSourceBuilder {
         if (this.retrieveIsolation && this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
+        if (this.loggingFilter != null) {
+            listener.setLoggingFilter(this.loggingFilter);
+        }
         return listener;
     }
 
@@ -1365,6 +1388,9 @@ public class ProxyDataSourceBuilder {
         if (this.retrieveIsolation && this.writeIsolation) {
             listener.setWriteIsolation(true);
         }
+        if (this.loggingFilter != null) {
+            listener.setLoggingFilter(this.loggingFilter);
+        }
         return listener;
     }
 
@@ -1388,6 +1414,9 @@ public class ProxyDataSourceBuilder {
         listener.setQueryLogEntryCreator(buildQueryLogEntryCreator());
         if (this.retrieveIsolation && this.writeIsolation) {
             listener.setWriteIsolation(true);
+        }
+        if (this.loggingFilter != null) {
+            listener.setLoggingFilter(this.loggingFilter);
         }
         return listener;
     }

@@ -88,4 +88,39 @@ public class JULQueryLoggingListenerTest {
 
     }
 
+    @Test
+    public void loggingFilterCustomLogic() {
+        JULQueryLoggingListener listener = new JULQueryLoggingListener();
+        InMemoryJULLogger logger = new InMemoryJULLogger();
+        listener.setLogger(logger);
+        listener.setLogLevel(Level.FINE);
+        logger.setLoggerLevel(Level.FINE);
+
+        ExecutionInfo execInfo = ExecutionInfoBuilder.create().build();
+        List<QueryInfo> logmeList = new ArrayList<QueryInfo>();
+        logmeList.add(QueryInfoBuilder.create().query("select * from logme").build());
+        List<QueryInfo> skipList = new ArrayList<QueryInfo>();
+        skipList.add(QueryInfoBuilder.create().query("select * from skipme").build());
+
+        // Filter with custom logic: skip queries containing 'skipme'
+        listener.setLoggingFilter(new LoggingFilter() {
+            public boolean shouldLog(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                for (QueryInfo qi : queryInfoList) {
+                    if (qi.getQuery().contains("skipme")) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        });
+
+        listener.afterQuery(execInfo, logmeList);
+
+        assertThat(logger.getFineMessages()).hasSize(1);
+
+        logger.reset();
+        listener.afterQuery(execInfo, skipList);
+
+        assertThat(logger.getFineMessages()).isEmpty();
+    }
 }

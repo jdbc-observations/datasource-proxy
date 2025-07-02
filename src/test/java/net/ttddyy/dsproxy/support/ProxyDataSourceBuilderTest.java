@@ -20,10 +20,12 @@ import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
 import net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsSlowQueryListener;
 import net.ttddyy.dsproxy.listener.logging.DefaultQueryLogEntryCreator;
+import net.ttddyy.dsproxy.listener.logging.InMemorySLF4JLogger;
 import net.ttddyy.dsproxy.listener.logging.JULQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.JULSlowQueryListener;
 import net.ttddyy.dsproxy.listener.logging.Log4jLogLevel;
 import net.ttddyy.dsproxy.listener.logging.Log4jSlowQueryListener;
+import net.ttddyy.dsproxy.listener.logging.LoggingFilter;
 import net.ttddyy.dsproxy.listener.logging.QueryLogEntryCreator;
 import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
 import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
@@ -44,6 +46,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
+import static org.apache.logging.log4j.FormatterLoggerManualExample.logger;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -763,4 +766,29 @@ public class ProxyDataSourceBuilderTest {
         assertThat(proxyConfig.isRetrieveIsolationLevel()).isTrue();
     }
 
+    @Test
+    public void loggingFilter() {
+        LoggingFilter filter = new LoggingFilter() {
+            public boolean shouldLog(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                return false;
+            }
+        };
+
+        ProxyDataSource ds = ProxyDataSourceBuilder.create().logQueryByCommons().loggingFilter(filter).build();
+        verifyLoggingFilter(ds, CommonsQueryLoggingListener.class, filter);
+
+        ds = ProxyDataSourceBuilder.create().logQueryBySlf4j().loggingFilter(filter).build();
+        verifyLoggingFilter(ds, SLF4JQueryLoggingListener.class, filter);
+
+        ds = ProxyDataSourceBuilder.create().logQueryByJUL().loggingFilter(filter).build();
+        verifyLoggingFilter(ds, JULQueryLoggingListener.class, filter);
+
+        ds = ProxyDataSourceBuilder.create().logQueryToSysOut().loggingFilter(filter).build();
+        verifyLoggingFilter(ds, SystemOutQueryLoggingListener.class, filter);
+    }
+
+    private void verifyLoggingFilter(ProxyDataSource ds, Class<? extends AbstractQueryLoggingListener> listenerClass, LoggingFilter expectedFilter) {
+        AbstractQueryLoggingListener listener = getAndVerifyListener(ds, listenerClass);
+        assertThat(listener.getLoggingFilter()).as("logging filter").isSameAs(expectedFilter);
+    }
 }

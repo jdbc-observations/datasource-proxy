@@ -81,4 +81,39 @@ public class SLF4JQueryLoggingListenerTest {
         assertThat(logger.getErrorMessages()).isEmpty();
     }
 
+    @Test
+    public void loggingFilterCustomLogic() {
+        SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener();
+        InMemorySLF4JLogger logger = new InMemorySLF4JLogger();
+        listener.setLogger(logger);
+        listener.setLogLevel(SLF4JLogLevel.DEBUG);
+        logger.setEnabledLogLevel(SLF4JLogLevel.DEBUG);
+
+        ExecutionInfo execInfo = ExecutionInfoBuilder.create().build();
+        List<QueryInfo> logmeList = new ArrayList<QueryInfo>();
+        logmeList.add(QueryInfoBuilder.create().query("select * from logme").build());
+        List<QueryInfo> skipList = new ArrayList<QueryInfo>();
+        skipList.add(QueryInfoBuilder.create().query("select * from skipme").build());
+
+        // Filter with custom logic: skip queries containing 'skipme'
+        listener.setLoggingFilter(new LoggingFilter() {
+            public boolean shouldLog(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                for (QueryInfo qi : queryInfoList) {
+                    if (qi.getQuery().contains("skipme")) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        });
+
+        listener.afterQuery(execInfo, logmeList);
+
+        assertThat(logger.getDebugMessages()).hasSize(1);
+
+        logger.reset();
+        listener.afterQuery(execInfo, skipList);
+
+        assertThat(logger.getDebugMessages()).isEmpty();
+    }
 }

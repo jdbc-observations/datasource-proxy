@@ -17,6 +17,7 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
     protected boolean writeConnectionId = true;
     protected boolean writeIsolation;
     protected LoggingCondition loggingCondition;
+    protected LoggingFilter loggingFilter = LoggingFilter.ALLOW_ALL;
 
     @Override
     public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
@@ -24,8 +25,7 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
 
     @Override
     public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        // only perform logging logic when the condition returns true
-        if (this.loggingCondition.getAsBoolean()) {
+        if (this.loggingCondition.getAsBoolean() && this.loggingFilter.shouldLog(execInfo, queryInfoList)) {
             final String entry = getEntry(execInfo, queryInfoList);
             writeLog(entry);
         }
@@ -98,5 +98,23 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
      */
     public void setLoggingCondition(LoggingCondition loggingCondition) {
         this.loggingCondition = loggingCondition;
+    }
+
+    /**
+     * Filter that controls which queries are logged.
+     *
+     * @param loggingFilter the filter to use (set <code>null</code> to log all)
+     * @since 1.11
+     */
+    public void setLoggingFilter(LoggingFilter loggingFilter) {
+        this.loggingFilter = (loggingFilter != null) ? loggingFilter : LoggingFilter.ALLOW_ALL;
+    }
+
+    /**
+     * @return current logging filter
+     * @since 1.11
+     */
+    public LoggingFilter getLoggingFilter() {
+        return this.loggingFilter;
     }
 }

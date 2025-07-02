@@ -87,6 +87,20 @@ return ProxyDataSourceBuilder
             .build()
 ----
 
+You can also filter which queries are logged by providing a `LoggingFilter`:
+
+[source,java]
+----
+builder
+  .logQueryBySlf4j()
+  // Only log queries that are not to the 'audit' table
+  .loggingFilter((execInfo, queryInfoList) ->
+    queryInfoList.stream().noneMatch(q -> q.getQuery().contains("audit"))
+  )
+----
+
+If no filter is set, all queries are logged (default behavior).
+
 === Slow Query Logging Listener
 
 When query takes more than specified threshold, `SlowQueryListener` executes a callback method.

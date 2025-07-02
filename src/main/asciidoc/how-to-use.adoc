@@ -17,6 +17,7 @@ Also, it provides builder methods to register built-in or custom listeners.
 DataSource dataSource =
     ProxyDataSourceBuilder.create(actualDataSource)  // pass original datasource
         .logQueryByCommons(INFO)    // logQueryBySlf4j(), logQueryByJUL(), logQueryToSysOut()
+        .loggingFilter(myFilter)    // filter which queries to log
         .countQuery()               // enable query count metrics
         .logSlowQueryByCommons(10, TimeUnit.MINUTES)  // also by sl4j, jul, system out
         .proxyResultSet()           // enable proxying ResultSet
