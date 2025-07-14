@@ -125,4 +125,39 @@ public class Log4jQueryLoggingListenerTest {
         assertThat(app.getEvents()).hasSize(0);
     }
 
+    @Test
+    public void loggingFilterCustomLogic() {
+        Log4jQueryLoggingListener listener = new Log4jQueryLoggingListener();
+        listener.setLogger(logger);
+        listener.setLogLevel(Log4jLogLevel.DEBUG);
+        Configurator.setLevel(this.logger.getName(), Level.DEBUG);
+
+        ExecutionInfo execInfo = ExecutionInfoBuilder.create().build();
+        List<QueryInfo> logmeList = new ArrayList<QueryInfo>();
+        logmeList.add(QueryInfoBuilder.create().query("select * from logme").build());
+        List<QueryInfo> skipList = new ArrayList<QueryInfo>();
+        skipList.add(QueryInfoBuilder.create().query("select * from skipme").build());
+
+        // Filter with custom logic: skip queries containing 'skipme'
+        listener.setLoggingFilter(new LoggingFilter() {
+            public boolean shouldLog(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                for (QueryInfo qi : queryInfoList) {
+                    if (qi.getQuery().contains("skipme")) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        });
+
+        listener.afterQuery(execInfo, logmeList);
+
+        List<LogEvent> events = app.getEvents();
+        assertThat(events).hasSize(1);
+        assertThat(events.get(0).getLevel()).isEqualTo(Level.DEBUG);
+
+        reset();
+        listener.afterQuery(execInfo, skipList);
+        assertThat(app.getEvents()).isEmpty();
+    }
 }

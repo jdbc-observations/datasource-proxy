@@ -113,4 +113,40 @@ public class CommonsQueryLoggingListenerTest {
         assertThat(log.getFatalMessages()).isEmpty();
 
     }
+
+    @Test
+    public void loggingFilterCustomLogic() {
+        CommonsQueryLoggingListener listener = new CommonsQueryLoggingListener();
+        InMemoryCommonsLog log = new InMemoryCommonsLog();
+        listener.setLog(log);
+        listener.setLogLevel(CommonsLogLevel.DEBUG);
+        log.setEnabledLogLevel(CommonsLogLevel.DEBUG);
+
+        ExecutionInfo execInfo = ExecutionInfoBuilder.create().build();
+        List<QueryInfo> logmeList = new ArrayList<QueryInfo>();
+        logmeList.add(QueryInfoBuilder.create().query("select * from logme").build());
+        List<QueryInfo> skipList = new ArrayList<QueryInfo>();
+        skipList.add(QueryInfoBuilder.create().query("select * from skipme").build());
+
+        // Filter with custom logic: skip queries containing 'skipme'
+        listener.setLoggingFilter(new LoggingFilter() {
+            public boolean shouldLog(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+                for (QueryInfo qi : queryInfoList) {
+                    if (qi.getQuery().contains("skipme")) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        });
+
+        listener.afterQuery(execInfo, logmeList);
+
+        assertThat(log.getDebugMessages()).hasSize(1);
+
+        log.reset();
+        listener.afterQuery(execInfo, skipList);
+
+        assertThat(log.getDebugMessages()).isEmpty();
+    }
 }
