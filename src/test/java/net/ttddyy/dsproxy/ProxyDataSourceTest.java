@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy;
 
+import java.io.Closeable;
+import java.util.concurrent.atomic.AtomicBoolean;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
@@ -26,6 +28,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 
@@ -33,6 +36,7 @@ import static org.mockito.Mockito.withSettings;
  * TODO: clean up & rewrite
  *
  * @author Tadaya Tsuyukubo
+ * @author Réda Housni Alaoui
  */
 public class ProxyDataSourceTest {
 
@@ -257,6 +261,58 @@ public class ProxyDataSourceTest {
 
         verify((AutoCloseable) ds).close();
     }
+
+	@Test
+	public void closeProxyOfAutoCloseableViaClose() throws Exception {
+		DataSource ds = mock(DataSource.class);
+		when(ds.isWrapperFor(AutoCloseable.class)).thenReturn(true);
+
+		AtomicBoolean closed = new AtomicBoolean();
+		AutoCloseable autoCloseable = () -> closed.set(true);
+		when(ds.unwrap(AutoCloseable.class)).thenReturn(autoCloseable);
+
+		new ProxyDataSource(ds).close();
+		assertThat(closed).isTrue();
+	}
+
+	@Test
+	public void closeProxyOfCloseableViaClose() throws Exception {
+		DataSource ds = mock(DataSource.class);
+		when(ds.isWrapperFor(Closeable.class)).thenReturn(true);
+
+		AtomicBoolean closed = new AtomicBoolean();
+		Closeable closeable = () -> closed.set(true);
+		when(ds.unwrap(Closeable.class)).thenReturn(closeable);
+
+		new ProxyDataSource(ds).close();
+		assertThat(closed).isTrue();
+	}
+
+	@Test
+	public void closeProxyOfAutoCloseableViaUnwrap() throws Exception {
+		DataSource ds = mock(DataSource.class);
+		when(ds.isWrapperFor(AutoCloseable.class)).thenReturn(true);
+
+		AtomicBoolean closed = new AtomicBoolean();
+		AutoCloseable autoCloseable = () -> closed.set(true);
+		when(ds.unwrap(AutoCloseable.class)).thenReturn(autoCloseable);
+
+		new ProxyDataSource(ds).unwrap(AutoCloseable.class).close();
+		assertThat(closed).isTrue();
+	}
+
+	@Test
+	public void closeProxyOfCloseableViaUnwrap() throws Exception {
+		DataSource ds = mock(DataSource.class);
+		when(ds.isWrapperFor(Closeable.class)).thenReturn(true);
+
+		AtomicBoolean closed = new AtomicBoolean();
+		Closeable closeable = () -> closed.set(true);
+		when(ds.unwrap(Closeable.class)).thenReturn(closeable);
+
+		new ProxyDataSource(ds).unwrap(Closeable.class).close();
+		assertThat(closed).isTrue();
+	}
 
     @Test
     public void getDataSource() {

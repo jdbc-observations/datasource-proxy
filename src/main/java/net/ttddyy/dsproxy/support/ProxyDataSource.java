@@ -24,6 +24,7 @@ import java.util.logging.Logger;
  * A proxy of {@link javax.sql.DataSource} with {@link net.ttddyy.dsproxy.listener.QueryExecutionListener}.
  *
  * @author Tadaya Tsuyukubo
+ * @author Réda Housni Alaoui
  */
 public class ProxyDataSource extends ProxyLogicSupport implements DataSource, Closeable {
 
@@ -153,14 +154,22 @@ public class ProxyDataSource extends ProxyLogicSupport implements DataSource, Cl
 
     @Override
     public void close() throws IOException {
+        try {
+            doClose();
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
+
+    private void doClose() throws Exception {
         if (dataSource instanceof Closeable) {
             ((Closeable) dataSource).close();
         } else if (isAutoCloseablePresent && dataSource instanceof AutoCloseable) {
-            try {
-                ((AutoCloseable) dataSource).close(); // (jdk7+)
-            } catch (Exception ex) {
-                throw new IOException(ex);
-            }
+            ((AutoCloseable) dataSource).close(); // (jdk7+)
+        } else if (dataSource.isWrapperFor(Closeable.class)) {
+            dataSource.unwrap(Closeable.class).close();
+        } else if (isAutoCloseablePresent && dataSource.isWrapperFor(AutoCloseable.class)) {
+            dataSource.unwrap(AutoCloseable.class).close();  // (jdk7+)
         }
     }
 
