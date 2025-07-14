@@ -103,11 +103,11 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
     /**
      * Filter that controls which queries are logged.
      *
-     * @param loggingFilter the filter to use (set <code>null</code> to log all)
+     * @param loggingFilter the filter to use
      * @since 1.11
      */
     public void setLoggingFilter(LoggingFilter loggingFilter) {
-        this.loggingFilter = (loggingFilter != null) ? loggingFilter : LoggingFilter.ALLOW_ALL;
+        this.loggingFilter = loggingFilter;
     }
 
     /**

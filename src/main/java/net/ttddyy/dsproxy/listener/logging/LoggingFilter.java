@@ -15,15 +15,6 @@ import java.util.List;
 public interface LoggingFilter {
 
     /**
-     * Determines if the query should be logged.
-     *
-     * @param execInfo execution context
-     * @param queryInfoList list of queries
-     * @return true to log, false to skip
-     */
-    boolean shouldLog(ExecutionInfo execInfo, List<QueryInfo> queryInfoList);
-
-    /**
      * Default filter that allows all queries to be logged.
      */
     LoggingFilter ALLOW_ALL = new LoggingFilter() {
@@ -31,4 +22,13 @@ public interface LoggingFilter {
             return true;
         }
     };
+
+    /**
+     * Determines if the query should be logged.
+     *
+     * @param execInfo execution context
+     * @param queryInfoList list of queries
+     * @return true to log, false to skip
+     */
+    boolean shouldLog(ExecutionInfo execInfo, List<QueryInfo> queryInfoList);
 }
