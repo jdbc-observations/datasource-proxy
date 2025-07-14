@@ -760,6 +760,7 @@ Also, it provides builder methods to register built-in or custom listeners.</p>
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">DataSource dataSource =
     ProxyDataSourceBuilder.create(actualDataSource)  // pass original datasource
         .logQueryByCommons(INFO)    // logQueryBySlf4j(), logQueryByJUL(), logQueryToSysOut()
+        .loggingFilter(myFilter)    // filter which queries to log
         .countQuery()               // enable query count metrics
         .logSlowQueryByCommons(10, TimeUnit.MINUTES)  // also by sl4j, jul, system out
         .proxyResultSet()           // enable proxying ResultSet
@@ -1607,6 +1608,22 @@ return ProxyDataSourceBuilder
             .listener(listener)
             .build()</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>You can also filter which queries are logged by providing a <code>LoggingFilter</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">builder
+  .logQueryBySlf4j()
+  // Only log queries that are not to the 'audit' table
+  .loggingFilter((execInfo, queryInfoList) -&gt;
+    queryInfoList.stream().noneMatch(q -&gt; q.getQuery().contains("audit"))
+  )</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If no filter is set, all queries are logged (default behavior).</p>
 </div>
 </div>
 <div class="sect2">
