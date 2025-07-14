@@ -1,11 +1,16 @@
-[[changelog-1.11]]
-=== 1.11
+[[changelog-1.11.0]]
+=== 1.11.0
 
 ====  New Features
-
 * Filtering support for query logging
-(https://github.com/jdbc-observations/datasource-proxy/issues/127[Issue-127]).
+(https://github.com/jdbc-observations/datasource-proxy/issues/127[Issue-127]).  +
+Thanks _https://github.com/frederikb[Frederik Bülthoff]_ for this contribution!!
+
 
 ====  Improvements
+* `ProxyDataSource#close` to unwrap and delegate `close` to underlying `DataSource` if needed (https://github.com/jdbc-observations/datasource-proxy/issues/129[Issue-129]).
++
+When `ProxyDataSource#close` is called, and the original `DataSource` does not implement `Closeable` or `AutoCloseable`, the proxy now attempts to unwrap the original `DataSource` to one that does, in order to delegate the `close` call appropriately.
++
+Thanks _https://github.com/reda-alaoui[Réda Housni Alaoui]_ for this contribution!!
 
-====  Bug Fixes
