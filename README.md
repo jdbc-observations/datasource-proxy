@@ -1,6 +1,6 @@
 # datasource-proxy
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.ttddyy/datasource-proxy/badge.svg)][maven-central_badge]
+[![Maven Central](https://img.shields.io/maven-central/v/net.ttddyy/datasource-proxy)][maven-central_badge]
 
 
 ## About
@@ -23,7 +23,7 @@ Provide proxy classes for JDBC API to intercept executing queries and methods.
 </dependency>
 ```
 
-- latest version is: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.ttddyy/datasource-proxy/badge.svg)][maven-central_badge]
+- latest version is: [![Maven Central](https://img.shields.io/maven-central/v/net.ttddyy/datasource-proxy)][maven-central_badge]
 - No dependencies to other libraries, everything is optional.
     - For example, if you want to use slf4j logger with `SLF4JQueryLoggingListener`, then you need slf4j library.
 - requires jdk1.6+ (works well with Java8 and above).
@@ -47,7 +47,7 @@ For instructions on how to consume snapshot releases, please refer to [the offic
 
 ----
 
-[maven-central_badge]: https://maven-badges.herokuapp.com/maven-central/net.ttddyy/datasource-proxy/
+[maven-central_badge]: https://central.sonatype.com/artifact/net.ttddyy/datasource-proxy
 [user-guide-current]: http://jdbc-observations.github.io/datasource-proxy/docs/current/user-guide/
 [user-guide-snapshot]: http://jdbc-observations.github.io/datasource-proxy/docs/snapshot/user-guide/
 [javadoc-current]: http://jdbc-observations.github.io/datasource-proxy/docs/current/api/
