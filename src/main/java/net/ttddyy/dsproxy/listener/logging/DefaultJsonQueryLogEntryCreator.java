@@ -320,7 +320,13 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
             String value = JSON_SPECIAL_CHARS.get(c);
-            sb.append(value != null ? value : c);
+            if (value != null) {
+                sb.append(value);
+            } else if (c < 0x20) {
+                sb.append(String.format("\\u%04x", (int) c));
+            } else {
+                sb.append(c);
+            }
         }
         return sb.toString();
     }
