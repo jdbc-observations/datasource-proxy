@@ -323,8 +323,10 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
             if (value != null) {
                 sb.append(value);
             } else if (c < 0x20) {
+                // Control character that does not have a short sequence
                 sb.append(String.format("\\u%04x", (int) c));
             } else {
+                // Short sequence
                 sb.append(c);
             }
         }
