@@ -21,6 +21,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DefaultJsonQueryLogEntryCreatorTest {
 
     @Test
+    public void escapesControlCharactersWithoutShortJsonEscapes() {
+        DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
+        String input = "a" + (char) 0 + (char) 1 + (char) 11 + (char) 31 + "b";
+        assertThat(creator.escapeSpecialCharacter(input)).isEqualTo("a\\u0000\\u0001\\u000b\\u001fb");
+    }
+
+    @Test
+    public void getLogEntryEscapesControlCharactersInQuery() {
+        ExecutionInfo info = new ExecutionInfo();
+        info.setStatementType(StatementType.STATEMENT);
+        QueryInfo query = new QueryInfo("select 'a" + (char) 1 + "b'");
+        String json = new DefaultJsonQueryLogEntryCreator().getLogEntry(
+                info, Arrays.asList(query), false, false, false);
+        assertThat(json).contains("select 'a\\u0001b'");
+        assertThat(json).doesNotContain(String.valueOf((char) 1));
+    }
+
+    @Test
     public void getLogEntryForStatement() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
