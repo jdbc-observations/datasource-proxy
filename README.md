@@ -5,7 +5,7 @@
 
 ## About
 
-Provide proxy classes for JDBC API to intercept executing queries and methods.
+Provides proxy classes for the JDBC API, allowing you to intercept query execution and JDBC method calls.
 
 ## User Guide
 
@@ -23,18 +23,17 @@ Provide proxy classes for JDBC API to intercept executing queries and methods.
 </dependency>
 ```
 
-- latest version is: [![Maven Central](https://img.shields.io/maven-central/v/net.ttddyy/datasource-proxy)][maven-central_badge]
-- No dependencies to other libraries, everything is optional.
-    - For example, if you want to use slf4j logger with `SLF4JQueryLoggingListener`, then you need slf4j library.
-- requires jdk1.6+ (works well with Java8 and above).
+- Latest version: [![Maven Central](https://img.shields.io/maven-central/v/net.ttddyy/datasource-proxy)][maven-central_badge]
+- The library has no required third-party dependencies; integrations are optional.
+  - For example, using `SLF4JQueryLoggingListener` requires the SLF4J library.
+- Requires JDK 6 or later. Java 8 and later are supported.
 
-Snapshots are available via the Maven Central repository.
-For instructions on how to consume snapshot releases, please refer to [the official documentation](https://central.sonatype.org/publish/publish-portal-snapshots/#consuming-snapshot-releases-for-your-project).
+Snapshot releases are available from Maven Central. See the [official documentation](https://central.sonatype.org/publish/publish-portal-snapshots/#consuming-snapshot-releases-for-your-project) for instructions on using them.
 
 
 ## Related Projects
 
-*Examples:*
+**Examples:**
 - [datasource-proxy-examples][datasource-proxy-examples]
 
 
