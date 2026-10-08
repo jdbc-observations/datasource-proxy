@@ -103,6 +103,59 @@ If no filter is set, all queries are logged (default behavior).
 
 === Slow Query Logging Listener
 
+There are two approaches to detect slow queries:
+
+During execution::
+Detect slow queries *while* they are running.
+A scheduled check fires once the query has run longer than the threshold, even if the query has not finished yet.
+`SlowQueryListener` uses this approach.
+This approach is sometimes called _preemptive_; however, it only notifies about the query.
+The running query is NOT interrupted or cancelled.
+
+After execution::
+Detect slow queries *after* they have finished.
+The `afterQuery` callback compares the elapsed time of the query with the threshold.
+This is a simple approach which can be implemented with any `QueryExecutionListener`.
+This approach is sometimes called _non-preemptive_.
+
+[cols="1,2,2", options="header"]
+|===
+|
+|During execution (`SlowQueryListener`)
+|After execution (`afterQuery` callback)
+
+|When it is triggered
+|When the threshold has passed, while the query is still running
+|After the query has finished
+
+|Elapsed time in `ExecutionInfo`
+|Time at the moment of the check (about the threshold time)
+|Actual query execution time
+
+|Query result, success/failure
+|Not available
+|Available
+
+|Thread that runs the callback
+|Thread of the scheduled executor in `SlowQueryListener`
+|Thread that executed the query
+
+|Queries that hang or never return
+|Detected
+|Not detected
+
+|Overhead
+|Schedules a check for each query execution
+|Compares elapsed time
+|===
+
+Both approaches can be used together.
+For example, use `SlowQueryListener` to get an early notice of long-running queries, and use
+an `afterQuery` callback to record their actual execution time.
+
+[[slow-query-during-execution]]
+==== During execution
+
 When query takes more than specified threshold, `SlowQueryListener` executes a callback method.
 The callback is invoked only once for the target query if it exceeds the threshold time.
 
@@ -135,13 +188,19 @@ builder
 
 For example, when 1 min is set to the threshold in a slow query logging listener and a query takes 5 min to run,
 it will log the query when 1 min has passed while the query is still running. +
-This is expected behavior; however, elapsed time in ExecutionInfo is not populated because it is still executing
-the query.
+This is expected behavior. Since the query is still running, elapsed time in `ExecutionInfo` is the time at the
+moment of the check (about 1 min in this example), not the actual execution time of the query (5 min).
 
-To log queries that have passed threshold with elapsed time populated, you can customize existing
-<<query-logging-listener>> instead of `SlowQueryListener`.
+To log slow queries with their actual execution time, use the <<slow-query-after-execution, after execution>> approach.
+====
 
-Here is sample implementation with SLF4JQueryLoggingListener:
+[[slow-query-after-execution]]
+==== After execution
+
+To log queries that have passed threshold with actual execution time, you can customize existing
+<<query-logging-listener>> instead of using `SlowQueryListener`.
+
+Here is sample implementation with `SLF4JQueryLoggingListener`:
 
 ```java
 long thresholdInMills = ...
@@ -159,9 +218,21 @@ listener.setLogLevel(SLF4JLogLevel.WARN);
 ```
 
 This implementation will log queries that took longer than specified threshold _AFTER_ query execution has finished.
-So that, query execution time is populated.
+So that, actual query execution time is populated.
 
-====
+To perform other actions for slow queries, such as recording metrics or sending notifications, register an
+`afterQuery` callback with `ProxyDataSourceBuilder`:
+
+```java
+long thresholdInMills = ...
+builder
+  .afterQuery((execInfo, queryInfoList) -> {
+    if (thresholdInMills <= execInfo.getElapsedTime()) {
+      // slow query: log, record metrics, send notification, etc.
+    }
+  })
+  .build();
+```
 
 
 === Query Count Listener

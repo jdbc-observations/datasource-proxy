@@ -18,27 +18,36 @@ import java.util.concurrent.TimeUnit;
 /**
  * Slow query detection listener.
  *
+ * <p>This listener detects slow queries <em>during execution</em> (sometimes called <em>preemptive</em>).
  * When query takes more than specified threshold, {@link #onSlowQuery(ExecutionInfo, List, long)} callback method
- * is called. The callback is called only once for the target query if it exceeds the threshold time.
+ * is called while the query is still running. The callback is called only once for the target query if it exceeds
+ * the threshold time. The running query is NOT interrupted or cancelled.
  *
- * NOTE:
- * {@link ExecutionInfo#elapsedTime} contains the time when callback is triggered which usually is the specified threshold time.
+ * <p>NOTE:
+ * <ul>
+ * <li>The callback is performed by a thread of the scheduled executor in this listener, not by the thread that
+ * executes the query.
+ * <li>{@link ExecutionInfo#getElapsedTime()} contains the time at the moment of the check, which usually is about the
+ * specified threshold time, not the actual execution time of the query.
+ * <li>Query result and success/failure in {@link ExecutionInfo} are not available, since the query has not finished.
+ * <li>A check is scheduled for each query execution.
+ * </ul>
  *
- * If you want to log or do something with AFTER execution that has exceeded specified threshold time, use normal
- * logging listener like following:
+ * <p>If you want to log or do something <em>after execution</em> (sometimes called <em>non-preemptive</em>) for
+ * queries that have exceeded specified threshold time, use normal logging listener like following:
  * <pre>
- * {@code}
  * long thresholdInMills = ...
  * SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener(){
  *      {@literal @}Override
- *      public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
- *          if (execInfo.getElapsedTime() >= thresholdInMills) {
+ *      public void afterQuery(ExecutionInfo execInfo, List&lt;QueryInfo&gt; queryInfoList) {
+ *          if (execInfo.getElapsedTime() &gt;= thresholdInMills) {
  *              super.afterQuery(execInfo, queryInfoList);
  *          }
  *      }
  * };
- * {@code}
  * </pre>
+ * This way, actual query execution time is available, but queries that never return are not detected.
+ * Both approaches can be used together.
  *
  * @author Tadaya Tsuyukubo
  * @see net.ttddyy.dsproxy.listener.logging.CommonsSlowQueryListener
@@ -143,8 +152,10 @@ public class SlowQueryListener implements QueryExecutionListener {
      * Callback when query execution time exceeds the threshold.
      *
      * This callback is called only once per query if it exceeds the threshold time.
+     * It is called by a thread of the scheduled executor while the query is still running.
+     * {@link ExecutionInfo#getElapsedTime()} contains the time at the moment of the check.
      *
-     * @param execInfo         query execution info
+     * @param execInfo        query execution info
      * @param queryInfoList    query parameter info
      * @param startTimeInMills time in mills when the query started
      */
