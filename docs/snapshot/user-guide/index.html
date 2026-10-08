@@ -482,8 +482,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_web_xml">6.3. web.xml</a></li>
 <li><a href="#_datasource">6.4. DataSource</a></li>
 <li><a href="#_controller">6.5. Controller</a></li>
-<li><a href="#_taglib_optional">6.6. taglib (optional)</a></li>
-<li><a href="#_accessing_application">6.7. Accessing application</a></li>
+<li><a href="#_taglib_optional">6.6. Taglib (optional)</a></li>
+<li><a href="#_accessing_the_application">6.7. Accessing the application</a></li>
 <li><a href="#_more_examples">6.8. More examples</a></li>
 </ul>
 </li>
@@ -533,11 +533,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="what-is-datasource-proxy"><a class="anchor" href="#what-is-datasource-proxy"></a>1.1. What is datasource-proxy?</h3>
 <div class="paragraph">
-<p>datasource-proxy provides simple API to intercept JDBC interactions and allows user to perform own logic
-before/after query or method executions. <br>
+<p>datasource-proxy provides a simple API for intercepting JDBC interactions and lets you add your own logic
+before or after query execution or method calls.<br>
 The proxy works as a <code>javax.sql.DataSource</code> and takes listeners.
-Pre-defined listeners support query logging, slow query detection, query execution statistics, interaction
-tracing, etc. Also, custom listeners can easily be added to the listener chain.</p>
+Predefined listeners support query logging, slow query detection, query execution statistics, interaction
+tracing, and more. You can also easily add custom listeners to the listener chain.</p>
 </div>
 </div>
 <div class="sect2">
@@ -547,59 +547,61 @@ tracing, etc. Also, custom listeners can easily be added to the listener chain.<
 <dt class="hdlist1">Query and Parameter Logging</dt>
 <dd>
 <div class="paragraph">
-<p>You can log executing database queries and parameters with choice of your logging framework(commons, slf4j,
-java util logging, sysout, or your own).
-Output can be formatted as JSON.</p>
+<p>You can log executed database queries and parameters using your preferred logging framework (Commons Logging,
+SLF4J, Java Util Logging, System.out, or your own implementation).
+The output can be formatted as JSON.</p>
 </div>
 </dd>
-<dt class="hdlist1">Slow Query Detector and Loggers</dt>
+<dt class="hdlist1">Slow Query Detection and Logging</dt>
 <dd>
 <div class="paragraph">
-<p>You can add callbacks for slow queries that take longer than threshold time you specified.
+<p>You can register callbacks for queries that exceed a configured threshold.
 Slow query loggers are available out of the box.</p>
 </div>
 </dd>
 <dt class="hdlist1">Connection ID</dt>
 <dd>
 <div class="paragraph">
-<p>Each connection is assigned unique ID that is a sequentially increasing number in default implementation.
-The connection ID is included in logging entry.</p>
+<p>Each connection is assigned a unique ID, implemented as a sequentially increasing number by default.
+The connection ID is included in the log entry.</p>
 </div>
 </dd>
 <dt class="hdlist1">Query Metrics</dt>
 <dd>
 <div class="paragraph">
-<p>You can collect statistics of executed query such as total time, number of select, insert, update, delete queries, etc.
-Output can be formatted as JSON.</p>
+<p>You can collect statistics for executed queries, such as total time and the number of <code>SELECT</code>, <code>INSERT</code>,
+<code>UPDATE</code>, and <code>DELETE</code> statements.
+The output can be formatted as JSON.</p>
 </div>
 </dd>
-<dt class="hdlist1">Custom Logic Injection for Query Execution and Method Execution</dt>
+<dt class="hdlist1">Custom Logic Injection for Query and Method Execution</dt>
 <dd>
 <div class="paragraph">
-<p>You can write own <code>QueryExecutionListener</code> and they can get called before/after query execution.
-Also, <code>MethodExecutionListener</code> is invoked every interaction with JDBC API internaction.</p>
+<p>You can write your own <code>QueryExecutionListener</code> implementations and have them invoked before or after
+query execution.
+<code>MethodExecutionListener</code> is also invoked for each JDBC API interaction.</p>
 </div>
 </dd>
 <dt class="hdlist1">Web Application Support</dt>
 <dd>
 <div class="paragraph">
 <p><code>ProxyDataSource</code> can be configured via JNDI.
-Query metrics information are available per web request basis(request-response lifecycle).
-For UI with JSP, custom tag to access metrics(<code>&lt;dsp:metrics/&gt;</code>) is available as well.</p>
+Query metrics are available on a per-web-request basis (request-response lifecycle).
+For JSP-based UIs, a custom tag for accessing metrics (<code>&lt;dsp:metrics/&gt;</code>) is also available.</p>
 </div>
 </dd>
-<dt class="hdlist1">Query and parameter replacement</dt>
+<dt class="hdlist1">Query and Parameter Replacement</dt>
 <dd>
 <div class="paragraph">
-<p><code>QueryTransformer</code> and <code>ParameterTransformer</code> allows you to modify executing query and parameters right before
-calling the database.</p>
+<p><code>QueryTransformer</code> and <code>ParameterTransformer</code> allow you to modify the executing query and parameters just
+before they are sent to the database.</p>
 </div>
 </dd>
 <dt class="hdlist1">Method Tracing</dt>
 <dd>
 <div class="paragraph">
-<p>Intercept JDBC API interactions such as getting connection, creating prepared statement, setting parameters,
-executing query, etc.</p>
+<p>Intercept JDBC API interactions such as obtaining a connection, creating prepared statements, setting
+parameters, and executing queries.</p>
 </div>
 </dd>
 </dl>
@@ -608,14 +610,17 @@ executing query, etc.</p>
 <div class="sect2">
 <h3 id="_jakarta_namespace"><a class="anchor" href="#_jakarta_namespace"></a>1.3. Jakarta Namespace</h3>
 <div class="paragraph">
-<p>The <code>javax.sql.*</code> are part of the Java SE APIs. So, they are not affected by the namespace change in the Java EE APIs to Jakarta. For example, the <code>javax.sql.DataSource</code> class will not change its package.</p>
+<p>The <code>javax.sql.*</code> classes are part of the Java SE APIs, so they are not affected by the namespace change in
+Java EE APIs to Jakarta. For example, the <code>javax.sql.DataSource</code> class remains in the <code>javax.sql</code> package.</p>
 </div>
 <div class="paragraph">
-<p>In the datasource-proxy, there are a few usages of the javax namespace in JNDI and query count support by <code>ServletRequestListener</code>.
-They are not frequently used and expected to either be removed or separated in the next major version release.</p>
+<p>In datasource-proxy, there are a few usages of the <code>javax</code> namespace in JNDI and query count support via
+<code>ServletRequestListener</code>.
+These are not used frequently and are expected to be removed or separated in the next major version release.</p>
 </div>
 <div class="paragraph">
-<p>If you require those functionalities in the Jakarta namespace, it is recommended to create your own classes based on the existing classes.</p>
+<p>If you require these features in the Jakarta namespace, it is recommended that you create your own classes
+based on the existing implementations.</p>
 </div>
 </div>
 <div class="sect2">
@@ -646,7 +651,7 @@ Params:[(id=100,name=foo),(id=200,name=bar)]</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json" data-lang="json">{"name":"MyProxy", "connection":1, "time":1, "success":true, "type":"Statement", "batch":false, "querySize":1, "batchSize":0, "query":["CREATE TABLE users(id INT, name VARCHAR(255))"], "params":[]}
-{"name":"MyProxy", "connection":2, "time":0, "success":true, "type":"Prepared", "batch":true, "querySize":1, "batchSize":3, "query":["INSERT INTO users (id, name) VALUES (?, ?)"], "params":[["1","foo"],["2","bar"],[3","baz"]]}</code></pre>
+{"name":"MyProxy", "connection":2, "time":0, "success":true, "type":"Prepared", "batch":true, "querySize":1, "batchSize":3, "query":["INSERT INTO users (id, name) VALUES (?, ?)"], "params":[["1","foo"],["2","bar"],["3","baz"]]}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -664,7 +669,7 @@ Params:[(id=100,name=foo),(id=200,name=bar)]</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Method Tracing:</p>
+<p>Method tracing:</p>
 </div>
 <div class="listingblock">
 <div class="title">Output:</div>
@@ -700,20 +705,20 @@ Params:[(id=100,name=foo),(id=200,name=bar)]</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>There is no dependent library for using <code>datasource-proxy</code>.<br>
-If you choose to use logging support for specific logging library, such as commons or slf4j, you need to specify
-the dependency explicitly.</p>
+<p>There is no required dependency for using <code>datasource-proxy</code>.<br>
+If you choose to use logging support for a specific logging library, such as Commons Logging or SLF4J,
+you need to add that dependency explicitly.</p>
 </div>
 <div class="paragraph">
-<p><code>datasource-proxy</code> does not bring any libraries via transitive dependency.</p>
+<p><code>datasource-proxy</code> does not bring in any libraries via transitive dependencies.</p>
 </div>
 <div class="sect3">
 <h4 id="_snapshot"><a class="anchor" href="#_snapshot"></a>2.1.1. Snapshot</h4>
 <div class="paragraph">
-<p>Snapshot is available via <a href="https://oss.sonatype.org/content/repositories/snapshots/net/ttddyy/datasource-proxy/">oss sonatype snapshot repository</a>.</p>
+<p>Snapshots are available from the <a href="https://oss.sonatype.org/content/repositories/snapshots/net/ttddyy/datasource-proxy/">OSS Sonatype snapshot repository</a>.</p>
 </div>
 <div class="paragraph">
-<p>To download snapshot jars, enable sonatype snapshot repository:</p>
+<p>To download snapshot JARs, enable the Sonatype snapshot repository:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -736,8 +741,8 @@ the dependency explicitly.</p>
 <div class="sect2">
 <h3 id="_supported_java_versions"><a class="anchor" href="#_supported_java_versions"></a>2.2. Supported Java Versions</h3>
 <div class="paragraph">
-<p><code>datasource-proxy</code> works with java 1.6+.<br>
-Java8(<em>JDBC4.2</em>) works fine, and planning to support java9(<em>JDBC 4.3</em>) specific feature.</p>
+<p><code>datasource-proxy</code> works with Java 6 or later.<br>
+Java 8 (<em>JDBC 4.2</em>) works well, and support for Java 9 (<em>JDBC 4.3</em>) specific features is planned.</p>
 </div>
 </div>
 </div>
@@ -746,45 +751,46 @@ Java8(<em>JDBC4.2</em>) works fine, and planning to support java9(<em>JDBC 4.3</
 <h2 id="how-to-use"><a class="anchor" href="#how-to-use"></a>3. How to use</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><code>ProxyDataSource</code> implements <code>javax.sql.DataSource</code>, and works as an entry point for all interceptor logic.
-You can directly instantiate <code>ProxyDataSource</code>, or use builder class <code>ProxyDataSourceBuilder</code> to build it.<br>
-Once <code>ProxyDataSource</code> is setup, you can pass it as a datasource to your application.</p>
+<p><code>ProxyDataSource</code> implements <code>javax.sql.DataSource</code> and serves as the entry point for all interceptor logic.
+You can directly instantiate <code>ProxyDataSource</code>, or use the <code>ProxyDataSourceBuilder</code> builder class to create it.<br>
+Once <code>ProxyDataSource</code> is set up, you can pass it to your application as a datasource.</p>
 </div>
 <div class="sect2">
 <h3 id="creating-proxydatasource"><a class="anchor" href="#creating-proxydatasource"></a>3.1. Creating ProxyDataSource</h3>
 <div class="paragraph">
-<p><code>ProxyDataSourceBuilder</code> provides fluent API to construct <code>ProxyDataSource</code> instance.
-Also, it provides builder methods to register built-in or custom listeners.</p>
+<p><code>ProxyDataSourceBuilder</code> provides a fluent API for constructing a <code>ProxyDataSource</code> instance.
+It also provides builder methods for registering built-in and custom listeners.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">DataSource dataSource =
-    ProxyDataSourceBuilder.create(actualDataSource)  // pass original datasource
+    ProxyDataSourceBuilder.create(actualDataSource)  // pass the original datasource
         .logQueryByCommons(INFO)    // logQueryBySlf4j(), logQueryByJUL(), logQueryToSysOut()
         .loggingFilter(myFilter)    // filter which queries to log
         .countQuery()               // enable query count metrics
-        .logSlowQueryByCommons(10, TimeUnit.MINUTES)  // also by sl4j, jul, system out
+        .logSlowQueryByCommons(10, TimeUnit.MINUTES)  // also by slf4j, jul, system out
         .proxyResultSet()           // enable proxying ResultSet
-        .listener(myListener)       // register my custom listener
+        .listener(myListener)       // register a custom listener
         .afterMethod(executionContext -&gt; {    // register a custom listener with lambda
             ...
         })
-        .build();  // returns ProxyDataSource instance</code></pre>
+        .build();  // returns a ProxyDataSource instance</code></pre>
 </div>
 </div>
 <div class="sect3">
 <h4 id="creating-a-proxied-datasource"><a class="anchor" href="#creating-a-proxied-datasource"></a>3.1.1. Creating a proxied DataSource</h4>
 <div class="paragraph">
-<p>Starting from datasource-proxy v1.10, the newly added <code>buildProxy()</code> method returns a pure <code>DataSource</code> proxy instance.</p>
+<p>Starting from datasource-proxy v1.10, the new <code>buildProxy()</code> method returns a pure <code>DataSource</code> proxy instance.</p>
 </div>
 <div class="paragraph">
-<p>The difference between <code>ProxyDataSource</code> returned by <code>build()</code> and the <code>DataSource</code> proxy returned by <code>buildProxy()</code> is as follows:</p>
+<p>The difference between the <code>ProxyDataSource</code> returned by <code>build()</code> and the <code>DataSource</code> proxy returned by
+<code>buildProxy()</code> is as follows:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
 <p><code>ProxyDataSource</code> is a concrete implementation class.
-This class provides method callback only for the <code>getConnection</code> methods.</p>
+This class provides method callbacks only for the <code>getConnection</code> methods.</p>
 </li>
 <li>
 <p>The <code>DataSource</code> proxy is a pure proxy instance. It provides method callbacks for all methods.</p>
@@ -794,7 +800,7 @@ This class provides method callback only for the <code>getConnection</code> meth
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">DataSource dataSource =
-    ProxyDataSourceBuilder.create(actualDataSource)  // pass original datasource
+    ProxyDataSourceBuilder.create(actualDataSource)  // pass the original datasource
         ...
         .buildProxy();  // returns DataSource</code></pre>
 </div>
@@ -803,7 +809,8 @@ This class provides method callback only for the <code>getConnection</code> meth
 <div class="sect3">
 <h4 id="retrieving-the-original-jdbc-object"><a class="anchor" href="#retrieving-the-original-jdbc-object"></a>3.1.2. Retrieving the original JDBC object</h4>
 <div class="paragraph">
-<p>All proxied JDBC objects implement the <code>ProxyJdbcObject</code> interface, which defines <code>getTarget()</code> to retrieve the original JDBC object.</p>
+<p>All proxied JDBC objects implement the <code>ProxyJdbcObject</code> interface, which defines <code>getTarget()</code> to retrieve
+the original JDBC object.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -817,11 +824,12 @@ This class provides method callback only for the <code>getConnection</code> meth
 <div class="sect3">
 <h4 id="_drivermanager_and_connection_support"><a class="anchor" href="#_drivermanager_and_connection_support"></a>3.1.3. DriverManager and Connection Support</h4>
 <div class="paragraph">
-<p>From instance of <code>java.sql.Connection</code>, you can create a proxy that is same as what <code>ProxyDataSource</code> returns.</p>
+<p>From an instance of <code>java.sql.Connection</code>, you can create a proxy that behaves the same way as the one
+returned by <code>ProxyDataSource</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">// obtain connection
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">// obtain a connection
 Class.forName("org.hsqldb.jdbcDriver");
 Connection realConnection = DriverManager.getConnection("jdbc:hsqldb:mem:aname");
 
@@ -838,9 +846,10 @@ Connection proxyConnection = jdbcProxyFactory.createConnection(realConnection, p
 <div class="sect3">
 <h4 id="_spring_xml_configuration_support"><a class="anchor" href="#_spring_xml_configuration_support"></a>3.1.4. Spring XML Configuration Support</h4>
 <div class="paragraph">
-<p>Since <code>ProxyConfig</code> uses builder style instance creation, it is difficult to directly create
-its bean in XML based spring config. <code>ProxyConfigSpringXmlSupport</code> class provides setters to
-build <code>ProxyConfig</code> aiming to support bean creation in XML based spring config file.</p>
+<p>Because <code>ProxyConfig</code> is created using a builder-style API, it is not straightforward to create its bean in
+an XML-based Spring configuration.
+<code>ProxyConfigSpringXmlSupport</code> provides setters to build a <code>ProxyConfig</code> specifically for use in XML-based
+Spring configuration files.</p>
 </div>
 <div class="listingblock">
 <div class="title">Sample XML config</div>
@@ -849,7 +858,7 @@ build <code>ProxyConfig</code> aiming to support bean creation in XML based spri
   &lt;property name="dataSource" ref="actualDataSource"/&gt;
   &lt;property name="proxyConfig" ref="proxyConfig"/&gt;
   &lt;!--
-    Alternatively, you can use SpEL to invoke create() method to get ProxyConfig bean.
+    Alternatively, you can use SpEL to invoke the create() method to get the ProxyConfig bean.
 
     &lt;property name="proxyConfig" value="#{proxyConfigSupport.create()}"/&gt;
     --&gt;
@@ -899,7 +908,8 @@ build <code>ProxyConfig</code> aiming to support bean creation in XML based spri
 </div>
 </div>
 <div class="paragraph">
-<p>datasource-proxy.jar and your choice of logging library(commons, slf4j, etc) needs to be accessible from container.</p>
+<p>The datasource-proxy JAR and your chosen logging library (Commons, SLF4J, etc.) must be accessible from the
+container.</p>
 </div>
 <table class="tableblock frame-all grid-all spread">
 <caption class="title">Table 1. JNDI Resource parameters</caption>
@@ -916,7 +926,7 @@ build <code>ProxyConfig</code> aiming to support bean creation in XML based spri
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">dataSource <strong>(required)</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Reference to actual datasource resource. ex: java:jdbc/global/myDS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reference to the actual datasource resource, for example: <code>java:jdbc/global/myDS</code></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">proxyName</p></td>
@@ -924,23 +934,23 @@ build <code>ProxyConfig</code> aiming to support bean creation in XML based spri
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">logLevel</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Loglevel for commons-logging or slf4j. ex: DEBUG, INFO, etc.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Log level for Commons Logging or SLF4J, for example: <code>DEBUG</code>, <code>INFO</code>, etc.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">loggerName</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name for logger. (since v1.3.1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Logger name (since v1.3.1)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">listeners</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Fully qualified class name of QueryExecutionListener implementation class,or predefined values below. Can be comma delimited.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fully qualified class name of a <code>QueryExecutionListener</code> implementation, or one of the predefined values below. Can be comma-delimited.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">queryTransformer</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Fully qualified class name of QueryTransformer implementation class.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fully qualified class name of a <code>QueryTransformer</code> implementation.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">parameterTransformer</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Fully qualified class name of ParameterTransformer implementation class.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fully qualified class name of a <code>ParameterTransformer</code> implementation.</p></td>
 </tr>
 </tbody>
 </table>
@@ -959,23 +969,23 @@ build <code>ProxyConfig</code> aiming to support bean creation in XML based spri
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">sysout</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Alias to net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alias to <code>net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener</code></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">commons</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Alias to net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alias to <code>net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener</code></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">slf4j</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Alias to net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alias to <code>net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener</code></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">count</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Alias to net.ttddyy.dsproxy.listener.logging.DataSourceQueryCountListener</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alias to <code>net.ttddyy.dsproxy.listener.logging.DataSourceQueryCountListener</code></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">x.y.z.MyQueryExecutionListener</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Fully qualified class name of QueryExecutionListener implementation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fully qualified class name of a <code>QueryExecutionListener</code> implementation</p></td>
 </tr>
 </tbody>
 </table>
@@ -994,40 +1004,41 @@ build <code>ProxyConfig</code> aiming to support bean creation in XML based spri
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">json</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Set logging output format as JSON</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the logging output format to JSON</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>See Tomcat configuration examples in <a href="https://github.com/ttddyy/datasource-proxy-examples">datasource-proxy-examples</a> project:</p>
+<p>See Tomcat configuration examples in the <a href="https://github.com/ttddyy/datasource-proxy-examples">datasource-proxy-examples</a> project:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://github.com/ttddyy/datasource-proxy-examples/tree/master/jndi-embedded-example">with embedded tomcat</a></p>
+<p><a href="https://github.com/ttddyy/datasource-proxy-examples/tree/master/jndi-embedded-example">with embedded Tomcat</a></p>
 </li>
 <li>
-<p><a href="https://github.com/ttddyy/datasource-proxy-examples/tree/master/jndi-external-example">with external tomcat</a></p>
+<p><a href="https://github.com/ttddyy/datasource-proxy-examples/tree/master/jndi-external-example">with external Tomcat</a></p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Also see <code>ProxyDataSourceObjectFactory</code> javadoc</p>
+<p>Also see the <code>ProxyDataSourceObjectFactory</code> Javadoc.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="generated-keys"><a class="anchor" href="#generated-keys"></a>3.2. Generated Keys</h3>
 <div class="sect3">
-<h4 id="auto-retrieve-generated-keys"><a class="anchor" href="#auto-retrieve-generated-keys"></a>3.2.1. Auto retrieve generated keys</h4>
+<h4 id="auto-retrieve-generated-keys"><a class="anchor" href="#auto-retrieve-generated-keys"></a>3.2.1. Auto-retrieve generated keys</h4>
 <div class="paragraph">
-<p>When 1) generated-keys are available(e.g.: <code>Statement#RETURN_GENERATED_KEYS</code> is specified at execution of statement
-or at creation of prepared/callable statement) and 2) query execution methods(<code>execute</code>, <code>executeUpdate</code>, <code>executeBatch</code>,
-etc) are called, automatically calls <code>getGeneratedKeys()</code> and make the returned <code>ResultSet</code> available via
-<code>ExecutionInfo#getGeneratedKeys()</code> in <code>QueryExecutionListener</code>.</p>
+<p>When 1) generated keys are available (for example, <code>Statement#RETURN_GENERATED_KEYS</code> is specified when a
+statement is executed or when a prepared/callable statement is created) and 2) query execution methods
+(<code>execute</code>, <code>executeUpdate</code>, <code>executeBatch</code>, etc.) are called, datasource-proxy automatically calls
+<code>getGeneratedKeys()</code> and makes the returned <code>ResultSet</code> available via <code>ExecutionInfo#getGeneratedKeys()</code> in
+<code>QueryExecutionListener</code>.</p>
 </div>
 <div class="paragraph">
-<p>To enable auto retrieval of generated-keys:</p>
+<p>To enable auto-retrieval of generated keys:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1043,24 +1054,25 @@ etc) are called, automatically calls <code>getGeneratedKeys()</code> and make th
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-When <code>getGeneratedKeys()</code> is called: <br>
-If there is a cached(auto retrieved) generated-keys and it is still open, then cached <code>ResultSet</code> is returned.
-If there is no cached generated-keys or cached one exists but it is already closed, it will perform the
-actual <code>getGeneratedKeys()</code> on underlying <code>Statement</code> object, keep the result into the cache, then return it.
+When <code>getGeneratedKeys()</code> is called:<br>
+If a cached auto-retrieved generated key result set is still open, it is returned.
+If there is no cached generated key result set, or the cached one has already been closed, datasource-proxy
+performs the actual <code>getGeneratedKeys()</code> call on the underlying <code>Statement</code> object, caches the result, and then
+returns it.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>If you want to <strong>always</strong> retrieve generated-keys without changing application code that may be executing query without
-<code>Statement#RETURN_GENERATED_KEYS</code>, see <a href="#replace-invoking-method-and-parameters">Replace invoking method and parameters</a>.
-You could modify query executions to set <code>RETURN_GENERATED_KEYS</code>.</p>
+<p>If you want to <strong>always</strong> retrieve generated keys without changing application code that may be executing a
+query without <code>Statement#RETURN_GENERATED_KEYS</code>, see <a href="#replace-invoking-method-and-parameters">Replace the invoking method and parameters</a>.
+You can modify query executions to set <code>RETURN_GENERATED_KEYS</code>.</p>
 </div>
 <div class="sect4">
 <h5 id="auto-retrieve-generated-keys-for-batch"><a class="anchor" href="#auto-retrieve-generated-keys-for-batch"></a>For batch execution: <code>executeBatch()</code> and <code>executeLargeBatch()</code></h5>
 <div class="paragraph">
-<p>According to JDBC specification, returning <code>getGeneratedKeys()</code> for <code>executeBatch()</code> and <code>executeLargeBatch()</code> is
-implementation specific:</p>
+<p>According to the JDBC specification, returning <code>getGeneratedKeys()</code> for <code>executeBatch()</code> and
+<code>executeLargeBatch()</code> is implementation-specific:</p>
 </div>
 <div class="quoteblock">
 <blockquote>
@@ -1075,14 +1087,14 @@ executeBatch or executeLargeBatch methods.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>In datasource-proxy, whether to auto-retrieve batch execution is configurable by
+<p>In datasource-proxy, whether to auto-retrieve generated keys for batch execution is configurable through
 <code>ProxyDataSourceBuilder#retrieveGeneratedKeysForBatch()</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">builder
   .autoRetrieveGeneratedKeys(...)
-  .retrieveGeneratedKeysForBatch(false, true)  // first arg is for Statement,
+  .retrieveGeneratedKeysForBatch(false, true)  // first argument is for Statement,
                                                // second is for Prepared/Callable
   .build();</code></pre>
 </div>
@@ -1091,7 +1103,7 @@ executeBatch or executeLargeBatch methods.</p>
 <p>Default behavior for batch executions:</p>
 </div>
 <table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 4. Default behavior for auto retrieving generated keys for batch execution</caption>
+<caption class="title">Table 4. Default behavior for auto retrieval of generated keys during batch execution</caption>
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 80%;">
@@ -1105,21 +1117,21 @@ executeBatch or executeLargeBatch methods.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Statement</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">NOT Retrieve</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Not retrieved</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Prepared/Callable</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Retrieve</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Retrieved</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 <div class="sect3">
-<h4 id="auto-close-generated-keys"><a class="anchor" href="#auto-close-generated-keys"></a>3.2.2. Auto close generated keys</h4>
+<h4 id="auto-close-generated-keys"><a class="anchor" href="#auto-close-generated-keys"></a>3.2.2. Auto-close generated keys</h4>
 <div class="paragraph">
-<p>When auto-close is enabled, close the <a href="#auto-retrieve-generated-keys">auto-retrieved generated-keys</a> after
-all <code>QueryExecutionListener#afterQuery()</code> are performed.</p>
+<p>When auto-close is enabled, the <a href="#auto-retrieve-generated-keys">auto-retrieved generated keys</a> are closed
+after all <code>QueryExecutionListener#afterQuery()</code> callbacks have been processed.</p>
 </div>
 <div class="paragraph">
 <p>This option is used with <a href="#auto-retrieve-generated-keys">auto retrieve generated keys</a> feature.</p>
@@ -1275,7 +1287,7 @@ which you can change via <code>RowSetFactory</code> (please see details on JDK d
 <h2 id="listeners"><a class="anchor" href="#listeners"></a>4. Listeners</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Currently, datasource-proxy provides following listeners:</p>
+<p>Currently, datasource-proxy provides the following listeners:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1293,8 +1305,8 @@ which you can change via <code>RowSetFactory</code> (please see details on JDK d
 <div class="sect2">
 <h3 id="_queryexecutionlistener"><a class="anchor" href="#_queryexecutionlistener"></a>4.1. QueryExecutionListener</h3>
 <div class="paragraph">
-<p><code>QueryExecutionListener</code> is called when query execution methods are invoked.
-(e.g.: <code>execute</code>, <code>executeBatch</code>, <code>executeQuery</code>, etc.)</p>
+<p><code>QueryExecutionListener</code> is called when query execution methods are invoked
+(for example: <code>execute</code>, <code>executeBatch</code>, <code>executeQuery</code>, and so on).</p>
 </div>
 <div class="listingblock">
 <div class="title"><code>QueryExecutionListener</code>:</div>
@@ -1305,15 +1317,15 @@ void afterQuery(ExecutionInfo execInfo, List&lt;QueryInfo&gt; queryInfoList);</c
 </div>
 </div>
 <div class="paragraph">
-<p><code>ExecutionInfo</code> contains contextual information about query execution(statement type, batch, connection id, etc),
-and <code>QueryInfo</code> contains actual query string and parameters.</p>
+<p><code>ExecutionInfo</code> contains contextual information about query execution (statement type, batch, connection ID,
+and so on), and <code>QueryInfo</code> contains the actual query string and parameters.</p>
 </div>
 <div class="paragraph">
-<p>For <code>afterQuery</code> callback, <code>ExecutionInfo</code> contains additional information - result of query, time took to perform
-query, and thrown exception.</p>
+<p>For the <code>afterQuery</code> callback, <code>ExecutionInfo</code> contains additional information: the query result, the time it
+took to execute the query, and any thrown exception.</p>
 </div>
 <div class="paragraph">
-<p>Based on the type of query execution, number of queries and parameters changes.</p>
+<p>The number of queries and parameters depends on the type of query execution.</p>
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
@@ -1365,15 +1377,15 @@ query, and thrown exception.</p>
 <div class="sect2">
 <h3 id="_methodexecutionlistener"><a class="anchor" href="#_methodexecutionlistener"></a>4.2. MethodExecutionListener</h3>
 <div class="paragraph">
-<p><code>MethodExecutionListener</code> intercepts JDBC API calls on followings:</p>
+<p><code>MethodExecutionListener</code> intercepts JDBC API calls for the following types:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>Connection</code>, <code>Statement</code>, <code>PreparedStatement</code>, <code>CallableStatement</code>: All methods</p>
+<p><code>Connection</code>, <code>Statement</code>, <code>PreparedStatement</code>, and <code>CallableStatement</code>: all methods</p>
 </li>
 <li>
-<p><code>ResultSet</code>: All methods when result set proxy is enabled.</p>
+<p><code>ResultSet</code>: all methods when the result set proxy is enabled</p>
 </li>
 <li>
 <p><code>ProxyDataSource</code>: <code>getConnection()</code> method</p>
@@ -1381,21 +1393,23 @@ query, and thrown exception.</p>
 </ul>
 </div>
 <div class="sect3">
-<h4 id="replace-invoking-method-and-parameters"><a class="anchor" href="#replace-invoking-method-and-parameters"></a>4.2.1. Replace invoking method and parameters</h4>
+<h4 id="replace-invoking-method-and-parameters"><a class="anchor" href="#replace-invoking-method-and-parameters"></a>4.2.1. Replace the invoking method and parameters</h4>
 <div class="paragraph">
-<p>In <code>MethodExecutionListener#beforeMethod()</code>, you could change the invoking method and its parameters on target JDBC object.</p>
+<p>In <code>MethodExecutionListener#beforeMethod()</code>, you can change the invoking method and its parameters on the
+target JDBC object.</p>
 </div>
 <div class="paragraph">
-<p>For example, in application code, it calls <code>Statement#execute(String)</code>. However, in order to leverage
-<a href="#generated-keys">generated-keys retrieval</a>, you may want to call <code>Statement#execute(String,int)</code> instead without
-changing application code.</p>
+<p>For example, in application code, it may call <code>Statement#execute(String)</code>. However, to leverage
+<a href="#generated-keys">generated-keys retrieval</a>, you may want to call <code>Statement#execute(String, int)</code> instead
+without changing application code.</p>
 </div>
 <div class="paragraph">
-<p>To update/replace method and parameters, you could set new method or parameters via <code>MethodExecutionContext#setMethod()</code>
- and <code>MethodExecutionContext#setMethodArgs()</code> in <code>MethodExecutionListener#beforeMethod()</code>.</p>
+<p>To update or replace the method and parameters, set the new method or arguments via
+<code>MethodExecutionContext#setMethod()</code> and <code>MethodExecutionContext#setMethodArgs()</code> inside
+<code>MethodExecutionListener#beforeMethod()</code>.</p>
 </div>
 <div class="paragraph">
-<p>For above example use case:</p>
+<p>For the above use case:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1405,14 +1419,14 @@ private static final Method EXECUTE_WITH_INT_METHOD = Statement.class.getMethod(
 @Override
 public void beforeMethod(MethodExecutionContext executionContext) {
 
-  // replace "Statement#execute(sql)" to "Statement#execute(sql, RETURN_GENERATED_KEYS)"
-  if(EXECUTE_METHOD.equals(executionContext.getMethod())) {
+  // replace "Statement#execute(sql)" with "Statement#execute(sql, RETURN_GENERATED_KEYS)"
+  if (EXECUTE_METHOD.equals(executionContext.getMethod())) {
 
-    Object[] orgArgs = executionContext.getMethodArgs();
-    Object[] newArgs = new Object[]{orgArgs[0], Statement.RETURN_GENERATED_KEYS};
+    Object[] originalArgs = executionContext.getMethodArgs();
+    Object[] newArgs = new Object[]{originalArgs[0], Statement.RETURN_GENERATED_KEYS};
 
     executionContext.setMethod(EXECUTE_WITH_INT_METHOD);  // new method
-    executionContext.setMethodArgs(newArgs);  // new method params
+    executionContext.setMethodArgs(newArgs);  // new method parameters
   }
 
 }</code></pre>
@@ -1423,14 +1437,14 @@ public void beforeMethod(MethodExecutionContext executionContext) {
 <div class="sect2">
 <h3 id="jdbclifecycleeventlistener"><a class="anchor" href="#jdbclifecycleeventlistener"></a>4.3. JdbcLifecycleEventListener</h3>
 <div class="paragraph">
-<p><code>JdbcLifecycleEventListener</code> interface defines before/after method callbacks for all of JDBC interfaces that
-datasource-proxy make proxies(<code>DataSource</code>, <code>Connection</code>, <code>Statement</code>, <code>PreparedStatement</code>, <code>CallableStatement</code>,
-and <code>ResultSet</code>). Also, this interface defines before/after execution of all method invocations and query executions,
+<p>The <code>JdbcLifecycleEventListener</code> interface defines before/after method callbacks for all JDBC interfaces that
+datasource-proxy proxies (<code>DataSource</code>, <code>Connection</code>, <code>Statement</code>, <code>PreparedStatement</code>, <code>CallableStatement</code>,
+and <code>ResultSet</code>). It also defines before/after callbacks for method invocations and query executions,
 analogous to <code>MethodExecutionListener</code> and <code>QueryExecutionListener</code>.</p>
 </div>
 <div class="paragraph">
-<p>To implement your listener, <code>JdbcLifecycleEventListenerAdapter</code> class, which implements all
-interface methods with no-op, can be extended, and selectively overrides any callback methods you have interests.</p>
+<p>To implement your listener, you can extend <code>JdbcLifecycleEventListenerAdapter</code>, which implements all
+interface methods with no-op implementations and lets you selectively override the callbacks you care about.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1439,12 +1453,12 @@ interface methods with no-op, can be extended, and selectively overrides any cal
     .listener(new JdbcLifecycleEventListenerAdapter() {
       @Override
       public void beforeGetConnection(MethodExecutionContext executionContext) {
-        // impl for before DataSource#getConnection();
+        // implement the logic before DataSource#getConnection();
       }
 
       @Override
       public void afterRollback(MethodExecutionContext executionContext) {
-        // impl for after Connection#rollback();
+        // implement the logic after Connection#rollback();
       }
     })
     .build();</code></pre>
@@ -1453,15 +1467,15 @@ interface methods with no-op, can be extended, and selectively overrides any cal
 <div class="sect3">
 <h4 id="jdbclifecycleeventlistener-overloaded-methods"><a class="anchor" href="#jdbclifecycleeventlistener-overloaded-methods"></a>4.3.1. Overloaded methods</h4>
 <div class="paragraph">
-<p>Since JDBC API classes are hierarchical (e.g.: <code>PreparedStatement</code> extends <code>Statement</code>) some
-of the methods are overloaded. For example, <code>PreparedStatement#execute</code> method is overloading <code>Statement#execute</code>. Another example is
-<code>PreparedStatement#setInt</code> and <code>CallableStatement#setInt</code>.</p>
+<p>Because JDBC API classes are hierarchical (for example, <code>PreparedStatement</code> extends <code>Statement</code>), some
+methods are overloaded. For example, <code>PreparedStatement#execute</code> overloads <code>Statement#execute</code>, and
+<code>PreparedStatement#setInt</code> and <code>CallableStatement#setInt</code> are both overloaded forms.</p>
 </div>
 <div class="paragraph">
-<p><code>JdbcLifecycleEventListener</code> methods are called back by comparing the invoked method name.
-Therefore, in this example, <code>[before|after]Execute</code> and <code>[before|after]setInt</code> will be called.
-If you need to know exactly which of the method is called, you could check the invoked instance, method,
-or passed arguments to diagnose the actual invoked method when it is overloaded.</p>
+<p><code>JdbcLifecycleEventListener</code> callbacks are invoked by comparing the invoked method name.
+Therefore, in this example, <code>[before|after]Execute</code> and <code>[before|after]setInt</code> are called.
+If you need to know exactly which overload was invoked, check the invoked instance, method, or arguments to
+identify the actual method that was called.</p>
 </div>
 </div>
 </div>
@@ -1473,8 +1487,8 @@ or passed arguments to diagnose the actual invoked method when it is overloaded.
 <div class="sect2">
 <h3 id="query-logging-listener"><a class="anchor" href="#query-logging-listener"></a>5.1. Query Logging Listener</h3>
 <div class="paragraph">
-<p>Query logging listener is the most used listener that logs executing query with actual parameters
-to commons/slf4j/JUL logger or System.out.</p>
+<p>The query logging listener is the most commonly used listener. It logs executed queries and their actual
+parameters to Commons Logging, SLF4J, JUL, or <code>System.out</code>.</p>
 </div>
 <div class="paragraph">
 <p><strong>Sample output</strong></p>
@@ -1507,31 +1521,31 @@ Name:MyProxy, Connection:2, Time:5, Success:True, Type:Prepared, Batch:True, Que
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Time</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">How long query took to execute in ms.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">How long the query took to execute, in milliseconds</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Success</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Query execution was successful or not.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether the query execution succeeded</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Type</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Type of statement (<em>Statement/Prepared/Callable</em>).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Type of statement (<em>Statement/Prepared/Callable</em>)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Batch</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Batch execution.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Batch execution</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">QuerySize</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of queries.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of queries</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">BatchSize</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of batch.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of batch operations</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Query</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Query</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The query text</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Params</p></td>
@@ -1540,12 +1554,12 @@ Name:MyProxy, Connection:2, Time:5, Success:True, Type:Prepared, Batch:True, Que
 </tbody>
 </table>
 <div class="paragraph">
-<p><code>ProxyDataSourceBuilder</code> provides methods to easily configure and register these listeners.</p>
+<p><code>ProxyDataSourceBuilder</code> provides methods for easily configuring and registering these listeners.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">builder
-  .logQueryByCommons()   // log using Commons
+  .logQueryByCommons()   // log using Commons Logging
   .logQueryBySlf4j()     // log using SLF4J
   .logQueryByJUL()       // log using Java Util Logging
   .logQueryToSysOut()    // log using System.out
@@ -1561,20 +1575,21 @@ Name:MyProxy, Connection:2, Time:5, Success:True, Type:Prepared, Batch:True, Que
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-If you choose to use commons or slf4j loggers, you need to add dependency to your project accordingly.
+If you choose to use Commons Logging or SLF4J, add the corresponding dependency to your project.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>By default, each log entry is printed to single line. If <code>multiline()</code> option is set, it prints out
-a log over multiple lines. Also, <code>json()</code> option prints out log in json format.</p>
+<p>By default, each log entry is printed on a single line. If the <code>multiline()</code> option is set, the log is written
+across multiple lines. Likewise, the <code>json()</code> option prints the output in JSON format.</p>
 </div>
 <div class="paragraph">
-<p>Here is another example printing multiline log with formatting query with formatter from Hibernate.</p>
+<p>Here is another example of a multiline log that formats the query using Hibernate formatting.</p>
 </div>
 <div class="paragraph">
-<p>The datasource-proxy <code>v1.9</code> added <code>formatQuery()</code> method on <code>ProxyDataSourceBuilder</code> which you can specify a callback to modify the query for logging.</p>
+<p>Datasource-proxy v1.9 added the <code>formatQuery()</code> method on <code>ProxyDataSourceBuilder</code>, which lets you specify a
+callback to modify the query before logging.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1594,15 +1609,15 @@ DataSource ds = ProxyDataSourceBuilder
 QueryLogEntryCreator logEntryCreator = new DefaultQueryLogEntryCreator() {
   @Override
   protected String formatQuery(String query) {
-    return FormatStyle.BASIC.getFormatter().format(query);  // use Hibernte formatter
+    return FormatStyle.BASIC.getFormatter().format(query);  // use Hibernate formatter
   }
 };
 
-creator.setMultiline(true);  // enable multiline output
+logEntryCreator.setMultiline(true);  // enable multiline output
 
-// print out to system.out
+// print to System.out
 SystemOutQueryLoggingListener listener = new SystemOutQueryLoggingListener();
-listener.setQueryLogEntryCreator(creator);
+listener.setQueryLogEntryCreator(logEntryCreator);
 
 return ProxyDataSourceBuilder
             .create(actualDataSource)
@@ -1617,25 +1632,100 @@ return ProxyDataSourceBuilder
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">builder
   .logQueryBySlf4j()
-  // Only log queries that are not to the 'audit' table
+  // Only log queries that are not sent to the 'audit' table
   .loggingFilter((execInfo, queryInfoList) -&gt;
     queryInfoList.stream().noneMatch(q -&gt; q.getQuery().contains("audit"))
   )</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If no filter is set, all queries are logged (default behavior).</p>
+<p>If no filter is set, all queries are logged by default.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_slow_query_logging_listener"><a class="anchor" href="#_slow_query_logging_listener"></a>5.2. Slow Query Logging Listener</h3>
 <div class="paragraph">
-<p>When query takes more than specified threshold, <code>SlowQueryListener</code> executes a callback method.
+<p>There are two approaches to detecting slow queries:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">During execution</dt>
+<dd>
+<p>Detect slow queries <strong>while</strong> they are running.
+A scheduled check fires once the query has run longer than the configured threshold, even if the query has not
+finished yet. <code>SlowQueryListener</code> uses this approach.
+This approach is sometimes called <em>preemptive</em>; however, it only notifies you about the query.
+The running query is NOT interrupted or canceled.</p>
+</dd>
+<dt class="hdlist1">After execution</dt>
+<dd>
+<p>Detect slow queries <strong>after</strong> they have finished.
+The <code>afterQuery</code> callback compares the query&#8217;s elapsed time with the threshold.
+This is a simple approach that can be implemented with any <code>QueryExecutionListener</code>.
+This approach is sometimes called <em>non-preemptive</em>.</p>
+</dd>
+</dl>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"></th>
+<th class="tableblock halign-left valign-top">During execution (<code>SlowQueryListener</code>)</th>
+<th class="tableblock halign-left valign-top">After execution (<code>afterQuery</code> callback)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">When it is triggered</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">When the threshold has passed while the query is still running</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">After the query has finished</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Elapsed time in <code>ExecutionInfo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Time at the moment of the check (approximately the threshold time)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Actual query execution time</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Query result, success/failure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Not available</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Available</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Thread that runs the callback</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Thread of the scheduled executor in <code>SlowQueryListener</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Thread that executed the query</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Queries that hang or never return</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Detected</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Not detected</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Overhead</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Schedules a check for each query execution</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compares elapsed time</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Both approaches can be used together.
+For example, use <code>SlowQueryListener</code> to get an early notice of long-running queries and use an
+<code>afterQuery</code> callback to record their actual execution time.</p>
+</div>
+<div class="sect3">
+<h4 id="slow-query-during-execution"><a class="anchor" href="#slow-query-during-execution"></a>5.2.1. During execution</h4>
+<div class="paragraph">
+<p>When a query takes longer than the configured threshold, <code>SlowQueryListener</code> invokes a callback method.
 The callback is invoked only once for the target query if it exceeds the threshold time.</p>
 </div>
 <div class="paragraph">
-<p>Combining logging and slow query detection, following built-in classes writes out slow query
-to its corresponding logger.</p>
+<p>Combining logging and slow query detection, the following built-in classes write slow query entries to their
+corresponding loggers:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1654,15 +1744,15 @@ to its corresponding logger.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p><code>ProxyDataSourceBuilder</code> provides methods to configure those listeners.</p>
+<p><code>ProxyDataSourceBuilder</code> provides methods for configuring these listeners.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">builder
-  .logSlowQueryByCommons(1, TimeUnit.SECONDS)   // log slow query using Commons
-  .logSlowQueryBySlf4j(1, TimeUnit.SECONDS)     // log slow query using Slf4J
-  .logSlowQueryByJUL(1, TimeUnit.SECONDS)       // log slow query using Java Util Logging
-  .logSlowQueryToSysOut(1, TimeUnit.SECONDS)    // log slow query using System.out
+  .logSlowQueryByCommons(1, TimeUnit.SECONDS)   // log slow queries using Commons Logging
+  .logSlowQueryBySlf4j(1, TimeUnit.SECONDS)     // log slow queries using SLF4J
+  .logSlowQueryByJUL(1, TimeUnit.SECONDS)       // log slow queries using Java Util Logging
+  .logSlowQueryToSysOut(1, TimeUnit.SECONDS)    // log slow queries using System.out
 
   .multiline()           // enable multiline output
   .build();</code></pre>
@@ -1677,20 +1767,31 @@ to its corresponding logger.</p>
 <td class="content">
 <div class="title">Elapsed Time</div>
 <div class="paragraph">
-<p><code>SlowQueryListener</code> triggers callback when query execution exceeds specified threshold time.</p>
+<p><code>SlowQueryListener</code> triggers its callback when query execution exceeds the configured threshold.</p>
 </div>
 <div class="paragraph">
-<p>For example, when 1 min is set to the threshold in a slow query logging listener and a query takes 5 min to run,
-it will log the query when 1 min has passed while the query is still running.<br>
-This is expected behavior; however, elapsed time in ExecutionInfo is not populated because it is still executing
-the query.</p>
+<p>For example, if the threshold is set to 1 minute and a query takes 5 minutes to complete, the query is logged
+when 1 minute has passed while the query is still running.<br>
+This is expected behavior. Because the query is still executing, the elapsed time in <code>ExecutionInfo</code> is the time
+at the moment of the check (about 1 minute in this example), not the actual execution time of the query (5 minutes).</p>
 </div>
 <div class="paragraph">
-<p>To log queries that have passed threshold with elapsed time populated, you can customize existing
-<a href="#query-logging-listener">Query Logging Listener</a> instead of <code>SlowQueryListener</code>.</p>
+<p>To log slow queries with their actual execution time, use the <a href="#slow-query-after-execution">after execution</a>
+approach.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="slow-query-after-execution"><a class="anchor" href="#slow-query-after-execution"></a>5.2.2. After execution</h4>
+<div class="paragraph">
+<p>To log queries that exceeded the threshold with their actual execution time, you can customize the existing
+<a href="#query-logging-listener">Query Logging Listener</a> implementation instead of using <code>SlowQueryListener</code>.</p>
 </div>
 <div class="paragraph">
-<p>Here is sample implementation with SLF4JQueryLoggingListener:</p>
+<p>Here is a sample implementation using <code>SLF4JQueryLoggingListener</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1698,7 +1799,7 @@ the query.</p>
 SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener() {
   @Override
   public void afterQuery(ExecutionInfo execInfo, List&lt;QueryInfo&gt; queryInfoList) {
-    // call query logging logic only when it took more than threshold
+    // call query logging logic only when it took more than the threshold
     if (thresholdInMills &lt;= execInfo.getElapsedTime()) {
       super.afterQuery(execInfo, queryInfoList);
     }
@@ -1709,34 +1810,47 @@ listener.setLogLevel(SLF4JLogLevel.WARN);</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This implementation will log queries that took longer than specified threshold <em>AFTER</em> query execution has finished.
-So that, query execution time is populated.</p>
+<p>This implementation logs queries that took longer than the configured threshold <em>AFTER</em> the query execution
+has finished, so the actual query execution time is available.</p>
 </div>
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>To perform other actions for slow queries, such as recording metrics or sending notifications, register an
+<code>afterQuery</code> callback with <code>ProxyDataSourceBuilder</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">long thresholdInMills = ...
+builder
+  .afterQuery((execInfo, queryInfoList) -&gt; {
+    if (thresholdInMills &lt;= execInfo.getElapsedTime()) {
+      // slow query: log, record metrics, send notification, etc.
+    }
+  })
+  .build();</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_query_count_listener"><a class="anchor" href="#_query_count_listener"></a>5.3. Query Count Listener</h3>
 <div class="paragraph">
-<p><code>DataSourceQueryCountListener</code> collects statistics of executed queries, such as number of query types(select, insert,
-update, delete), statement types(statement, prepared, callable), etc.
-This class also takes strategy to store such metrics. Default strategy stores metrics in thread-local expecting
-metrics get reset at the end of the request-response lifecycle.
-Another strategy is <code>SingleQueryCountHolder</code>. This accumulates query metrics from all threads until explicitly
-clear the metrics.</p>
+<p><code>DataSourceQueryCountListener</code> collects statistics for executed queries, such as the number of query types
+(<code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>), statement types (<code>Statement</code>, <code>Prepared</code>, <code>Callable</code>), and more.
+This class also accepts a strategy for storing such metrics. The default strategy stores metrics in a
+thread-local value, which is expected to be reset at the end of the request-response lifecycle.
+Another strategy is <code>SingleQueryCountHolder</code>, which accumulates query metrics from all threads until the metrics
+are explicitly cleared.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">builder.
   .countQuery()    // enable collecting query metrics
-//  .countQuery(new SingleQueryCountHolder())  // enable and specify query count holder
+//  .countQuery(new SingleQueryCountHolder())  // enable and specify a query count holder
   .build();</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Stored metrics can be retrieved by following static method.</p>
+<p>Stored metrics can be retrieved by the following static method.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2070,10 +2184,10 @@ conn.close();</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>log all queries to System.out as JSON</p>
+<p>Log all queries to <code>System.out</code> as JSON</p>
 </li>
 <li>
-<p>log query metrics to commons logger at the end of each http request using servlet-filter</p>
+<p>Log query metrics to the Commons Logging logger at the end of each HTTP request using a servlet filter</p>
 </li>
 </ul>
 </div>
@@ -2081,7 +2195,7 @@ conn.close();</code></pre>
 <div class="sect2">
 <h3 id="_pom_xml"><a class="anchor" href="#_pom_xml"></a>6.2. pom.xml</h3>
 <div class="paragraph">
-<p>Install <code>datasource-proxy</code> and <code>commons-logging</code> since we chose to use commons logger for query metrics.</p>
+<p>Install <code>datasource-proxy</code> and <code>commons-logging</code> because this example uses Commons Logging for query metrics.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2102,14 +2216,14 @@ conn.close();</code></pre>
 <div class="sect2">
 <h3 id="_web_xml"><a class="anchor" href="#_web_xml"></a>6.3. web.xml</h3>
 <div class="paragraph">
-<p>Add <code>CommonsQueryCountLoggingServletFilter</code> for query metrics</p>
+<p>Add <code>CommonsQueryCountLoggingServletFilter</code> for query metrics.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">  &lt;filter&gt;
     &lt;filter-name&gt;queryCountFilter&lt;/filter-name&gt;
     &lt;filter-class&gt;net.ttddyy.dsproxy.support.CommonsQueryCountLoggingServletFilter&lt;/filter-class&gt;
-    &lt;!-- Default to DEBUG level, use "logLevel" filter param to change the log level --&gt;
+    &lt;!-- Default to DEBUG level. Use the "logLevel" filter parameter to change the log level. --&gt;
   &lt;/filter&gt;
 
   &lt;filter-mapping&gt;
@@ -2122,20 +2236,20 @@ conn.close();</code></pre>
 <div class="sect2">
 <h3 id="_datasource"><a class="anchor" href="#_datasource"></a>6.4. DataSource</h3>
 <div class="paragraph">
-<p>Create a proxy datasource that performs:</p>
+<p>Create a proxy datasource that performs the following actions:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>log query execution to System.out as json</p>
+<p>Log query execution to <code>System.out</code> as JSON</p>
 </li>
 <li>
-<p>collect query metrics</p>
+<p>Collect query metrics</p>
 </li>
 </ul>
 </div>
 <div class="listingblock">
-<div class="title">Java based:</div>
+<div class="title">Java-based example:</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">@Bean
 public DataSource dataSource(DataSource actualDataSource) {
@@ -2150,7 +2264,7 @@ public DataSource dataSource(DataSource actualDataSource) {
 </div>
 </div>
 <div class="listingblock">
-<div class="title">XML based(applicationContext.xml)</div>
+<div class="title">XML-based example (<code>applicationContext.xml</code>):</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;bean id="dataSource" primary="true" class="net.ttddyy.dsproxy.support.ProxyDataSource"&gt;
   &lt;property name="dataSource" ref="actualDataSource"/&gt;
@@ -2180,7 +2294,7 @@ public DataSource dataSource(DataSource actualDataSource) {
 <div class="sect2">
 <h3 id="_controller"><a class="anchor" href="#_controller"></a>6.5. Controller</h3>
 <div class="paragraph">
-<p>Write a simple controller that returns query metrics info as json. (using spring-boot)</p>
+<p>Write a simple controller that returns query metrics as JSON using Spring Boot.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2197,23 +2311,23 @@ public class MyController {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_taglib_optional"><a class="anchor" href="#_taglib_optional"></a>6.6. taglib (optional)</h3>
+<h3 id="_taglib_optional"><a class="anchor" href="#_taglib_optional"></a>6.6. Taglib (optional)</h3>
 <div class="paragraph">
-<p>Display query metrics on jsp.</p>
+<p>Display query metrics in a JSP page.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-jsp" data-lang="jsp">&lt;%@ taglib prefix="dsp" uri="http://www.ttddyy.net/dsproxy/tags" %&gt;
 
 &lt;dsp:metrics metric="select"/&gt;  - Select
-&lt;dsp:metrics metric="update" dataSource="FOO" /&gt;  - Num of update queries for datasource FOO
-&lt;dsp:metrics metric="total"/&gt;  - Total Queries
-&lt;dsp:metrics metric="time"/&gt;  - Total TIme</code></pre>
+&lt;dsp:metrics metric="update" dataSource="FOO" /&gt;  - Number of update queries for datasource FOO
+&lt;dsp:metrics metric="total"/&gt;  - Total queries
+&lt;dsp:metrics metric="time"/&gt;  - Total time</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_accessing_application"><a class="anchor" href="#_accessing_application"></a>6.7. Accessing application</h3>
+<h3 id="_accessing_the_application"><a class="anchor" href="#_accessing_the_application"></a>6.7. Accessing the application</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-sh" data-lang="sh">&gt; curl http://localhost:8080
@@ -2224,7 +2338,7 @@ public class MyController {
 <div class="sect2">
 <h3 id="_more_examples"><a class="anchor" href="#_more_examples"></a>6.8. More examples</h3>
 <div class="paragraph">
-<p>See more examples in <a href="https://github.com/ttddyy/datasource-proxy-examples">datasource-proxy-examples</a> project.</p>
+<p>See more examples in the <a href="https://github.com/ttddyy/datasource-proxy-examples">datasource-proxy-examples</a> project.</p>
 </div>
 </div>
 </div>
@@ -2233,12 +2347,12 @@ public class MyController {
 <h2 id="development"><a class="anchor" href="#development"></a>7. Development</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Github repository: <a href="https://github.com/jdbc-observations/datasource-proxy" class="bare">https://github.com/jdbc-observations/datasource-proxy</a></p>
+<p>GitHub repository: <a href="https://github.com/jdbc-observations/datasource-proxy" class="bare">https://github.com/jdbc-observations/datasource-proxy</a></p>
 </div>
 <div class="sect2">
 <h3 id="_build_documentation"><a class="anchor" href="#_build_documentation"></a>7.1. Build Documentation</h3>
 <div class="paragraph">
-<p>Generate <code>index.html</code></p>
+<p>Generate <code>index.html</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2246,7 +2360,7 @@ public class MyController {
 </div>
 </div>
 <div class="paragraph">
-<p>Http preview</p>
+<p>HTTP preview:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2665,10 +2779,10 @@ See details on <a href="#repeatable-read-resultset-with-cachedrowsetresultsetpro
 <ul>
 <li>
 <p>Method and parameter replacement in <code>MethodExecutionListener</code>. <br>
-See details on <a href="#replace-invoking-method-and-parameters">Replace invoking method and parameters</a>.</p>
+See details on <a href="#replace-invoking-method-and-parameters">Replace the invoking method and parameters</a>.</p>
 </li>
 <li>
-<p>Updated <a href="#auto-retrieve-generated-keys">Auto retrieve generated keys</a> feature. Auto-retrieval is now only called when key-generation is specified. <br>
+<p>Updated <a href="#auto-retrieve-generated-keys">Auto-retrieve generated keys</a> feature. Auto-retrieval is now only called when key-generation is specified. <br>
 Following methods specify key-generation:</p>
 <div class="ulist">
 <ul>
