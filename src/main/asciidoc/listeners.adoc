@@ -1,7 +1,7 @@
 [[listeners]]
 == Listeners
 
-Currently, datasource-proxy provides following listeners:
+Currently, datasource-proxy provides the following listeners:
 
 - `QueryExecutionListener`
 - `MethodExecutionListener`
@@ -10,8 +10,8 @@ Currently, datasource-proxy provides following listeners:
 
 === QueryExecutionListener
 
-`QueryExecutionListener` is called when query execution methods are invoked.
-(e.g.: `execute`, `executeBatch`, `executeQuery`, etc.)
+`QueryExecutionListener` is called when query execution methods are invoked
+(for example: `execute`, `executeBatch`, `executeQuery`, and so on).
 
 
 .`QueryExecutionListener`:
@@ -21,13 +21,13 @@ void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList);
 void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList);
 ```
 
-`ExecutionInfo` contains contextual information about query execution(statement type, batch, connection id, etc),
-and `QueryInfo` contains actual query string and parameters.
+`ExecutionInfo` contains contextual information about query execution (statement type, batch, connection ID,
+and so on), and `QueryInfo` contains the actual query string and parameters.
 
-For `afterQuery` callback, `ExecutionInfo` contains additional information - result of query, time took to perform
-query, and thrown exception.
+For the `afterQuery` callback, `ExecutionInfo` contains additional information: the query result, the time it
+took to execute the query, and any thrown exception.
 
-Based on the type of query execution, number of queries and parameters changes.
+The number of queries and parameters depends on the type of query execution.
 
 |===
 | Execution Type            | # of Query | # of Query Parameters
@@ -44,27 +44,29 @@ Based on the type of query execution, number of queries and parameters changes.
 
 === MethodExecutionListener
 
-`MethodExecutionListener` intercepts JDBC API calls on followings:
+`MethodExecutionListener` intercepts JDBC API calls for the following types:
 
-- `Connection`, `Statement`, `PreparedStatement`, `CallableStatement`: All methods
-- `ResultSet`: All methods when result set proxy is enabled.
+- `Connection`, `Statement`, `PreparedStatement`, and `CallableStatement`: all methods
+- `ResultSet`: all methods when the result set proxy is enabled
 - `ProxyDataSource`: `getConnection()` method
 
 
 [[replace-invoking-method-and-parameters]]
-==== Replace invoking method and parameters
+==== Replace the invoking method and parameters
 
-In `MethodExecutionListener#beforeMethod()`, you could change the invoking method and its parameters on target JDBC object.
+In `MethodExecutionListener#beforeMethod()`, you can change the invoking method and its parameters on the
+target JDBC object.
 
-For example, in application code, it calls `Statement#execute(String)`. However, in order to leverage
-<<generated-keys,generated-keys retrieval>>, you may want to call `Statement#execute(String,int)` instead without
-changing application code.
+For example, in application code, it may call `Statement#execute(String)`. However, to leverage
+<<generated-keys,generated-keys retrieval>>, you may want to call `Statement#execute(String, int)` instead
+without changing application code.
 
-To update/replace method and parameters, you could set new method or parameters via `MethodExecutionContext#setMethod()`
- and `MethodExecutionContext#setMethodArgs()` in `MethodExecutionListener#beforeMethod()`.
+To update or replace the method and parameters, set the new method or arguments via
+`MethodExecutionContext#setMethod()` and `MethodExecutionContext#setMethodArgs()` inside
+`MethodExecutionListener#beforeMethod()`.
 
 
-For above example use case:
+For the above use case:
 
 ```java
 private static final Method EXECUTE_METHOD = Statement.class.getMethod("execute", String.class);
@@ -73,14 +75,14 @@ private static final Method EXECUTE_WITH_INT_METHOD = Statement.class.getMethod(
 @Override
 public void beforeMethod(MethodExecutionContext executionContext) {
 
-  // replace "Statement#execute(sql)" to "Statement#execute(sql, RETURN_GENERATED_KEYS)"
-  if(EXECUTE_METHOD.equals(executionContext.getMethod())) {
+  // replace "Statement#execute(sql)" with "Statement#execute(sql, RETURN_GENERATED_KEYS)"
+  if (EXECUTE_METHOD.equals(executionContext.getMethod())) {
 
-    Object[] orgArgs = executionContext.getMethodArgs();
-    Object[] newArgs = new Object[]{orgArgs[0], Statement.RETURN_GENERATED_KEYS};
+    Object[] originalArgs = executionContext.getMethodArgs();
+    Object[] newArgs = new Object[]{originalArgs[0], Statement.RETURN_GENERATED_KEYS};
 
     executionContext.setMethod(EXECUTE_WITH_INT_METHOD);  // new method
-    executionContext.setMethodArgs(newArgs);  // new method params
+    executionContext.setMethodArgs(newArgs);  // new method parameters
   }
 
 }
@@ -90,14 +92,14 @@ public void beforeMethod(MethodExecutionContext executionContext) {
 [[jdbclifecycleeventlistener]]
 === JdbcLifecycleEventListener
 
-`JdbcLifecycleEventListener` interface defines before/after method callbacks for all of JDBC interfaces that
-datasource-proxy make proxies(`DataSource`, `Connection`, `Statement`, `PreparedStatement`, `CallableStatement`,
-and `ResultSet`). Also, this interface defines before/after execution of all method invocations and query executions,
+The `JdbcLifecycleEventListener` interface defines before/after method callbacks for all JDBC interfaces that
+datasource-proxy proxies (`DataSource`, `Connection`, `Statement`, `PreparedStatement`, `CallableStatement`,
+and `ResultSet`). It also defines before/after callbacks for method invocations and query executions,
 analogous to `MethodExecutionListener` and `QueryExecutionListener`.
 
 
-To implement your listener, `JdbcLifecycleEventListenerAdapter` class, which implements all
-interface methods with no-op, can be extended, and selectively overrides any callback methods you have interests.
+To implement your listener, you can extend `JdbcLifecycleEventListenerAdapter`, which implements all
+interface methods with no-op implementations and lets you selectively override the callbacks you care about.
 
 ```java
 DataSource dataSource =
@@ -105,12 +107,12 @@ DataSource dataSource =
     .listener(new JdbcLifecycleEventListenerAdapter() {
       @Override
       public void beforeGetConnection(MethodExecutionContext executionContext) {
-        // impl for before DataSource#getConnection();
+        // implement the logic before DataSource#getConnection();
       }
 
       @Override
       public void afterRollback(MethodExecutionContext executionContext) {
-        // impl for after Connection#rollback();
+        // implement the logic after Connection#rollback();
       }
     })
     .build();
@@ -120,12 +122,12 @@ DataSource dataSource =
 [[jdbclifecycleeventlistener-overloaded-methods]]
 ==== Overloaded methods
 
-Since JDBC API classes are hierarchical (e.g.: `PreparedStatement` extends `Statement`) some
-of the methods are overloaded. For example, `PreparedStatement#execute` method is overloading `Statement#execute`. Another example is
-`PreparedStatement#setInt` and `CallableStatement#setInt`.
+Because JDBC API classes are hierarchical (for example, `PreparedStatement` extends `Statement`), some
+methods are overloaded. For example, `PreparedStatement#execute` overloads `Statement#execute`, and
+`PreparedStatement#setInt` and `CallableStatement#setInt` are both overloaded forms.
 
-`JdbcLifecycleEventListener` methods are called back by comparing the invoked method name.
-Therefore, in this example, `[before|after]Execute` and `[before|after]setInt` will be called.
-If you need to know exactly which of the method is called, you could check the invoked instance, method,
-or passed arguments to diagnose the actual invoked method when it is overloaded.
+`JdbcLifecycleEventListener` callbacks are invoked by comparing the invoked method name.
+Therefore, in this example, `[before|after]Execute` and `[before|after]setInt` are called.
+If you need to know exactly which overload was invoked, check the invoked instance, method, or arguments to
+identify the actual method that was called.
 

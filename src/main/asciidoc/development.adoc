@@ -1,17 +1,17 @@
 [[development]]
 == Development
 
-Github repository: {datasource-proxy}
+GitHub repository: {datasource-proxy}
 
 === Build Documentation
 
-Generate `index.html`
+Generate `index.html`:
 
 ```sh
 > ./mvnw asciidoctor:process-asciidoc@output-html
 ```
 
-Http preview
+HTTP preview:
 
 ```sh
 > ./mvnw asciidoctor:http@output-html

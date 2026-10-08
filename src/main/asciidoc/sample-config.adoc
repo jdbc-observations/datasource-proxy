@@ -3,12 +3,12 @@
 
 === Use Case
 
-* log all queries to System.out as JSON
-* log query metrics to commons logger at the end of each http request using servlet-filter
+* Log all queries to `System.out` as JSON
+* Log query metrics to the Commons Logging logger at the end of each HTTP request using a servlet filter
 
 === pom.xml
 
-Install `datasource-proxy` and `commons-logging` since we chose to use commons logger for query metrics.
+Install `datasource-proxy` and `commons-logging` because this example uses Commons Logging for query metrics.
 
 ```xml
 <dependency>
@@ -26,13 +26,13 @@ Install `datasource-proxy` and `commons-logging` since we chose to use commons l
 
 === web.xml
 
-Add `CommonsQueryCountLoggingServletFilter` for query metrics
+Add `CommonsQueryCountLoggingServletFilter` for query metrics.
 
 ```xml
   <filter>
     <filter-name>queryCountFilter</filter-name>
     <filter-class>net.ttddyy.dsproxy.support.CommonsQueryCountLoggingServletFilter</filter-class>
-    <!-- Default to DEBUG level, use "logLevel" filter param to change the log level -->
+    <!-- Default to DEBUG level. Use the "logLevel" filter parameter to change the log level. -->
   </filter>
 
   <filter-mapping>
@@ -43,12 +43,12 @@ Add `CommonsQueryCountLoggingServletFilter` for query metrics
 
 === DataSource
 
-Create a proxy datasource that performs:
+Create a proxy datasource that performs the following actions:
 
-- log query execution to System.out as json
-- collect query metrics
+- Log query execution to `System.out` as JSON
+- Collect query metrics
 
-.Java based:
+.Java-based example:
 ```java
 @Bean
 public DataSource dataSource(DataSource actualDataSource) {
@@ -62,7 +62,7 @@ public DataSource dataSource(DataSource actualDataSource) {
 }
 ```
 
-.XML based(applicationContext.xml)
+.XML-based example (`applicationContext.xml`):
 ```xml
 <bean id="dataSource" primary="true" class="net.ttddyy.dsproxy.support.ProxyDataSource">
   <property name="dataSource" ref="actualDataSource"/>
@@ -90,7 +90,7 @@ public DataSource dataSource(DataSource actualDataSource) {
 
 === Controller
 
-Write a simple controller that returns query metrics info as json. (using spring-boot)
+Write a simple controller that returns query metrics as JSON using Spring Boot.
 
 ```java
 @RestController
@@ -104,20 +104,20 @@ public class MyController {
 }
 ```
 
-=== taglib (optional)
+=== Taglib (optional)
 
-Display query metrics on jsp.
+Display query metrics in a JSP page.
 
 ```jsp
 <%@ taglib prefix="dsp" uri="http://www.ttddyy.net/dsproxy/tags" %>
 
 <dsp:metrics metric="select"/>  - Select
-<dsp:metrics metric="update" dataSource="FOO" />  - Num of update queries for datasource FOO
-<dsp:metrics metric="total"/>  - Total Queries
-<dsp:metrics metric="time"/>  - Total TIme
+<dsp:metrics metric="update" dataSource="FOO" />  - Number of update queries for datasource FOO
+<dsp:metrics metric="total"/>  - Total queries
+<dsp:metrics metric="time"/>  - Total time
 ```
 
-=== Accessing application
+=== Accessing the application
 
 ```sh
 > curl http://localhost:8080
@@ -126,5 +126,5 @@ Display query metrics on jsp.
 
 === More examples
 
-See more examples in {datasource-proxy-examples}[datasource-proxy-examples] project.
+See more examples in the {datasource-proxy-examples}[datasource-proxy-examples] project.
 

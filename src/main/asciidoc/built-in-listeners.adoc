@@ -4,8 +4,8 @@
 [[query-logging-listener]]
 === Query Logging Listener
 
-Query logging listener is the most used listener that logs executing query with actual parameters
-to commons/slf4j/JUL logger or System.out.
+The query logging listener is the most commonly used listener. It logs executed queries and their actual
+parameters to Commons Logging, SLF4J, JUL, or `System.out`.
 
 *Sample output*
 
@@ -20,22 +20,22 @@ Name:MyProxy, Connection:2, Time:5, Success:True, Type:Prepared, Batch:True, Que
 
 | Name          | Name of `ProxyDataSource`
 | Connection    | Connection ID
-| Time          | How long query took to execute in ms.
-| Success       | Query execution was successful or not.
-| Type          | Type of statement (_Statement/Prepared/Callable_).
-| Batch         | Batch execution.
-| QuerySize     | Number of queries.
-| BatchSize     | Number of batch.
-| Query         | Query
+| Time          | How long the query took to execute, in milliseconds
+| Success       | Whether the query execution succeeded
+| Type          | Type of statement (_Statement/Prepared/Callable_)
+| Batch         | Batch execution
+| QuerySize     | Number of queries
+| BatchSize     | Number of batch operations
+| Query         | The query text
 | Params        | Query parameters
 |===
 
 
-`ProxyDataSourceBuilder` provides methods to easily configure and register these listeners.
+`ProxyDataSourceBuilder` provides methods for easily configuring and registering these listeners.
 
 ```java
 builder
-  .logQueryByCommons()   // log using Commons
+  .logQueryByCommons()   // log using Commons Logging
   .logQueryBySlf4j()     // log using SLF4J
   .logQueryByJUL()       // log using Java Util Logging
   .logQueryToSysOut()    // log using System.out
@@ -44,15 +44,16 @@ builder
   .build();
 ```
 
-NOTE: If you choose to use commons or slf4j loggers, you need to add dependency to your project accordingly.
+NOTE: If you choose to use Commons Logging or SLF4J, add the corresponding dependency to your project.
 
-By default, each log entry is printed to single line. If `multiline()` option is set, it prints out
-a log over multiple lines. Also, `json()` option prints out log in json format.
+By default, each log entry is printed on a single line. If the `multiline()` option is set, the log is written
+across multiple lines. Likewise, the `json()` option prints the output in JSON format.
 
 
-Here is another example printing multiline log with formatting query with formatter from Hibernate.
+Here is another example of a multiline log that formats the query using Hibernate formatting.
 
-The datasource-proxy `v1.9` added `formatQuery()` method on `ProxyDataSourceBuilder` which you can specify a callback to modify the query for logging.
+Datasource-proxy v1.9 added the `formatQuery()` method on `ProxyDataSourceBuilder`, which lets you specify a
+callback to modify the query before logging.
 
 ```java
 // v1.9 or above
@@ -71,15 +72,15 @@ DataSource ds = ProxyDataSourceBuilder
 QueryLogEntryCreator logEntryCreator = new DefaultQueryLogEntryCreator() {
   @Override
   protected String formatQuery(String query) {
-    return FormatStyle.BASIC.getFormatter().format(query);  // use Hibernte formatter
+    return FormatStyle.BASIC.getFormatter().format(query);  // use Hibernate formatter
   }
 };
 
-creator.setMultiline(true);  // enable multiline output
+logEntryCreator.setMultiline(true);  // enable multiline output
 
-// print out to system.out
+// print to System.out
 SystemOutQueryLoggingListener listener = new SystemOutQueryLoggingListener();
-listener.setQueryLogEntryCreator(creator);
+listener.setQueryLogEntryCreator(logEntryCreator);
 
 return ProxyDataSourceBuilder
             .create(actualDataSource)
@@ -93,29 +94,29 @@ You can also filter which queries are logged by providing a `LoggingFilter`:
 ----
 builder
   .logQueryBySlf4j()
-  // Only log queries that are not to the 'audit' table
+  // Only log queries that are not sent to the 'audit' table
   .loggingFilter((execInfo, queryInfoList) ->
     queryInfoList.stream().noneMatch(q -> q.getQuery().contains("audit"))
   )
 ----
 
-If no filter is set, all queries are logged (default behavior).
+If no filter is set, all queries are logged by default.
 
 === Slow Query Logging Listener
 
-There are two approaches to detect slow queries:
+There are two approaches to detecting slow queries:
 
 During execution::
 Detect slow queries *while* they are running.
-A scheduled check fires once the query has run longer than the threshold, even if the query has not finished yet.
-`SlowQueryListener` uses this approach.
-This approach is sometimes called _preemptive_; however, it only notifies about the query.
-The running query is NOT interrupted or cancelled.
+A scheduled check fires once the query has run longer than the configured threshold, even if the query has not
+finished yet. `SlowQueryListener` uses this approach.
+This approach is sometimes called _preemptive_; however, it only notifies you about the query.
+The running query is NOT interrupted or canceled.
 
 After execution::
 Detect slow queries *after* they have finished.
-The `afterQuery` callback compares the elapsed time of the query with the threshold.
-This is a simple approach which can be implemented with any `QueryExecutionListener`.
+The `afterQuery` callback compares the query's elapsed time with the threshold.
+This is a simple approach that can be implemented with any `QueryExecutionListener`.
 This approach is sometimes called _non-preemptive_.
 
 [cols="1,2,2", options="header"]
@@ -125,11 +126,11 @@ This approach is sometimes called _non-preemptive_.
 |After execution (`afterQuery` callback)
 
 |When it is triggered
-|When the threshold has passed, while the query is still running
+|When the threshold has passed while the query is still running
 |After the query has finished
 
 |Elapsed time in `ExecutionInfo`
-|Time at the moment of the check (about the threshold time)
+|Time at the moment of the check (approximately the threshold time)
 |Actual query execution time
 
 |Query result, success/failure
@@ -150,17 +151,17 @@ This approach is sometimes called _non-preemptive_.
 |===
 
 Both approaches can be used together.
-For example, use `SlowQueryListener` to get an early notice of long-running queries, and use
-an `afterQuery` callback to record their actual execution time.
+For example, use `SlowQueryListener` to get an early notice of long-running queries and use an
+`afterQuery` callback to record their actual execution time.
 
 [[slow-query-during-execution]]
 ==== During execution
 
-When query takes more than specified threshold, `SlowQueryListener` executes a callback method.
+When a query takes longer than the configured threshold, `SlowQueryListener` invokes a callback method.
 The callback is invoked only once for the target query if it exceeds the threshold time.
 
-Combining logging and slow query detection, following built-in classes writes out slow query
-to its corresponding logger.
+Combining logging and slow query detection, the following built-in classes write slow query entries to their
+corresponding loggers:
 
 - `CommonsSlowQueryListener`
 - `SLF4JSlowQueryListener`
@@ -168,14 +169,14 @@ to its corresponding logger.
 - `SystemOutSlowQueryListener`
 
 
-`ProxyDataSourceBuilder` provides methods to configure those listeners.
+`ProxyDataSourceBuilder` provides methods for configuring these listeners.
 
 ```java
 builder
-  .logSlowQueryByCommons(1, TimeUnit.SECONDS)   // log slow query using Commons
-  .logSlowQueryBySlf4j(1, TimeUnit.SECONDS)     // log slow query using Slf4J
-  .logSlowQueryByJUL(1, TimeUnit.SECONDS)       // log slow query using Java Util Logging
-  .logSlowQueryToSysOut(1, TimeUnit.SECONDS)    // log slow query using System.out
+  .logSlowQueryByCommons(1, TimeUnit.SECONDS)   // log slow queries using Commons Logging
+  .logSlowQueryBySlf4j(1, TimeUnit.SECONDS)     // log slow queries using SLF4J
+  .logSlowQueryByJUL(1, TimeUnit.SECONDS)       // log slow queries using Java Util Logging
+  .logSlowQueryToSysOut(1, TimeUnit.SECONDS)    // log slow queries using System.out
 
   .multiline()           // enable multiline output
   .build();
@@ -184,30 +185,31 @@ builder
 [NOTE]
 .Elapsed Time
 ====
-`SlowQueryListener` triggers callback when query execution exceeds specified threshold time.
+`SlowQueryListener` triggers its callback when query execution exceeds the configured threshold.
 
-For example, when 1 min is set to the threshold in a slow query logging listener and a query takes 5 min to run,
-it will log the query when 1 min has passed while the query is still running. +
-This is expected behavior. Since the query is still running, elapsed time in `ExecutionInfo` is the time at the
-moment of the check (about 1 min in this example), not the actual execution time of the query (5 min).
+For example, if the threshold is set to 1 minute and a query takes 5 minutes to complete, the query is logged
+when 1 minute has passed while the query is still running. +
+This is expected behavior. Because the query is still executing, the elapsed time in `ExecutionInfo` is the time
+at the moment of the check (about 1 minute in this example), not the actual execution time of the query (5 minutes).
 
-To log slow queries with their actual execution time, use the <<slow-query-after-execution, after execution>> approach.
+To log slow queries with their actual execution time, use the <<slow-query-after-execution, after execution>>
+approach.
 ====
 
 [[slow-query-after-execution]]
 ==== After execution
 
-To log queries that have passed threshold with actual execution time, you can customize existing
-<<query-logging-listener>> instead of using `SlowQueryListener`.
+To log queries that exceeded the threshold with their actual execution time, you can customize the existing
+<<query-logging-listener>> implementation instead of using `SlowQueryListener`.
 
-Here is sample implementation with `SLF4JQueryLoggingListener`:
+Here is a sample implementation using `SLF4JQueryLoggingListener`:
 
 ```java
 long thresholdInMills = ...
 SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener() {
   @Override
   public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-    // call query logging logic only when it took more than threshold
+    // call query logging logic only when it took more than the threshold
     if (thresholdInMills <= execInfo.getElapsedTime()) {
       super.afterQuery(execInfo, queryInfoList);
     }
@@ -217,8 +219,8 @@ SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener() {
 listener.setLogLevel(SLF4JLogLevel.WARN);
 ```
 
-This implementation will log queries that took longer than specified threshold _AFTER_ query execution has finished.
-So that, actual query execution time is populated.
+This implementation logs queries that took longer than the configured threshold _AFTER_ the query execution
+has finished, so the actual query execution time is available.
 
 To perform other actions for slow queries, such as recording metrics or sending notifications, register an
 `afterQuery` callback with `ProxyDataSourceBuilder`:
@@ -238,22 +240,22 @@ builder
 === Query Count Listener
 
 
-`DataSourceQueryCountListener` collects statistics of executed queries, such as number of query types(select, insert,
-update, delete), statement types(statement, prepared, callable), etc.
-This class also takes strategy to store such metrics. Default strategy stores metrics in thread-local expecting
-metrics get reset at the end of the request-response lifecycle.
-Another strategy is `SingleQueryCountHolder`. This accumulates query metrics from all threads until explicitly
-clear the metrics.
+`DataSourceQueryCountListener` collects statistics for executed queries, such as the number of query types
+(`SELECT`, `INSERT`, `UPDATE`, `DELETE`), statement types (`Statement`, `Prepared`, `Callable`), and more.
+This class also accepts a strategy for storing such metrics. The default strategy stores metrics in a
+thread-local value, which is expected to be reset at the end of the request-response lifecycle.
+Another strategy is `SingleQueryCountHolder`, which accumulates query metrics from all threads until the metrics
+are explicitly cleared.
 
 
 ```java
 builder.
   .countQuery()    // enable collecting query metrics
-//  .countQuery(new SingleQueryCountHolder())  // enable and specify query count holder
+//  .countQuery(new SingleQueryCountHolder())  // enable and specify a query count holder
   .build();
 ```
 
-Stored metrics can be retrieved by following static method.
+Stored metrics can be retrieved by the following static method.
 
 ```java
 QueryCountHolder.get()

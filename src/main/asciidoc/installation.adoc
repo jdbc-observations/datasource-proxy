@@ -11,18 +11,18 @@
 </dependency>
 ```
 
-There is no dependent library for using `datasource-proxy`. +
-If you choose to use logging support for specific logging library, such as commons or slf4j, you need to specify
-the dependency explicitly.
+There is no required dependency for using `datasource-proxy`. +
+If you choose to use logging support for a specific logging library, such as Commons Logging or SLF4J,
+you need to add that dependency explicitly.
 
-`datasource-proxy` does not bring any libraries via transitive dependency.
+`datasource-proxy` does not bring in any libraries via transitive dependencies.
 
 
 ==== Snapshot
 
-Snapshot is available via {oss-snapshot-repository}[oss sonatype snapshot repository].
+Snapshots are available from the {oss-snapshot-repository}[OSS Sonatype snapshot repository].
 
-To download snapshot jars, enable sonatype snapshot repository:
+To download snapshot JARs, enable the Sonatype snapshot repository:
 
 ```xml
 <repositories>
@@ -41,5 +41,5 @@ To download snapshot jars, enable sonatype snapshot repository:
 
 === Supported Java Versions
 
-`datasource-proxy` works with java 1.6+. +
-Java8(_JDBC4.2_) works fine, and planning to support java9(_JDBC 4.3_) specific feature.
+`datasource-proxy` works with Java 6 or later. +
+Java 8 (_JDBC 4.2_) works well, and support for Java 9 (_JDBC 4.3_) specific features is planned.

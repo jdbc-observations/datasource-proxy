@@ -4,11 +4,11 @@
 [[what-is-datasource-proxy]]
 === What is datasource-proxy?
 
-datasource-proxy provides simple API to intercept JDBC interactions and allows user to perform own logic
-before/after query or method executions.  +
+datasource-proxy provides a simple API for intercepting JDBC interactions and lets you add your own logic
+before or after query execution or method calls. +
 The proxy works as a `javax.sql.DataSource` and takes listeners.
-Pre-defined listeners support query logging, slow query detection, query execution statistics, interaction
-tracing, etc. Also, custom listeners can easily be added to the listener chain.
+Predefined listeners support query logging, slow query detection, query execution statistics, interaction
+tracing, and more. You can also easily add custom listeners to the listener chain.
 
 
 [[built-in-support]]
@@ -16,62 +16,67 @@ tracing, etc. Also, custom listeners can easily be added to the listener chain.
 
 Query and Parameter Logging::
 +
-You can log executing database queries and parameters with choice of your logging framework(commons, slf4j,
-java util logging, sysout, or your own).
-Output can be formatted as JSON.
+You can log executed database queries and parameters using your preferred logging framework (Commons Logging,
+SLF4J, Java Util Logging, System.out, or your own implementation).
+The output can be formatted as JSON.
 
 
-Slow Query Detector and Loggers::
+Slow Query Detection and Logging::
 +
-You can add callbacks for slow queries that take longer than threshold time you specified.
+You can register callbacks for queries that exceed a configured threshold.
 Slow query loggers are available out of the box.
 
 
 Connection ID::
 +
-Each connection is assigned unique ID that is a sequentially increasing number in default implementation.
-The connection ID is included in logging entry.
+Each connection is assigned a unique ID, implemented as a sequentially increasing number by default.
+The connection ID is included in the log entry.
 
 
 Query Metrics::
 +
-You can collect statistics of executed query such as total time, number of select, insert, update, delete queries, etc.
-Output can be formatted as JSON.
+You can collect statistics for executed queries, such as total time and the number of `SELECT`, `INSERT`,
+`UPDATE`, and `DELETE` statements.
+The output can be formatted as JSON.
 
 
-Custom Logic Injection for Query Execution and Method Execution::
+Custom Logic Injection for Query and Method Execution::
 +
-You can write own `QueryExecutionListener` and they can get called before/after query execution.
-Also, `MethodExecutionListener` is invoked every interaction with JDBC API internaction.
+You can write your own `QueryExecutionListener` implementations and have them invoked before or after
+query execution.
+`MethodExecutionListener` is also invoked for each JDBC API interaction.
 
 
 Web Application Support::
 +
 `ProxyDataSource` can be configured via JNDI.
-Query metrics information are available per web request basis(request-response lifecycle).
-For UI with JSP, custom tag to access metrics(`<dsp:metrics/>`) is available as well.
+Query metrics are available on a per-web-request basis (request-response lifecycle).
+For JSP-based UIs, a custom tag for accessing metrics (`<dsp:metrics/>`) is also available.
 
 
-Query and parameter replacement::
+Query and Parameter Replacement::
 +
-`QueryTransformer` and `ParameterTransformer` allows you to modify executing query and parameters right before
-calling the database.
+`QueryTransformer` and `ParameterTransformer` allow you to modify the executing query and parameters just
+before they are sent to the database.
 
 
 Method Tracing::
 +
-Intercept JDBC API interactions such as getting connection, creating prepared statement, setting parameters,
-executing query, etc.
+Intercept JDBC API interactions such as obtaining a connection, creating prepared statements, setting
+parameters, and executing queries.
 
 
 === Jakarta Namespace
 
-The `javax.sql.*` are part of the Java SE APIs. So, they are not affected by the namespace change in the Java EE APIs to Jakarta. For example, the `javax.sql.DataSource` class will not change its package.
+The `javax.sql.*` classes are part of the Java SE APIs, so they are not affected by the namespace change in
+Java EE APIs to Jakarta. For example, the `javax.sql.DataSource` class remains in the `javax.sql` package.
 
-In the datasource-proxy, there are a few usages of the javax namespace in JNDI and query count support by `ServletRequestListener`.
-They are not frequently used and expected to either be removed or separated in the next major version release.
+In datasource-proxy, there are a few usages of the `javax` namespace in JNDI and query count support via
+`ServletRequestListener`.
+These are not used frequently and are expected to be removed or separated in the next major version release.
 
-If you require those functionalities in the Jakarta namespace, it is recommended to create your own classes based on the existing classes.
+If you require these features in the Jakarta namespace, it is recommended that you create your own classes
+based on the existing implementations.
 
 
 === Sample Log Output
@@ -97,7 +102,7 @@ JSON output:
 
 ```json
 {"name":"MyProxy", "connection":1, "time":1, "success":true, "type":"Statement", "batch":false, "querySize":1, "batchSize":0, "query":["CREATE TABLE users(id INT, name VARCHAR(255))"], "params":[]}
-{"name":"MyProxy", "connection":2, "time":0, "success":true, "type":"Prepared", "batch":true, "querySize":1, "batchSize":3, "query":["INSERT INTO users (id, name) VALUES (?, ?)"], "params":[["1","foo"],["2","bar"],[3","baz"]]}
+{"name":"MyProxy", "connection":2, "time":0, "success":true, "type":"Prepared", "batch":true, "querySize":1, "batchSize":3, "query":["INSERT INTO users (id, name) VALUES (?, ?)"], "params":[["1","foo"],["2","bar"],["3","baz"]]}
 ```
 
 Query metrics:
@@ -111,7 +116,7 @@ Name:"MyProxy", Time:6, Total:1, Success:1, Failure:0, Select:1, Insert:0, Updat
 {"name":"MyProxy", "time":10, "total":3, "success":3, "failure":0, "select":1, "insert":2, "update":0, "delete":0, "other":0}
 ```
 
-Method Tracing:
+Method tracing:
 
 .Output:
 ```
