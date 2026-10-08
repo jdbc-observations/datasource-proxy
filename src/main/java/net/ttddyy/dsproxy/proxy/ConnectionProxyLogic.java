@@ -79,23 +79,23 @@ public class ConnectionProxyLogic extends ProxyLogicSupport {
             ConnectionProxyLogic.this.proxyConfig.getConnectionIdManager().addClosedId(connId);
         }
 
-        // when it is a call to createStatement, prepareStatement or prepareCall, returns a proxy.
-        // most of the time, spring and hibernate use prepareStatement to execute query as batch
+        // Return a proxy when this is a call to createStatement, prepareStatement, or prepareCall.
+        // Spring and Hibernate usually use prepareStatement to execute queries in batches.
         if ("createStatement".equals(methodName)) {
-            // for normal statement, transforming query is handled inside of handler.
+            // For regular statements, query transformation is handled by the statement handler.
             return jdbcProxyFactory.createStatement((Statement) retVal, this.connectionInfo, proxyConnection, this.proxyConfig);
         } else if ("prepareStatement".equals(methodName)) {
             if (ObjectArrayUtils.isFirstArgString(args)) {
                 final String query = (String) args[0];
 
-                // check auto-generated-keys is enabled for these methods:
+                // Check whether automatic generated-key retrieval is enabled for these methods:
                 //   prepareStatement(String,int), prepareStatement(String,int[]), prepareStatement(String,String[])
                 final boolean generateKey = GeneratedKeysUtils.isAutoGenerateEnabledParameters(args);
 
                 return jdbcProxyFactory.createPreparedStatement((PreparedStatement) retVal, query,
                         this.connectionInfo, proxyConnection, this.proxyConfig, generateKey);
             }
-        } else if ("prepareCall".equals(methodName)) {  // for stored procedure call
+        } else if ("prepareCall".equals(methodName)) {  // For stored procedure calls.
             if (ObjectArrayUtils.isFirstArgString(args)) {
                 final String query = (String) args[0];
                 return jdbcProxyFactory.createCallableStatement((CallableStatement) retVal, query,

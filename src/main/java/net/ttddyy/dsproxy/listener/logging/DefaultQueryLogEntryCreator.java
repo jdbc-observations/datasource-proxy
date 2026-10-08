@@ -136,7 +136,7 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
      * <p>default: Time: 123,
      *
      * The unit of time is determined by underlying {@link net.ttddyy.dsproxy.proxy.Stopwatch} implementation.
-     * (milli vs nano seconds)
+     * (milliseconds versus nanoseconds)
      *
      * @param sb            StringBuilder to write
      * @param execInfo      execution info
@@ -251,10 +251,10 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
     }
 
     /**
-     * Callback method to allow alternating given query for logging.
+     * Callback method that allows the given query to be reformatted for logging.
      *
-     * Subclass can override this method to change the given query.
-     * For example, it can call BasicFormatterImpl in hibernate to format the query.
+     * <p>Subclasses can override this method to change the query, for example, by calling Hibernate's
+     * {@code BasicFormatterImpl}.
      *
      * @param query a query to format
      * @return formatted query
@@ -267,8 +267,8 @@ public class DefaultQueryLogEntryCreator extends AbstractQueryLogEntryCreator {
     /**
      * Write query parameters.
      *
-     * <p>default for prepared: Params:[(foo,100),(bar,101)],
-     * <p>default for callable: Params:[(1=foo,key=100),(1=bar,key=101)],
+     * <p>Default format for prepared statements: {@code Params:[(foo,100),(bar,101)]}.
+     * <p>Default format for callable statements: {@code Params:[(1=foo,key=100),(1=bar,key=101)]}.
      *
      * @param sb            StringBuilder to write
      * @param execInfo      execution info

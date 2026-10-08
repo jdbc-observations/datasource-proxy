@@ -186,7 +186,7 @@ public class PreparedStatementParameterTransformTest {
         doAnswer(new Answer() {
             // for first batch
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                // first batch. call clearParameters().
+                // Clear the parameters for the first batch.
                 ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
                 replacer.clearParameters();
                 replacer.setString(1, "BAZ");
@@ -196,7 +196,7 @@ public class PreparedStatementParameterTransformTest {
         }).doAnswer(new Answer() {
                         // for second batch
                         public Object answer(InvocationOnMock invocation) throws Throwable {
-                            // second batch. don't call clearParameters().
+                            // Do not clear the parameters for the second batch.
                             ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
                             String name = replacer.getValue(1);
                             replacer.setString(1, name + "-INTERCEPTED");

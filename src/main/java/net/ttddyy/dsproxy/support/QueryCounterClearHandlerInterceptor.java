@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Spring {@link org.springframework.web.servlet.HandlerInterceptor} to clear {@link net.ttddyy.dsproxy.QueryCount}
- * stored in thread local when {@link net.ttddyy.dsproxy.listener.DataSourceQueryCountListener} is used.
+ * Spring {@link org.springframework.web.servlet.HandlerInterceptor} that clears the {@link net.ttddyy.dsproxy.QueryCount}
+ * stored in a thread-local variable when {@link net.ttddyy.dsproxy.listener.DataSourceQueryCountListener} is used.
  *
  * @author Tadaya Tsuyukubo
  * @see QueryCounterClearFilter

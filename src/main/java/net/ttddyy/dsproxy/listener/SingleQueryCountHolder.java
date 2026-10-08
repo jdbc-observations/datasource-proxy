@@ -7,11 +7,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * Use single instance to hold  {@link net.ttddyy.dsproxy.QueryCount}.
+ * Uses a single instance to hold {@link net.ttddyy.dsproxy.QueryCount} objects.
  *
- * The {@link QueryCount} holds total accumulated values from all threads where database access has performed.
+ * <p>The {@link QueryCount} objects hold accumulated totals for database access across all threads.
  *
- * When {@link #populateQueryCountHolder} is set to {@code true}(default), it populates {@link QueryCountHolder}.
+ * <p>When {@link #populateQueryCountHolder} is set to {@code true} (the default), the holder also populates
+ * {@link QueryCountHolder}.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.4.2

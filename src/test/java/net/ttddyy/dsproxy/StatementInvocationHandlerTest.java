@@ -170,8 +170,8 @@ public class StatementInvocationHandlerTest {
     }
 
     /**
-     * When "executeBatch" is called, List<QueryInfo> should be cleared.
-     * reported:  https://github.com/ttddyy/datasource-proxy/issues/9
+     * When {@code executeBatch()} is called, the list of {@link QueryInfo} objects should be cleared.
+     * Reported in https://github.com/ttddyy/datasource-proxy/issues/9.
      */
     @Test
     public void testExecuteBatchShouldClearQueries() throws Exception {

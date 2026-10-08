@@ -22,17 +22,17 @@ public class GeneratedKeysUtils {
         methodNames.add("executeUpdate");
         methodNames.add("executeLargeUpdate");
 
-        // for batch execution (whether to generate key is driver impl dependent)
+        // Whether to generate keys for batch execution depends on the driver implementation.
         methodNames.add("executeBatch");
         methodNames.add("executeLargeBatch");
         METHOD_NAMES_TO_CHECK = Collections.unmodifiableSet(methodNames);
     }
 
     /**
-     * Whether the given method supports auto-generated keys.
+     * Returns whether the given method supports automatic generated-key retrieval.
      *
-     * For batch execution methods, whether to return generated-keys is implementation specific.
-     * In datasource-proxy, it is controlled by {@link ProxyConfig#isRetrieveGeneratedKeysForBatchStatement()} and
+     * <p>For batch execution methods, whether generated keys are returned is implementation-specific.
+     * In datasource-proxy, this behavior is controlled by {@link ProxyConfig#isRetrieveGeneratedKeysForBatchStatement()} and
      * {@link ProxyConfig#isRetrieveGeneratedKeysForBatchPreparedOrCallable()}.
      *
      * @see Connection#prepareStatement(String)
@@ -55,10 +55,10 @@ public class GeneratedKeysUtils {
     }
 
     /**
-     * Whether given method arguments intend to enable auto-generated keys.
+     * Returns whether the given method arguments enable automatic generated-key retrieval.
      *
-     * @param args method parameters for methods that can enable auto-generated keys.
-     * @return true if method params indicate to enable auto-generated keys
+     * @param args method arguments for a method that can enable generated keys
+     * @return {@code true} if the arguments enable generated keys
      * @see #isMethodToRetrieveGeneratedKeys(Method)
      */
     public static boolean isAutoGenerateEnabledParameters(Object[] args) {
@@ -82,4 +82,3 @@ public class GeneratedKeysUtils {
     }
 
 }
-

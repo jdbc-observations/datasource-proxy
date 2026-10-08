@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 
 /**
- * Proxy Logic implementation for {@link DataSource} methods.
+ * Proxy logic implementation for {@link DataSource} methods.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.2
@@ -50,7 +50,7 @@ public class DataSourceProxyLogic extends ProxyLogicSupport {
                 connectionInfo.setIsolationLevel(conn.getTransactionIsolation());
             }
 
-            // make ConnectionInfo available in afterMethod() callback
+            // Make ConnectionInfo available in the afterMethod() callback.
             methodContext.setConnectionInfo(connectionInfo);
 
             return jdbcProxyFactory.createConnection((Connection) retVal, connectionInfo, this.proxyConfig);

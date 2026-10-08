@@ -8,13 +8,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Uses {@link javax.sql.rowset.CachedRowSet} to provide repeatable read {@link ResultSet} proxy.
+ * Uses {@link javax.sql.rowset.CachedRowSet} to provide a repeatable-read {@link ResultSet} proxy.
  *
- * {@link javax.sql.rowset.CachedRowSet} is disconnected scrollable {@link javax.sql.RowSet} which is a
- * subset of {@link ResultSet}. Using those feature to provide repeatable read resultset proxy.
+ * <p>A {@link javax.sql.rowset.CachedRowSet} is a disconnected, scrollable {@link javax.sql.RowSet} that implements a
+ * subset of {@link ResultSet}. Its features are used to provide a repeatable-read result set proxy.
  *
- * The default oracle jdk implementation {@code com.sun.rowset.CachedRowSetImpl} does not support {@code isClosed}
- * method. Thus, keep close status and return it when {@code isClosed()} is called.
+ * <p>The default Oracle JDK implementation, {@code com.sun.rowset.CachedRowSetImpl}, does not support the
+ * {@code isClosed} method. This class therefore tracks the closed state and returns it when {@code isClosed()} is called.
  *
  * @author Tadaya Tsuyukubo
  * @see CachedRowSetResultSetProxyLogicFactory
@@ -22,12 +22,12 @@ import java.sql.SQLException;
  */
 public class CachedRowSetResultSetProxyLogic extends ProxyLogicSupport implements ResultSetProxyLogic {
 
-    private ResultSet resultSet;  // original resultset
+    private ResultSet resultSet;  // original result set
     private ResultSet cachedRowSet;
     private ConnectionInfo connectionInfo;
     private ProxyConfig proxyConfig;
 
-    // default impl "com.sun.rowset.CachedRowSetImpl" does NOT support "isClosed()", so enable handling in this class
+    // The default implementation does not support isClosed(), so handle it in this class.
     protected boolean supportIsClosedMethod = true;
     protected boolean isClosed;
 
@@ -70,7 +70,7 @@ public class CachedRowSetResultSetProxyLogic extends ProxyLogicSupport implement
             if (throwable instanceof SQLException) {
                 throw throwable;
             }
-            // convert any exception to SQLException.
+            // Convert any exception to SQLException.
             String reason = String.format("CachedRowSet threw exception: %s", throwable);
             throw new SQLException(reason, throwable);
         }

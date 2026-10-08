@@ -11,12 +11,11 @@ import java.util.List;
 /**
  * Servlet filter to output query statistics.
  *
- * <p>By default, after logging the query count, it resets the {@link net.ttddyy.dsproxy.QueryCountHolder}, so that
- * each http request will have fresh set of query statistics.
- * If you want to manage when to reset the counter, you can disable this filter to clear the counter by setting
- * filter parameter <em>clearQueryCounter</em> to {@code false}.
+ * <p>By default, the filter resets the {@link net.ttddyy.dsproxy.QueryCountHolder} after logging the query count, so
+ * each HTTP request starts with a fresh set of query statistics. To control when the counter is reset, disable
+ * automatic clearing by setting the <em>clearQueryCounter</em> filter parameter to {@code false}.
  *
- * <p><em>loggerName</em> parameter(Optional): create a logger instance by this name if specified.
+ * <p><em>loggerName</em> parameter (optional): creates a logger with the specified name.
  *
  * <pre>
  * {@code

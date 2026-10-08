@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 /**
- * Factory to create {@link Stopwatch}.
+ * Factory for creating {@link Stopwatch} instances.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.5.1

@@ -3,21 +3,21 @@ package net.ttddyy.dsproxy.transform;
 import java.sql.Statement;
 
 /**
- * Hold context information for {@link ParameterTransformer#transformParameters(ParameterReplacer, TransformInfo)}.
+ * Holds context information for {@link ParameterTransformer#transformParameters(ParameterReplacer, TransformInfo)}.
  *
  * <ul>
- * <li>clazz: calling class. {@link java.sql.PreparedStatement} or {@link java.sql.CallableStatement}
- * <li>dataSourceName: datasource name
+ * <li>clazz: calling class, either {@link java.sql.PreparedStatement} or {@link java.sql.CallableStatement}
+ * <li>dataSourceName: data source name
  * <li>query: query string
- * <li>isBatch: true when called in batch
- * <li>count: current number of call in batch. 0 origin. 0 if call is not batched
+ * <li>isBatch: {@code true} when called as part of a batch
+ * <li>count: current batch position, zero-based; {@code 0} if not batched
  * </ul>
  *
- * <b>Semantics of {@link #isBatch()}:</b>
- * <p>For {@link QueryTransformer},  {@link #isBatch()} is only true when {@link Statement#addBatch(String)} is called.
- * {@link #isBatch()} is always false for {@link java.sql.PreparedStatement} and {@link java.sql.CallableStatement}.
- * For {@link ParameterTransformer}, {@link #isBatch()} returns true when
- * {@link java.sql.PreparedStatement#addBatch()} or {@link java.sql.CallableStatement#addBatch()} is called.
+ * <p><b>Semantics of {@link #isBatch()}:</b>
+ * <p>For {@link QueryTransformer}, {@link #isBatch()} is true only when {@link Statement#addBatch(String)} is called.
+ * It is always false for {@link java.sql.PreparedStatement} and {@link java.sql.CallableStatement}.
+ * For {@link ParameterTransformer}, it is true when {@link java.sql.PreparedStatement#addBatch()} or
+ * {@link java.sql.CallableStatement#addBatch()} is called.
  *
  * @author Tadaya Tsuyukubo
  * @see net.ttddyy.dsproxy.transform.ParameterTransformer
@@ -76,10 +76,10 @@ public class TransformInfo {
     }
 
     /**
-     * Current order in batch.
-     * 0 origin. always 0 if called in non-batch.
+     * Returns the current order in the batch.
+     * Zero-based; always {@code 0} when not called in batch mode.
      *
-     * @return current order in batch
+     * @return current order in the batch
      */
     public int getCount() {
         return count;

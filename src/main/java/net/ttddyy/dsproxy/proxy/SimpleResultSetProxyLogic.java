@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.sql.ResultSet;
 
 /**
- * Simply delegate method calls to the actual {@link ResultSet}.
+ * Simply delegates method calls to the actual {@link ResultSet}.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.4.3

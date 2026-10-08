@@ -4,8 +4,7 @@ import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import org.springframework.beans.factory.BeanNameAware;
 
 /**
- * Extending {@link ProxyDataSource} to use
- * spring bean name(id) as dataSourceName when it is not set.
+ * Extends {@link ProxyDataSource} to use the Spring bean name (ID) as the data source name when it is not set.
  *
  * @author Tadaya Tsuyukubo
  */

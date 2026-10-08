@@ -85,7 +85,7 @@ public class PreparedStatementQueryTransformTest {
     public void testCreatePreparedStatement() throws Exception {
         getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
 
-        // when statement method is called, intercept should be called
+        // The interceptor should be called when a statement method is invoked.
         assertThat(interceptedQueries).hasSize(1).containsExactly("UPDATE foo SET name = ?");
     }
 
@@ -176,7 +176,7 @@ public class PreparedStatementQueryTransformTest {
         PreparedStatement ps = getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
         ps.clearBatch();
 
-        // even though batch is canceled, interceptor was called once.
+        // The interceptor is called once even though the batch was cleared.
         assertThat(interceptedQueries).hasSize(1).containsExactly("UPDATE foo SET name = ?");
     }
 

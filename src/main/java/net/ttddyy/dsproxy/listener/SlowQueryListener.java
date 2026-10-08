@@ -19,34 +19,34 @@ import java.util.concurrent.TimeUnit;
  * Slow query detection listener.
  *
  * <p>This listener detects slow queries <em>during execution</em> (sometimes called <em>preemptive</em>).
- * When query takes more than specified threshold, {@link #onSlowQuery(ExecutionInfo, List, long)} callback method
- * is called while the query is still running. The callback is called only once for the target query if it exceeds
- * the threshold time. The running query is NOT interrupted or cancelled.
+ * When a query exceeds the specified threshold, the {@link #onSlowQuery(ExecutionInfo, List, long)} callback is
+ * invoked while the query is still running. The callback is invoked only once for each query that exceeds the
+ * threshold. The running query is not interrupted or cancelled.
  *
  * <p>NOTE:
  * <ul>
- * <li>The callback is performed by a thread of the scheduled executor in this listener, not by the thread that
- * executes the query.
- * <li>{@link ExecutionInfo#getElapsedTime()} contains the time at the moment of the check, which usually is about the
- * specified threshold time, not the actual execution time of the query.
- * <li>Query result and success/failure in {@link ExecutionInfo} are not available, since the query has not finished.
+ * <li>The callback is invoked by a thread from this listener's scheduled executor, not by the thread executing the query.
+ * <li>{@link ExecutionInfo#getElapsedTime()} contains the elapsed time at the moment of the check, which is usually
+ * close to the specified threshold rather than the query's actual execution time.
+ * <li>The query result and success or failure status in {@link ExecutionInfo} are not available because the query
+ * has not finished.
  * <li>A check is scheduled for each query execution.
  * </ul>
  *
- * <p>If you want to log or do something <em>after execution</em> (sometimes called <em>non-preemptive</em>) for
- * queries that have exceeded specified threshold time, use normal logging listener like following:
+ * <p>If you want to log or take action <em>after execution</em> (sometimes called <em>non-preemptive</em>) for queries
+ * that exceed a specified threshold, use a regular logging listener like this:
  * <pre>
- * long thresholdInMills = ...
+ * long thresholdInMillis = ...
  * SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener(){
  *      {@literal @}Override
  *      public void afterQuery(ExecutionInfo execInfo, List&lt;QueryInfo&gt; queryInfoList) {
- *          if (execInfo.getElapsedTime() &gt;= thresholdInMills) {
+ *          if (execInfo.getElapsedTime() &gt;= thresholdInMillis) {
  *              super.afterQuery(execInfo, queryInfoList);
  *          }
  *      }
  * };
  * </pre>
- * This way, actual query execution time is available, but queries that never return are not detected.
+ * This approach makes the actual query execution time available, but does not detect queries that never return.
  * Both approaches can be used together.
  *
  * @author Tadaya Tsuyukubo
@@ -59,9 +59,10 @@ import java.util.concurrent.TimeUnit;
 public class SlowQueryListener implements QueryExecutionListener {
 
     /**
-     * Data holder for currently running query.
+     * Data holder for the currently running query.
      *
-     * This structure is used to avoid hard reference from scheduled {@link Runnable} to {@link ExecutionInfo} and etc.
+     * This structure prevents a hard reference from scheduled {@link Runnable} instances to {@link ExecutionInfo} and
+     * related objects.
      */
     protected static class RunningQueryContext {
         protected ExecutionInfo executionInfo;
@@ -97,16 +98,16 @@ public class SlowQueryListener implements QueryExecutionListener {
 
         final String execInfoKey = getExecutionInfoKey(execInfo);
 
-        // only pass the key to prevent hard reference from Runnable to ExecutionInfo. (Issue-53)
+        // Pass only the key to prevent a hard reference from the Runnable to ExecutionInfo. (Issue-53)
         Runnable check = new Runnable() {
             @Override
             public void run() {
-                // if it's still in map, that means it's still running
+                // If the query is still in the map, it is still running.
                 RunningQueryContext context = SlowQueryListener.this.inExecution.get(execInfoKey);
 
                 if (context != null) {
                     long elapsedTime = context.stopwatch.getElapsedTime();
-                    // populate elapsed time
+                    // Set the elapsed time.
                     if (context.executionInfo.getElapsedTime() == 0) {
                         context.executionInfo.setElapsedTime(elapsedTime);
                     }
@@ -132,13 +133,15 @@ public class SlowQueryListener implements QueryExecutionListener {
 
 
     /**
-     * Calculate a key for given {@link ExecutionInfo}.
+     * Calculates a key for the given {@link ExecutionInfo}.
      *
-     * <p>This key is passed to the slow query check {@link Runnable} as well as for removal in {@link #afterQuery(ExecutionInfo, List)}.
+     * <p>This key is passed to the slow-query check {@link Runnable} and is also used for removal in
+     * {@link #afterQuery(ExecutionInfo, List)}.
      *
-     * <p>Default implementation uses {@link System#identityHashCode(Object)}. This does NOT guarantee 100% of uniqueness; however, since
-     * the current usage of the key is short lived and good enough for this use case.
-     * <p>Subclass can override this method to provide different implementation to uniquely represent {@link ExecutionInfo}.
+     * <p>The default implementation uses {@link System#identityHashCode(Object)}. This does not guarantee 100% uniqueness,
+     * but it is sufficient for the short-lived usage in this class.
+     * <p>Subclasses may override this method to provide a different implementation that uniquely represents
+     * {@link ExecutionInfo}.
      *
      * @param executionInfo execution info
      * @return key
@@ -149,15 +152,15 @@ public class SlowQueryListener implements QueryExecutionListener {
     }
 
     /**
-     * Callback when query execution time exceeds the threshold.
+     * Callback invoked when query execution exceeds the threshold.
      *
-     * This callback is called only once per query if it exceeds the threshold time.
-     * It is called by a thread of the scheduled executor while the query is still running.
-     * {@link ExecutionInfo#getElapsedTime()} contains the time at the moment of the check.
+     * <p>This callback is invoked only once per query if it exceeds the threshold.
+     * It is invoked by a thread from the scheduled executor while the query is still running.
+     * {@link ExecutionInfo#getElapsedTime()} contains the elapsed time at the moment of the check.
      *
      * @param execInfo        query execution info
-     * @param queryInfoList    query parameter info
-     * @param startTimeInMills time in mills when the query started
+     * @param queryInfoList   query parameter info
+     * @param startTimeInMills time in milliseconds when the query started
      */
     protected void onSlowQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, long startTimeInMills) {
     }
@@ -183,9 +186,9 @@ public class SlowQueryListener implements QueryExecutionListener {
     }
 
     /**
-     * When set to {@code true}(default), the executor creates daemon threads to check slow queries.
+     * Sets whether the executor creates daemon threads to check for slow queries.
      *
-     * @param useDaemonThread use daemon thread or not. (default is true)
+     * @param useDaemonThread whether to use daemon threads; defaults to {@code true}
      * @since 1.4.2
      */
     public void setUseDaemonThread(boolean useDaemonThread) {
@@ -194,9 +197,9 @@ public class SlowQueryListener implements QueryExecutionListener {
 
 
     /**
-     * Set {@link StopwatchFactory} which is used to calculate {@link ExecutionInfo#getElapsedTime()} for slow queries.
+     * Sets the {@link StopwatchFactory} used to compute {@link ExecutionInfo#getElapsedTime()} for slow queries.
      *
-     * @param stopwatchFactory factory to create {@link Stopwatch} used for calculating elapsed time for slow queries
+     * @param stopwatchFactory factory used to create a {@link Stopwatch} for slow-query timing
      * @since 1.5.1
      */
     public void setStopwatchFactory(StopwatchFactory stopwatchFactory) {

@@ -65,7 +65,7 @@ public class StatementQueryTest {
         assertThat(Proxy.getInvocationHandler(result)).isExactlyInstanceOf(ResultSetInvocationHandler.class);
 
         // verify getGeneratedKeys
-        // generatedKeys have own proxy factory, thus expecting non-proxy to be returned
+        // Generated keys have a separate proxy factory, so this expects a non-proxied ResultSet.
         result = proxySt.getGeneratedKeys();
         assertThat(result).isInstanceOf(ResultSet.class);
         assertThat(Proxy.isProxyClass(result.getClass())).isFalse();
@@ -226,7 +226,7 @@ public class StatementQueryTest {
         Statement proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
 
 
-        // Test with NOT enabling generated-keys
+        // Test without enabling generated-key retrieval.
         proxySt.execute("insert into emp_with_auto_id ( name ) values ('BAZ');");
         assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
 
@@ -245,7 +245,7 @@ public class StatementQueryTest {
         assertThat(listenerReceivedExecutionInfo.get().getGeneratedKeys()).isNull();
 
 
-        // Test with enabling generated-keys
+        // Test with generated-key retrieval enabled.
 
         // with Statement.RETURN_GENERATED_KEYS
         proxySt = proxyFactory.createStatement(st, new ConnectionInfo(), conn, proxyConfig);
@@ -363,7 +363,7 @@ public class StatementQueryTest {
 
         proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", Statement.RETURN_GENERATED_KEYS);
 
-        // calling getGeneratedKeys() multiple time is not defined in JDBC spec
+        // Calling getGeneratedKeys() multiple times is not defined in the JDBC specification.
         // For hsqldb, calling second time closes previously returned ResultSet and returns new ResultSet.
         ResultSet generatedKeys1 = proxySt.getGeneratedKeys();
         assertThat(generatedKeys1.isClosed()).isFalse();
@@ -396,13 +396,13 @@ public class StatementQueryTest {
         ResultSet generatedKeys5 = proxySt.getGeneratedKeys();
         assertThat(generatedKeys5.isClosed()).isFalse();
 
-        // once it is closed, getGeneratedKeys should return a new ResultSet
+        // Once it is closed, getGeneratedKeys() should return a new ResultSet.
         assertThat(generatedKeys5).isNotSameAs(generatedKeys4);
 
         ResultSet generatedKeys6 = proxySt.getGeneratedKeys();
         assertThat(generatedKeys6.isClosed()).isFalse();
 
-        // again it's not closed, thus same ResultSet should be returned
+        // If it is still open, the same ResultSet should be returned.
         assertThat(generatedKeys6).isSameAs(generatedKeys5);
 
     }
@@ -435,7 +435,7 @@ public class StatementQueryTest {
         assertThat(generatedKeys3).isNotSameAs(generatedKeys1);
         assertThat(generatedKeys3.isClosed()).isFalse();
 
-        // since generatedKeys3 is open, calling getGeneratedKeys() should return the same resultset
+        // Since generatedKeys3 is open, getGeneratedKeys() should return the same ResultSet.
         ResultSet generatedKeys4 = proxySt.getGeneratedKeys();
         assertThat(generatedKeys4).isSameAs(generatedKeys3);
 
@@ -456,14 +456,14 @@ public class StatementQueryTest {
 
         proxySt.executeUpdate("insert into emp_with_auto_id ( name ) values ('BAZ');", Statement.RETURN_GENERATED_KEYS);
 
-        // auto close should not affect the result of "getGeneratedKeys" method.
+        // Automatic closing should not affect the result of getGeneratedKeys().
         ResultSet generatedKeys1 = proxySt.getGeneratedKeys();
         assertThat(generatedKeys1.isClosed()).isFalse();
 
         ResultSet generatedKeys2 = proxySt.getGeneratedKeys();
         assertThat(generatedKeys2.isClosed()).isFalse();
 
-        // result of "getGeneratedKeys" is still open, thus second call of "getGeneratedKeys" should return the same one
+        // The ResultSet returned by getGeneratedKeys() is still open, so a second call should return the same object.
         assertThat(generatedKeys2).isSameAs(generatedKeys1);
         assertThat(generatedKeys1.isClosed()).isFalse();
     }

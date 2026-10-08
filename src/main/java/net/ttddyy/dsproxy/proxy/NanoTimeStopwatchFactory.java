@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 /**
- * Factory to create {@link NanoTimeStopwatch}.
+ * Factory for creating {@link NanoTimeStopwatch}.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.5.1
@@ -16,7 +16,7 @@ public class NanoTimeStopwatchFactory implements StopwatchFactory {
     /**
      * {@link Stopwatch} implementation that uses {@code System.nanoTime()}.
      *
-     * {@link #getElapsedTime()} returns nano seconds.
+     * <p>{@link #getElapsedTime()} returns nanoseconds.
      */
     public static class NanoTimeStopwatch implements Stopwatch {
 
@@ -29,9 +29,9 @@ public class NanoTimeStopwatchFactory implements StopwatchFactory {
         }
 
         /**
-         * Elapsed nano seconds from {@link #start()}.
+         * Returns the elapsed time in nanoseconds since {@link #start()}.
          *
-         * @return nano second from {@link #start()}
+         * @return elapsed time in nanoseconds since {@link #start()}
          */
         @Override
         public long getElapsedTime() {

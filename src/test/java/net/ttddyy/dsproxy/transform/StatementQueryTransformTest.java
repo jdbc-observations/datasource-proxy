@@ -168,7 +168,7 @@ public class StatementQueryTransformTest {
         int[] result = stat.executeBatch();
         assertThat(result).isEmpty();
 
-        // even though batch is canceled, interceptor should be called
+        // The interceptor should be called even though the batch was cleared.
         assertThat(interceptedQueries).hasSize(2).containsExactly("UPDATE foo SET name = 'FOO1'", "UPDATE foo SET name = 'FOO2'");
 
         // verify data should not be changed

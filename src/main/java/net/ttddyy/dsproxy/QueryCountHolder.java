@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * Hold QueryCount object by datasource name.
+ * Holds {@link QueryCount} objects by data source name.
  *
  * @author Tadaya Tsuyukubo
  * @see net.ttddyy.dsproxy.listener.QueryCountStrategy

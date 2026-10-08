@@ -11,8 +11,8 @@ import javax.servlet.ServletResponse;
 import java.io.IOException;
 
 /**
- * Servlet filter to clear the {@link net.ttddyy.dsproxy.QueryCount} stored in thread local at the end of the
- * http servlet request lifecycle when {@link net.ttddyy.dsproxy.listener.DataSourceQueryCountListener} is used.
+ * Servlet filter that clears the {@link net.ttddyy.dsproxy.QueryCount} stored in a thread-local variable at the end
+ * of an HTTP request when {@link net.ttddyy.dsproxy.listener.DataSourceQueryCountListener} is used.
  *
  * @author Tadaya Tsuyukubo
  * @see QueryCounterClearHandlerInterceptor

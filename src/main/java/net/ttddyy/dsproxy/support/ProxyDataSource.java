@@ -21,7 +21,7 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
 /**
- * A proxy of {@link javax.sql.DataSource} with {@link net.ttddyy.dsproxy.listener.QueryExecutionListener}.
+ * A {@link javax.sql.DataSource} proxy that supports {@link net.ttddyy.dsproxy.listener.QueryExecutionListener}.
  *
  * @author Tadaya Tsuyukubo
  * @author Réda Housni Alaoui
@@ -228,7 +228,7 @@ public class ProxyDataSource extends ProxyLogicSupport implements DataSource, Cl
     }
 
     /**
-     * Return the original {@link DataSource}.
+     * Returns the original {@link DataSource}.
      *
      * @since 1.8
      */

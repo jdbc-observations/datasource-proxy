@@ -161,11 +161,11 @@ public class MethodExecutionContext {
     }
 
     /**
-     * The time took to execute the method.
+     * Returns the time taken to execute the method.
      *
-     * The unit of time is determined by implementation of {@link net.ttddyy.dsproxy.proxy.Stopwatch}.
-     * By default, it uses {@link net.ttddyy.dsproxy.proxy.SystemStopwatchFactory.SystemStopwatch} which
-     * uses milliseconds.
+     * <p>The unit of time is determined by the implementation of {@link net.ttddyy.dsproxy.proxy.Stopwatch}.
+     * By default, it uses {@link net.ttddyy.dsproxy.proxy.SystemStopwatchFactory.SystemStopwatch}, which measures
+     * milliseconds.
      *
      * @return elapsed time for the method execution
      */

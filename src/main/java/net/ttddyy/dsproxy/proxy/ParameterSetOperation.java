@@ -3,7 +3,7 @@ package net.ttddyy.dsproxy.proxy;
 import java.lang.reflect.Method;
 
 /**
- * Keeps a method and its arguments when parameter-set-method is called.
+ * Keeps a method and its arguments when a parameter-setting method is called.
  *
  * @author Tadaya Tsuyukubo
  * @see net.ttddyy.dsproxy.proxy.jdk.PreparedStatementInvocationHandler
@@ -12,10 +12,10 @@ import java.lang.reflect.Method;
 public class ParameterSetOperation {
 
     /**
-     * Check the given operation is {@link java.sql.CallableStatement#registerOutParameter} method by method name.
+     * Checks whether the given operation is a {@link java.sql.CallableStatement#registerOutParameter} call.
      *
      * @param operation a parameter set operation
-     * @return true if it is a {@code registerOutParameter} operation
+     * @return {@code true} if this is a {@code registerOutParameter} operation
      * @since 1.4
      */
     public static boolean isRegisterOutParameterOperation(ParameterSetOperation operation) {
@@ -24,10 +24,10 @@ public class ParameterSetOperation {
     }
 
     /**
-     * Check the given operation is {@code setNull} method by method name.
+     * Checks whether the given operation is a {@code setNull} call.
      *
      * @param operation a parameter set operation
-     * @return true if it is a {@code setNull} operation
+     * @return {@code true} if this is a {@code setNull} operation
      * @since 1.4
      */
     public static boolean isSetNullParameterOperation(ParameterSetOperation operation) {

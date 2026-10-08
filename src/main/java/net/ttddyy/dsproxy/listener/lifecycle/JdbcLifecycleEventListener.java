@@ -9,11 +9,11 @@ import java.util.List;
 /**
  * Callback for all JDBC proxy methods.
  *
- * This interface provides before and after method callbacks for all JDBC proxy interfaces({@link javax.sql.DataSource},
+ * <p>This interface provides before- and after-method callbacks for all JDBC proxy interfaces ({@link javax.sql.DataSource},
  * {@link java.sql.Connection}, {@link java.sql.Statement}, {@link java.sql.PreparedStatement},
  * {@link java.sql.CallableStatement}, {@link java.sql.ResultSet}), as well as
  * callbacks for any method calls ({@link #beforeMethod(MethodExecutionContext)}, {@link #afterMethod(MethodExecutionContext)})
- * and query executions({@link #beforeQuery(ExecutionInfo, List)}, {@link #afterQuery(ExecutionInfo, List)}).
+ * and query executions ({@link #beforeQuery(ExecutionInfo, List)}, {@link #afterQuery(ExecutionInfo, List)}).
  *
  * @author Tadaya Tsuyukubo
  * @see JdbcLifecycleEventExecutionListener

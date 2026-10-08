@@ -34,10 +34,9 @@ public abstract class AbstractQueryLogEntryCreator implements QueryLogEntryCreat
     protected ParameterValueConverter registerOutParameterValueConverter = new RegisterOutParameterValueConverter();
 
     /**
-     * Comparator considering string as integer.
+     * Comparator that compares strings as integers when possible.
      *
-     * When it has null, put it as first element(smaller).
-     * If string cannot be parsed to integer, it compared as string.
+     * <p>Null values are placed first. If a string cannot be parsed as an integer, it is compared lexicographically.
      */
     protected static class StringAsIntegerComparator implements Comparator<String> {
         @Override

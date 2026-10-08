@@ -115,7 +115,7 @@ public class DefaultJsonQueryLogEntryCreator extends AbstractQueryLogEntryCreato
      * <p>default: "time":123,
      *
      * The unit of time is determined by underlying {@link net.ttddyy.dsproxy.proxy.Stopwatch} implementation.
-     * (milli vs nano seconds)
+     * (milliseconds versus nanoseconds)
      *
      * @param sb            StringBuilder to write
      * @param execInfo      execution info

@@ -6,8 +6,8 @@ import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 
 /**
- * {@link javax.servlet.ServletRequestListener} to clear {@link net.ttddyy.dsproxy.QueryCount} stored in
- * thread local when {@link net.ttddyy.dsproxy.listener.DataSourceQueryCountListener} is used.
+ * {@link javax.servlet.ServletRequestListener} that clears the {@link net.ttddyy.dsproxy.QueryCount} stored in a
+ * thread-local variable when {@link net.ttddyy.dsproxy.listener.DataSourceQueryCountListener} is used.
  *
  * @author Tadaya Tsuyukubo
  * @see QueryCounterClearFilter

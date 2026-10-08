@@ -9,8 +9,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * {@link ConnectionIdManager} implementation that emits connection IDs(sequential number) unique across all
- * datasources in JVM.
+ * {@link ConnectionIdManager} implementation that generates sequential connection IDs that are unique across all
+ * data sources in the JVM.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.6

@@ -58,9 +58,9 @@ public class ConnectionInfo {
     }
 
     /**
-     * Returns how many times {@link Connection#commit()} method is called.
+     * Returns how many times {@link Connection#commit()} was called.
      *
-     * @return num of commit method being called
+     * @return number of commit calls
      * @since 1.4.5
      */
     public int getCommitCount() {
@@ -68,7 +68,7 @@ public class ConnectionInfo {
     }
 
     /**
-     * @param commitCount num of commit method call
+     * @param commitCount number of commit calls
      * @since 1.4.5
      */
     public void setCommitCount(int commitCount) {
@@ -76,9 +76,9 @@ public class ConnectionInfo {
     }
 
     /**
-     * Returns how many times {@link Connection#rollback()} method is called.
+     * Returns how many times {@link Connection#rollback()} was called.
      *
-     * @return num of rollback method being called
+     * @return number of rollback calls
      * @since 1.4.5
      */
     public int getRollbackCount() {
@@ -86,7 +86,7 @@ public class ConnectionInfo {
     }
 
     /**
-     * @param rollbackCount num of rollback method call
+     * @param rollbackCount number of rollback calls
      * @since 1.4.5
      */
     public void setRollbackCount(int rollbackCount) {

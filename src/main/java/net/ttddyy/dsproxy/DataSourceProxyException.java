@@ -3,7 +3,7 @@ package net.ttddyy.dsproxy;
 import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
 /**
- * Framework exception that datasource-proxy encountered.
+ * Exception thrown when datasource-proxy encounters an error.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.4.3

@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Hold query and parameter information.
+ * Holds query and parameter information.
  *
- * For Statement batch execution, there will be multiple QueryInfo.
- * For Prepared/Callable batch execution, there will be one QueryInfo with multiple elements in parameters.
- * For batch execution, single instance of this class represents each batch entry.
+ * <p>For {@link java.sql.Statement} batch execution, there is one {@code QueryInfo} per batch entry.
+ * For {@link java.sql.PreparedStatement} or {@link java.sql.CallableStatement} batch execution, there is one
+ * {@code QueryInfo} with multiple entries in its parameter list.
  *
  * @author Tadaya Tsuyukubo
  */
@@ -37,9 +37,9 @@ public class QueryInfo {
     }
 
     /**
-     * Deprecated: Since return doesn't contain method information, {@link #getParametersList()} is now used.
+     * Deprecated because the return value does not include method information. Use {@link #getParametersList()} instead.
      *
-     * @return list of parameter map, key is first arg as string, value is second arg.
+     * @return list of parameter maps, where each key is the first argument converted to a string and each value is the second argument
      * @deprecated use {@link #getParametersList()}
      */
     @Deprecated
@@ -61,13 +61,13 @@ public class QueryInfo {
 
 
     /**
-     * List of parameter-operation-list.
+     * Lists parameter-operation groups.
      *
-     * For non-batch Prepared/Callable execution, this list contains 1 element that is a list which contains all
-     * parameter sets operations for the execution.
-     * For batch Prepared/Callable executions, this list will have N number of elements.
+     * <p>For non-batch Prepared/Callable execution, this list contains one element containing all parameter-set
+     * operations for the execution.
+     * For batch Prepared/Callable executions, this list contains one element per batch entry.
      *
-     * @return list of prameter operation list
+     * @return list of parameter-operation lists
      * @since 1.4
      */
     public List<List<ParameterSetOperation>> getParametersList() {

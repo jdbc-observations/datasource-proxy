@@ -242,7 +242,7 @@ public class RepeatableReadResultSetProxyLogic extends ProxyLogicSupport impleme
 
     /**
      * Determine whether the retrieved value is {@code null} for {@link #wasNull}.
-     * <p> Subclass may override this method to provide more sophisticated wasNull check.
+     * <p>Subclasses may override this method to provide a more sophisticated {@code wasNull} check.
      *
      * @param value  result value
      * @param method getX method

@@ -11,14 +11,14 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 /**
- * Factory interface to return a proxy with InvocationHandler used by datasource-proxy.
+ * Factory interface for creating proxies with invocation handlers used by datasource-proxy.
  *
  * @author Tadaya Tsuyukubo
  */
 public interface JdbcProxyFactory {
 
     /**
-     * use JDK proxy as default.
+     * Uses a JDK proxy by default.
      */
     JdbcProxyFactory DEFAULT = new JdkJdbcProxyFactory();
 
@@ -39,14 +39,14 @@ public interface JdbcProxyFactory {
                                               Connection proxyConnection, ProxyConfig proxyConfig);
 
     /**
-     * Create a proxy for {@link ResultSet}.
+     * Creates a proxy for {@link ResultSet}.
      *
      * @since 1.4.3
      */
     ResultSet createResultSet(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig);
 
     /**
-     * Create a proxy for {@link ResultSet} generated keys.
+     * Creates a proxy for generated keys represented by a {@link ResultSet}.
      *
      * @since 1.4.5
      */

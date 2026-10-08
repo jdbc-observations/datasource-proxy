@@ -76,7 +76,7 @@ public abstract class ProxyLogicSupport {
     }
 
     /**
-     * Populate {@link MethodExecutionContext} and calls before/after method callback.
+     * Populates {@link MethodExecutionContext} and invokes the before- and after-method callbacks.
      */
     protected Object proceedMethodExecution(ProxyConfig proxyConfig, Object original, ConnectionInfo connectionInfo,
                                             Object proxy, Method method, Object[] args) throws Throwable {

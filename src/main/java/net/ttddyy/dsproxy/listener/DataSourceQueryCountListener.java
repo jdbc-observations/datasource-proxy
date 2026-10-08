@@ -8,26 +8,25 @@ import net.ttddyy.dsproxy.QueryType;
 import java.util.List;
 
 /**
- * Update database access information.
+ * Tracks database access statistics.
  *
- * <p>Default implementation uses {@link ThreadQueryCountHolder} strategy that uses thread local to keep
- * {@link net.ttddyy.dsproxy.QueryCount}. {@link QueryCount} can be retrieved by {@link net.ttddyy.dsproxy.QueryCountHolder#get(String)}.
+ * <p>The default implementation uses the {@link ThreadQueryCountHolder} strategy, which stores
+ * {@link QueryCount} objects in a thread-local variable. A {@link QueryCount} can be retrieved with
+ * {@link net.ttddyy.dsproxy.QueryCountHolder#get(String)}.
  *
- * <p>Alternatively, {@link SingleQueryCountHolder} strategy can be used. This strategy uses single instance to keep
- * {@link QueryCount}; therefore, {@link QueryCount} holds accumulated total values from any threads until values are cleared.
+ * <p>Alternatively, the {@link SingleQueryCountHolder} strategy can be used. It uses a single instance to store
+ * {@link QueryCount} objects, which accumulate values across all threads until they are cleared.
  *
- * <p>In web application lifecycle, one http request is handled by one thread.
- * Storing database access information into a thread local value provides metrics
- * information per http request.
- * On the other hand, using single instance to store database access information allows you to retrieve total accumulated
- * numbers since application has started.
+ * <p>In a web application, each HTTP request is handled by a single thread. Storing database access information in a
+ * thread-local variable provides metrics for each request. Using a single instance instead lets you retrieve
+ * accumulated totals since the application started.
  *
  * <p>{@link net.ttddyy.dsproxy.QueryCount} holds following data:
  * <ul>
- * <li> datasource name
- * <li> number of database call
- * <li> total query execution time
- * <li> number of queries by type
+ * <li>data source name
+ * <li>number of database calls
+ * <li>total query execution time
+ * <li>number of queries by type
  * </ul>
  *
  * @author Tadaya Tsuyukubo
@@ -40,7 +39,7 @@ import java.util.List;
  */
 public class DataSourceQueryCountListener implements QueryExecutionListener {
 
-    // uses per thread implementation in default
+    // Use the per-thread implementation by default.
     private QueryCountStrategy queryCountStrategy = new ThreadQueryCountHolder();
 
     @Override

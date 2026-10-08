@@ -33,22 +33,25 @@ import java.util.Set;
  *
  * Parameters:
  * <ul>
- * <li> <b>dataSource <i>(required)</i></b>: Reference to actual datasource resource.  ex: java:jdbc/global/myDS
- * <li> <b>proxyName</b>:             ProxyDataSource name
- * <li> <b>logLevel</b>:              Loglevel for commons-logging, slf4j or log4j. ex: DEBUG, INFO, etc.
- * <li> <b>listeners</b>:             Fully qualified class name of `QueryExecutionListener` implementation class,or predefined values below. Can be comma delimited.
- * <li> <b>queryTransformer</b>:      Fully qualified class name of `QueryTransformer` implementation class.
- * <li> <b>parameterTransformer</b>:  Fully qualified class name of `ParameterTransformer` implementation class.
+ * <li><b>dataSource <i>(required)</i></b>: Reference to the actual data source resource, for example,
+ * {@code java:jdbc/global/myDS}.
+ * <li><b>proxyName</b>: ProxyDataSource name.
+ * <li><b>logLevel</b>: Log level for Commons Logging, SLF4J, or Log4j, for example, DEBUG or INFO.
+ * <li><b>listeners</b>: Fully qualified class name of a {@code QueryExecutionListener} implementation, or one of the
+ * predefined values below. Multiple values can be comma-delimited.
+ * <li><b>queryTransformer</b>: Fully qualified class name of a {@code QueryTransformer} implementation.
+ * <li><b>parameterTransformer</b>: Fully qualified class name of a {@code ParameterTransformer} implementation.
  * </ul>
  *
  * <i>listeners</i> parameter:
  * <ul>
- * <li> <b>sysout</b>:   alias to `net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener`
- * <li> <b>commons</b>:  alias to `net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener`
- * <li> <b>slf4j</b>:    alias to `net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener`
- * <li> <b>log4j</b>:    alias to `net.ttddyy.dsproxy.listener.logging.Log4jSlowQueryListener`
- * <li> <b>count</b>:    alias to `net.ttddyy.dsproxy.listener.DataSourceQueryCountListener`
- * <li> <b>x.y.z.MyQueryExecutionListener</b>: Fully qualified class name of `QueryExecutionListener` implementation
+ * <li><b>sysout</b>: alias for {@code net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener}
+ * <li><b>commons</b>: alias for {@code net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener}
+ * <li><b>slf4j</b>: alias for {@code net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener}
+ * <li><b>log4j</b>: alias for {@code net.ttddyy.dsproxy.listener.logging.Log4jSlowQueryListener}
+ * <li><b>count</b>: alias for {@code net.ttddyy.dsproxy.listener.DataSourceQueryCountListener}
+ * <li><b>x.y.z.MyQueryExecutionListener</b>: Fully qualified class name of a {@code QueryExecutionListener}
+ * implementation.
  * </ul>
  *
  * <i>format</i> parameter:

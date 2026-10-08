@@ -9,19 +9,19 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class QueryCount {
 
-    // num of queries
+    // number of queries
     private AtomicLong select = new AtomicLong();
     private AtomicLong insert = new AtomicLong();
     private AtomicLong update = new AtomicLong();
     private AtomicLong delete = new AtomicLong();
     private AtomicLong other = new AtomicLong();
 
-    // num of statement type
+    // number of statement types
     private AtomicLong statement = new AtomicLong();
     private AtomicLong prepared = new AtomicLong();
     private AtomicLong callable = new AtomicLong();
 
-    // num of database call
+    // number of database calls
     private AtomicLong total = new AtomicLong();
     private AtomicLong failure = new AtomicLong();
     private AtomicLong success = new AtomicLong();

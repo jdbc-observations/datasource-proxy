@@ -212,7 +212,7 @@ public class CallableStatementParameterTransformTest {
         ParameterTransformer paramTransformer = mock(ParameterTransformer.class);
         doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                // first batch. call clearParameters().
+                // Clear the parameters for the first batch.
                 ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
                 replacer.clearParameters();
                 replacer.setString(1, "first-1_REPLACED");
@@ -221,7 +221,7 @@ public class CallableStatementParameterTransformTest {
             }
         }).doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                // second batch. don't call clearParameters().
+                // Do not clear the parameters for the second batch.
                 ParameterReplacer replacer = (ParameterReplacer) invocation.getArguments()[0];
                 replacer.setString("in2", "second-2_REPLACED");
                 return null;

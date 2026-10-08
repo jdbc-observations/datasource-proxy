@@ -6,9 +6,9 @@ import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Log all JDBC API interaction.
+ * Logs all JDBC API interactions.
  *
- * To log interaction with {@link java.sql.ResultSet}, proxying result set needs to be enabled.
+ * <p>To log interactions with {@link java.sql.ResultSet}, result set proxying must be enabled.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.4.4
@@ -20,7 +20,7 @@ public class TracingMethodListener implements MethodExecutionListener {
     /**
      * Functional interface to decide whether to perform tracing.
      *
-     * This will be updated to BooleanSupplier once it is updated to java8.
+     * This can be replaced with {@code BooleanSupplier} when the minimum Java version is upgraded to Java 8.
      */
     public interface TracingCondition {
         boolean getAsBoolean();
@@ -29,7 +29,7 @@ public class TracingMethodListener implements MethodExecutionListener {
     /**
      * Functional interface to consume log message.
      *
-     * This will be updated to string consumer once it is updated to java8.
+     * This can be replaced with a string consumer when the minimum Java version is upgraded to Java 8.
      */
     public interface TracingMessageConsumer {
         void accept(String logMessage);
@@ -136,7 +136,7 @@ public class TracingMethodListener implements MethodExecutionListener {
     /**
      * Convert single parameter to String.
      *
-     * This method is called when invoked method takes single argument.
+     * This method is called when the invoked method takes a single argument.
      *
      * @param arg method parameter
      * @return string representation
@@ -151,7 +151,7 @@ public class TracingMethodListener implements MethodExecutionListener {
     /**
      * Construct display string for parameter.
      *
-     * This method is called when invoked method takes single argument.
+     * This method is called when the invoked method takes a single argument.
      *
      * @param parameter parameter value as string
      * @return parameter value to display
@@ -164,7 +164,7 @@ public class TracingMethodListener implements MethodExecutionListener {
     /**
      * Convert single parameter to String.
      *
-     * This method is called when invoked method takes multiple arguments.
+     * This method is called when the invoked method takes multiple arguments.
      *
      * @param arg method parameter
      * @return string representation
@@ -179,9 +179,9 @@ public class TracingMethodListener implements MethodExecutionListener {
     /**
      * Construct parameter value to display.
      *
-     * This method is called when invoked method takes multiple arguments.
+     * This method is called when the invoked method takes multiple arguments.
      *
-     * Default implementation truncate the parameter string if it is too long.
+     * The default implementation truncates the parameter string if it is too long.
      *
      * @param parameter parameter value as string
      * @return parameter value to display
@@ -198,11 +198,11 @@ public class TracingMethodListener implements MethodExecutionListener {
      *
      * @param seq          sequence number
      * @param thrown       thrown exception
-     * @param execTime     time took to perform the method
-     * @param connectionId connection id
-     * @param targetClass  invoked class
+     * @param execTime     time taken to execute the method
+     * @param connectionId connection ID
+     * @param targetClass  class of the invoked object
      * @param method       invoked method
-     * @param args         method arguments(parameters)
+     * @param args         method arguments
      * @return message to log
      */
     protected String constructMessage(long seq, Throwable thrown, long execTime,
@@ -242,9 +242,9 @@ public class TracingMethodListener implements MethodExecutionListener {
     }
 
     /**
-     * log message
+     * Logs a message.
      *
-     * Default implementation delegates to consumer that writes out to console.
+     * The default implementation delegates to a consumer that writes to the console.
      *
      * @param message message to log
      */

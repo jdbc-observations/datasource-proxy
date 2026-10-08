@@ -238,16 +238,16 @@ public class ProxyConfig {
     }
 
     /**
-     * When this returns {@code true}, the proxy logic always call {@link Statement#getGeneratedKeys()} and set it to
+     * When this returns {@code true}, the proxy logic always calls {@link Statement#getGeneratedKeys()} and stores the result in
      * {@link net.ttddyy.dsproxy.ExecutionInfo}.
-     * Also, if {@link Statement#getGeneratedKeys()} is called, it will return cached generated keys {@link ResultSet}
-     * when cached {@link ResultSet} is still open. If cached {@link ResultSet} is closed, calling
-     * {@link Statement#getGeneratedKeys()} returns a new {@link ResultSet}. (Calling {@link Statement#getGeneratedKeys()}
-     * multiple times is not defined in JDBC spec. Therefore, behavior depends on JDBC driver.)
+     * Also, if {@link Statement#getGeneratedKeys()} is called while the cached generated-keys {@link ResultSet} is
+     * still open, the cached result set is returned. If it is closed, calling {@link Statement#getGeneratedKeys()}
+     * returns a new {@link ResultSet}. (Calling {@link Statement#getGeneratedKeys()} multiple times is not defined
+     * in the JDBC specification, so behavior depends on the JDBC driver.)
      *
      * If {@code false} is returned, {@link ExecutionInfo#getGeneratedKeys()} returns {@code null}.
      *
-     * @return true if generated-keys retrieval is enabled
+     * @return {@code true} if generated-keys retrieval is enabled
      * @since 1.4.5
      */
     public boolean isAutoRetrieveGeneratedKeys() {
@@ -255,7 +255,7 @@ public class ProxyConfig {
     }
 
     /**
-     * When {@link JdbcProxyFactory} for generated-keys is specified, return {@code true}.
+     * Returns {@code true} when a proxy logic factory for generated keys is specified.
      *
      * @return {@code true} when {@link ResultSetProxyLogicFactory} for generated keys is specified
      * @see ProxyConfig.Builder#generatedKeysProxyLogicFactory(ResultSetProxyLogicFactory)
@@ -266,12 +266,11 @@ public class ProxyConfig {
     }
 
     /**
-     * Whether to auto close {@link ResultSet} for generated-keys that is automatically retrieved.
+     * Whether to automatically close the {@link ResultSet} for retrieved generated keys.
      *
-     * When this returns {@code true}, always close the {@link ResultSet} for generated keys when
-     * {@link QueryExecutionListener#afterQuery(ExecutionInfo, List)} has finished.
-     * The result of {@link Statement#getGeneratedKeys()} method will not be closed by this. Only auto retrieved
-     * {@link ResultSet} of generated keys is closed.
+     * When this returns {@code true}, the automatically retrieved generated-keys {@link ResultSet} is closed after
+     * {@link QueryExecutionListener#afterQuery(ExecutionInfo, List)} finishes. The result of an explicit call to
+     * {@link Statement#getGeneratedKeys()} is not closed by this setting.
      *
      * @since 1.4.5
      */
@@ -280,9 +279,9 @@ public class ProxyConfig {
     }
 
     /**
-     * Perform generated-keys auto retrieval for batch statement.
+     * Whether to automatically retrieve generated keys for batch statements.
      *
-     * Default is set to {@code false}.
+     * The default is {@code false}.
      *
      * @since 1.4.6
      */
@@ -291,9 +290,9 @@ public class ProxyConfig {
     }
 
     /**
-     * Perform generated-keys auto retrieval for batch prepared or callable.
+     * Whether to automatically retrieve generated keys for batch prepared or callable statements.
      *
-     * Default is set to {@code true}.
+     * The default is {@code true}.
      *
      * @since 1.4.6
      */
@@ -310,11 +309,11 @@ public class ProxyConfig {
     }
 
     /**
-     * Retrieve {@link Stopwatch}.
+     * Returns the {@link StopwatchFactory}.
      *
      * Default implementation is {@link SystemStopwatchFactory}.
      *
-     * @return stopwatchFactory
+     * @return stopwatch factory
      * @since 1.5.1
      */
     public StopwatchFactory getStopwatchFactory() {

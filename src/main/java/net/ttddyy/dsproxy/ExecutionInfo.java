@@ -103,8 +103,8 @@ public class ExecutionInfo {
     }
 
     /**
-     * Contains query execution result.
-     * Only available after successful query execution.
+     * Returns the query execution result.
+     * Available only after successful query execution.
      *
      * @return result of query
      */
@@ -117,8 +117,8 @@ public class ExecutionInfo {
     }
 
     /**
-     * Duration of query execution.
-     * Only available after successful query execution.
+     * Returns the query execution duration.
+     * Available only after successful query execution.
      *
      * The unit of time is determined by implementation of {@link net.ttddyy.dsproxy.proxy.Stopwatch}.
      * By default, it uses {@link net.ttddyy.dsproxy.proxy.SystemStopwatchFactory.SystemStopwatch} which
@@ -139,8 +139,8 @@ public class ExecutionInfo {
     }
 
     /**
-     * Contains an exception thrown while query was executed.
-     * Contains value only when an exception has thrown, otherwise {@code null}.
+     * Sets the exception thrown during query execution.
+     * The value is non-null only when an exception was thrown; otherwise, it is {@code null}.
      *
      * @param throwable an error thrown while executing a query
      */
@@ -157,10 +157,10 @@ public class ExecutionInfo {
     }
 
     /**
-     * Indicate whether the query execution was successful or not.
-     * Contains valid value only after the query execution.
+     * Indicates whether the query execution was successful.
+     * The value is valid only after query execution.
      *
-     * @return true when query has successfully executed
+     * @return {@code true} if the query executed successfully
      */
     public boolean isSuccess() {
         return isSuccess;
@@ -190,7 +190,7 @@ public class ExecutionInfo {
      * Returns {@link java.sql.Statement}, {@link java.sql.PreparedStatement}, or {@link java.sql.CallableStatement}
      * used by the execution.
      *
-     * @return statement/prepared/callable object
+     * @return statement, prepared statement, or callable statement used for the execution
      * @since 1.3.1
      */
     public Statement getStatement() {
@@ -202,7 +202,7 @@ public class ExecutionInfo {
     }
 
     /**
-     * @return Generated keys of the current statement
+     * @return generated keys for the current statement
      * @since 1.4.5
      */
     public ResultSet getGeneratedKeys() {

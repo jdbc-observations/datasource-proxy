@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Factory to create {@link RepeatableReadResultSetProxyLogic}.
+ * Factory for creating {@link RepeatableReadResultSetProxyLogic}.
  *
  * @author Tadaya Tsuyukubo
  * @author Liam Williams

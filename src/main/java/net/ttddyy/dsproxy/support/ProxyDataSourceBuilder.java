@@ -196,9 +196,9 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Set actual datasource.
+     * Sets the actual data source.
      *
-     * @param dataSource actual datasource
+     * @param dataSource actual data source
      * @return builder
      */
     public ProxyDataSourceBuilder dataSource(DataSource dataSource) {
@@ -739,9 +739,9 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Set datasource name.
+     * Sets the data source name.
      *
-     * @param dataSourceName datasource name
+     * @param dataSourceName data source name
      * @return builder
      */
     public ProxyDataSourceBuilder name(String dataSourceName) {
@@ -810,7 +810,7 @@ public class ProxyDataSourceBuilder {
 
     /**
      * Add connection isolation to logging query.
-     * <p>Since v1.10, this option is only meaningful when {@link #retrieveIsolation()} is called..
+     * <p>Since version 1.10, this option is only meaningful when {@link #retrieveIsolation()} is called.
      *
      * @return builder
      * @since 1.8
@@ -856,9 +856,10 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Enable resultset proxy.
+     * Enables result set proxying.
      *
-     * When it is enabled, returned ResultSet will be proxied(e.g.: Statement#executeQuery()).
+     * When enabled, returned {@link ResultSet} instances are proxied (for example, those returned by
+     * {@link Statement#executeQuery(String)}).
      *
      * @return builder
      * @since 1.4.3
@@ -869,7 +870,7 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Enable resultset proxy with given proxy logic factory.
+     * Enables result set proxying with the specified proxy logic factory.
      *
      * @return builder
      * @since 1.4.3
@@ -880,7 +881,8 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Enable {@link java.sql.ResultSet} proxy for generated keys(e.g.: Statement#getGeneratedKeys()).
+     * Enables {@link java.sql.ResultSet} proxying for generated keys (for example, those returned by
+     * {@link Statement#getGeneratedKeys()}).
      *
      * @return builder
      * @since 1.4.5
@@ -913,22 +915,22 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Enable auto retrieval of generated keys.
+     * Enables automatic retrieval of generated keys.
      *
-     * When it is enabled, after executing query, it always call {@link Statement#getGeneratedKeys()}.
+     * <p>When enabled, the proxy always calls {@link Statement#getGeneratedKeys()} after query execution.
      * The retrieved {@link java.sql.ResultSet} is available via {@link ExecutionInfo#getGeneratedKeys()}.
      *
-     * When this configuration is combined with {@link #proxyGeneratedKeys(ResultSetProxyLogicFactory)}, the proxied
+     * <p>When this configuration is combined with {@link #proxyGeneratedKeys(ResultSetProxyLogicFactory)}, the proxied
      * {@link java.sql.ResultSet} will be returned from {@link ExecutionInfo#getGeneratedKeys()}.
      *
-     * When autoClose parameter is set to {@code true}, datasource-proxy will close the generated-keys {@link java.sql.ResultSet}
-     * after it called {@link QueryExecutionListener#afterQuery(ExecutionInfo, List)}.
-     * This behavior might not be ideal if above layer, such as OR Mapper or application code, need to access generated-keys
-     * because when they access generated-keys, the resultset is already closed.
+     * <p>When the {@code autoClose} parameter is {@code true}, datasource-proxy closes the generated-keys
+     * {@link java.sql.ResultSet} after invoking {@link QueryExecutionListener#afterQuery(ExecutionInfo, List)}.
+     * This behavior may not be ideal if an upper layer, such as an ORM or application code, needs to access the
+     * generated keys because the result set is already closed when it tries to access them.
      *
-     * To support such usecase, specify {@link RepeatableReadResultSetProxyLogicFactory} and set {@code autoClose=false}.
-     * This way, even though your {@link QueryExecutionListener} has accessed generated-keys, it is still readable at
-     * upper layer of the code, and they can close the generated-keys resultset.
+     * <p>To support such a use case, specify {@link RepeatableReadResultSetProxyLogicFactory} and set
+     * {@code autoClose=false}. This way, even if your {@link QueryExecutionListener} has accessed the generated keys,
+     * they remain readable in the upper layers of the code, and those layers can close the generated-keys result set.
      *
      * @param autoClose set {@code true} to close the generated-keys {@link java.sql.ResultSet} after query listener execution
      * @return builder
@@ -941,12 +943,12 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Enable auto retrieval of generated keys with proxy created by specified factory.
+     * Enables automatic retrieval of generated keys using a proxy created by the specified factory.
      *
-     * See detail on {@link #autoRetrieveGeneratedKeys(boolean)}.
+     * <p>See {@link #autoRetrieveGeneratedKeys(boolean)} for details.
      *
      * @param autoClose set {@code true} to close the generated-keys {@link java.sql.ResultSet} after query listener execution
-     * @param factory   a factory to create a generated-keys proxy
+     * @param factory   factory that creates a generated-keys proxy
      * @return builder
      * @since 1.4.5
      */
@@ -958,9 +960,9 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Enable auto retrieval of generated keys with {@link RepeatableReadResultSetProxyLogicFactory}.
+     * Enables automatic retrieval of generated keys using {@link RepeatableReadResultSetProxyLogicFactory}.
      *
-     * See detail on {@link #autoRetrieveGeneratedKeys(boolean)}.
+     * <p>See {@link #autoRetrieveGeneratedKeys(boolean)} for details.
      *
      * @param autoClose set {@code true} to close the generated-keys {@link java.sql.ResultSet} after query listener execution
      * @return builder
@@ -974,14 +976,15 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Configure generated-keys retrieval for batch statement and prepared/callable when auto retrieval is enabled.
+     * Configures generated-key retrieval for batch statements and prepared/callable statements when automatic
+     * retrieval is enabled.
      *
-     * Since JDBC spec defines creation of generated-keys for batch executions are driver implementation specific,
-     * this method controls whether to auto-retrieve generated-keys for batch execution of {@link Statement} and
+     * Since the JDBC specification leaves generated-key creation for batch executions to the driver implementation,
+     * this method controls whether to automatically retrieve generated keys for batch executions of {@link Statement} and
      * {@link java.sql.PreparedStatement} / {@link java.sql.CallableStatement}.
-     * Setting is only effective when generated-keys auto-retrieval is enabled.
+     * This setting is effective only when automatic generated-key retrieval is enabled.
      *
-     * Defult values are set {@code false} for {@link Statement}, {@code true} for {@link java.sql.PreparedStatement}
+     * The default is {@code false} for {@link Statement} and {@code true} for {@link java.sql.PreparedStatement}
      * and {@link java.sql.CallableStatement}.
      *
      * @param forStatement          for {@link Statement}
@@ -997,9 +1000,9 @@ public class ProxyDataSourceBuilder {
 
 
     /**
-     * Enable resultset proxy that allows repeatable read.
+     * Enables result set proxying that allows repeatable reads.
      *
-     * Equivalent to {@code proxyResultSet(new RepeatableReadResultSetProxyLogicFactory())}
+     * <p>Equivalent to {@code proxyResultSet(new RepeatableReadResultSetProxyLogicFactory())}.
      *
      * @return builder
      * @since 1.4.3
@@ -1069,9 +1072,9 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Enable {@link TracingMethodListener} with consumer that receives trace logging message.
+     * Enables {@link TracingMethodListener} with a consumer that receives trace messages.
      *
-     * @param messageConsumer receives trace logging message
+     * @param messageConsumer consumer that receives trace messages
      * @return builder
      * @since 1.4.4
      */
@@ -1082,12 +1085,12 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Enable {@link TracingMethodListener}.
+     * Enables {@link TracingMethodListener}.
      *
-     * When given condition returns {@code true}, it prints out trace log.
-     * The condition is used for dynamically turn on/off tracing.
+     * <p>When the given condition returns {@code true}, a trace message is logged.
+     * Use the condition to dynamically turn tracing on or off.
      *
-     * @param condition decide to turn on/off tracing
+     * @param condition condition that determines whether tracing is enabled
      * @return builder
      * @since 1.4.4
      */
@@ -1098,14 +1101,14 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Enable {@link TracingMethodListener}.
+     * Enables {@link TracingMethodListener}.
      *
-     * When given condition returns {@code true}, it prints out trace log.
-     * The condition is used for dynamically turn on/off tracing.
-     * The message consumer receives a tracing message that can be printed to console, logger, etc.
+     * <p>When the given condition returns {@code true}, a trace message is logged.
+     * Use the condition to dynamically turn tracing on or off.
+     * The message consumer receives a trace message that can be written to the console, a logger, or another destination.
      *
-     * @param condition       decide to turn on/off tracing
-     * @param messageConsumer receives trace logging message
+     * @param condition       condition that determines whether tracing is enabled
+     * @param messageConsumer consumer that receives trace messages
      * @return builder
      * @since 1.4.4
      */
