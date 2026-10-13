@@ -1,4 +1,10 @@
 [[changelog-1.11.0]]
+=== 1.11.1
+====  Bug Fixes
+* Escape control characters in JSON query logs
+(https://github.com/jdbc-observations/datasource-proxy/issues/134[Issue-134]).  +
+Thanks _https://github.com/PHJ2000[박재홍]_ for this contribution!!
+
 === 1.11.0
 
 ====  New Features
