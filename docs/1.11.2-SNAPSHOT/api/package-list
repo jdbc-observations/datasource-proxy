@@ -1,0 +1,10 @@
+net.ttddyy.dsproxy
+net.ttddyy.dsproxy.listener
+net.ttddyy.dsproxy.listener.lifecycle
+net.ttddyy.dsproxy.listener.logging
+net.ttddyy.dsproxy.proxy
+net.ttddyy.dsproxy.proxy.jdk
+net.ttddyy.dsproxy.support
+net.ttddyy.dsproxy.support.jndi
+net.ttddyy.dsproxy.support.tags
+net.ttddyy.dsproxy.transform

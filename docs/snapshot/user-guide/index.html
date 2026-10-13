@@ -433,7 +433,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>datasource-proxy User Guide</h1>
 <div class="details">
 <span id="author" class="author">Tadaya Tsuyukubo</span><br>
-<span id="revnumber">version 1.12.0-SNAPSHOT</span>
+<span id="revnumber">version 1.11.2-SNAPSHOT</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -494,7 +494,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#changelog">8. Changelog</a>
 <ul class="sectlevel2">
-<li><a href="#changelog-1.11.0">1.11.0</a></li>
+<li><a href="#changelog-1.11.0">1.11.1</a></li>
+<li><a href="#_1_11_0">1.11.0</a></li>
 <li><a href="#changelog-1.10.1">1.10.1</a></li>
 <li><a href="#changelog-1.10">1.10</a></li>
 <li><a href="#changelog-1.9">1.9</a></li>
@@ -2374,7 +2375,22 @@ public class MyController {
 <h2 id="changelog"><a class="anchor" href="#changelog"></a>8. Changelog</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="changelog-1.11.0"><a class="anchor" href="#changelog-1.11.0"></a>1.11.0</h3>
+<h3 id="changelog-1.11.0"><a class="anchor" href="#changelog-1.11.0"></a>1.11.1</h3>
+<div class="sect3">
+<h4 id="_bug_fixes"><a class="anchor" href="#_bug_fixes"></a>Bug Fixes</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Escape control characters in JSON query logs
+(<a href="https://github.com/jdbc-observations/datasource-proxy/issues/134">Issue-134</a>). <br>
+Thanks <em><a href="https://github.com/PHJ2000">박재홍</a></em> for this contribution!!</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_1_11_0"><a class="anchor" href="#_1_11_0"></a>1.11.0</h3>
 <div class="sect3">
 <h4 id="_new_features"><a class="anchor" href="#_new_features"></a>New Features</h4>
 <div class="ulist">
@@ -2421,7 +2437,7 @@ Thanks <em><a href="https://github.com/reda-alaoui">Réda Housni Alaoui</a></em>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_bug_fixes"><a class="anchor" href="#_bug_fixes"></a>Bug Fixes</h4>
+<h4 id="_bug_fixes_2"><a class="anchor" href="#_bug_fixes_2"></a>Bug Fixes</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2483,7 +2499,7 @@ To enable isolation level retrieval, use <code>ProxyDataSourceBuilder#retrieveIs
 </div>
 </div>
 <div class="sect3">
-<h4 id="_bug_fixes_2"><a class="anchor" href="#_bug_fixes_2"></a>Bug Fixes</h4>
+<h4 id="_bug_fixes_3"><a class="anchor" href="#_bug_fixes_3"></a>Bug Fixes</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2587,7 +2603,7 @@ Thanks <em><a href="https://github.com/ivasanpag">Ivan Jose Sanchez Pagador</a><
 </div>
 </div>
 <div class="sect3">
-<h4 id="_bug_fixes_3"><a class="anchor" href="#_bug_fixes_3"></a>Bug Fixes</h4>
+<h4 id="_bug_fixes_4"><a class="anchor" href="#_bug_fixes_4"></a>Bug Fixes</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2703,7 +2719,7 @@ elapsed time. Default is set to <code>SystemStopwatchFactory</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_bug_fixes_4"><a class="anchor" href="#_bug_fixes_4"></a>Bug Fixes</h4>
+<h4 id="_bug_fixes_5"><a class="anchor" href="#_bug_fixes_5"></a>Bug Fixes</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -3398,7 +3414,7 @@ call &#8658; total, elapsedTime &#8658; time, added success, failure, etc.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.12.0-SNAPSHOT<br>
+Version 1.11.2-SNAPSHOT<br>
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
