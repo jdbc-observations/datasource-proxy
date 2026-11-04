@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 public class QueryTypeDetectorTest {
 
     private static final String REPORTED_CTE = "WITH RECURSIVE t(n, level_num) AS (SELECT next value for SEQ_PARENT_ID as n, 1 as level_num UNION ALL SELECT next value for SEQ_PARENT_ID as n, level_num + 1 as level_num  FROM t  WHERE level_num < ?) SELECT n FROM t";
-    private static final String EXECUTABLE_CTE = "WITH RECURSIVE t(n) AS (VALUES (1) UNION ALL SELECT n + 1 FROM t WHERE n < 3) SELECT n FROM t";
+    private static final String EXECUTABLE_CTE = "WITH RECURSIVE t(n) AS (VALUES (1) UNION SELECT n + 1 FROM t WHERE n < 3) SELECT n FROM t";
 
     @After
     public void clearCounts() {
