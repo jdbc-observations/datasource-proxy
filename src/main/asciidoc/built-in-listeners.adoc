@@ -255,6 +255,24 @@ builder.
   .build();
 ```
 
+Query types are classified by `DefaultQueryTypeDetector`, which delegates to `QueryUtils.getQueryType`.
+This preserves the existing leading-character heuristic; it is not a full SQL parser and a query starting with
+`WITH` is still counted as `OTHER` by default. To support database-specific syntax, implement `QueryTypeDetector`
+and register a configured count listener through the existing listener builder method:
+
+```java
+DataSourceQueryCountListener countListener = new DataSourceQueryCountListener();
+countListener.setQueryTypeDetector(customQueryTypeDetector);
+ProxyDataSource dataSource = ProxyDataSourceBuilder.create(originalDataSource)
+    .listener(countListener)
+    .build();
+```
+
+Use this listener instead of also calling `countQuery()`, which would register a second count listener.
+The detector receives the original query string (possibly null) and must return a non-null `QueryType`.
+Configure it before using the listener, and make it thread-safe if the listener is shared across threads.
+This setting does not change the query count storage strategy.
+
 Stored metrics can be retrieved by the following static method.
 
 ```java
