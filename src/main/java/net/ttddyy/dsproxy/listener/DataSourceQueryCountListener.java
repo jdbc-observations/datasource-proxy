@@ -21,6 +21,9 @@ import java.util.List;
  * thread-local variable provides metrics for each request. Using a single instance instead lets you retrieve
  * accumulated totals since the application started.
  *
+ * <p>Query types are determined by {@link DefaultQueryTypeDetector}. Configure a custom
+ * {@link QueryTypeDetector} before using this listener to support database-specific SQL syntax.
+ *
  * <p>{@link net.ttddyy.dsproxy.QueryCount} holds following data:
  * <ul>
  * <li>data source name
@@ -41,6 +44,8 @@ public class DataSourceQueryCountListener implements QueryExecutionListener {
 
     // Use the per-thread implementation by default.
     private QueryCountStrategy queryCountStrategy = new ThreadQueryCountHolder();
+
+    private QueryTypeDetector queryTypeDetector = new DefaultQueryTypeDetector();
 
     @Override
     public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
@@ -70,7 +75,7 @@ public class DataSourceQueryCountListener implements QueryExecutionListener {
         // increment query count
         for (QueryInfo queryInfo : queryInfoList) {
             final String query = queryInfo.getQuery();
-            final QueryType type = QueryUtils.getQueryType(query);
+            final QueryType type = this.queryTypeDetector.getQueryType(query);
             count.increment(type);
         }
 
@@ -88,6 +93,29 @@ public class DataSourceQueryCountListener implements QueryExecutionListener {
      */
     public void setQueryCountStrategy(QueryCountStrategy queryCountStrategy) {
         this.queryCountStrategy = queryCountStrategy;
+    }
+
+    /**
+     * Returns the detector used to classify queries.
+     *
+     * @return the query type detector
+     */
+    public QueryTypeDetector getQueryTypeDetector() {
+        return this.queryTypeDetector;
+    }
+
+    /**
+     * Configures query classification independently of the query count storage strategy.
+     * Set this before using the listener. A detector shared across threads must be thread-safe.
+     *
+     * @param queryTypeDetector the detector, not {@code null}
+     * @throws IllegalArgumentException if the detector is {@code null}
+     */
+    public void setQueryTypeDetector(QueryTypeDetector queryTypeDetector) {
+        if (queryTypeDetector == null) {
+            throw new IllegalArgumentException("queryTypeDetector must not be null");
+        }
+        this.queryTypeDetector = queryTypeDetector;
     }
 
 }
