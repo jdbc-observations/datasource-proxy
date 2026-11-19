@@ -16,6 +16,8 @@ public interface ConnectionMethodCallbacks {
 
     void beforeAbort(MethodExecutionContext executionContext);
 
+    void beforeBeginRequest(MethodExecutionContext executionContext);
+
     void beforeClearWarnings(MethodExecutionContext executionContext);
 
     void beforeClose(MethodExecutionContext executionContext);
@@ -35,6 +37,8 @@ public interface ConnectionMethodCallbacks {
     void beforeCreateStatement(MethodExecutionContext executionContext);
 
     void beforeCreateStruct(MethodExecutionContext executionContext);
+
+    void beforeEndRequest(MethodExecutionContext executionContext);
 
     void beforeGetAutoCommit(MethodExecutionContext executionContext);
 
@@ -88,11 +92,17 @@ public interface ConnectionMethodCallbacks {
 
     void beforeSetSchema(MethodExecutionContext executionContext);
 
+    void beforeSetShardingKey(MethodExecutionContext executionContext);
+
+    void beforeSetShardingKeyIfValid(MethodExecutionContext executionContext);
+
     void beforeSetTransactionIsolation(MethodExecutionContext executionContext);
 
     void beforeSetTypeMap(MethodExecutionContext executionContext);
 
     void afterAbort(MethodExecutionContext executionContext);
+
+    void afterBeginRequest(MethodExecutionContext executionContext);
 
     void afterClearWarnings(MethodExecutionContext executionContext);
 
@@ -113,6 +123,8 @@ public interface ConnectionMethodCallbacks {
     void afterCreateStatement(MethodExecutionContext executionContext);
 
     void afterCreateStruct(MethodExecutionContext executionContext);
+
+    void afterEndRequest(MethodExecutionContext executionContext);
 
     void afterGetAutoCommit(MethodExecutionContext executionContext);
 
@@ -165,6 +177,10 @@ public interface ConnectionMethodCallbacks {
     void afterSetSavepoint(MethodExecutionContext executionContext);
 
     void afterSetSchema(MethodExecutionContext executionContext);
+
+    void afterSetShardingKey(MethodExecutionContext executionContext);
+
+    void afterSetShardingKeyIfValid(MethodExecutionContext executionContext);
 
     void afterSetTransactionIsolation(MethodExecutionContext executionContext);
 

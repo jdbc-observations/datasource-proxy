@@ -43,7 +43,15 @@ public interface DataSourceMethodCallbacks {
 
     void beforeGetConnection(MethodExecutionContext executionContext);
 
+    void beforeCreateConnectionBuilder(MethodExecutionContext executionContext);
+
+    void beforeCreateShardingKeyBuilder(MethodExecutionContext executionContext);
+
     void afterGetConnection(MethodExecutionContext executionContext);
+
+    void afterCreateConnectionBuilder(MethodExecutionContext executionContext);
+
+    void afterCreateShardingKeyBuilder(MethodExecutionContext executionContext);
 
 
 }

@@ -3,7 +3,7 @@
 
   <groupId>net.ttddyy</groupId>
   <artifactId>datasource-proxy</artifactId>
-  <version>1.11.2-SNAPSHOT</version>
+  <version>2.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>datasource-proxy</name>
@@ -36,7 +36,6 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <surefire.version>2.19.1</surefire.version>
     <commons-logging.version>1.1.1</commons-logging.version>
     <slf4j.version>1.7.12</slf4j.version>
     <spring.version>2.5.6</spring.version>
@@ -45,11 +44,10 @@
     <aopalliance.version>1.0</aopalliance.version>
     <hsqldb.version>2.3.5</hsqldb.version>
     <junit.version>4.13.1</junit.version>
-    <mockito.version>2.10.0</mockito.version>
+    <mockito.version>4.11.0</mockito.version>
     <assertj.version>2.8.0</assertj.version>
     <logback.versino>1.2.0</logback.versino>
     <asciidoctor.version>1.5.3</asciidoctor.version>
-    <animal-sniffer-maven-plugin.version>1.23</animal-sniffer-maven-plugin.version>
     <log4j2.version>2.17.2</log4j2.version>
     <central-publishing-maven-plugin.version>0.7.0</central-publishing-maven-plugin.version>
   </properties>
@@ -114,7 +112,7 @@
             <artifactId>maven-javadoc-plugin</artifactId>
             <configuration>
               <!-- disable java8 doclint for @see reference to generic class -->
-              <additionalparam>-Xdoclint:none --allow-script-in-comments</additionalparam>
+              <additionalOptions>-Xdoclint:none --allow-script-in-comments</additionalOptions>
               <footer>
                 <![CDATA[
                 <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -142,19 +140,16 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.7.0</version>
+        <version>3.13.0</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-          <testSource>1.8</testSource>
-          <testTarget>1.8</testTarget>
+          <release>17</release>
         </configuration>
       </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>${surefire.version}</version>
+        <version>3.5.2</version>
       </plugin>
 
       <plugin>
@@ -174,7 +169,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.0.0-M1</version>
+        <version>3.6.3</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -185,7 +180,7 @@
         </executions>
         <configuration>
           <!-- disable java8 doclint for @see reference to generic class -->
-          <additionalparam>-Xdoclint:none --allow-script-in-comments</additionalparam>
+          <additionalOptions>-Xdoclint:none --allow-script-in-comments</additionalOptions>
         </configuration>
       </plugin>
 
@@ -231,29 +226,6 @@
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>${animal-sniffer-maven-plugin.version}</version>
-        <configuration>
-          <signature>
-            <groupId>org.codehaus.mojo.signature</groupId>
-            <artifactId>java16</artifactId>
-            <version>1.0</version>
-          </signature>
-          <ignores>
-            <ignore>java.lang.AutoCloseable</ignore>
-          </ignores>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>test</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -336,12 +308,6 @@
     </dependency>
 
 
-    <dependency>
-      <groupId>org.codehaus.mojo</groupId>
-      <artifactId>animal-sniffer-annotations</artifactId>
-      <version>${animal-sniffer-maven-plugin.version}</version>
-      <optional>true</optional>
-    </dependency>
 
     <dependency>
       <groupId>org.hsqldb</groupId>

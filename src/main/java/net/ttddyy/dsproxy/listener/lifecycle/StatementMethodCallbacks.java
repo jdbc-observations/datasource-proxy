@@ -24,6 +24,12 @@ public interface StatementMethodCallbacks {
 
     void beforeClose(MethodExecutionContext executionContext);
 
+    void beforeEnquoteIdentifier(MethodExecutionContext executionContext);
+
+    void beforeEnquoteLiteral(MethodExecutionContext executionContext);
+
+    void beforeEnquoteNCharLiteral(MethodExecutionContext executionContext);
+
     void beforeCloseOnCompletion(MethodExecutionContext executionContext);
 
     void beforeExecute(MethodExecutionContext executionContext);
@@ -76,6 +82,8 @@ public interface StatementMethodCallbacks {
 
     void beforeIsPoolable(MethodExecutionContext executionContext);
 
+    void beforeIsSimpleIdentifier(MethodExecutionContext executionContext);
+
     void beforeSetCursorName(MethodExecutionContext executionContext);
 
     void beforeSetEscapeProcessing(MethodExecutionContext executionContext);
@@ -103,6 +111,12 @@ public interface StatementMethodCallbacks {
     void afterClearWarnings(MethodExecutionContext executionContext);
 
     void afterClose(MethodExecutionContext executionContext);
+
+    void afterEnquoteIdentifier(MethodExecutionContext executionContext);
+
+    void afterEnquoteLiteral(MethodExecutionContext executionContext);
+
+    void afterEnquoteNCharLiteral(MethodExecutionContext executionContext);
 
     void afterCloseOnCompletion(MethodExecutionContext executionContext);
 
@@ -155,6 +169,8 @@ public interface StatementMethodCallbacks {
     void afterIsCloseOnCompletion(MethodExecutionContext executionContext);
 
     void afterIsPoolable(MethodExecutionContext executionContext);
+
+    void afterIsSimpleIdentifier(MethodExecutionContext executionContext);
 
     void afterSetCursorName(MethodExecutionContext executionContext);
 

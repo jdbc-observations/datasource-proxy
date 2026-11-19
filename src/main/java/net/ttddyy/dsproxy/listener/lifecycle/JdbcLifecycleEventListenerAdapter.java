@@ -307,12 +307,32 @@ public class JdbcLifecycleEventListenerAdapter implements JdbcLifecycleEventList
     }
 
     @Override
+    public void beforeBeginRequest(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
     public void beforeClearWarnings(MethodExecutionContext executionContext) {
 
     }
 
     @Override
     public void beforeClose(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
+    public void beforeEnquoteIdentifier(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
+    public void beforeEnquoteLiteral(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
+    public void beforeEnquoteNCharLiteral(MethodExecutionContext executionContext) {
 
     }
 
@@ -353,6 +373,11 @@ public class JdbcLifecycleEventListenerAdapter implements JdbcLifecycleEventList
 
     @Override
     public void beforeCreateStruct(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
+    public void beforeEndRequest(MethodExecutionContext executionContext) {
 
     }
 
@@ -487,6 +512,16 @@ public class JdbcLifecycleEventListenerAdapter implements JdbcLifecycleEventList
     }
 
     @Override
+    public void beforeSetShardingKey(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
+    public void beforeSetShardingKeyIfValid(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
     public void beforeSetTransactionIsolation(MethodExecutionContext executionContext) {
 
     }
@@ -502,12 +537,32 @@ public class JdbcLifecycleEventListenerAdapter implements JdbcLifecycleEventList
     }
 
     @Override
+    public void afterBeginRequest(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
     public void afterClearWarnings(MethodExecutionContext executionContext) {
 
     }
 
     @Override
     public void afterClose(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
+    public void afterEnquoteIdentifier(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
+    public void afterEnquoteLiteral(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
+    public void afterEnquoteNCharLiteral(MethodExecutionContext executionContext) {
 
     }
 
@@ -548,6 +603,11 @@ public class JdbcLifecycleEventListenerAdapter implements JdbcLifecycleEventList
 
     @Override
     public void afterCreateStruct(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
+    public void afterEndRequest(MethodExecutionContext executionContext) {
 
     }
 
@@ -682,6 +742,16 @@ public class JdbcLifecycleEventListenerAdapter implements JdbcLifecycleEventList
     }
 
     @Override
+    public void afterSetShardingKey(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
+    public void afterSetShardingKeyIfValid(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
     public void afterSetTransactionIsolation(MethodExecutionContext executionContext) {
 
     }
@@ -747,7 +817,27 @@ public class JdbcLifecycleEventListenerAdapter implements JdbcLifecycleEventList
     }
 
     @Override
+    public void beforeCreateConnectionBuilder(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
+    public void beforeCreateShardingKeyBuilder(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
     public void afterGetConnection(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
+    public void afterCreateConnectionBuilder(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
+    public void afterCreateShardingKeyBuilder(MethodExecutionContext executionContext) {
 
     }
 
@@ -1772,6 +1862,11 @@ public class JdbcLifecycleEventListenerAdapter implements JdbcLifecycleEventList
     }
 
     @Override
+    public void beforeIsSimpleIdentifier(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
     public void beforeSetCursorName(MethodExecutionContext executionContext) {
 
     }
@@ -1943,6 +2038,11 @@ public class JdbcLifecycleEventListenerAdapter implements JdbcLifecycleEventList
 
     @Override
     public void afterIsPoolable(MethodExecutionContext executionContext) {
+
+    }
+
+    @Override
+    public void afterIsSimpleIdentifier(MethodExecutionContext executionContext) {
 
     }
 

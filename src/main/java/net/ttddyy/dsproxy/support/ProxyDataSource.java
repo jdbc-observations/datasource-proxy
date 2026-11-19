@@ -8,7 +8,6 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.ProxyLogicSupport;
-import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
 import javax.sql.DataSource;
 import java.io.Closeable;
@@ -30,7 +29,6 @@ public class ProxyDataSource extends ProxyLogicSupport implements DataSource, Cl
 
     private static final Method GET_CONNECTION_WITH_NO_ARGS;
     private static final Method GET_CONNECTION_WITH_USER_PASS;
-    private static final boolean isAutoCloseablePresent = isAutoCloseablePresent();
 
     static {
         try {
@@ -39,15 +37,6 @@ public class ProxyDataSource extends ProxyLogicSupport implements DataSource, Cl
         } catch (NoSuchMethodException e) {
             throw new DataSourceProxyException("Failed to find getConnection methods", e);
         }
-    }
-
-    private static boolean isAutoCloseablePresent() {
-        try {
-            Class.forName("java.lang.AutoCloseable");  // jdk7+
-        } catch (ClassNotFoundException ex) {
-            return false;
-        }
-        return true;
     }
 
     private DataSource dataSource;
@@ -146,7 +135,6 @@ public class ProxyDataSource extends ProxyLogicSupport implements DataSource, Cl
         return this.dataSource.isWrapperFor(iface);
     }
 
-    @IgnoreJRERequirement
     @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         return this.dataSource.getParentLogger();  // JDBC4.1 (jdk7+)
@@ -164,11 +152,11 @@ public class ProxyDataSource extends ProxyLogicSupport implements DataSource, Cl
     private void doClose() throws Exception {
         if (dataSource instanceof Closeable) {
             ((Closeable) dataSource).close();
-        } else if (isAutoCloseablePresent && dataSource instanceof AutoCloseable) {
+        } else if (dataSource instanceof AutoCloseable) {
             ((AutoCloseable) dataSource).close(); // (jdk7+)
         } else if (dataSource.isWrapperFor(Closeable.class)) {
             dataSource.unwrap(Closeable.class).close();
-        } else if (isAutoCloseablePresent && dataSource.isWrapperFor(AutoCloseable.class)) {
+        } else if (dataSource.isWrapperFor(AutoCloseable.class)) {
             dataSource.unwrap(AutoCloseable.class).close();  // (jdk7+)
         }
     }

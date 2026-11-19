@@ -2,7 +2,6 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.DataSourceProxyException;
-import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetFactory;
@@ -27,7 +26,6 @@ import java.sql.SQLException;
  * @see CachedRowSetResultSetProxyLogic
  * @since 1.4.7
  */
-@IgnoreJRERequirement
 public class CachedRowSetResultSetProxyLogicFactory implements ResultSetProxyLogicFactory {
 
     private final RowSetFactory rowSetFactory;

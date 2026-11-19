@@ -1,6 +1,5 @@
 package net.ttddyy.dsproxy;
 
-import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
 /**
  * Exception thrown when datasource-proxy encounters an error.
@@ -25,7 +24,6 @@ public class DataSourceProxyException extends RuntimeException {
         super(cause);
     }
 
-    @IgnoreJRERequirement
     public DataSourceProxyException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }

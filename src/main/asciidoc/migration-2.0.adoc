@@ -1,0 +1,15 @@
+= Migrating to 2.0
+
+== Baseline
+
+Java 17 is required; stay on 1.x for Java 6–16.
+
+== Removed integrations
+
+== Listeners
+
+== Query counting
+
+== Logging
+
+== ResultSet
