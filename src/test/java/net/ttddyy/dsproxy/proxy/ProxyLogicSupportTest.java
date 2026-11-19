@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.CallCheckMethodListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +25,7 @@ class ProxyLogicSupportTest {
         final Object returnObj = new Object();
         final ConnectionInfo connectionInfo = new ConnectionInfo();
 
-        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener() {
+        CallCheckMethodListener listener = new CallCheckMethodListener() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {
                 super.beforeMethod(executionContext);
@@ -62,7 +62,7 @@ class ProxyLogicSupportTest {
         };
 
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(LegacyListenerBridge.ofMethod(listener)).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
         Custom custom = new Custom((proxyTarget, m, args) -> returnObj);
         Object result = custom.proceedMethodExecution(proxyConfig, target, connectionInfo, proxy, method, methodArgs);
@@ -87,7 +87,7 @@ class ProxyLogicSupportTest {
         final Exception exception = new Exception();
         final ConnectionInfo connectionInfo = new ConnectionInfo();
 
-        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener() {
+        CallCheckMethodListener listener = new CallCheckMethodListener() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {
                 super.beforeMethod(executionContext);
@@ -104,7 +104,7 @@ class ProxyLogicSupportTest {
             }
         };
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(LegacyListenerBridge.ofMethod(listener)).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
         Custom custom = new Custom((proxyTarget, m, args) -> {
             throw exception;
@@ -132,7 +132,7 @@ class ProxyLogicSupportTest {
         final Object[] replacedMethodArgs = new Object[]{Statement.RETURN_GENERATED_KEYS};
         final ConnectionInfo connectionInfo = new ConnectionInfo();
 
-        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener() {
+        CallCheckMethodListener listener = new CallCheckMethodListener() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {
                 super.beforeMethod(executionContext);
@@ -152,7 +152,7 @@ class ProxyLogicSupportTest {
         };
 
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(LegacyListenerBridge.ofMethod(listener)).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
         final AtomicReference<Method> invokedMethod = new AtomicReference<Method>();
         final AtomicReference<Object[]> invokedMethodArgs = new AtomicReference<Object[]>();

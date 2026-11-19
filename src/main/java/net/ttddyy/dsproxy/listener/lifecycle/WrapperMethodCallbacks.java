@@ -10,12 +10,20 @@ import net.ttddyy.dsproxy.listener.MethodExecutionContext;
  */
 public interface WrapperMethodCallbacks {
 
-    void beforeIsWrapperFor(MethodExecutionContext executionContext);
+    default void beforeIsWrapperFor(MethodExecutionContext executionContext) {
 
-    void beforeUnwrap(MethodExecutionContext executionContext);
+    }
 
-    void afterIsWrapperFor(MethodExecutionContext executionContext);
+    default void beforeUnwrap(MethodExecutionContext executionContext) {
 
-    void afterUnwrap(MethodExecutionContext executionContext);
+    }
+
+    default void afterIsWrapperFor(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUnwrap(MethodExecutionContext executionContext) {
+
+    }
 
 }

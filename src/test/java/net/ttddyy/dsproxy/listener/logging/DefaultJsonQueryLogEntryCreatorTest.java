@@ -1,7 +1,9 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.ExecutionInfoBuilder;
+import static net.ttddyy.dsproxy.QueryExecutionContextBuilder.withQueries;
+import net.ttddyy.dsproxy.proxy.MutableQueryExecutionContext;
+import java.time.Duration;
+import net.ttddyy.dsproxy.QueryExecutionContextBuilder;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.QueryInfoBuilder;
 import net.ttddyy.dsproxy.StatementType;
@@ -29,11 +31,10 @@ class DefaultJsonQueryLogEntryCreatorTest {
 
     @Test
     void getLogEntryEscapesControlCharactersInQuery() {
-        ExecutionInfo info = new ExecutionInfo();
+        MutableQueryExecutionContext info = new MutableQueryExecutionContext();
         info.setStatementType(StatementType.STATEMENT);
         QueryInfo query = new QueryInfo("select 'a" + (char) 1 + "b'");
-        String json = new DefaultJsonQueryLogEntryCreator().getLogEntry(
-                info, Arrays.asList(query), false, false, false);
+        String json = new DefaultJsonQueryLogEntryCreator().getLogEntry(withQueries(info, Arrays.asList(query)), false, false, false);
         assertThat(json)
                 .contains("select 'a\\u0001b'")
                 .doesNotContain(String.valueOf((char) 1));
@@ -44,12 +45,12 @@ class DefaultJsonQueryLogEntryCreatorTest {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        MutableQueryExecutionContext executionInfo = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
                 .connectionId("10")
                 .isolationLevel(Connection.TRANSACTION_READ_COMMITTED)
-                .elapsedTime(100)
+                .elapsedTime(Duration.ofMillis(100))
                 .method(method)
                 .result(result)
                 .statementType(StatementType.STATEMENT)
@@ -62,23 +63,23 @@ class DefaultJsonQueryLogEntryCreatorTest {
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true, true);
+        String jsonEntry = creator.getLogEntry(withQueries(executionInfo, Lists.newArrayList(queryInfo)), true, true, true);
         assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"isolation\":\"READ_COMMITTED\", \"time\":100, \"success\":true, \"type\":\"Statement\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{}]}");
 
         // writeDataSourceName=false
-        jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), false, true, true);
+        jsonEntry = creator.getLogEntry(withQueries(executionInfo, Lists.newArrayList(queryInfo)), false, true, true);
         assertThat(jsonEntry).isEqualTo("{\"connection\":10, \"isolation\":\"READ_COMMITTED\", \"time\":100, \"success\":true, \"type\":\"Statement\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{}]}");
 
         // writeConnectionId=false
-        jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, false, true);
+        jsonEntry = creator.getLogEntry(withQueries(executionInfo, Lists.newArrayList(queryInfo)), true, false, true);
         assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"isolation\":\"READ_COMMITTED\", \"time\":100, \"success\":true, \"type\":\"Statement\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{}]}");
 
         // writeIsolation=false
-        jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true, false);
+        jsonEntry = creator.getLogEntry(withQueries(executionInfo, Lists.newArrayList(queryInfo)), true, true, false);
         assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"time\":100, \"success\":true, \"type\":\"Statement\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{}]}");
 
         // writeDataSourceName=false, writeConnectionId=false, writeIsolation=false
-        jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), false, false, false);
+        jsonEntry = creator.getLogEntry(withQueries(executionInfo, Lists.newArrayList(queryInfo)), false, false, false);
         assertThat(jsonEntry).isEqualTo("{\"time\":100, \"success\":true, \"type\":\"Statement\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{}]}");
     }
 
@@ -87,12 +88,12 @@ class DefaultJsonQueryLogEntryCreatorTest {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        MutableQueryExecutionContext executionInfo = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
                 .connectionId("10")
                 .isolationLevel(Connection.TRANSACTION_READ_COMMITTED)
-                .elapsedTime(100)
+                .elapsedTime(Duration.ofMillis(100))
                 .method(method)
                 .result(result)
                 .statementType(StatementType.STATEMENT)
@@ -106,7 +107,7 @@ class DefaultJsonQueryLogEntryCreatorTest {
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo1, queryInfo2), true, true, true);
+        String jsonEntry = creator.getLogEntry(withQueries(executionInfo, Lists.newArrayList(queryInfo1, queryInfo2)), true, true, true);
         assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"isolation\":\"READ_COMMITTED\", \"time\":100, \"success\":true, \"type\":\"Statement\", \"batch\":true, \"querySize\":2, \"batchSize\":2, \"query\":[\"select 1\",\"select 2\"], \"params\":[{},{}]}");
     }
 
@@ -115,12 +116,12 @@ class DefaultJsonQueryLogEntryCreatorTest {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        MutableQueryExecutionContext executionInfo = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
                 .connectionId("10")
                 .isolationLevel(Connection.TRANSACTION_READ_COMMITTED)
-                .elapsedTime(100)
+                .elapsedTime(Duration.ofMillis(100))
                 .method(method)
                 .result(result)
                 .statementType(StatementType.PREPARED)
@@ -138,7 +139,7 @@ class DefaultJsonQueryLogEntryCreatorTest {
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true, true);
+        String jsonEntry = creator.getLogEntry(withQueries(executionInfo, Lists.newArrayList(queryInfo)), true, true, true);
         assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"isolation\":\"READ_COMMITTED\", \"time\":100, \"success\":true, \"type\":\"Prepared\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[[\"foo\",\"100\",null]]}");
     }
 
@@ -147,12 +148,12 @@ class DefaultJsonQueryLogEntryCreatorTest {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        MutableQueryExecutionContext executionInfo = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
                 .connectionId("10")
                 .isolationLevel(Connection.TRANSACTION_READ_COMMITTED)
-                .elapsedTime(100)
+                .elapsedTime(Duration.ofMillis(100))
                 .method(method)
                 .result(result)
                 .statementType(StatementType.PREPARED)
@@ -171,7 +172,7 @@ class DefaultJsonQueryLogEntryCreatorTest {
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true, true);
+        String jsonEntry = creator.getLogEntry(withQueries(executionInfo, Lists.newArrayList(queryInfo)), true, true, true);
         assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"isolation\":\"READ_COMMITTED\", \"time\":100, \"success\":true, \"type\":\"Prepared\", \"batch\":true, \"querySize\":1, \"batchSize\":2, \"query\":[\"select 1\"], \"params\":[[\"foo\",\"100\"],[\"bar\",\"200\"]]}");
     }
 
@@ -180,12 +181,12 @@ class DefaultJsonQueryLogEntryCreatorTest {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        MutableQueryExecutionContext executionInfo = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
                 .connectionId("10")
                 .isolationLevel(Connection.TRANSACTION_READ_COMMITTED)
-                .elapsedTime(100)
+                .elapsedTime(Duration.ofMillis(100))
                 .method(method)
                 .result(result)
                 .statementType(StatementType.CALLABLE)
@@ -202,7 +203,7 @@ class DefaultJsonQueryLogEntryCreatorTest {
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true, true);
+        String jsonEntry = creator.getLogEntry(withQueries(executionInfo, Lists.newArrayList(queryInfo)), true, true, true);
         assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"isolation\":\"READ_COMMITTED\", \"time\":100, \"success\":true, \"type\":\"Callable\", \"batch\":false, \"querySize\":1, \"batchSize\":0, \"query\":[\"select 1\"], \"params\":[{\"id\":\"100\",\"name\":\"foo\"}]}");
     }
 
@@ -211,12 +212,12 @@ class DefaultJsonQueryLogEntryCreatorTest {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        MutableQueryExecutionContext executionInfo = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
                 .connectionId("10")
                 .isolationLevel(Connection.TRANSACTION_READ_COMMITTED)
-                .elapsedTime(100)
+                .elapsedTime(Duration.ofMillis(100))
                 .method(method)
                 .result(result)
                 .statementType(StatementType.CALLABLE)
@@ -235,7 +236,7 @@ class DefaultJsonQueryLogEntryCreatorTest {
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true, true);
+        String jsonEntry = creator.getLogEntry(withQueries(executionInfo, Lists.newArrayList(queryInfo)), true, true, true);
         assertThat(jsonEntry).isEqualTo("{\"name\":\"foo\", \"connection\":10, \"isolation\":\"READ_COMMITTED\", \"time\":100, \"success\":true, \"type\":\"Callable\", \"batch\":true, \"querySize\":1, \"batchSize\":2, \"query\":[\"select 1\"], \"params\":[{\"id\":\"100\",\"name\":\"foo\"},{\"id\":\"200\",\"name\":\"bar\"}]}");
     }
 
@@ -244,12 +245,12 @@ class DefaultJsonQueryLogEntryCreatorTest {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        MutableQueryExecutionContext executionInfo = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
                 .connectionId("10")
                 .isolationLevel(Connection.TRANSACTION_READ_COMMITTED)
-                .elapsedTime(100)
+                .elapsedTime(Duration.ofMillis(100))
                 .method(method)
                 .result(result)
                 .statementType(StatementType.PREPARED)
@@ -270,7 +271,7 @@ class DefaultJsonQueryLogEntryCreatorTest {
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true, true);
+        String jsonEntry = creator.getLogEntry(withQueries(executionInfo, Lists.newArrayList(queryInfo)), true, true, true);
         assertThat(jsonEntry).containsOnlyOnce("\"params\":[[\"foo\",\"100\",\"FOO\"],[\"bar\",\"200\",\"BAR\"]]");
     }
 
@@ -279,12 +280,12 @@ class DefaultJsonQueryLogEntryCreatorTest {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        MutableQueryExecutionContext executionInfo = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
                 .connectionId("10")
                 .isolationLevel(Connection.TRANSACTION_READ_COMMITTED)
-                .elapsedTime(100)
+                .elapsedTime(Duration.ofMillis(100))
                 .method(method)
                 .result(result)
                 .statementType(StatementType.CALLABLE)
@@ -305,36 +306,36 @@ class DefaultJsonQueryLogEntryCreatorTest {
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
-        String jsonEntry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), true, true, true);
+        String jsonEntry = creator.getLogEntry(withQueries(executionInfo, Lists.newArrayList(queryInfo)), true, true, true);
         assertThat(jsonEntry).containsOnlyOnce("\"params\":[{\"a-idx\":\"foo\",\"b-idx\":\"FOO\",\"c-idx\":\"100\"},{\"a-idx\":\"bar\",\"b-idx\":\"BAR\",\"c-idx\":\"200\"}]");
     }
 
     @Test
     void statementType() throws Exception {
-        ExecutionInfo executionInfo;
+        MutableQueryExecutionContext executionInfo;
         String jsonResult;
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
         // Statement
-        executionInfo = ExecutionInfoBuilder.create().statementType(StatementType.STATEMENT).build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true, true);
+        executionInfo = QueryExecutionContextBuilder.create().statementType(StatementType.STATEMENT).build();
+        jsonResult = creator.getLogEntry(withQueries(executionInfo, new ArrayList<QueryInfo>()), true, true, true);
         assertThat(jsonResult).containsOnlyOnce("\"type\":\"Statement\"");
 
         // PreparedStatement
-        executionInfo = ExecutionInfoBuilder.create().statementType(StatementType.PREPARED).build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true, true);
+        executionInfo = QueryExecutionContextBuilder.create().statementType(StatementType.PREPARED).build();
+        jsonResult = creator.getLogEntry(withQueries(executionInfo, new ArrayList<QueryInfo>()), true, true, true);
         assertThat(jsonResult).containsOnlyOnce("\"type\":\"Prepared\"");
 
         // CallableStatement
-        executionInfo = ExecutionInfoBuilder.create().statementType(StatementType.CALLABLE).build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true, true);
+        executionInfo = QueryExecutionContextBuilder.create().statementType(StatementType.CALLABLE).build();
+        jsonResult = creator.getLogEntry(withQueries(executionInfo, new ArrayList<QueryInfo>()), true, true, true);
         assertThat(jsonResult).containsOnlyOnce("\"type\":\"Callable\"");
     }
 
     @Test
     void query() throws Exception {
-        ExecutionInfo executionInfo = ExecutionInfoBuilder.create().build();
+        MutableQueryExecutionContext executionInfo = QueryExecutionContextBuilder.create().build();
         QueryInfo select1 = QueryInfoBuilder.create().query("select 1").build();
         QueryInfo select2 = QueryInfoBuilder.create().query("select 2").build();
         QueryInfo select3 = QueryInfoBuilder.create().query("select 3").build();
@@ -343,17 +344,17 @@ class DefaultJsonQueryLogEntryCreatorTest {
         String jsonResult;
 
         // single query
-        jsonResult = creator.getLogEntry(executionInfo, Arrays.asList(select1), true, true, true);
+        jsonResult = creator.getLogEntry(withQueries(executionInfo, Arrays.asList(select1)), true, true, true);
         assertThat(jsonResult).containsOnlyOnce("\"query\":[\"select 1\"]");
 
         // multiple query
-        jsonResult = creator.getLogEntry(executionInfo, Arrays.asList(select1, select2, select3), true, true, true);
+        jsonResult = creator.getLogEntry(withQueries(executionInfo, Arrays.asList(select1, select2, select3)), true, true, true);
         assertThat(jsonResult).containsOnlyOnce("\"query\":[\"select 1\",\"select 2\",\"select 3\"]");
     }
 
     @Test
     void querySize() throws Exception {
-        ExecutionInfo executionInfo = ExecutionInfoBuilder.create().build();
+        MutableQueryExecutionContext executionInfo = QueryExecutionContextBuilder.create().build();
         QueryInfo select1 = QueryInfoBuilder.create().query("select 1").build();
         QueryInfo select2 = QueryInfoBuilder.create().query("select 2").build();
         QueryInfo select3 = QueryInfoBuilder.create().query("select 3").build();
@@ -362,65 +363,65 @@ class DefaultJsonQueryLogEntryCreatorTest {
         String jsonResult;
 
         // single query
-        jsonResult = creator.getLogEntry(executionInfo, Arrays.asList(select1), true, true, true);
+        jsonResult = creator.getLogEntry(withQueries(executionInfo, Arrays.asList(select1)), true, true, true);
         assertThat(jsonResult).containsOnlyOnce("\"querySize\":1");
 
         // multiple query
-        jsonResult = creator.getLogEntry(executionInfo, Arrays.asList(select1, select2, select3), true, true, true);
+        jsonResult = creator.getLogEntry(withQueries(executionInfo, Arrays.asList(select1, select2, select3)), true, true, true);
         assertThat(jsonResult).containsOnlyOnce("\"querySize\":3");
     }
 
     @Test
     void success() throws Exception {
-        ExecutionInfo executionInfo;
+        MutableQueryExecutionContext executionInfo;
         String jsonResult;
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
         // success
-        executionInfo = ExecutionInfoBuilder.create().success(true).build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true, true);
+        executionInfo = QueryExecutionContextBuilder.create().success(true).build();
+        jsonResult = creator.getLogEntry(withQueries(executionInfo, new ArrayList<QueryInfo>()), true, true, true);
         assertThat(jsonResult).containsOnlyOnce("\"success\":true");
 
         // fail
-        executionInfo = ExecutionInfoBuilder.create().success(false).build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true, true);
+        executionInfo = QueryExecutionContextBuilder.create().success(false).build();
+        jsonResult = creator.getLogEntry(withQueries(executionInfo, new ArrayList<QueryInfo>()), true, true, true);
         assertThat(jsonResult).containsOnlyOnce("\"success\":false");
 
     }
 
     @Test
     void batch() throws Exception {
-        ExecutionInfo executionInfo;
+        MutableQueryExecutionContext executionInfo;
         String jsonResult;
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
         // success
-        executionInfo = ExecutionInfoBuilder.create().batch(true).build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true, true);
+        executionInfo = QueryExecutionContextBuilder.create().batch(true).build();
+        jsonResult = creator.getLogEntry(withQueries(executionInfo, new ArrayList<QueryInfo>()), true, true, true);
         assertThat(jsonResult).containsOnlyOnce("\"batch\":true");
 
         // fail
-        executionInfo = ExecutionInfoBuilder.create().batch(false).build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true, true);
+        executionInfo = QueryExecutionContextBuilder.create().batch(false).build();
+        jsonResult = creator.getLogEntry(withQueries(executionInfo, new ArrayList<QueryInfo>()), true, true, true);
         assertThat(jsonResult).containsOnlyOnce("\"batch\":false");
     }
 
     @Test
     void batchSize() throws Exception {
-        ExecutionInfo executionInfo;
+        MutableQueryExecutionContext executionInfo;
         String jsonResult;
 
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
 
         // default
-        executionInfo = ExecutionInfoBuilder.create().build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true, true);
+        executionInfo = QueryExecutionContextBuilder.create().build();
+        jsonResult = creator.getLogEntry(withQueries(executionInfo, new ArrayList<QueryInfo>()), true, true, true);
         assertThat(jsonResult).containsOnlyOnce("\"batchSize\":0");
 
-        executionInfo = ExecutionInfoBuilder.create().batchSize(100).build();
-        jsonResult = creator.getLogEntry(executionInfo, new ArrayList<QueryInfo>(), true, true, true);
+        executionInfo = QueryExecutionContextBuilder.create().batchSize(100).build();
+        jsonResult = creator.getLogEntry(withQueries(executionInfo, new ArrayList<QueryInfo>()), true, true, true);
         assertThat(jsonResult).containsOnlyOnce("\"batchSize\":100");
     }
 

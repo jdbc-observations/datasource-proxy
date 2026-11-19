@@ -1,17 +1,22 @@
 package net.ttddyy.dsproxy;
 
+import net.ttddyy.dsproxy.proxy.MutableQueryExecutionContext;
+
 import java.lang.reflect.Method;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Tadaya Tsuyukubo
  * @since 1.3
  */
-public class ExecutionInfoBuilder {
+public class QueryExecutionContextBuilder {
     private String dataSourceName;
     private Method method;
     private Object[] methodArgs;
     private Object result;
-    private long elapsedTime;
+    private Duration elapsedTime = Duration.ZERO;
     private Throwable throwable;
     private StatementType statementType;
     private boolean success;
@@ -19,73 +24,87 @@ public class ExecutionInfoBuilder {
     private int batchSize;
     private String connectionId;
     private int isolationLevel;
+    private List<QueryInfo> queries = new ArrayList<>();
 
-    public static ExecutionInfoBuilder create() {
-        return new ExecutionInfoBuilder();
+    /**
+     * Set the queries on the given context and return it.
+     */
+    public static MutableQueryExecutionContext withQueries(MutableQueryExecutionContext context, List<QueryInfo> queries) {
+        context.setQueries(queries);
+        return context;
     }
 
-    public ExecutionInfoBuilder dataSourceName(String dataSourceName) {
+    public static QueryExecutionContextBuilder create() {
+        return new QueryExecutionContextBuilder();
+    }
+
+    public QueryExecutionContextBuilder dataSourceName(String dataSourceName) {
         this.dataSourceName = dataSourceName;
         return this;
     }
 
-    public ExecutionInfoBuilder method(Method method) {
+    public QueryExecutionContextBuilder method(Method method) {
         this.method = method;
         return this;
     }
 
-    public ExecutionInfoBuilder methodArgs(Object[] methodArgs) {
+    public QueryExecutionContextBuilder methodArgs(Object[] methodArgs) {
         this.methodArgs = methodArgs;
         return this;
     }
 
-    public ExecutionInfoBuilder result(Object result) {
+    public QueryExecutionContextBuilder result(Object result) {
         this.result = result;
         return this;
     }
 
-    public ExecutionInfoBuilder elapsedTime(long elapsedTime) {
+    public QueryExecutionContextBuilder elapsedTime(Duration elapsedTime) {
         this.elapsedTime = elapsedTime;
         return this;
     }
 
-    public ExecutionInfoBuilder throwable(Throwable throwable) {
+    public QueryExecutionContextBuilder throwable(Throwable throwable) {
         this.throwable = throwable;
         return this;
     }
 
-    public ExecutionInfoBuilder statementType(StatementType statementType) {
+    public QueryExecutionContextBuilder statementType(StatementType statementType) {
         this.statementType = statementType;
         return this;
     }
 
-    public ExecutionInfoBuilder success(boolean success) {
+    public QueryExecutionContextBuilder success(boolean success) {
         this.success = success;
         return this;
     }
 
-    public ExecutionInfoBuilder batch(boolean batch) {
+    public QueryExecutionContextBuilder batch(boolean batch) {
         this.batch = batch;
         return this;
     }
 
-    public ExecutionInfoBuilder batchSize(int batchSize) {
+    public QueryExecutionContextBuilder batchSize(int batchSize) {
         this.batchSize = batchSize;
         return this;
     }
 
-    public ExecutionInfoBuilder connectionId(String connectionId) {
+    public QueryExecutionContextBuilder connectionId(String connectionId) {
         this.connectionId = connectionId;
         return this;
     }
 
-    public ExecutionInfoBuilder isolationLevel(int isolationLevel) {
+    public QueryExecutionContextBuilder isolationLevel(int isolationLevel) {
         this.isolationLevel = isolationLevel;
         return this;
     }
 
-    public ExecutionInfo build() {
-        ExecutionInfo executionInfo = new ExecutionInfo();
+    public QueryExecutionContextBuilder queries(List<QueryInfo> queries) {
+        this.queries = queries;
+        return this;
+    }
+
+    public MutableQueryExecutionContext build() {
+        MutableQueryExecutionContext executionInfo = new MutableQueryExecutionContext();
         executionInfo.setDataSourceName(dataSourceName);
         executionInfo.setMethod(method);
         executionInfo.setMethodArgs(methodArgs);
@@ -98,6 +117,7 @@ public class ExecutionInfoBuilder {
         executionInfo.setBatchSize(batchSize);
         executionInfo.setConnectionId(this.connectionId);
         executionInfo.setIsolationLevel(isolationLevel);
+        executionInfo.setQueries(queries);
         return executionInfo;
     }
 }

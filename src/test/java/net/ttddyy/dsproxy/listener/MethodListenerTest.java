@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Tadaya Tsuyukubo
  */
-class MethodExecutionListenerTest {
+class MethodListenerTest {
 
     private DataSource jdbcDataSource;
 
@@ -35,7 +35,7 @@ class MethodExecutionListenerTest {
 
     @Test
     void replaceMethodArgument() throws Throwable {
-        MethodExecutionListener methodListener = new MethodExecutionListener() {
+        ProxyDataSourceListener methodListener = new ProxyDataSourceListener() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {
 
@@ -51,7 +51,7 @@ class MethodExecutionListenerTest {
             }
         };
 
-        ProxyDataSource ds = ProxyDataSourceBuilder.create(this.jdbcDataSource).methodListener(methodListener).build();
+        ProxyDataSource ds = ProxyDataSourceBuilder.create(this.jdbcDataSource).listener(methodListener).build();
         Connection conn = ds.getConnection();
         Statement statement = conn.createStatement();
         ResultSet rs = statement.executeQuery("select * from emp where id=1");

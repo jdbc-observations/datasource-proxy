@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.junit.jupiter.api.AfterEach;
@@ -41,8 +41,8 @@ class StatementInvocationHandlerTest {
         connectionInfo.setDataSourceName("myDS");
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .listener(LegacyListenerBridge.ofQuery(this.testListener))
-                .listener(LegacyListenerBridge.ofQuery(this.lastQueryListener))
+                .listener(this.testListener)
+                .listener(this.lastQueryListener)
                 .build();
 
         statement = new JdkJdbcProxyFactory().createStatement(stmt, connectionInfo, null, proxyConfig);
@@ -78,7 +78,7 @@ class StatementInvocationHandlerTest {
         assertThat(afterQueries).hasSize(1);
         assertThat(afterQueries.get(0).getQuery()).isEqualTo(query);
 
-        ExecutionInfo afterExec = lastQueryListener.getAfterExecInfo();
+        QueryExecutionContext afterExec = lastQueryListener.getAfterExecInfo();
         assertThat(afterExec).isNotNull();
         assertThat(afterExec.getThrowable()).isNotNull();
 
@@ -202,13 +202,13 @@ class StatementInvocationHandlerTest {
     }
 
     @Test
-    void sameInstanceOfExecutionInfo() throws Exception {
+    void sameInstanceOfQueryExecutionContext() throws Exception {
         final String query = "select * from emp;";
         statement.executeQuery(query);
 
-        ExecutionInfo before = lastQueryListener.getBeforeExecInfo();
-        ExecutionInfo after = lastQueryListener.getAfterExecInfo();
+        QueryExecutionContext before = lastQueryListener.getBeforeExecInfo();
+        QueryExecutionContext after = lastQueryListener.getAfterExecInfo();
 
-        assertThat(before).as("before and after uses same ExecutionInfo instance").isSameAs(after);
+        assertThat(before).as("before and after uses same QueryExecutionContext instance").isSameAs(after);
     }
 }

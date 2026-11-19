@@ -14,380 +14,756 @@ public interface ResultSetMethodCallbacks {
     // ResultSet methods
     //
 
-    void beforeAbsolute(MethodExecutionContext executionContext);
+    default void beforeAbsolute(MethodExecutionContext executionContext) {
 
-    void beforeAfterLast(MethodExecutionContext executionContext);
+    }
 
-    void beforeBeforeFirst(MethodExecutionContext executionContext);
+    default void beforeAfterLast(MethodExecutionContext executionContext) {
 
-    void beforeCancelRowUpdates(MethodExecutionContext executionContext);
+    }
 
-    void beforeClearWarnings(MethodExecutionContext executionContext);
+    default void beforeBeforeFirst(MethodExecutionContext executionContext) {
 
-    void beforeClose(MethodExecutionContext executionContext);
+    }
 
-    void beforeDeleteRow(MethodExecutionContext executionContext);
+    default void beforeCancelRowUpdates(MethodExecutionContext executionContext) {
 
-    void beforeFindColumn(MethodExecutionContext executionContext);
+    }
 
-    void beforeFirst(MethodExecutionContext executionContext);
+    default void beforeClearWarnings(MethodExecutionContext executionContext) {
 
-    void beforeGetArray(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetAsciiStream(MethodExecutionContext executionContext);
+    default void beforeClose(MethodExecutionContext executionContext) {
 
-    void beforeGetBigDecimal(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetBinaryStream(MethodExecutionContext executionContext);
+    default void beforeDeleteRow(MethodExecutionContext executionContext) {
 
-    void beforeGetBlob(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetBoolean(MethodExecutionContext executionContext);
+    default void beforeFindColumn(MethodExecutionContext executionContext) {
 
-    void beforeGetByte(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetBytes(MethodExecutionContext executionContext);
+    default void beforeFirst(MethodExecutionContext executionContext) {
 
-    void beforeGetCharacterStream(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetClob(MethodExecutionContext executionContext);
+    default void beforeGetArray(MethodExecutionContext executionContext) {
 
-    void beforeGetConcurrency(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetCursorName(MethodExecutionContext executionContext);
+    default void beforeGetAsciiStream(MethodExecutionContext executionContext) {
 
-    void beforeGetDate(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetDouble(MethodExecutionContext executionContext);
+    default void beforeGetBigDecimal(MethodExecutionContext executionContext) {
 
-    void beforeGetFetchDirection(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetFetchSize(MethodExecutionContext executionContext);
+    default void beforeGetBinaryStream(MethodExecutionContext executionContext) {
 
-    void beforeGetFloat(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetHoldability(MethodExecutionContext executionContext);
+    default void beforeGetBlob(MethodExecutionContext executionContext) {
 
-    void beforeGetInt(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetLong(MethodExecutionContext executionContext);
+    default void beforeGetBoolean(MethodExecutionContext executionContext) {
 
-    void beforeGetMetaData(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetNCharacterStream(MethodExecutionContext executionContext);
+    default void beforeGetByte(MethodExecutionContext executionContext) {
 
-    void beforeGetNClob(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetNString(MethodExecutionContext executionContext);
+    default void beforeGetBytes(MethodExecutionContext executionContext) {
 
-    void beforeGetObject(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetRef(MethodExecutionContext executionContext);
+    default void beforeGetCharacterStream(MethodExecutionContext executionContext) {
 
-    void beforeGetRow(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetRowId(MethodExecutionContext executionContext);
+    default void beforeGetClob(MethodExecutionContext executionContext) {
 
-    void beforeGetShort(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetSQLXML(MethodExecutionContext executionContext);
+    default void beforeGetConcurrency(MethodExecutionContext executionContext) {
 
-    void beforeGetStatement(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetString(MethodExecutionContext executionContext);
+    default void beforeGetCursorName(MethodExecutionContext executionContext) {
 
-    void beforeGetTime(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetTimestamp(MethodExecutionContext executionContext);
+    default void beforeGetDate(MethodExecutionContext executionContext) {
 
-    void beforeGetType(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetUnicodeStream(MethodExecutionContext executionContext);
+    default void beforeGetDouble(MethodExecutionContext executionContext) {
 
-    void beforeGetURL(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetWarnings(MethodExecutionContext executionContext);
+    default void beforeGetFetchDirection(MethodExecutionContext executionContext) {
 
-    void beforeInsertRow(MethodExecutionContext executionContext);
+    }
 
-    void beforeIsAfterLast(MethodExecutionContext executionContext);
+    default void beforeGetFetchSize(MethodExecutionContext executionContext) {
 
-    void beforeIsBeforeFirst(MethodExecutionContext executionContext);
+    }
 
-    void beforeIsClosed(MethodExecutionContext executionContext);
+    default void beforeGetFloat(MethodExecutionContext executionContext) {
 
-    void beforeIsFirst(MethodExecutionContext executionContext);
+    }
 
-    void beforeIsLast(MethodExecutionContext executionContext);
+    default void beforeGetHoldability(MethodExecutionContext executionContext) {
 
-    void beforeLast(MethodExecutionContext executionContext);
+    }
 
-    void beforeMoveToCurrentRow(MethodExecutionContext executionContext);
+    default void beforeGetInt(MethodExecutionContext executionContext) {
 
-    void beforeMoveToInsertRow(MethodExecutionContext executionContext);
+    }
 
-    void beforeNext(MethodExecutionContext executionContext);
+    default void beforeGetLong(MethodExecutionContext executionContext) {
 
-    void beforePrevious(MethodExecutionContext executionContext);
+    }
 
-    void beforeRefreshRow(MethodExecutionContext executionContext);
+    default void beforeGetMetaData(MethodExecutionContext executionContext) {
 
-    void beforeRelative(MethodExecutionContext executionContext);
+    }
 
-    void beforeRowDeleted(MethodExecutionContext executionContext);
+    default void beforeGetNCharacterStream(MethodExecutionContext executionContext) {
 
-    void beforeRowInserted(MethodExecutionContext executionContext);
+    }
 
-    void beforeRowUpdated(MethodExecutionContext executionContext);
+    default void beforeGetNClob(MethodExecutionContext executionContext) {
 
-    void beforeSetFetchDirection(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetFetchSize(MethodExecutionContext executionContext);
+    default void beforeGetNString(MethodExecutionContext executionContext) {
 
-    void beforeUpdateArray(MethodExecutionContext executionContext);
+    }
 
-    void beforeUpdateAsciiStream(MethodExecutionContext executionContext);
+    default void beforeGetObject(MethodExecutionContext executionContext) {
 
-    void beforeUpdateBigDecimal(MethodExecutionContext executionContext);
+    }
 
-    void beforeUpdateBinaryStream(MethodExecutionContext executionContext);
+    default void beforeGetRef(MethodExecutionContext executionContext) {
 
-    void beforeUpdateBlob(MethodExecutionContext executionContext);
+    }
 
-    void beforeUpdateBoolean(MethodExecutionContext executionContext);
+    default void beforeGetRow(MethodExecutionContext executionContext) {
 
-    void beforeUpdateByte(MethodExecutionContext executionContext);
+    }
 
-    void beforeUpdateBytes(MethodExecutionContext executionContext);
+    default void beforeGetRowId(MethodExecutionContext executionContext) {
 
-    void beforeUpdateCharacterStream(MethodExecutionContext executionContext);
+    }
 
-    void beforeUpdateClob(MethodExecutionContext executionContext);
+    default void beforeGetShort(MethodExecutionContext executionContext) {
 
-    void beforeUpdateDate(MethodExecutionContext executionContext);
+    }
 
-    void beforeUpdateDouble(MethodExecutionContext executionContext);
+    default void beforeGetSQLXML(MethodExecutionContext executionContext) {
 
-    void beforeUpdateFloat(MethodExecutionContext executionContext);
+    }
 
-    void beforeUpdateInt(MethodExecutionContext executionContext);
+    default void beforeGetStatement(MethodExecutionContext executionContext) {
 
-    void beforeUpdateLong(MethodExecutionContext executionContext);
+    }
 
-    void beforeUpdateNCharacterStream(MethodExecutionContext executionContext);
+    default void beforeGetString(MethodExecutionContext executionContext) {
 
-    void beforeUpdateNClob(MethodExecutionContext executionContext);
+    }
 
-    void beforeUpdateNString(MethodExecutionContext executionContext);
+    default void beforeGetTime(MethodExecutionContext executionContext) {
 
-    void beforeUpdateNull(MethodExecutionContext executionContext);
+    }
 
-    void beforeUpdateObject(MethodExecutionContext executionContext);
+    default void beforeGetTimestamp(MethodExecutionContext executionContext) {
 
-    void beforeUpdateRef(MethodExecutionContext executionContext);
+    }
 
-    void beforeUpdateRow(MethodExecutionContext executionContext);
+    default void beforeGetType(MethodExecutionContext executionContext) {
 
-    void beforeUpdateRowId(MethodExecutionContext executionContext);
+    }
 
-    void beforeUpdateShort(MethodExecutionContext executionContext);
+    default void beforeGetUnicodeStream(MethodExecutionContext executionContext) {
 
-    void beforeUpdateSQLXML(MethodExecutionContext executionContext);
+    }
 
-    void beforeUpdateString(MethodExecutionContext executionContext);
+    default void beforeGetURL(MethodExecutionContext executionContext) {
 
-    void beforeUpdateTime(MethodExecutionContext executionContext);
+    }
 
-    void beforeUpdateTimestamp(MethodExecutionContext executionContext);
+    default void beforeGetWarnings(MethodExecutionContext executionContext) {
 
-    void beforeWasNull(MethodExecutionContext executionContext);
+    }
 
-    void afterAbsolute(MethodExecutionContext executionContext);
+    default void beforeInsertRow(MethodExecutionContext executionContext) {
 
-    void afterAfterLast(MethodExecutionContext executionContext);
+    }
 
-    void afterBeforeFirst(MethodExecutionContext executionContext);
+    default void beforeIsAfterLast(MethodExecutionContext executionContext) {
 
-    void afterCancelRowUpdates(MethodExecutionContext executionContext);
+    }
 
-    void afterClearWarnings(MethodExecutionContext executionContext);
+    default void beforeIsBeforeFirst(MethodExecutionContext executionContext) {
 
-    void afterClose(MethodExecutionContext executionContext);
+    }
 
-    void afterDeleteRow(MethodExecutionContext executionContext);
+    default void beforeIsClosed(MethodExecutionContext executionContext) {
 
-    void afterFindColumn(MethodExecutionContext executionContext);
+    }
 
-    void afterFirst(MethodExecutionContext executionContext);
+    default void beforeIsFirst(MethodExecutionContext executionContext) {
 
-    void afterGetArray(MethodExecutionContext executionContext);
+    }
 
-    void afterGetAsciiStream(MethodExecutionContext executionContext);
+    default void beforeIsLast(MethodExecutionContext executionContext) {
 
-    void afterGetBigDecimal(MethodExecutionContext executionContext);
+    }
 
-    void afterGetBinaryStream(MethodExecutionContext executionContext);
+    default void beforeLast(MethodExecutionContext executionContext) {
 
-    void afterGetBlob(MethodExecutionContext executionContext);
+    }
 
-    void afterGetBoolean(MethodExecutionContext executionContext);
+    default void beforeMoveToCurrentRow(MethodExecutionContext executionContext) {
 
-    void afterGetByte(MethodExecutionContext executionContext);
+    }
 
-    void afterGetBytes(MethodExecutionContext executionContext);
+    default void beforeMoveToInsertRow(MethodExecutionContext executionContext) {
 
-    void afterGetCharacterStream(MethodExecutionContext executionContext);
+    }
 
-    void afterGetClob(MethodExecutionContext executionContext);
+    default void beforeNext(MethodExecutionContext executionContext) {
 
-    void afterGetConcurrency(MethodExecutionContext executionContext);
+    }
 
-    void afterGetCursorName(MethodExecutionContext executionContext);
+    default void beforePrevious(MethodExecutionContext executionContext) {
 
-    void afterGetDate(MethodExecutionContext executionContext);
+    }
 
-    void afterGetDouble(MethodExecutionContext executionContext);
+    default void beforeRefreshRow(MethodExecutionContext executionContext) {
 
-    void afterGetFetchDirection(MethodExecutionContext executionContext);
+    }
 
-    void afterGetFetchSize(MethodExecutionContext executionContext);
+    default void beforeRelative(MethodExecutionContext executionContext) {
 
-    void afterGetFloat(MethodExecutionContext executionContext);
+    }
 
-    void afterGetHoldability(MethodExecutionContext executionContext);
+    default void beforeRowDeleted(MethodExecutionContext executionContext) {
 
-    void afterGetInt(MethodExecutionContext executionContext);
+    }
 
-    void afterGetLong(MethodExecutionContext executionContext);
+    default void beforeRowInserted(MethodExecutionContext executionContext) {
 
-    void afterGetMetaData(MethodExecutionContext executionContext);
+    }
 
-    void afterGetNCharacterStream(MethodExecutionContext executionContext);
+    default void beforeRowUpdated(MethodExecutionContext executionContext) {
 
-    void afterGetNClob(MethodExecutionContext executionContext);
+    }
 
-    void afterGetNString(MethodExecutionContext executionContext);
+    default void beforeSetFetchDirection(MethodExecutionContext executionContext) {
 
-    void afterGetObject(MethodExecutionContext executionContext);
+    }
 
-    void afterGetRef(MethodExecutionContext executionContext);
+    default void beforeSetFetchSize(MethodExecutionContext executionContext) {
 
-    void afterGetRow(MethodExecutionContext executionContext);
+    }
 
-    void afterGetRowId(MethodExecutionContext executionContext);
+    default void beforeUpdateArray(MethodExecutionContext executionContext) {
 
-    void afterGetShort(MethodExecutionContext executionContext);
+    }
 
-    void afterGetSQLXML(MethodExecutionContext executionContext);
+    default void beforeUpdateAsciiStream(MethodExecutionContext executionContext) {
 
-    void afterGetStatement(MethodExecutionContext executionContext);
+    }
 
-    void afterGetString(MethodExecutionContext executionContext);
+    default void beforeUpdateBigDecimal(MethodExecutionContext executionContext) {
 
-    void afterGetTime(MethodExecutionContext executionContext);
+    }
 
-    void afterGetTimestamp(MethodExecutionContext executionContext);
+    default void beforeUpdateBinaryStream(MethodExecutionContext executionContext) {
 
-    void afterGetType(MethodExecutionContext executionContext);
+    }
 
-    void afterGetUnicodeStream(MethodExecutionContext executionContext);
+    default void beforeUpdateBlob(MethodExecutionContext executionContext) {
 
-    void afterGetURL(MethodExecutionContext executionContext);
+    }
 
-    void afterGetWarnings(MethodExecutionContext executionContext);
+    default void beforeUpdateBoolean(MethodExecutionContext executionContext) {
 
-    void afterInsertRow(MethodExecutionContext executionContext);
+    }
 
-    void afterIsAfterLast(MethodExecutionContext executionContext);
+    default void beforeUpdateByte(MethodExecutionContext executionContext) {
 
-    void afterIsBeforeFirst(MethodExecutionContext executionContext);
+    }
 
-    void afterIsClosed(MethodExecutionContext executionContext);
+    default void beforeUpdateBytes(MethodExecutionContext executionContext) {
 
-    void afterIsFirst(MethodExecutionContext executionContext);
+    }
 
-    void afterIsLast(MethodExecutionContext executionContext);
+    default void beforeUpdateCharacterStream(MethodExecutionContext executionContext) {
 
-    void afterLast(MethodExecutionContext executionContext);
+    }
 
-    void afterMoveToCurrentRow(MethodExecutionContext executionContext);
+    default void beforeUpdateClob(MethodExecutionContext executionContext) {
 
-    void afterMoveToInsertRow(MethodExecutionContext executionContext);
+    }
 
-    void afterNext(MethodExecutionContext executionContext);
+    default void beforeUpdateDate(MethodExecutionContext executionContext) {
 
-    void afterPrevious(MethodExecutionContext executionContext);
+    }
 
-    void afterRefreshRow(MethodExecutionContext executionContext);
+    default void beforeUpdateDouble(MethodExecutionContext executionContext) {
 
-    void afterRelative(MethodExecutionContext executionContext);
+    }
 
-    void afterRowDeleted(MethodExecutionContext executionContext);
+    default void beforeUpdateFloat(MethodExecutionContext executionContext) {
 
-    void afterRowInserted(MethodExecutionContext executionContext);
+    }
 
-    void afterRowUpdated(MethodExecutionContext executionContext);
+    default void beforeUpdateInt(MethodExecutionContext executionContext) {
 
-    void afterSetFetchDirection(MethodExecutionContext executionContext);
+    }
 
-    void afterSetFetchSize(MethodExecutionContext executionContext);
+    default void beforeUpdateLong(MethodExecutionContext executionContext) {
 
-    void afterUpdateArray(MethodExecutionContext executionContext);
+    }
 
-    void afterUpdateAsciiStream(MethodExecutionContext executionContext);
+    default void beforeUpdateNCharacterStream(MethodExecutionContext executionContext) {
 
-    void afterUpdateBigDecimal(MethodExecutionContext executionContext);
+    }
 
-    void afterUpdateBinaryStream(MethodExecutionContext executionContext);
+    default void beforeUpdateNClob(MethodExecutionContext executionContext) {
 
-    void afterUpdateBlob(MethodExecutionContext executionContext);
+    }
 
-    void afterUpdateBoolean(MethodExecutionContext executionContext);
+    default void beforeUpdateNString(MethodExecutionContext executionContext) {
 
-    void afterUpdateByte(MethodExecutionContext executionContext);
+    }
 
-    void afterUpdateBytes(MethodExecutionContext executionContext);
+    default void beforeUpdateNull(MethodExecutionContext executionContext) {
 
-    void afterUpdateCharacterStream(MethodExecutionContext executionContext);
+    }
 
-    void afterUpdateClob(MethodExecutionContext executionContext);
+    default void beforeUpdateObject(MethodExecutionContext executionContext) {
 
-    void afterUpdateDate(MethodExecutionContext executionContext);
+    }
 
-    void afterUpdateDouble(MethodExecutionContext executionContext);
+    default void beforeUpdateRef(MethodExecutionContext executionContext) {
 
-    void afterUpdateFloat(MethodExecutionContext executionContext);
+    }
 
-    void afterUpdateInt(MethodExecutionContext executionContext);
+    default void beforeUpdateRow(MethodExecutionContext executionContext) {
 
-    void afterUpdateLong(MethodExecutionContext executionContext);
+    }
 
-    void afterUpdateNCharacterStream(MethodExecutionContext executionContext);
+    default void beforeUpdateRowId(MethodExecutionContext executionContext) {
 
-    void afterUpdateNClob(MethodExecutionContext executionContext);
+    }
 
-    void afterUpdateNString(MethodExecutionContext executionContext);
+    default void beforeUpdateShort(MethodExecutionContext executionContext) {
 
-    void afterUpdateNull(MethodExecutionContext executionContext);
+    }
 
-    void afterUpdateObject(MethodExecutionContext executionContext);
+    default void beforeUpdateSQLXML(MethodExecutionContext executionContext) {
 
-    void afterUpdateRef(MethodExecutionContext executionContext);
+    }
 
-    void afterUpdateRow(MethodExecutionContext executionContext);
+    default void beforeUpdateString(MethodExecutionContext executionContext) {
 
-    void afterUpdateRowId(MethodExecutionContext executionContext);
+    }
 
-    void afterUpdateShort(MethodExecutionContext executionContext);
+    default void beforeUpdateTime(MethodExecutionContext executionContext) {
 
-    void afterUpdateSQLXML(MethodExecutionContext executionContext);
+    }
 
-    void afterUpdateString(MethodExecutionContext executionContext);
+    default void beforeUpdateTimestamp(MethodExecutionContext executionContext) {
 
-    void afterUpdateTime(MethodExecutionContext executionContext);
+    }
 
-    void afterUpdateTimestamp(MethodExecutionContext executionContext);
+    default void beforeWasNull(MethodExecutionContext executionContext) {
 
-    void afterWasNull(MethodExecutionContext executionContext);
+    }
+
+    default void afterAbsolute(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterAfterLast(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterBeforeFirst(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterCancelRowUpdates(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterClearWarnings(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterClose(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterDeleteRow(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterFindColumn(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterFirst(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetArray(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetAsciiStream(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetBigDecimal(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetBinaryStream(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetBlob(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetBoolean(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetByte(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetBytes(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetCharacterStream(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetClob(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetConcurrency(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetCursorName(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetDate(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetDouble(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetFetchDirection(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetFetchSize(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetFloat(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetHoldability(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetInt(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetLong(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetMetaData(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetNCharacterStream(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetNClob(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetNString(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetObject(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetRef(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetRow(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetRowId(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetShort(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetSQLXML(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetStatement(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetString(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetTime(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetTimestamp(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetType(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetUnicodeStream(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetURL(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetWarnings(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterInsertRow(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterIsAfterLast(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterIsBeforeFirst(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterIsClosed(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterIsFirst(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterIsLast(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterLast(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterMoveToCurrentRow(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterMoveToInsertRow(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterNext(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterPrevious(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterRefreshRow(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterRelative(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterRowDeleted(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterRowInserted(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterRowUpdated(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetFetchDirection(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetFetchSize(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateArray(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateAsciiStream(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateBigDecimal(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateBinaryStream(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateBlob(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateBoolean(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateByte(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateBytes(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateCharacterStream(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateClob(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateDate(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateDouble(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateFloat(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateInt(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateLong(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateNCharacterStream(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateNClob(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateNString(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateNull(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateObject(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateRef(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateRow(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateRowId(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateShort(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateSQLXML(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateString(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateTime(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterUpdateTimestamp(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterWasNull(MethodExecutionContext executionContext) {
+
+    }
 
 }

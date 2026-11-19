@@ -1,11 +1,8 @@
 package net.ttddyy.dsproxy.listener;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryCount;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.QueryType;
-
-import java.util.List;
 
 /**
  * Tracks database access statistics.
@@ -37,38 +34,34 @@ import java.util.List;
  * @see net.ttddyy.dsproxy.support.CommonsQueryCountLoggingRequestListener
  * @see net.ttddyy.dsproxy.support.CommonsQueryCountLoggingHandlerInterceptor
  */
-public class DataSourceQueryCountListener implements QueryExecutionListener {
+public class DataSourceQueryCountListener implements ProxyDataSourceListener {
 
     // Use the per-thread implementation by default.
     private QueryCountStrategy queryCountStrategy = new ThreadQueryCountHolder();
 
     @Override
-    public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-    }
-
-    @Override
-    public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        final String dataSourceName = execInfo.getDataSourceName();
+    public void afterQuery(QueryExecutionContext context) {
+        final String dataSourceName = context.getDataSourceName();
 
         QueryCount count = this.queryCountStrategy.getOrCreateQueryCount(dataSourceName);
 
         // increment db call
         count.incrementTotal();
-        if (execInfo.isSuccess()) {
+        if (context.isSuccess()) {
             count.incrementSuccess();
         } else {
             count.incrementFailure();
         }
 
         // increment elapsed time
-        final long elapsedTime = execInfo.getElapsedTime();
+        final long elapsedTime = context.getElapsedTime().toMillis();
         count.incrementTime(elapsedTime);
 
         // increment statement type
-        count.increment(execInfo.getStatementType());
+        count.increment(context.getStatementType());
 
         // increment query count
-        for (QueryInfo queryInfo : queryInfoList) {
+        for (QueryInfo queryInfo : context.getQueries()) {
             final String query = queryInfo.getQuery();
             final QueryType type = QueryUtils.getQueryType(query);
             count.increment(type);

@@ -1,7 +1,9 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.ExecutionInfoBuilder;
+import static net.ttddyy.dsproxy.QueryExecutionContextBuilder.withQueries;
+import net.ttddyy.dsproxy.proxy.MutableQueryExecutionContext;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
+import net.ttddyy.dsproxy.QueryExecutionContextBuilder;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.QueryInfoBuilder;
 import org.apache.commons.logging.Log;
@@ -67,7 +69,7 @@ class CommonsQueryLoggingListenerTest {
         InMemoryCommonsLog log = new InMemoryCommonsLog();
         listener.setLog(log);
 
-        ExecutionInfo execInfo = ExecutionInfoBuilder.create().build();
+        MutableQueryExecutionContext execInfo = QueryExecutionContextBuilder.create().build();
         List<QueryInfo> queryInfoList = new ArrayList<QueryInfo>();
         queryInfoList.add(QueryInfoBuilder.create().query("select * ").build());
 
@@ -75,7 +77,7 @@ class CommonsQueryLoggingListenerTest {
         listener.setLogLevel(CommonsLogLevel.DEBUG);
         log.setEnabledLogLevel(CommonsLogLevel.TRACE);
 
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(withQueries(execInfo, queryInfoList));
 
         assertThat(log.getTraceMessages()).isEmpty();
         assertThat(log.getDebugMessages()).hasSize(1);
@@ -89,7 +91,7 @@ class CommonsQueryLoggingListenerTest {
         listener.setLogLevel(CommonsLogLevel.TRACE);
         log.setEnabledLogLevel(CommonsLogLevel.DEBUG);
 
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(withQueries(execInfo, queryInfoList));
 
         assertThat(log.getTraceMessages()).isEmpty();
         assertThat(log.getDebugMessages()).isEmpty();
@@ -103,7 +105,7 @@ class CommonsQueryLoggingListenerTest {
         listener.setLogLevel(CommonsLogLevel.DEBUG);
         log.setEnabledLogLevel(CommonsLogLevel.DEBUG);
 
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(withQueries(execInfo, queryInfoList));
 
         assertThat(log.getTraceMessages()).isEmpty();
         assertThat(log.getDebugMessages()).hasSize(1);
@@ -122,7 +124,7 @@ class CommonsQueryLoggingListenerTest {
         listener.setLogLevel(CommonsLogLevel.DEBUG);
         log.setEnabledLogLevel(CommonsLogLevel.DEBUG);
 
-        ExecutionInfo execInfo = ExecutionInfoBuilder.create().build();
+        MutableQueryExecutionContext execInfo = QueryExecutionContextBuilder.create().build();
         List<QueryInfo> logmeList = new ArrayList<QueryInfo>();
         logmeList.add(QueryInfoBuilder.create().query("select * from logme").build());
         List<QueryInfo> skipList = new ArrayList<QueryInfo>();
@@ -130,8 +132,8 @@ class CommonsQueryLoggingListenerTest {
 
         // Filter with custom logic: skip queries containing 'skipme'
         listener.setLoggingFilter(new LoggingFilter() {
-            public boolean shouldLog(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-                for (QueryInfo qi : queryInfoList) {
+            public boolean shouldLog(QueryExecutionContext execInfo) {
+                for (QueryInfo qi : execInfo.getQueries()) {
                     if (qi.getQuery().contains("skipme")) {
                         return false;
                     }
@@ -140,12 +142,12 @@ class CommonsQueryLoggingListenerTest {
             }
         });
 
-        listener.afterQuery(execInfo, logmeList);
+        listener.afterQuery(withQueries(execInfo, logmeList));
 
         assertThat(log.getDebugMessages()).hasSize(1);
 
         log.reset();
-        listener.afterQuery(execInfo, skipList);
+        listener.afterQuery(withQueries(execInfo, skipList));
 
         assertThat(log.getDebugMessages()).isEmpty();
     }

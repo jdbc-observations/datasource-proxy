@@ -91,8 +91,8 @@ Connection proxyConnection = jdbcProxyFactory.createConnection(realConnection, p
 When 1) generated keys are available (for example, `Statement#RETURN_GENERATED_KEYS` is specified when a
 statement is executed or when a prepared/callable statement is created) and 2) query execution methods
 (`execute`, `executeUpdate`, `executeBatch`, etc.) are called, datasource-proxy automatically calls
-`getGeneratedKeys()` and makes the returned `ResultSet` available via `ExecutionInfo#getGeneratedKeys()` in
-`QueryExecutionListener`.
+`getGeneratedKeys()` and makes the returned `ResultSet` available via `QueryExecutionContext#getGeneratedKeys()` in
+`ProxyDataSourceListener`.
 
 To enable auto-retrieval of generated keys:
 
@@ -154,7 +154,7 @@ Default behavior for batch executions:
 ==== Auto-close generated keys
 
 When auto-close is enabled, the <<auto-retrieve-generated-keys, auto-retrieved generated keys>> are closed
-after all `QueryExecutionListener#afterQuery()` callbacks have been processed.
+after all `ProxyDataSourceListener#afterQuery()` callbacks have been processed.
 
 This option is used with <<auto-retrieve-generated-keys, auto retrieve generated keys>> feature.
 
@@ -184,11 +184,11 @@ This applies to both <<auto-retrieve-generated-keys, auto-retrieved generated-ke
 
 *Usecase*
 
-You have a `QueryExecutionListener` that reads values from  generated-keys' `ResultSet`. Also, in upper layer, such as
+You have a `ProxyDataSourceListener` that reads values from  generated-keys' `ResultSet`. Also, in upper layer, such as
 ORM or application logic, it needs to use the same generated-keys' `ResultSet`.
 
 Based on `ResultSet` implementation, reading values may be limited to only once; therefore, when
-`QueryExecutionListener` reads values from generated-keys' `ResultSet` and upper layer tries to read values from it,
+`ProxyDataSourceListener` reads values from generated-keys' `ResultSet` and upper layer tries to read values from it,
 the `ResultSet` may not allow the repeated read.
 
 To allow multiple reads, you can proxy the generated-keys' `ResultSet` with `RepeatableReadResultSetProxyLogic`.
@@ -206,7 +206,7 @@ builder
 === Proxying ResultSet
 
 By default, datasource-proxy does *NOT* proxy `ResultSet`. However, in some case, you want to return a proxied
-`ResultSet` - for example, apply `MethodExecutionListener` on `ResultSet`.
+`ResultSet` - for example, apply `ProxyDataSourceListener` on `ResultSet`.
 
 To enable `ResultSet` proxy, `ProxyDataSourceBuilder` has `proxyResultSet()` method.
 

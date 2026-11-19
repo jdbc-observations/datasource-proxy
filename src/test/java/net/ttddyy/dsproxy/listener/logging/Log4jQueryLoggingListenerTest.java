@@ -1,7 +1,9 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.ExecutionInfoBuilder;
+import static net.ttddyy.dsproxy.QueryExecutionContextBuilder.withQueries;
+import net.ttddyy.dsproxy.proxy.MutableQueryExecutionContext;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
+import net.ttddyy.dsproxy.QueryExecutionContextBuilder;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.QueryInfoBuilder;
 import org.apache.logging.log4j.Level;
@@ -72,7 +74,7 @@ public class Log4jQueryLoggingListenerTest {
         Log4jQueryLoggingListener listener = new Log4jQueryLoggingListener();
 
         List<QueryInfo> queryInfoList = new ArrayList<QueryInfo>();
-        ExecutionInfo execInfo = ExecutionInfoBuilder.create().build();
+        MutableQueryExecutionContext execInfo = QueryExecutionContextBuilder.create().build();
         queryInfoList.add(QueryInfoBuilder.create().query("select * ").build());
 
 
@@ -80,7 +82,7 @@ public class Log4jQueryLoggingListenerTest {
         Configurator.setLevel(this.logger.getName(), Level.TRACE);
         listener.setLogger(logger);
         listener.setLogLevel(Log4jLogLevel.DEBUG);
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(withQueries(execInfo, queryInfoList));
         List<LogEvent> eventsTrace = app.getEvents();
 
         assertThat(eventsTrace).hasSize(1);
@@ -94,7 +96,7 @@ public class Log4jQueryLoggingListenerTest {
         listener.setLogLevel(Log4jLogLevel.TRACE);
         Configurator.setLevel(this.logger.getName(), Level.DEBUG);
         reset();
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(withQueries(execInfo, queryInfoList));
         List<LogEvent> eventsDebug = app.getEvents();
 
         assertThat(eventsDebug).isEmpty();
@@ -103,7 +105,7 @@ public class Log4jQueryLoggingListenerTest {
         listener.setLogLevel(Log4jLogLevel.DEBUG);
         Configurator.setLevel(this.logger.getName(), Level.DEBUG);
         reset();
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(withQueries(execInfo, queryInfoList));
         List<LogEvent> eventsDebug2 = app.getEvents();
 
         assertThat(eventsDebug2).hasSize(1);
@@ -117,7 +119,7 @@ public class Log4jQueryLoggingListenerTest {
         listener.setLogLevel(Log4jLogLevel.INFO);
         Configurator.setLevel(this.logger.getName(), Level.DEBUG);
         reset();
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(withQueries(execInfo, queryInfoList));
         List<LogEvent> eventsInfo = app.getEvents();
 
         assertThat(eventsInfo).hasSize(1);
@@ -131,7 +133,7 @@ public class Log4jQueryLoggingListenerTest {
         listener.setLogLevel(Log4jLogLevel.DEBUG);
         Configurator.setLevel(this.logger.getName(), Level.INFO);
         reset();
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(withQueries(execInfo, queryInfoList));
         assertThat(app.getEvents()).isEmpty();
     }
 
@@ -142,7 +144,7 @@ public class Log4jQueryLoggingListenerTest {
         listener.setLogLevel(Log4jLogLevel.DEBUG);
         Configurator.setLevel(this.logger.getName(), Level.DEBUG);
 
-        ExecutionInfo execInfo = ExecutionInfoBuilder.create().build();
+        MutableQueryExecutionContext execInfo = QueryExecutionContextBuilder.create().build();
         List<QueryInfo> logmeList = new ArrayList<QueryInfo>();
         logmeList.add(QueryInfoBuilder.create().query("select * from logme").build());
         List<QueryInfo> skipList = new ArrayList<QueryInfo>();
@@ -150,8 +152,8 @@ public class Log4jQueryLoggingListenerTest {
 
         // Filter with custom logic: skip queries containing 'skipme'
         listener.setLoggingFilter(new LoggingFilter() {
-            public boolean shouldLog(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-                for (QueryInfo qi : queryInfoList) {
+            public boolean shouldLog(QueryExecutionContext execInfo) {
+                for (QueryInfo qi : execInfo.getQueries()) {
                     if (qi.getQuery().contains("skipme")) {
                         return false;
                     }
@@ -160,14 +162,14 @@ public class Log4jQueryLoggingListenerTest {
             }
         });
 
-        listener.afterQuery(execInfo, logmeList);
+        listener.afterQuery(withQueries(execInfo, logmeList));
 
         List<LogEvent> events = app.getEvents();
         assertThat(events).hasSize(1);
         assertThat(events.get(0).getLevel()).isEqualTo(Level.DEBUG);
 
         reset();
-        listener.afterQuery(execInfo, skipList);
+        listener.afterQuery(withQueries(execInfo, skipList));
         assertThat(app.getEvents()).isEmpty();
     }
 }

@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.listener;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
+import static net.ttddyy.dsproxy.QueryExecutionContextBuilder.withQueries;
+import net.ttddyy.dsproxy.proxy.MutableQueryExecutionContext;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.listener.logging.DefaultQueryLogEntryCreator;
@@ -42,26 +43,26 @@ public class SlowQueryListenerTest {
     @Test
     void onSlowQuery() throws Exception {
 
-        final ExecutionInfo executionInfo = new ExecutionInfo();
+        final MutableQueryExecutionContext executionInfo = new MutableQueryExecutionContext();
         final List<QueryInfo> queryInfo = new ArrayList<QueryInfo>();
 
         final AtomicInteger counter = new AtomicInteger();
 
         SlowQueryListener listener = new SlowQueryListener() {
             @Override
-            protected void onSlowQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, long startTimeInMills) {
+            protected void onSlowQuery(QueryExecutionContext execInfo, long startTimeInMills) {
                 counter.incrementAndGet();
                 assertThat(execInfo).isSameAs(executionInfo);
-                assertThat(queryInfoList).isSameAs(queryInfo);
+                assertThat(execInfo.getQueries()).isSameAs(queryInfo);
             }
         };
         listener.setThreshold(50);
         listener.setThresholdTimeUnit(TimeUnit.MILLISECONDS);
 
         // simulate slow query
-        listener.beforeQuery(executionInfo, queryInfo);
+        listener.beforeQuery(withQueries(executionInfo, queryInfo));
         TimeUnit.MILLISECONDS.sleep(200);  // ample time
-        listener.afterQuery(executionInfo, queryInfo);
+        listener.afterQuery(withQueries(executionInfo, queryInfo));
 
         assertThat(counter.get()).as("callback should be called, and it should be once").isOne();
     }
@@ -71,19 +72,19 @@ public class SlowQueryListenerTest {
 
         SlowQueryListener listener = new SlowQueryListener() {
             @Override
-            protected void onSlowQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, long startTimeInMills) {
+            protected void onSlowQuery(QueryExecutionContext execInfo, long startTimeInMills) {
                 fail("onSlowQuery method should not be called for fast query");
             }
         };
         listener.setThreshold(100);
         listener.setThresholdTimeUnit(TimeUnit.MILLISECONDS);
 
-        final ExecutionInfo executionInfo = new ExecutionInfo();
+        final MutableQueryExecutionContext executionInfo = new MutableQueryExecutionContext();
         final List<QueryInfo> queryInfo = new ArrayList<QueryInfo>();
 
         // calling immediately after
-        listener.beforeQuery(executionInfo, queryInfo);
-        listener.afterQuery(executionInfo, queryInfo);
+        listener.beforeQuery(withQueries(executionInfo, queryInfo));
+        listener.afterQuery(withQueries(executionInfo, queryInfo));
     }
 
 
@@ -93,9 +94,9 @@ public class SlowQueryListenerTest {
         final AtomicLong executionTime = new AtomicLong(0);
         QueryLogEntryCreator queryLogEntryCreator = new DefaultQueryLogEntryCreator() {
             @Override
-            public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName, boolean writeConnectionId, boolean writeIsolation) {
-                executionTime.set(execInfo.getElapsedTime());
-                return super.getLogEntry(execInfo, queryInfoList, writeDataSourceName, writeConnectionId, writeIsolation);
+            public String getLogEntry(QueryExecutionContext execInfo, boolean writeDataSourceName, boolean writeConnectionId, boolean writeIsolation) {
+                executionTime.set(execInfo.getElapsedTime().toMillis());
+                return super.getLogEntry(execInfo, writeDataSourceName, writeConnectionId, writeIsolation);
             }
         };
 

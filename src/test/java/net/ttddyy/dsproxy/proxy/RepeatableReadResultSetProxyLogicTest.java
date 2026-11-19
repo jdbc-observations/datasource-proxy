@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.CallCheckMethodListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
@@ -391,8 +391,8 @@ class RepeatableReadResultSetProxyLogicTest {
 
     @Test
     void methodExecutionListener() throws Throwable {
-        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(LegacyListenerBridge.ofMethod(listener)).build();
+        CallCheckMethodListener listener = new CallCheckMethodListener();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
         ResultSet rs = mock(ResultSet.class);
         ResultSetMetaData metaData = mock(ResultSetMetaData.class);
         when(rs.getMetaData()).thenReturn(metaData);

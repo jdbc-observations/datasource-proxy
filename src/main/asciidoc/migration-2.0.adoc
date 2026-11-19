@@ -28,6 +28,27 @@ The taglib, JNDI, servlet and Spring support classes are removed. Replacements:
 * Custom `Stopwatch` / `StopwatchFactory` implementations must return a `Duration` from `Stopwatch.getElapsedTime()`.
 * If `afterMethod` throws while the JDBC call itself failed, the listener's exception is added to the JDBC exception
   with `addSuppressed` and the JDBC exception is rethrown. In 1.x the listener's exception replaced it.
+* `QueryExecutionListener` and `MethodExecutionListener` are removed. Implement `ProxyDataSourceListener`:
+  `beforeQuery(ExecutionInfo, List<QueryInfo>)` becomes `beforeQuery(QueryExecutionContext)` (queries via
+  `context.getQueries()`), and `beforeMethod` / `afterMethod` keep their `MethodExecutionContext` signature.
+  One class can implement both query and method callbacks.
+* `ChainListener` / `CompositeMethodListener` are removed: register several listeners on the builder
+  (`listener(a).listener(b)`); they run in registration order.
+* `NoOpQueryExecutionListener`, `NoOpMethodExecutionListener` and `JdbcLifecycleEventListenerAdapter` are removed:
+  implement `ProxyDataSourceListener` (or `JdbcLifecycleEventListener`) and override only what you need; every
+  callback has a no-op default.
+* Lifecycle listeners: register with `listener(JdbcLifecycleEventListener.asListener(myLifecycle))`.
+  `JdbcLifecycleEventListener.beforeQuery` / `afterQuery` now take a `QueryExecutionContext`.
+* `ProxyDataSource.addListener(...)` and the deprecated `setListener(...)` take a `ProxyDataSourceListener`
+  instead of a `QueryExecutionListener`.
+* Built-in listeners (`DataSourceQueryCountListener`, `SlowQueryListener`, the query-logging and slow-query-logging
+  listeners, `TracingMethodListener`) now implement `ProxyDataSourceListener`. Subclass hooks change accordingly:
+  `SlowQueryListener.onSlowQuery(QueryExecutionContext, long)`, `getExecutionInfoKey(QueryExecutionContext)`;
+  `QueryLogEntryCreator.getLogEntry(QueryExecutionContext, boolean, boolean, boolean)`;
+  `LoggingFilter.shouldLog(QueryExecutionContext)`; the `DefaultQueryLogEntryCreator` / `DefaultJsonQueryLogEntryCreator`
+  `write*Entry(StringBuilder, QueryExecutionContext)` hooks. (Phases 3 and 4 replace these classes.)
+* Query log `Time:` and the query-count elapsed time are always milliseconds. In 1.x they were nanoseconds when
+  `NanoTimeStopwatchFactory` was configured. `TracingMethodListener` keeps the 1.x unit.
 
 `ProxyDataSourceBuilder` listener registration:
 
@@ -35,8 +56,11 @@ The taglib, JNDI, servlet and Spring support classes are removed. Replacements:
 |===
 |1.x |2.0
 
-|`listener(QueryExecutionListener)`, `methodListener(MethodExecutionListener)`
+|`listener(QueryExecutionListener)`, `methodListener(MethodExecutionListener)` (removed)
 |`listener(ProxyDataSourceListener)`. All registrations run in call order.
+
+|`listener(JdbcLifecycleEventListener)` (removed)
+|`listener(JdbcLifecycleEventListener.asListener(myLifecycle))`
 
 |`beforeQuery((execInfo, queries) -> ...)` / `afterQuery(...)` (`SingleQueryExecution`)
 |`beforeQuery(ctx -> ... ctx.getQueries() ...)` / `afterQuery(...)` taking `Consumer<QueryExecutionContext>`

@@ -1,8 +1,8 @@
 package net.ttddyy.dsproxy.proxy;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.QueryInfo;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import org.mockito.ArgumentCaptor;
 
 import java.util.HashMap;
@@ -20,17 +20,16 @@ public class MockTestUtils {
     // TODO: this needs clean up
 
     @SuppressWarnings("unchecked")
-    public static void verifyListenerForBatch(QueryExecutionListener listener, String dataSourceName, String query,
+    public static void verifyListenerForBatch(ProxyDataSourceListener listener, String dataSourceName, String query,
                                               Map<String, Object>... expectedQueryParamsArray) {
-        ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
-        ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<QueryExecutionContext> executionInfoCaptor = ArgumentCaptor.forClass(QueryExecutionContext.class);
 
-        verify(listener).afterQuery(executionInfoCaptor.capture(), queryInfoListCaptor.capture());
+        verify(listener).afterQuery(executionInfoCaptor.capture());
 
 
         final int expectedBatchSize = expectedQueryParamsArray.length;
 
-        ExecutionInfo execInfo = executionInfoCaptor.getValue();
+        QueryExecutionContext execInfo = executionInfoCaptor.getValue();
         assertThat(execInfo.getMethod()).isNotNull();
         assertThat(execInfo.getMethod().getName()).isEqualTo("executeBatch");
 
@@ -40,7 +39,7 @@ public class MockTestUtils {
         assertThat(execInfo.isBatch()).isTrue();
         assertThat(execInfo.getBatchSize()).isEqualTo(expectedBatchSize);
 
-        List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
+        List<QueryInfo> queryInfoList = executionInfoCaptor.getValue().getQueries();
         assertThat(queryInfoList).hasSize(1).as("for prepared/callable statement, batch query size is always 1");
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery()).isEqualTo(query);

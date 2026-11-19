@@ -1,23 +1,22 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryInfo;
-
-import java.util.List;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 
 /**
  * @author Tadaya Tsuyukubo
  */
-public class TestListener implements QueryExecutionListener {
+public class TestListener implements ProxyDataSourceListener {
     int beforeCount = 0;
     int afterCount = 0;
 
-    public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    @Override
+    public void beforeQuery(QueryExecutionContext context) {
         beforeCount++;
     }
 
-    public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    @Override
+    public void afterQuery(QueryExecutionContext context) {
         afterCount++;
     }
 

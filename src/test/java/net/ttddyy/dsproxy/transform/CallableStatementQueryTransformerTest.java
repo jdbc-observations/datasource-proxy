@@ -1,9 +1,8 @@
 package net.ttddyy.dsproxy.transform;
 
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.TestUtils;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.hsqldb.jdbc.JDBCDataSource;
@@ -105,9 +104,9 @@ public class CallableStatementQueryTransformerTest {
             }
         };
 
-        QueryExecutionListener queryListener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener queryListener = mock(ProxyDataSourceListener.class);
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .listener(LegacyListenerBridge.ofQuery(queryListener))
+                .listener(queryListener)
                 .queryTransformer(transformer)
                 .build();
 

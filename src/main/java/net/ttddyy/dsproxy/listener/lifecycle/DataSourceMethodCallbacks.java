@@ -16,42 +16,74 @@ public interface DataSourceMethodCallbacks {
     // CommonDataSource methods
     //
 
-    void beforeGetLoginTimeout(MethodExecutionContext executionContext);
+    default void beforeGetLoginTimeout(MethodExecutionContext executionContext) {
 
-    void beforeGetLogWriter(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetParentLogger(MethodExecutionContext executionContext);
+    default void beforeGetLogWriter(MethodExecutionContext executionContext) {
 
-    void beforeSetLoginTimeout(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetLogWriter(MethodExecutionContext executionContext);
+    default void beforeGetParentLogger(MethodExecutionContext executionContext) {
 
-    void afterGetLoginTimeout(MethodExecutionContext executionContext);
+    }
 
-    void afterGetLogWriter(MethodExecutionContext executionContext);
+    default void beforeSetLoginTimeout(MethodExecutionContext executionContext) {
 
-    void afterGetParentLogger(MethodExecutionContext executionContext);
+    }
 
-    void afterSetLoginTimeout(MethodExecutionContext executionContext);
+    default void beforeSetLogWriter(MethodExecutionContext executionContext) {
 
-    void afterSetLogWriter(MethodExecutionContext executionContext);
+    }
+
+    default void afterGetLoginTimeout(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetLogWriter(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetParentLogger(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetLoginTimeout(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetLogWriter(MethodExecutionContext executionContext) {
+
+    }
 
 
     //
     // DataSource methods
     //
 
-    void beforeGetConnection(MethodExecutionContext executionContext);
+    default void beforeGetConnection(MethodExecutionContext executionContext) {
 
-    void beforeCreateConnectionBuilder(MethodExecutionContext executionContext);
+    }
 
-    void beforeCreateShardingKeyBuilder(MethodExecutionContext executionContext);
+    default void beforeCreateConnectionBuilder(MethodExecutionContext executionContext) {
 
-    void afterGetConnection(MethodExecutionContext executionContext);
+    }
 
-    void afterCreateConnectionBuilder(MethodExecutionContext executionContext);
+    default void beforeCreateShardingKeyBuilder(MethodExecutionContext executionContext) {
 
-    void afterCreateShardingKeyBuilder(MethodExecutionContext executionContext);
+    }
+
+    default void afterGetConnection(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterCreateConnectionBuilder(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterCreateShardingKeyBuilder(MethodExecutionContext executionContext) {
+
+    }
 
 
 }

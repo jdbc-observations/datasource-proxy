@@ -1,13 +1,11 @@
 package net.ttddyy.dsproxy.listener;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryInfo;
-import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
+import net.ttddyy.dsproxy.proxy.MutableQueryExecutionContext;
 import net.ttddyy.dsproxy.proxy.Stopwatch;
 import net.ttddyy.dsproxy.proxy.StopwatchFactory;
 import net.ttddyy.dsproxy.proxy.SystemStopwatchFactory;
 
-import java.util.List;
+import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -20,16 +18,16 @@ import java.util.concurrent.TimeUnit;
  * Slow query detection listener.
  *
  * <p>This listener detects slow queries <em>during execution</em> (sometimes called <em>preemptive</em>).
- * When a query exceeds the specified threshold, the {@link #onSlowQuery(ExecutionInfo, List, long)} callback is
+ * When a query exceeds the specified threshold, the {@link #onSlowQuery(QueryExecutionContext, long)} callback is
  * invoked while the query is still running. The callback is invoked only once for each query that exceeds the
  * threshold. The running query is not interrupted or cancelled.
  *
  * <p>NOTE:
  * <ul>
  * <li>The callback is invoked by a thread from this listener's scheduled executor, not by the thread executing the query.
- * <li>{@link ExecutionInfo#getElapsedTime()} contains the elapsed time at the moment of the check, which is usually
+ * <li>{@link QueryExecutionContext#getElapsedTime()} contains the elapsed time at the moment of the check, which is usually
  * close to the specified threshold rather than the query's actual execution time.
- * <li>The query result and success or failure status in {@link ExecutionInfo} are not available because the query
+ * <li>The query result and success or failure status in {@link QueryExecutionContext} are not available because the query
  * has not finished.
  * <li>A check is scheduled for each query execution.
  * </ul>
@@ -40,9 +38,9 @@ import java.util.concurrent.TimeUnit;
  * long thresholdInMillis = ...
  * SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener(){
  *      {@literal @}Override
- *      public void afterQuery(ExecutionInfo execInfo, List&lt;QueryInfo&gt; queryInfoList) {
- *          if (execInfo.getElapsedTime() &gt;= thresholdInMillis) {
- *              super.afterQuery(execInfo, queryInfoList);
+ *      public void afterQuery(QueryExecutionContext context) {
+ *          if (context.getElapsedTime().toMillis() &gt;= thresholdInMillis) {
+ *              super.afterQuery(context);
  *          }
  *      }
  * };
@@ -57,23 +55,21 @@ import java.util.concurrent.TimeUnit;
  * @see net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener
  * @since 1.4.1
  */
-public class SlowQueryListener implements QueryExecutionListener {
+public class SlowQueryListener implements ProxyDataSourceListener {
 
     /**
      * Data holder for the currently running query.
      *
-     * This structure prevents a hard reference from scheduled {@link Runnable} instances to {@link ExecutionInfo} and
+     * This structure prevents a hard reference from scheduled {@link Runnable} instances to {@link QueryExecutionContext} and
      * related objects.
      */
     protected static class RunningQueryContext {
-        protected ExecutionInfo executionInfo;
-        protected List<QueryInfo> queryInfoList;
+        protected QueryExecutionContext queryExecutionContext;
         protected long startTimeInMills;
         protected Stopwatch stopwatch;
 
-        public RunningQueryContext(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList, long nowInMills, Stopwatch stopwatch) {
-            this.executionInfo = executionInfo;
-            this.queryInfoList = queryInfoList;
+        public RunningQueryContext(QueryExecutionContext queryExecutionContext, long nowInMills, Stopwatch stopwatch) {
+            this.queryExecutionContext = queryExecutionContext;
             this.startTimeInMills = nowInMills;
             this.stopwatch = stopwatch;
         }
@@ -95,11 +91,11 @@ public class SlowQueryListener implements QueryExecutionListener {
     protected StopwatchFactory stopwatchFactory = new SystemStopwatchFactory();
 
     @Override
-    public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    public void beforeQuery(QueryExecutionContext queryExecutionContext) {
 
-        final String execInfoKey = getExecutionInfoKey(execInfo);
+        final String execInfoKey = getExecutionInfoKey(queryExecutionContext);
 
-        // Pass only the key to prevent a hard reference from the Runnable to ExecutionInfo. (Issue-53)
+        // Pass only the key to prevent a hard reference from the Runnable to the context. (Issue-53)
         Runnable check = new Runnable() {
             @Override
             public void run() {
@@ -107,13 +103,15 @@ public class SlowQueryListener implements QueryExecutionListener {
                 RunningQueryContext context = SlowQueryListener.this.inExecution.get(execInfoKey);
 
                 if (context != null) {
-                    long elapsedTime = LegacyListenerBridge.toLegacyElapsedTime(context.stopwatch.getElapsedTime(), SlowQueryListener.this.stopwatchFactory);
-                    // Set the elapsed time.
-                    if (context.executionInfo.getElapsedTime() == 0) {
-                        context.executionInfo.setElapsedTime(elapsedTime);
+                    Duration elapsedTime = context.stopwatch.getElapsedTime();
+                    // Set the elapsed time on the shared context, as 1.x did.
+                    // shortcut: only the proxy's MutableQueryExecutionContext can carry it; Phase 4 replaces this listener
+                    if (context.queryExecutionContext instanceof MutableQueryExecutionContext mutable
+                            && mutable.getElapsedTime().isZero()) {
+                        mutable.setElapsedTime(elapsedTime);
                     }
 
-                    onSlowQuery(context.executionInfo, context.queryInfoList, context.startTimeInMills);
+                    onSlowQuery(context.queryExecutionContext, context.startTimeInMills);
                 }
             }
         };
@@ -121,34 +119,34 @@ public class SlowQueryListener implements QueryExecutionListener {
 
         long now = System.currentTimeMillis();
         Stopwatch stopwatch = this.stopwatchFactory.create().start();
-        RunningQueryContext context = new RunningQueryContext(execInfo, queryInfoList, now, stopwatch);
+        RunningQueryContext context = new RunningQueryContext(queryExecutionContext, now, stopwatch);
         this.inExecution.put(execInfoKey, context);
 
     }
 
     @Override
-    public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        String executionInfoKey = getExecutionInfoKey(execInfo);
+    public void afterQuery(QueryExecutionContext queryExecutionContext) {
+        String executionInfoKey = getExecutionInfoKey(queryExecutionContext);
         this.inExecution.remove(executionInfoKey);
     }
 
 
     /**
-     * Calculates a key for the given {@link ExecutionInfo}.
+     * Calculates a key for the given {@link QueryExecutionContext}.
      *
      * <p>This key is passed to the slow-query check {@link Runnable} and is also used for removal in
-     * {@link #afterQuery(ExecutionInfo, List)}.
+     * {@link #afterQuery(QueryExecutionContext)}.
      *
      * <p>The default implementation uses {@link System#identityHashCode(Object)}. This does not guarantee 100% uniqueness,
      * but it is sufficient for the short-lived usage in this class.
      * <p>Subclasses may override this method to provide a different implementation that uniquely represents
-     * {@link ExecutionInfo}.
+     * {@link QueryExecutionContext}.
      *
-     * @param executionInfo execution info
+     * @param queryExecutionContext query execution context
      * @return key
      */
-    protected String getExecutionInfoKey(ExecutionInfo executionInfo) {
-        int exeInfoKey = System.identityHashCode(executionInfo);
+    protected String getExecutionInfoKey(QueryExecutionContext queryExecutionContext) {
+        int exeInfoKey = System.identityHashCode(queryExecutionContext);
         return String.valueOf(exeInfoKey);
     }
 
@@ -157,13 +155,12 @@ public class SlowQueryListener implements QueryExecutionListener {
      *
      * <p>This callback is invoked only once per query if it exceeds the threshold.
      * It is invoked by a thread from the scheduled executor while the query is still running.
-     * {@link ExecutionInfo#getElapsedTime()} contains the elapsed time at the moment of the check.
+     * {@link QueryExecutionContext#getElapsedTime()} contains the elapsed time at the moment of the check.
      *
-     * @param execInfo        query execution info
-     * @param queryInfoList   query parameter info
+     * @param queryExecutionContext query execution context
      * @param startTimeInMills time in milliseconds when the query started
      */
-    protected void onSlowQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, long startTimeInMills) {
+    protected void onSlowQuery(QueryExecutionContext queryExecutionContext, long startTimeInMills) {
     }
 
     public void setThreshold(long threshHold) {
@@ -198,7 +195,7 @@ public class SlowQueryListener implements QueryExecutionListener {
 
 
     /**
-     * Sets the {@link StopwatchFactory} used to compute {@link ExecutionInfo#getElapsedTime()} for slow queries.
+     * Sets the {@link StopwatchFactory} used to compute {@link QueryExecutionContext#getElapsedTime()} for slow queries.
      *
      * @param stopwatchFactory factory used to create a {@link Stopwatch} for slow-query timing
      * @since 1.5.1

@@ -1,10 +1,9 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
-import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.SimpleResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
@@ -49,8 +48,8 @@ public class PreparedStatementQueryTest {
         connectionInfo.setDataSourceName("myDS");
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .listener(LegacyListenerBridge.ofQuery(this.testListener))
-                .listener(LegacyListenerBridge.ofQuery(this.lastQueryListener))
+                .listener(this.testListener)
+                .listener(this.lastQueryListener)
                 .build();
 
         final Connection conn = jdbcDataSource.getConnection();
@@ -88,7 +87,7 @@ public class PreparedStatementQueryTest {
         assertThat(afterQueries).hasSize(1);
         assertThat(afterQueries.get(0).getQuery()).isEqualTo(query);
 
-        ExecutionInfo afterExec = lastQueryListener.getAfterExecInfo();
+        QueryExecutionContext afterExec = lastQueryListener.getAfterExecInfo();
         assertThat(afterExec).isNotNull();
         assertThat(afterExec.getThrowable()).isNotNull();
 
@@ -349,15 +348,15 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    void sameInstanceOfExecutionInfo() throws Exception {
+    void sameInstanceOfQueryExecutionContext() throws Exception {
         final String query = "select * from emp;";
         PreparedStatement stat = connection.prepareStatement(query);
         stat.executeQuery();
 
-        ExecutionInfo before = lastQueryListener.getBeforeExecInfo();
-        ExecutionInfo after = lastQueryListener.getAfterExecInfo();
+        QueryExecutionContext before = lastQueryListener.getBeforeExecInfo();
+        QueryExecutionContext after = lastQueryListener.getAfterExecInfo();
 
-        assertThat(before).as("before and after uses same ExecutionInfo instance").isSameAs(after);
+        assertThat(before).as("before and after uses same QueryExecutionContext instance").isSameAs(after);
     }
 
     @Test
@@ -424,18 +423,18 @@ public class PreparedStatementQueryTest {
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-        final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        final AtomicReference<QueryExecutionContext> listenerReceivedContext = new AtomicReference<QueryExecutionContext>();
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(QueryExecutionContext execInfo) {
                 // since generatedKeys will NOT be closed, they can be read afterwards.
-                listenerReceivedExecutionInfo.set(execInfo);
+                listenerReceivedContext.set(execInfo);
             }
         };
 
         // autoRetrieveGeneratedKeys=true
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .listener(LegacyListenerBridge.ofQuery(listener))
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -444,7 +443,7 @@ public class PreparedStatementQueryTest {
 
         proxyPs.executeUpdate();
 
-        ExecutionInfo info = listenerReceivedExecutionInfo.get();
+        QueryExecutionContext info = listenerReceivedContext.get();
         assertThat(info).isNotNull();
 
         ResultSet generatedKeys = info.getGeneratedKeys();
@@ -461,11 +460,11 @@ public class PreparedStatementQueryTest {
         assertThat(generatedId).as("generated ID").isEqualTo(2);
 
         // reset
-        listenerReceivedExecutionInfo.set(null);
+        listenerReceivedContext.set(null);
 
         // autoRetrieveGeneratedKeys=false
         proxyConfig = ProxyConfig.Builder.create()
-                .listener(LegacyListenerBridge.ofQuery(listener))
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(false)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -473,7 +472,7 @@ public class PreparedStatementQueryTest {
 
         proxyPs.executeUpdate();
 
-        info = listenerReceivedExecutionInfo.get();
+        info = listenerReceivedContext.get();
         assertThat(info).isNotNull();
 
         assertThat(info.getGeneratedKeys()).isNull();
@@ -487,16 +486,16 @@ public class PreparedStatementQueryTest {
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         final AtomicReference<ResultSet> listenerReceivedGeneratedKeys = new AtomicReference<ResultSet>();
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(QueryExecutionContext execInfo) {
                 listenerReceivedGeneratedKeys.set(execInfo.getGeneratedKeys());
             }
         };
 
         // autoRetrieveGeneratedKeys=true
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .listener(LegacyListenerBridge.ofQuery(listener))
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -544,16 +543,16 @@ public class PreparedStatementQueryTest {
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         final AtomicReference<ResultSet> listenerReceivedGeneratedKeys = new AtomicReference<ResultSet>();
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(QueryExecutionContext execInfo) {
                 listenerReceivedGeneratedKeys.set(execInfo.getGeneratedKeys());
             }
         };
 
         // autoRetrieveGeneratedKeys=true
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .listener(LegacyListenerBridge.ofQuery(listener))
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -574,9 +573,9 @@ public class PreparedStatementQueryTest {
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         final AtomicReference<ResultSet> listenerReceivedGeneratedKeys = new AtomicReference<ResultSet>();
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(QueryExecutionContext execInfo) {
                 listenerReceivedGeneratedKeys.set(execInfo.getGeneratedKeys());
             }
         };
@@ -586,7 +585,7 @@ public class PreparedStatementQueryTest {
         ProxyConfig proxyConfig;
         PreparedStatement proxyPs;
         proxyConfig = ProxyConfig.Builder.create()
-                .listener(LegacyListenerBridge.ofQuery(listener))
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -603,7 +602,7 @@ public class PreparedStatementQueryTest {
 
         // autoRetrieve for batch prepared = true
         proxyConfig = ProxyConfig.Builder.create()
-                .listener(LegacyListenerBridge.ofQuery(listener))
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .retrieveGeneratedKeysForBatchPreparedOrCallable(true)  // set true
@@ -620,7 +619,7 @@ public class PreparedStatementQueryTest {
 
         // autoRetrieve for batch prepared = false
         proxyConfig = ProxyConfig.Builder.create()
-                .listener(LegacyListenerBridge.ofQuery(listener))
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .retrieveGeneratedKeysForBatchPreparedOrCallable(false)  // set false
@@ -762,20 +761,20 @@ public class PreparedStatementQueryTest {
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-        final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        final AtomicReference<QueryExecutionContext> listenerReceivedContext = new AtomicReference<QueryExecutionContext>();
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(QueryExecutionContext execInfo) {
                 ResultSet generatedKeys = execInfo.getGeneratedKeys();
                 boolean isClosed = Assertions.assertDoesNotThrow(generatedKeys::isClosed, "Failed to call generatedKeys.isClosed() message=");
                 assertThat(isClosed).isFalse();
-                listenerReceivedExecutionInfo.set(execInfo);
+                listenerReceivedContext.set(execInfo);
             }
         };
 
         // autoCloseGeneratedKeys=false
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .listener(LegacyListenerBridge.ofQuery(listener))
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -784,7 +783,7 @@ public class PreparedStatementQueryTest {
 
         proxyPs.executeUpdate();
 
-        ExecutionInfo info = listenerReceivedExecutionInfo.get();
+        QueryExecutionContext info = listenerReceivedContext.get();
         ResultSet generatedKeys = info.getGeneratedKeys();
         assertThat(generatedKeys.isClosed()).isFalse();
 
@@ -793,11 +792,11 @@ public class PreparedStatementQueryTest {
             keysToClose.close();
         }, "closing non closed ResultSet should success. message=");
 
-        listenerReceivedExecutionInfo.set(null);
+        listenerReceivedContext.set(null);
 
         // autoCloseGeneratedKeys=true
         proxyConfig = ProxyConfig.Builder.create()
-                .listener(LegacyListenerBridge.ofQuery(listener))
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(true)
                 .build();
@@ -805,7 +804,7 @@ public class PreparedStatementQueryTest {
 
         proxyPs.executeUpdate();
 
-        info = listenerReceivedExecutionInfo.get();
+        info = listenerReceivedContext.get();
         generatedKeys = info.getGeneratedKeys();
         assertThat(generatedKeys.isClosed()).isTrue();
 
@@ -817,17 +816,17 @@ public class PreparedStatementQueryTest {
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-        final AtomicReference<ExecutionInfo> listenerReceivedExecutionInfo = new AtomicReference<ExecutionInfo>();
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        final AtomicReference<QueryExecutionContext> listenerReceivedContext = new AtomicReference<QueryExecutionContext>();
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-                listenerReceivedExecutionInfo.set(execInfo);
+            public void afterQuery(QueryExecutionContext execInfo) {
+                listenerReceivedContext.set(execInfo);
             }
         };
 
         // specify autoRetrieveGeneratedKeys and proxy factory
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .listener(LegacyListenerBridge.ofQuery(listener))
+                .listener(listener)
                 .autoRetrieveGeneratedKeys(true)
                 .generatedKeysProxyLogicFactory(new SimpleResultSetProxyLogicFactory())
                 .autoCloseGeneratedKeys(false)
@@ -837,7 +836,7 @@ public class PreparedStatementQueryTest {
 
         proxyPs.executeUpdate();
 
-        ExecutionInfo info = listenerReceivedExecutionInfo.get();
+        QueryExecutionContext info = listenerReceivedContext.get();
         assertThat(info).isNotNull();
         assertThat(info.getGeneratedKeys()).isInstanceOf(ResultSet.class);
 

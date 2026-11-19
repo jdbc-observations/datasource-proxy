@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 
 import java.time.Duration;
@@ -11,7 +11,7 @@ import java.time.Duration;
  * @author Tadaya Tsuyukubo
  * @see SystemStopwatchFactory.SystemStopwatch
  * @see NanoTimeStopwatchFactory.NanoTimeStopwatch
- * @see ExecutionInfo#getElapsedTime()
+ * @see QueryExecutionContext#getElapsedTime()
  * @see MethodExecutionContext#getElapsedTime()
  * @since 1.5.1
  */

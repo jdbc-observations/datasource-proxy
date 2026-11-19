@@ -1,16 +1,13 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryInfo;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-
-import java.util.List;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 
 /**
  * @author Tadaya Tsuyukubo
  * @since 1.3
  */
-public abstract class AbstractQueryLoggingListener implements QueryExecutionListener {
+public abstract class AbstractQueryLoggingListener implements ProxyDataSourceListener {
 
     protected QueryLogEntryCreator queryLogEntryCreator = new DefaultQueryLogEntryCreator();
     protected boolean writeDataSourceName = true;
@@ -20,19 +17,19 @@ public abstract class AbstractQueryLoggingListener implements QueryExecutionList
     protected LoggingFilter loggingFilter = LoggingFilter.ALLOW_ALL;
 
     @Override
-    public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+    public void beforeQuery(QueryExecutionContext context) {
     }
 
     @Override
-    public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        if (this.loggingCondition.getAsBoolean() && this.loggingFilter.shouldLog(execInfo, queryInfoList)) {
-            final String entry = getEntry(execInfo, queryInfoList);
+    public void afterQuery(QueryExecutionContext context) {
+        if (this.loggingCondition.getAsBoolean() && this.loggingFilter.shouldLog(context)) {
+            final String entry = getEntry(context);
             writeLog(entry);
         }
     }
 
-    protected String getEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        return this.queryLogEntryCreator.getLogEntry(execInfo, queryInfoList, this.writeDataSourceName, this.writeConnectionId, this.writeIsolation);
+    protected String getEntry(QueryExecutionContext context) {
+        return this.queryLogEntryCreator.getLogEntry(context, this.writeDataSourceName, this.writeConnectionId, this.writeIsolation);
     }
 
     protected abstract void writeLog(String message);

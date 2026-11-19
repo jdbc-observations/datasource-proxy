@@ -1,7 +1,9 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.ExecutionInfoBuilder;
+import static net.ttddyy.dsproxy.QueryExecutionContextBuilder.withQueries;
+import net.ttddyy.dsproxy.proxy.MutableQueryExecutionContext;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
+import net.ttddyy.dsproxy.QueryExecutionContextBuilder;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.QueryInfoBuilder;
 import org.junit.jupiter.api.Test;
@@ -37,7 +39,7 @@ class SLF4JQueryLoggingListenerTest {
         InMemorySLF4JLogger logger = new InMemorySLF4JLogger();
 
         List<QueryInfo> queryInfoList = new ArrayList<QueryInfo>();
-        ExecutionInfo execInfo = ExecutionInfoBuilder.create().build();
+        MutableQueryExecutionContext execInfo = QueryExecutionContextBuilder.create().build();
         queryInfoList.add(QueryInfoBuilder.create().query("select * ").build());
 
 
@@ -46,7 +48,7 @@ class SLF4JQueryLoggingListenerTest {
         logger.setEnabledLogLevel(SLF4JLogLevel.TRACE);
         listener.setLogger(logger);
 
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(withQueries(execInfo, queryInfoList));
 
         assertThat(logger.getTraceMessages()).isEmpty();
         assertThat(logger.getDebugMessages()).hasSize(1);
@@ -59,7 +61,7 @@ class SLF4JQueryLoggingListenerTest {
         listener.setLogLevel(SLF4JLogLevel.TRACE);
         logger.setEnabledLogLevel(SLF4JLogLevel.DEBUG);
 
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(withQueries(execInfo, queryInfoList));
 
         assertThat(logger.getTraceMessages()).isEmpty();
         assertThat(logger.getDebugMessages()).isEmpty();
@@ -72,7 +74,7 @@ class SLF4JQueryLoggingListenerTest {
         listener.setLogLevel(SLF4JLogLevel.DEBUG);
         logger.setEnabledLogLevel(SLF4JLogLevel.DEBUG);
 
-        listener.afterQuery(execInfo, queryInfoList);
+        listener.afterQuery(withQueries(execInfo, queryInfoList));
 
         assertThat(logger.getTraceMessages()).isEmpty();
         assertThat(logger.getDebugMessages()).hasSize(1);
@@ -89,7 +91,7 @@ class SLF4JQueryLoggingListenerTest {
         listener.setLogLevel(SLF4JLogLevel.DEBUG);
         logger.setEnabledLogLevel(SLF4JLogLevel.DEBUG);
 
-        ExecutionInfo execInfo = ExecutionInfoBuilder.create().build();
+        MutableQueryExecutionContext execInfo = QueryExecutionContextBuilder.create().build();
         List<QueryInfo> logmeList = new ArrayList<QueryInfo>();
         logmeList.add(QueryInfoBuilder.create().query("select * from logme").build());
         List<QueryInfo> skipList = new ArrayList<QueryInfo>();
@@ -97,8 +99,8 @@ class SLF4JQueryLoggingListenerTest {
 
         // Filter with custom logic: skip queries containing 'skipme'
         listener.setLoggingFilter(new LoggingFilter() {
-            public boolean shouldLog(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-                for (QueryInfo qi : queryInfoList) {
+            public boolean shouldLog(QueryExecutionContext execInfo) {
+                for (QueryInfo qi : execInfo.getQueries()) {
                     if (qi.getQuery().contains("skipme")) {
                         return false;
                     }
@@ -107,12 +109,12 @@ class SLF4JQueryLoggingListenerTest {
             }
         });
 
-        listener.afterQuery(execInfo, logmeList);
+        listener.afterQuery(withQueries(execInfo, logmeList));
 
         assertThat(logger.getDebugMessages()).hasSize(1);
 
         logger.reset();
-        listener.afterQuery(execInfo, skipList);
+        listener.afterQuery(withQueries(execInfo, skipList));
 
         assertThat(logger.getDebugMessages()).isEmpty();
     }

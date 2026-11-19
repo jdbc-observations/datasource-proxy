@@ -14,180 +14,356 @@ public interface StatementMethodCallbacks {
     // Statement methods
     //
 
-    void beforeAddBatch(MethodExecutionContext executionContext);
+    default void beforeAddBatch(MethodExecutionContext executionContext) {
 
-    void beforeCancel(MethodExecutionContext executionContext);
+    }
 
-    void beforeClearBatch(MethodExecutionContext executionContext);
+    default void beforeCancel(MethodExecutionContext executionContext) {
 
-    void beforeClearWarnings(MethodExecutionContext executionContext);
+    }
 
-    void beforeClose(MethodExecutionContext executionContext);
+    default void beforeClearBatch(MethodExecutionContext executionContext) {
 
-    void beforeEnquoteIdentifier(MethodExecutionContext executionContext);
+    }
 
-    void beforeEnquoteLiteral(MethodExecutionContext executionContext);
+    default void beforeClearWarnings(MethodExecutionContext executionContext) {
 
-    void beforeEnquoteNCharLiteral(MethodExecutionContext executionContext);
+    }
 
-    void beforeCloseOnCompletion(MethodExecutionContext executionContext);
+    default void beforeClose(MethodExecutionContext executionContext) {
 
-    void beforeExecute(MethodExecutionContext executionContext);
+    }
 
-    void beforeExecuteBatch(MethodExecutionContext executionContext);
+    default void beforeEnquoteIdentifier(MethodExecutionContext executionContext) {
 
-    void beforeExecuteLargeBatch(MethodExecutionContext executionContext);
+    }
 
-    void beforeExecuteLargeUpdate(MethodExecutionContext executionContext);
+    default void beforeEnquoteLiteral(MethodExecutionContext executionContext) {
 
-    void beforeExecuteQuery(MethodExecutionContext executionContext);
+    }
 
-    void beforeExecuteUpdate(MethodExecutionContext executionContext);
+    default void beforeEnquoteNCharLiteral(MethodExecutionContext executionContext) {
 
-    void beforeGetConnection(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetFetchDirection(MethodExecutionContext executionContext);
+    default void beforeCloseOnCompletion(MethodExecutionContext executionContext) {
 
-    void beforeGetFetchSize(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetGeneratedKeys(MethodExecutionContext executionContext);
+    default void beforeExecute(MethodExecutionContext executionContext) {
 
-    void beforeGetLargeMaxRows(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetLargeUpdateCount(MethodExecutionContext executionContext);
+    default void beforeExecuteBatch(MethodExecutionContext executionContext) {
 
-    void beforeGetMaxFieldSize(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetMaxRows(MethodExecutionContext executionContext);
+    default void beforeExecuteLargeBatch(MethodExecutionContext executionContext) {
 
-    void beforeGetMoreResults(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetQueryTimeout(MethodExecutionContext executionContext);
+    default void beforeExecuteLargeUpdate(MethodExecutionContext executionContext) {
 
-    void beforeGetResultSet(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetResultSetConcurrency(MethodExecutionContext executionContext);
+    default void beforeExecuteQuery(MethodExecutionContext executionContext) {
 
-    void beforeGetResultSetHoldability(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetResultSetType(MethodExecutionContext executionContext);
+    default void beforeExecuteUpdate(MethodExecutionContext executionContext) {
 
-    void beforeGetUpdateCount(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetWarnings(MethodExecutionContext executionContext);
+    default void beforeGetConnection(MethodExecutionContext executionContext) {
 
-    void beforeIsClosed(MethodExecutionContext executionContext);
+    }
 
-    void beforeIsCloseOnCompletion(MethodExecutionContext executionContext);
+    default void beforeGetFetchDirection(MethodExecutionContext executionContext) {
 
-    void beforeIsPoolable(MethodExecutionContext executionContext);
+    }
 
-    void beforeIsSimpleIdentifier(MethodExecutionContext executionContext);
+    default void beforeGetFetchSize(MethodExecutionContext executionContext) {
 
-    void beforeSetCursorName(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetEscapeProcessing(MethodExecutionContext executionContext);
+    default void beforeGetGeneratedKeys(MethodExecutionContext executionContext) {
 
-    void beforeSetFetchDirection(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetFetchSize(MethodExecutionContext executionContext);
+    default void beforeGetLargeMaxRows(MethodExecutionContext executionContext) {
 
-    void beforeSetLargeMaxRows(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetMaxFieldSize(MethodExecutionContext executionContext);
+    default void beforeGetLargeUpdateCount(MethodExecutionContext executionContext) {
 
-    void beforeSetMaxRows(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetPoolable(MethodExecutionContext executionContext);
+    default void beforeGetMaxFieldSize(MethodExecutionContext executionContext) {
 
-    void beforeSetQueryTimeout(MethodExecutionContext executionContext);
+    }
 
-    void afterAddBatch(MethodExecutionContext executionContext);
+    default void beforeGetMaxRows(MethodExecutionContext executionContext) {
 
-    void afterCancel(MethodExecutionContext executionContext);
+    }
 
-    void afterClearBatch(MethodExecutionContext executionContext);
+    default void beforeGetMoreResults(MethodExecutionContext executionContext) {
 
-    void afterClearWarnings(MethodExecutionContext executionContext);
+    }
 
-    void afterClose(MethodExecutionContext executionContext);
+    default void beforeGetQueryTimeout(MethodExecutionContext executionContext) {
 
-    void afterEnquoteIdentifier(MethodExecutionContext executionContext);
+    }
 
-    void afterEnquoteLiteral(MethodExecutionContext executionContext);
+    default void beforeGetResultSet(MethodExecutionContext executionContext) {
 
-    void afterEnquoteNCharLiteral(MethodExecutionContext executionContext);
+    }
 
-    void afterCloseOnCompletion(MethodExecutionContext executionContext);
+    default void beforeGetResultSetConcurrency(MethodExecutionContext executionContext) {
 
-    void afterExecute(MethodExecutionContext executionContext);
+    }
 
-    void afterExecuteBatch(MethodExecutionContext executionContext);
+    default void beforeGetResultSetHoldability(MethodExecutionContext executionContext) {
 
-    void afterExecuteLargeBatch(MethodExecutionContext executionContext);
+    }
 
-    void afterExecuteLargeUpdate(MethodExecutionContext executionContext);
+    default void beforeGetResultSetType(MethodExecutionContext executionContext) {
 
-    void afterExecuteQuery(MethodExecutionContext executionContext);
+    }
 
-    void afterExecuteUpdate(MethodExecutionContext executionContext);
+    default void beforeGetUpdateCount(MethodExecutionContext executionContext) {
 
-    void afterGetConnection(MethodExecutionContext executionContext);
+    }
 
-    void afterGetFetchDirection(MethodExecutionContext executionContext);
+    default void beforeGetWarnings(MethodExecutionContext executionContext) {
 
-    void afterGetFetchSize(MethodExecutionContext executionContext);
+    }
 
-    void afterGetGeneratedKeys(MethodExecutionContext executionContext);
+    default void beforeIsClosed(MethodExecutionContext executionContext) {
 
-    void afterGetLargeMaxRows(MethodExecutionContext executionContext);
+    }
 
-    void afterGetLargeUpdateCount(MethodExecutionContext executionContext);
+    default void beforeIsCloseOnCompletion(MethodExecutionContext executionContext) {
 
-    void afterGetMaxFieldSize(MethodExecutionContext executionContext);
+    }
 
-    void afterGetMaxRows(MethodExecutionContext executionContext);
+    default void beforeIsPoolable(MethodExecutionContext executionContext) {
 
-    void afterGetMoreResults(MethodExecutionContext executionContext);
+    }
 
-    void afterGetQueryTimeout(MethodExecutionContext executionContext);
+    default void beforeIsSimpleIdentifier(MethodExecutionContext executionContext) {
 
-    void afterGetResultSet(MethodExecutionContext executionContext);
+    }
 
-    void afterGetResultSetConcurrency(MethodExecutionContext executionContext);
+    default void beforeSetCursorName(MethodExecutionContext executionContext) {
 
-    void afterGetResultSetHoldability(MethodExecutionContext executionContext);
+    }
 
-    void afterGetResultSetType(MethodExecutionContext executionContext);
+    default void beforeSetEscapeProcessing(MethodExecutionContext executionContext) {
 
-    void afterGetUpdateCount(MethodExecutionContext executionContext);
+    }
 
-    void afterGetWarnings(MethodExecutionContext executionContext);
+    default void beforeSetFetchDirection(MethodExecutionContext executionContext) {
 
-    void afterIsClosed(MethodExecutionContext executionContext);
+    }
 
-    void afterIsCloseOnCompletion(MethodExecutionContext executionContext);
+    default void beforeSetFetchSize(MethodExecutionContext executionContext) {
 
-    void afterIsPoolable(MethodExecutionContext executionContext);
+    }
 
-    void afterIsSimpleIdentifier(MethodExecutionContext executionContext);
+    default void beforeSetLargeMaxRows(MethodExecutionContext executionContext) {
 
-    void afterSetCursorName(MethodExecutionContext executionContext);
+    }
 
-    void afterSetEscapeProcessing(MethodExecutionContext executionContext);
+    default void beforeSetMaxFieldSize(MethodExecutionContext executionContext) {
 
-    void afterSetFetchDirection(MethodExecutionContext executionContext);
+    }
 
-    void afterSetFetchSize(MethodExecutionContext executionContext);
+    default void beforeSetMaxRows(MethodExecutionContext executionContext) {
 
-    void afterSetLargeMaxRows(MethodExecutionContext executionContext);
+    }
 
-    void afterSetMaxFieldSize(MethodExecutionContext executionContext);
+    default void beforeSetPoolable(MethodExecutionContext executionContext) {
 
-    void afterSetMaxRows(MethodExecutionContext executionContext);
+    }
 
-    void afterSetPoolable(MethodExecutionContext executionContext);
+    default void beforeSetQueryTimeout(MethodExecutionContext executionContext) {
 
-    void afterSetQueryTimeout(MethodExecutionContext executionContext);
+    }
+
+    default void afterAddBatch(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterCancel(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterClearBatch(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterClearWarnings(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterClose(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterEnquoteIdentifier(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterEnquoteLiteral(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterEnquoteNCharLiteral(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterCloseOnCompletion(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterExecute(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterExecuteBatch(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterExecuteLargeBatch(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterExecuteLargeUpdate(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterExecuteQuery(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterExecuteUpdate(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetConnection(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetFetchDirection(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetFetchSize(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetGeneratedKeys(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetLargeMaxRows(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetLargeUpdateCount(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetMaxFieldSize(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetMaxRows(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetMoreResults(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetQueryTimeout(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetResultSet(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetResultSetConcurrency(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetResultSetHoldability(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetResultSetType(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetUpdateCount(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetWarnings(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterIsClosed(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterIsCloseOnCompletion(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterIsPoolable(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterIsSimpleIdentifier(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetCursorName(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetEscapeProcessing(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetFetchDirection(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetFetchSize(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetLargeMaxRows(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetMaxFieldSize(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetMaxRows(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetPoolable(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetQueryTimeout(MethodExecutionContext executionContext) {
+
+    }
 
 }

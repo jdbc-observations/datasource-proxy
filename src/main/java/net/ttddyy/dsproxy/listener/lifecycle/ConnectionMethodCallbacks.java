@@ -14,175 +14,347 @@ public interface ConnectionMethodCallbacks {
     // Connection methods
     //
 
-    void beforeAbort(MethodExecutionContext executionContext);
+    default void beforeAbort(MethodExecutionContext executionContext) {
 
-    void beforeBeginRequest(MethodExecutionContext executionContext);
+    }
 
-    void beforeClearWarnings(MethodExecutionContext executionContext);
+    default void beforeBeginRequest(MethodExecutionContext executionContext) {
 
-    void beforeClose(MethodExecutionContext executionContext);
+    }
 
-    void beforeCommit(MethodExecutionContext executionContext);
+    default void beforeClearWarnings(MethodExecutionContext executionContext) {
 
-    void beforeCreateArrayOf(MethodExecutionContext executionContext);
+    }
 
-    void beforeCreateBlob(MethodExecutionContext executionContext);
+    default void beforeClose(MethodExecutionContext executionContext) {
 
-    void beforeCreateClob(MethodExecutionContext executionContext);
+    }
 
-    void beforeCreateNClob(MethodExecutionContext executionContext);
+    default void beforeCommit(MethodExecutionContext executionContext) {
 
-    void beforeCreateSQLXML(MethodExecutionContext executionContext);
+    }
 
-    void beforeCreateStatement(MethodExecutionContext executionContext);
+    default void beforeCreateArrayOf(MethodExecutionContext executionContext) {
 
-    void beforeCreateStruct(MethodExecutionContext executionContext);
+    }
 
-    void beforeEndRequest(MethodExecutionContext executionContext);
+    default void beforeCreateBlob(MethodExecutionContext executionContext) {
 
-    void beforeGetAutoCommit(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetCatalog(MethodExecutionContext executionContext);
+    default void beforeCreateClob(MethodExecutionContext executionContext) {
 
-    void beforeGetClientInfo(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetHoldability(MethodExecutionContext executionContext);
+    default void beforeCreateNClob(MethodExecutionContext executionContext) {
 
-    void beforeGetMetaData(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetNetworkTimeout(MethodExecutionContext executionContext);
+    default void beforeCreateSQLXML(MethodExecutionContext executionContext) {
 
-    void beforeGetSchema(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetTransactionIsolation(MethodExecutionContext executionContext);
+    default void beforeCreateStatement(MethodExecutionContext executionContext) {
 
-    void beforeGetTypeMap(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetWarnings(MethodExecutionContext executionContext);
+    default void beforeCreateStruct(MethodExecutionContext executionContext) {
 
-    void beforeIsClosed(MethodExecutionContext executionContext);
+    }
 
-    void beforeIsReadOnly(MethodExecutionContext executionContext);
+    default void beforeEndRequest(MethodExecutionContext executionContext) {
 
-    void beforeIsValid(MethodExecutionContext executionContext);
+    }
 
-    void beforeNativeSQL(MethodExecutionContext executionContext);
+    default void beforeGetAutoCommit(MethodExecutionContext executionContext) {
 
-    void beforePrepareCall(MethodExecutionContext executionContext);
+    }
 
-    void beforePrepareStatement(MethodExecutionContext executionContext);
+    default void beforeGetCatalog(MethodExecutionContext executionContext) {
 
-    void beforeReleaseSavepoint(MethodExecutionContext executionContext);
+    }
 
-    void beforeRollback(MethodExecutionContext executionContext);
+    default void beforeGetClientInfo(MethodExecutionContext executionContext) {
 
-    void beforeSetAutoCommit(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetCatalog(MethodExecutionContext executionContext);
+    default void beforeGetHoldability(MethodExecutionContext executionContext) {
 
-    void beforeSetClientInfo(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetHoldability(MethodExecutionContext executionContext);
+    default void beforeGetMetaData(MethodExecutionContext executionContext) {
 
-    void beforeSetNetworkTimeout(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetReadOnly(MethodExecutionContext executionContext);
+    default void beforeGetNetworkTimeout(MethodExecutionContext executionContext) {
 
-    void beforeSetSavepoint(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetSchema(MethodExecutionContext executionContext);
+    default void beforeGetSchema(MethodExecutionContext executionContext) {
 
-    void beforeSetShardingKey(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetShardingKeyIfValid(MethodExecutionContext executionContext);
+    default void beforeGetTransactionIsolation(MethodExecutionContext executionContext) {
 
-    void beforeSetTransactionIsolation(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetTypeMap(MethodExecutionContext executionContext);
+    default void beforeGetTypeMap(MethodExecutionContext executionContext) {
 
-    void afterAbort(MethodExecutionContext executionContext);
+    }
 
-    void afterBeginRequest(MethodExecutionContext executionContext);
+    default void beforeGetWarnings(MethodExecutionContext executionContext) {
 
-    void afterClearWarnings(MethodExecutionContext executionContext);
+    }
 
-    void afterClose(MethodExecutionContext executionContext);
+    default void beforeIsClosed(MethodExecutionContext executionContext) {
 
-    void afterCommit(MethodExecutionContext executionContext);
+    }
 
-    void afterCreateArrayOf(MethodExecutionContext executionContext);
+    default void beforeIsReadOnly(MethodExecutionContext executionContext) {
 
-    void afterCreateBlob(MethodExecutionContext executionContext);
+    }
 
-    void afterCreateClob(MethodExecutionContext executionContext);
+    default void beforeIsValid(MethodExecutionContext executionContext) {
 
-    void afterCreateNClob(MethodExecutionContext executionContext);
+    }
 
-    void afterCreateSQLXML(MethodExecutionContext executionContext);
+    default void beforeNativeSQL(MethodExecutionContext executionContext) {
 
-    void afterCreateStatement(MethodExecutionContext executionContext);
+    }
 
-    void afterCreateStruct(MethodExecutionContext executionContext);
+    default void beforePrepareCall(MethodExecutionContext executionContext) {
 
-    void afterEndRequest(MethodExecutionContext executionContext);
+    }
 
-    void afterGetAutoCommit(MethodExecutionContext executionContext);
+    default void beforePrepareStatement(MethodExecutionContext executionContext) {
 
-    void afterGetCatalog(MethodExecutionContext executionContext);
+    }
 
-    void afterGetClientInfo(MethodExecutionContext executionContext);
+    default void beforeReleaseSavepoint(MethodExecutionContext executionContext) {
 
-    void afterGetHoldability(MethodExecutionContext executionContext);
+    }
 
-    void afterGetMetaData(MethodExecutionContext executionContext);
+    default void beforeRollback(MethodExecutionContext executionContext) {
 
-    void afterGetNetworkTimeout(MethodExecutionContext executionContext);
+    }
 
-    void afterGetSchema(MethodExecutionContext executionContext);
+    default void beforeSetAutoCommit(MethodExecutionContext executionContext) {
 
-    void afterGetTransactionIsolation(MethodExecutionContext executionContext);
+    }
 
-    void afterGetTypeMap(MethodExecutionContext executionContext);
+    default void beforeSetCatalog(MethodExecutionContext executionContext) {
 
-    void afterGetWarnings(MethodExecutionContext executionContext);
+    }
 
-    void afterIsClosed(MethodExecutionContext executionContext);
+    default void beforeSetClientInfo(MethodExecutionContext executionContext) {
 
-    void afterIsReadOnly(MethodExecutionContext executionContext);
+    }
 
-    void afterIsValid(MethodExecutionContext executionContext);
+    default void beforeSetHoldability(MethodExecutionContext executionContext) {
 
-    void afterNativeSQL(MethodExecutionContext executionContext);
+    }
 
-    void afterPrepareCall(MethodExecutionContext executionContext);
+    default void beforeSetNetworkTimeout(MethodExecutionContext executionContext) {
 
-    void afterPrepareStatement(MethodExecutionContext executionContext);
+    }
 
-    void afterReleaseSavepoint(MethodExecutionContext executionContext);
+    default void beforeSetReadOnly(MethodExecutionContext executionContext) {
 
-    void afterRollback(MethodExecutionContext executionContext);
+    }
 
-    void afterSetAutoCommit(MethodExecutionContext executionContext);
+    default void beforeSetSavepoint(MethodExecutionContext executionContext) {
 
-    void afterSetCatalog(MethodExecutionContext executionContext);
+    }
 
-    void afterSetClientInfo(MethodExecutionContext executionContext);
+    default void beforeSetSchema(MethodExecutionContext executionContext) {
 
-    void afterSetHoldability(MethodExecutionContext executionContext);
+    }
 
-    void afterSetNetworkTimeout(MethodExecutionContext executionContext);
+    default void beforeSetShardingKey(MethodExecutionContext executionContext) {
 
-    void afterSetReadOnly(MethodExecutionContext executionContext);
+    }
 
-    void afterSetSavepoint(MethodExecutionContext executionContext);
+    default void beforeSetShardingKeyIfValid(MethodExecutionContext executionContext) {
 
-    void afterSetSchema(MethodExecutionContext executionContext);
+    }
 
-    void afterSetShardingKey(MethodExecutionContext executionContext);
+    default void beforeSetTransactionIsolation(MethodExecutionContext executionContext) {
 
-    void afterSetShardingKeyIfValid(MethodExecutionContext executionContext);
+    }
 
-    void afterSetTransactionIsolation(MethodExecutionContext executionContext);
+    default void beforeSetTypeMap(MethodExecutionContext executionContext) {
 
-    void afterSetTypeMap(MethodExecutionContext executionContext);
+    }
+
+    default void afterAbort(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterBeginRequest(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterClearWarnings(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterClose(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterCommit(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterCreateArrayOf(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterCreateBlob(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterCreateClob(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterCreateNClob(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterCreateSQLXML(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterCreateStatement(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterCreateStruct(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterEndRequest(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetAutoCommit(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetCatalog(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetClientInfo(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetHoldability(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetMetaData(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetNetworkTimeout(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetSchema(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetTransactionIsolation(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetTypeMap(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetWarnings(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterIsClosed(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterIsReadOnly(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterIsValid(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterNativeSQL(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterPrepareCall(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterPrepareStatement(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterReleaseSavepoint(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterRollback(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetAutoCommit(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetCatalog(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetClientInfo(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetHoldability(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetNetworkTimeout(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetReadOnly(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetSavepoint(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetSchema(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetShardingKey(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetShardingKeyIfValid(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetTransactionIsolation(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetTypeMap(MethodExecutionContext executionContext) {
+
+    }
 }

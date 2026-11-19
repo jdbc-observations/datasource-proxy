@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
+import static net.ttddyy.dsproxy.QueryExecutionContextBuilder.withQueries;
+import net.ttddyy.dsproxy.proxy.MutableQueryExecutionContext;
 import net.ttddyy.dsproxy.QueryInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,15 +31,15 @@ class CommonsSlowQueryListenerTest {
         this.listener.setThreshold(50);
         this.listener.setThresholdTimeUnit(TimeUnit.MILLISECONDS);
 
-        ExecutionInfo executionInfo = new ExecutionInfo();
+        MutableQueryExecutionContext executionInfo = new MutableQueryExecutionContext();
         QueryInfo queryInfo = new QueryInfo();
         queryInfo.setQuery("SELECT 1");
         List<QueryInfo> queryInfos = new ArrayList<QueryInfo>();
         queryInfos.add(queryInfo);
 
-        this.listener.beforeQuery(executionInfo, queryInfos);
+        this.listener.beforeQuery(withQueries(executionInfo, queryInfos));
         TimeUnit.MILLISECONDS.sleep(100);
-        this.listener.afterQuery(executionInfo, queryInfos);
+        this.listener.afterQuery(withQueries(executionInfo, queryInfos));
 
         InMemoryCommonsLog log = (InMemoryCommonsLog) this.listener.getLog();
         List<String> messages = log.getWarnMessages();

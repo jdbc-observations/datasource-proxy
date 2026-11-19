@@ -1,18 +1,14 @@
 package net.ttddyy.dsproxy.support;
 
-import net.ttddyy.dsproxy.ConnectionIdManager;
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryInfo;
-import net.ttddyy.dsproxy.listener.ChainListener;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
+import net.ttddyy.dsproxy.ConnectionIdManager;
+import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.proxy.CompositeProxyDataSourceListener;
-import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
-import net.ttddyy.dsproxy.listener.CompositeMethodListener;
+import net.ttddyy.dsproxy.proxy.MutableQueryExecutionContext;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryCountStrategy;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.listener.ThreadQueryCountHolder;
 import net.ttddyy.dsproxy.listener.TracingMethodListener;
 import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventExecutionListener;
@@ -43,7 +39,6 @@ import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -323,8 +318,8 @@ class ProxyDataSourceBuilderTest {
         verifyMultiline(ds, SystemOutSlowQueryListener.class);
     }
 
-    private void verifyMultiline(ProxyDataSource ds, Class<? extends QueryExecutionListener> listenerClass) {
-        QueryExecutionListener listener = getAndVerifyListener(ds, listenerClass);
+    private void verifyMultiline(ProxyDataSource ds, Class<? extends ProxyDataSourceListener> listenerClass) {
+        ProxyDataSourceListener listener = getAndVerifyListener(ds, listenerClass);
 
         QueryLogEntryCreator entryCreator;
         if (listener instanceof AbstractQueryLoggingListener) {
@@ -337,38 +332,16 @@ class ProxyDataSourceBuilderTest {
     }
 
 
-    // collects the 1.x query listeners registered through the temporary bridge (removed in Task 7)
-    private static ChainListener queryListeners(ProxyConfig proxyConfig) {
-        ChainListener chainListener = new ChainListener();
-        for (ProxyDataSourceListener listener : ((CompositeProxyDataSourceListener) proxyConfig.getListener()).getListeners()) {
-            QueryExecutionListener queryListener = listener instanceof LegacyListenerBridge ? ((LegacyListenerBridge) listener).getQueryListener() : null;
-            if (queryListener != null) {
-                chainListener.addListener(queryListener);
-            }
-        }
-        return chainListener;
-    }
-
-    // collects the 1.x method listeners registered through the temporary bridge (removed in Task 7)
-    private static CompositeMethodListener methodListeners(ProxyConfig proxyConfig) {
-        CompositeMethodListener compositeListener = new CompositeMethodListener();
-        for (ProxyDataSourceListener listener : ((CompositeProxyDataSourceListener) proxyConfig.getListener()).getListeners()) {
-            MethodExecutionListener methodListener = listener instanceof LegacyListenerBridge ? ((LegacyListenerBridge) listener).getMethodListener() : null;
-            if (methodListener != null) {
-                compositeListener.addListener(methodListener);
-            }
-        }
-        return compositeListener;
+    private static List<ProxyDataSourceListener> listeners(ProxyConfig proxyConfig) {
+        return ((CompositeProxyDataSourceListener) proxyConfig.getListener()).getListeners();
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends QueryExecutionListener> T getAndVerifyListener(ProxyDataSource ds, Class<T> listenerClass) {
-        QueryExecutionListener listener = queryListeners(ds.getProxyConfig());
-        assertThat(listener).isInstanceOf(ChainListener.class);
-        List<QueryExecutionListener> listeners = ((ChainListener) listener).getListeners();
+    private <T extends ProxyDataSourceListener> T getAndVerifyListener(ProxyDataSource ds, Class<T> listenerClass) {
+        List<ProxyDataSourceListener> listeners = listeners(ds.getProxyConfig());
         assertThat(listeners).hasSize(1);
 
-        QueryExecutionListener target = listeners.get(0);
+        ProxyDataSourceListener target = listeners.get(0);
         assertThat(target).isInstanceOf(listenerClass);
 
         return (T) target;
@@ -383,20 +356,17 @@ class ProxyDataSourceBuilderTest {
         };
 
         ProxyDataSource ds = ProxyDataSourceBuilder.create().logQueryToSysOut().formatQuery(formatCallback).build();
-        ChainListener chainListener = queryListeners(ds.getProxyConfig());
-        assertThat(chainListener.getListeners()).hasSize(1).first().isInstanceOf(AbstractQueryLoggingListener.class);
-        AbstractQueryLoggingListener listener = (AbstractQueryLoggingListener) chainListener.getListeners().get(0);
+        AbstractQueryLoggingListener listener = getAndVerifyListener(ds, AbstractQueryLoggingListener.class);
         QueryLogEntryCreator logEntryCreator = listener.getQueryLogEntryCreator();
         assertThat(logEntryCreator).isInstanceOf(DefaultQueryLogEntryCreator.class);
         DefaultQueryLogEntryCreator defaultQueryLogEntryCreator = (DefaultQueryLogEntryCreator) logEntryCreator;
         assertThat(defaultQueryLogEntryCreator.isMultiline()).isFalse();
 
-        ExecutionInfo executionInfo = new ExecutionInfo();
+        MutableQueryExecutionContext executionContext = new MutableQueryExecutionContext();
         QueryInfo queryInfo = new QueryInfo();
         queryInfo.setQuery("SELECT 1");
-        List<QueryInfo> queryInfoList = new ArrayList<>();
-        queryInfoList.add(queryInfo);
-        String result = logEntryCreator.getLogEntry(executionInfo, queryInfoList, false, false, false);
+        executionContext.setQueries(List.of(queryInfo));
+        String result = logEntryCreator.getLogEntry(executionContext, false, false, false);
 
         assertThat(formatCalled).isTrue();
         assertThat(result).contains("SELECT 1-formatted");
@@ -490,34 +460,30 @@ class ProxyDataSourceBuilderTest {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends MethodExecutionListener> T getAndVerifyMethodListener(ProxyDataSource ds, Class<T> listenerClass) {
-        CompositeMethodListener compositeListener = methodListeners(ds.getProxyConfig());
-        List<MethodExecutionListener> listeners = compositeListener.getListeners();
+    private <T extends ProxyDataSourceListener> T getAndVerifyMethodListener(ProxyDataSource ds, Class<T> listenerClass) {
+        List<ProxyDataSourceListener> listeners = listeners(ds.getProxyConfig());
         assertThat(listeners).hasSize(1);
 
-        MethodExecutionListener target = listeners.get(0);
+        ProxyDataSourceListener target = listeners.get(0);
         assertThat(target).isInstanceOf(listenerClass);
 
         return (T) target;
     }
 
     @Test
-    void buildMethodListener() {
+    void buildListener() {
         ProxyDataSource ds;
-        CompositeMethodListener methodListener;
 
-        MethodExecutionListener listener1 = mock(MethodExecutionListener.class);
-        MethodExecutionListener listener2 = mock(MethodExecutionListener.class);
+        ProxyDataSourceListener listener1 = mock(ProxyDataSourceListener.class);
+        ProxyDataSourceListener listener2 = mock(ProxyDataSourceListener.class);
 
         // single listener
-        ds = ProxyDataSourceBuilder.create().methodListener(listener1).build();
-        methodListener = methodListeners(ds.getProxyConfig());
-        assertThat(methodListener.getListeners()).hasSize(1).contains(listener1);
+        ds = ProxyDataSourceBuilder.create().listener(listener1).build();
+        assertThat(listeners(ds.getProxyConfig())).containsExactly(listener1);
 
-        // multiple listeners
-        ds = ProxyDataSourceBuilder.create().methodListener(listener1).methodListener(listener2).build();
-        methodListener = methodListeners(ds.getProxyConfig());
-        assertThat(methodListener.getListeners()).hasSize(2).contains(listener1, listener2);
+        // multiple listeners, in registration order
+        ds = ProxyDataSourceBuilder.create().listener(listener1).listener(listener2).build();
+        assertThat(listeners(ds.getProxyConfig())).containsExactly(listener1, listener2);
     }
 
     @Test
@@ -558,21 +524,10 @@ class ProxyDataSourceBuilderTest {
 
         JdbcLifecycleEventListener listener = mock(JdbcLifecycleEventListener.class);
 
-        ds = ProxyDataSourceBuilder.create().listener(listener).build();
-        CompositeMethodListener compositeMethodListener = methodListeners(ds.getProxyConfig());
-        ChainListener chainListener = queryListeners(ds.getProxyConfig());
+        ds = ProxyDataSourceBuilder.create().listener(JdbcLifecycleEventListener.asListener(listener)).build();
+        JdbcLifecycleEventExecutionListener executionListener = getAndVerifyListener(ds, JdbcLifecycleEventExecutionListener.class);
 
-        assertThat(compositeMethodListener.getListeners()).hasSize(1);
-        assertThat(chainListener.getListeners()).hasSize(1);
-
-        MethodExecutionListener methodListener = compositeMethodListener.getListeners().get(0);
-        QueryExecutionListener queryListener = chainListener.getListeners().get(0);
-
-        assertThat(methodListener).isInstanceOf(JdbcLifecycleEventExecutionListener.class);
-        assertThat(queryListener).isInstanceOf(JdbcLifecycleEventExecutionListener.class);
-        assertThat(methodListener).isSameAs(queryListener);
-
-        JdbcLifecycleEventListener eventListener = ((JdbcLifecycleEventExecutionListener) methodListener).getDelegate();
+        JdbcLifecycleEventListener eventListener = executionListener.getDelegate();
         assertThat(eventListener).isSameAs(listener);
     }
 
@@ -739,7 +694,7 @@ class ProxyDataSourceBuilderTest {
     @Test
     void loggingFilter() {
         LoggingFilter filter = new LoggingFilter() {
-            public boolean shouldLog(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public boolean shouldLog(QueryExecutionContext execInfo) {
                 return false;
             }
         };

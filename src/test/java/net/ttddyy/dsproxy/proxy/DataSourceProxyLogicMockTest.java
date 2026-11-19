@@ -1,8 +1,8 @@
 package net.ttddyy.dsproxy.proxy;
 
-import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
+import net.ttddyy.dsproxy.listener.CallCheckMethodListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
 import org.junit.jupiter.api.Test;
 
@@ -38,12 +38,12 @@ class DataSourceProxyLogicMockTest {
     }
 
     private DataSourceProxyLogic getProxyLogic(DataSource ds) throws Throwable {
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
         when(ds.getConnection()).thenReturn(mock(Connection.class));
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
                 .dataSourceName(DS_NAME)
-                .listener(LegacyListenerBridge.ofQuery(listener))
+                .listener(listener)
                 .build();
         return new DataSourceProxyLogic(ds, proxyConfig);
     }
@@ -141,14 +141,14 @@ class DataSourceProxyLogicMockTest {
 
     @Test
     void methodExecutionListener() throws Throwable {
-        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
+        CallCheckMethodListener listener = new CallCheckMethodListener();
 
         DataSource ds = mock(DataSource.class);
         when(ds.getConnection()).thenReturn(mock(Connection.class));
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
                 .dataSourceName(DS_NAME)
-                .listener(LegacyListenerBridge.ofMethod(listener))
+                .listener(listener)
                 .build();
         DataSourceProxyLogic logic = new DataSourceProxyLogic(ds, proxyConfig);
 

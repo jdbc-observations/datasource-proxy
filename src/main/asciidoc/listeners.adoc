@@ -3,28 +3,33 @@
 
 Currently, datasource-proxy provides the following listeners:
 
-- `QueryExecutionListener`
-- `MethodExecutionListener`
+- `ProxyDataSourceListener`
 - `JdbcLifecycleEventListener`
 
 
-=== QueryExecutionListener
+=== ProxyDataSourceListener
 
-`QueryExecutionListener` is called when query execution methods are invoked
-(for example: `execute`, `executeBatch`, `executeQuery`, and so on).
+`ProxyDataSourceListener` has query callbacks, called when query execution methods are invoked
+(for example: `execute`, `executeBatch`, `executeQuery`, and so on), and method callbacks.
+Every callback is a no-op by default; override only what you need.
 
 
-.`QueryExecutionListener`:
+.`ProxyDataSourceListener`:
 ```java
-void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList);
+default void beforeQuery(QueryExecutionContext context) {}
 
-void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList);
+default void afterQuery(QueryExecutionContext context) {}
+
+default void beforeMethod(MethodExecutionContext context) {}
+
+default void afterMethod(MethodExecutionContext context) {}
 ```
 
-`ExecutionInfo` contains contextual information about query execution (statement type, batch, connection ID,
-and so on), and `QueryInfo` contains the actual query string and parameters.
+`QueryExecutionContext` contains contextual information about query execution (statement type, batch, connection ID,
+and so on), and `QueryExecutionContext#getQueries()` returns `QueryInfo` objects with the actual query strings and
+parameters.
 
-For the `afterQuery` callback, `ExecutionInfo` contains additional information: the query result, the time it
+For the `afterQuery` callback, `QueryExecutionContext` contains additional information: the query result, the time it
 took to execute the query, and any thrown exception.
 
 The number of queries and parameters depends on the type of query execution.
@@ -42,9 +47,9 @@ The number of queries and parameters depends on the type of query execution.
 
 
 
-=== MethodExecutionListener
+=== Method callbacks
 
-`MethodExecutionListener` intercepts JDBC API calls for the following types:
+`beforeMethod` and `afterMethod` intercept JDBC API calls for the following types:
 
 - `Connection`, `Statement`, `PreparedStatement`, and `CallableStatement`: all methods
 - `ResultSet`: all methods when the result set proxy is enabled
@@ -54,7 +59,7 @@ The number of queries and parameters depends on the type of query execution.
 [[replace-invoking-method-and-parameters]]
 ==== Replace the invoking method and parameters
 
-In `MethodExecutionListener#beforeMethod()`, you can change the invoking method and its parameters on the
+In `ProxyDataSourceListener#beforeMethod()`, you can change the invoking method and its parameters on the
 target JDBC object.
 
 For example, in application code, it may call `Statement#execute(String)`. However, to leverage
@@ -63,7 +68,7 @@ without changing application code.
 
 To update or replace the method and parameters, set the new method or arguments via
 `MethodExecutionContext#setMethod()` and `MethodExecutionContext#setMethodArgs()` inside
-`MethodExecutionListener#beforeMethod()`.
+`ProxyDataSourceListener#beforeMethod()`.
 
 
 For the above use case:
@@ -95,16 +100,16 @@ public void beforeMethod(MethodExecutionContext executionContext) {
 The `JdbcLifecycleEventListener` interface defines before/after method callbacks for all JDBC interfaces that
 datasource-proxy proxies (`DataSource`, `Connection`, `Statement`, `PreparedStatement`, `CallableStatement`,
 and `ResultSet`). It also defines before/after callbacks for method invocations and query executions,
-analogous to `MethodExecutionListener` and `QueryExecutionListener`.
+analogous to `ProxyDataSourceListener`.
 
 
-To implement your listener, you can extend `JdbcLifecycleEventListenerAdapter`, which implements all
-interface methods with no-op implementations and lets you selectively override the callbacks you care about.
+Every callback is a no-op by default, so override only the callbacks you care about. Register the listener with
+`JdbcLifecycleEventListener.asListener(...)`.
 
 ```java
 DataSource dataSource =
   ProxyDataSourceBuilder.create(actualDataSource)
-    .listener(new JdbcLifecycleEventListenerAdapter() {
+    .listener(JdbcLifecycleEventListener.asListener(new JdbcLifecycleEventListener() {
       @Override
       public void beforeGetConnection(MethodExecutionContext executionContext) {
         // implement the logic before DataSource#getConnection();
@@ -114,7 +119,7 @@ DataSource dataSource =
       public void afterRollback(MethodExecutionContext executionContext) {
         // implement the logic after Connection#rollback();
       }
-    })
+    }))
     .build();
 
 ```

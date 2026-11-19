@@ -1,8 +1,7 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,27 +9,29 @@ import java.util.List;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class LastQueryListener implements QueryExecutionListener {
-    private ExecutionInfo beforeExecInfo;
-    private ExecutionInfo afterExecInfo;
+public class LastQueryListener implements ProxyDataSourceListener {
+    private QueryExecutionContext beforeExecInfo;
+    private QueryExecutionContext afterExecInfo;
     private List<QueryInfo> beforeQueries = new ArrayList<QueryInfo>();
     private List<QueryInfo> afterQueries = new ArrayList<QueryInfo>();
 
-    public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        beforeExecInfo = execInfo;
-        beforeQueries = queryInfoList;
+    @Override
+    public void beforeQuery(QueryExecutionContext context) {
+        beforeExecInfo = context;
+        beforeQueries = context.getQueries();
     }
 
-    public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        afterExecInfo = execInfo;
-        afterQueries = queryInfoList;
+    @Override
+    public void afterQuery(QueryExecutionContext context) {
+        afterExecInfo = context;
+        afterQueries = context.getQueries();
     }
 
-    public ExecutionInfo getBeforeExecInfo() {
+    public QueryExecutionContext getBeforeExecInfo() {
         return beforeExecInfo;
     }
 
-    public ExecutionInfo getAfterExecInfo() {
+    public QueryExecutionContext getAfterExecInfo() {
         return afterExecInfo;
     }
 

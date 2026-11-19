@@ -14,152 +14,300 @@ public interface PreparedStatementMethodCallbacks {
     // PreparedStatement methods
     //
 
-    void beforeAddBatch(MethodExecutionContext executionContext);
+    default void beforeAddBatch(MethodExecutionContext executionContext) {
 
-    void beforeClearParameters(MethodExecutionContext executionContext);
+    }
 
-    void beforeExecute(MethodExecutionContext executionContext);
+    default void beforeClearParameters(MethodExecutionContext executionContext) {
 
-    void beforeExecuteLargeUpdate(MethodExecutionContext executionContext);
+    }
 
-    void beforeExecuteQuery(MethodExecutionContext executionContext);
+    default void beforeExecute(MethodExecutionContext executionContext) {
 
-    void beforeExecuteUpdate(MethodExecutionContext executionContext);
+    }
 
-    void beforeGetMetaData(MethodExecutionContext executionContext);
+    default void beforeExecuteLargeUpdate(MethodExecutionContext executionContext) {
 
-    void beforeGetParameterMetaData(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetArray(MethodExecutionContext executionContext);
+    default void beforeExecuteQuery(MethodExecutionContext executionContext) {
 
-    void beforeSetAsciiStream(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetBigDecimal(MethodExecutionContext executionContext);
+    default void beforeExecuteUpdate(MethodExecutionContext executionContext) {
 
-    void beforeSetBinaryStream(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetBlob(MethodExecutionContext executionContext);
+    default void beforeGetMetaData(MethodExecutionContext executionContext) {
 
-    void beforeSetBoolean(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetByte(MethodExecutionContext executionContext);
+    default void beforeGetParameterMetaData(MethodExecutionContext executionContext) {
 
-    void beforeSetBytes(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetCharacterStream(MethodExecutionContext executionContext);
+    default void beforeSetArray(MethodExecutionContext executionContext) {
 
-    void beforeSetClob(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetDate(MethodExecutionContext executionContext);
+    default void beforeSetAsciiStream(MethodExecutionContext executionContext) {
 
-    void beforeSetDouble(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetFloat(MethodExecutionContext executionContext);
+    default void beforeSetBigDecimal(MethodExecutionContext executionContext) {
 
-    void beforeSetInt(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetLong(MethodExecutionContext executionContext);
+    default void beforeSetBinaryStream(MethodExecutionContext executionContext) {
 
-    void beforeSetNCharacterStream(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetNClob(MethodExecutionContext executionContext);
+    default void beforeSetBlob(MethodExecutionContext executionContext) {
 
-    void beforeSetNString(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetNull(MethodExecutionContext executionContext);
+    default void beforeSetBoolean(MethodExecutionContext executionContext) {
 
-    void beforeSetObject(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetRef(MethodExecutionContext executionContext);
+    default void beforeSetByte(MethodExecutionContext executionContext) {
 
-    void beforeSetRowId(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetShort(MethodExecutionContext executionContext);
+    default void beforeSetBytes(MethodExecutionContext executionContext) {
 
-    void beforeSetSQLXML(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetString(MethodExecutionContext executionContext);
+    default void beforeSetCharacterStream(MethodExecutionContext executionContext) {
 
-    void beforeSetTime(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetTimestamp(MethodExecutionContext executionContext);
+    default void beforeSetClob(MethodExecutionContext executionContext) {
 
-    void beforeSetUnicodeStream(MethodExecutionContext executionContext);
+    }
 
-    void beforeSetURL(MethodExecutionContext executionContext);
+    default void beforeSetDate(MethodExecutionContext executionContext) {
 
-    void afterAddBatch(MethodExecutionContext executionContext);
+    }
 
-    void afterClearParameters(MethodExecutionContext executionContext);
+    default void beforeSetDouble(MethodExecutionContext executionContext) {
 
-    void afterExecute(MethodExecutionContext executionContext);
+    }
 
-    void afterExecuteLargeUpdate(MethodExecutionContext executionContext);
+    default void beforeSetFloat(MethodExecutionContext executionContext) {
 
-    void afterExecuteQuery(MethodExecutionContext executionContext);
+    }
 
-    void afterExecuteUpdate(MethodExecutionContext executionContext);
+    default void beforeSetInt(MethodExecutionContext executionContext) {
 
-    void afterGetMetaData(MethodExecutionContext executionContext);
+    }
 
-    void afterGetParameterMetaData(MethodExecutionContext executionContext);
+    default void beforeSetLong(MethodExecutionContext executionContext) {
 
-    void afterSetArray(MethodExecutionContext executionContext);
+    }
 
-    void afterSetAsciiStream(MethodExecutionContext executionContext);
+    default void beforeSetNCharacterStream(MethodExecutionContext executionContext) {
 
-    void afterSetBigDecimal(MethodExecutionContext executionContext);
+    }
 
-    void afterSetBinaryStream(MethodExecutionContext executionContext);
+    default void beforeSetNClob(MethodExecutionContext executionContext) {
 
-    void afterSetBlob(MethodExecutionContext executionContext);
+    }
 
-    void afterSetBoolean(MethodExecutionContext executionContext);
+    default void beforeSetNString(MethodExecutionContext executionContext) {
 
-    void afterSetByte(MethodExecutionContext executionContext);
+    }
 
-    void afterSetBytes(MethodExecutionContext executionContext);
+    default void beforeSetNull(MethodExecutionContext executionContext) {
 
-    void afterSetCharacterStream(MethodExecutionContext executionContext);
+    }
 
-    void afterSetClob(MethodExecutionContext executionContext);
+    default void beforeSetObject(MethodExecutionContext executionContext) {
 
-    void afterSetDate(MethodExecutionContext executionContext);
+    }
 
-    void afterSetDouble(MethodExecutionContext executionContext);
+    default void beforeSetRef(MethodExecutionContext executionContext) {
 
-    void afterSetFloat(MethodExecutionContext executionContext);
+    }
 
-    void afterSetInt(MethodExecutionContext executionContext);
+    default void beforeSetRowId(MethodExecutionContext executionContext) {
 
-    void afterSetLong(MethodExecutionContext executionContext);
+    }
 
-    void afterSetNCharacterStream(MethodExecutionContext executionContext);
+    default void beforeSetShort(MethodExecutionContext executionContext) {
 
-    void afterSetNClob(MethodExecutionContext executionContext);
+    }
 
-    void afterSetNString(MethodExecutionContext executionContext);
+    default void beforeSetSQLXML(MethodExecutionContext executionContext) {
 
-    void afterSetNull(MethodExecutionContext executionContext);
+    }
 
-    void afterSetObject(MethodExecutionContext executionContext);
+    default void beforeSetString(MethodExecutionContext executionContext) {
 
-    void afterSetRef(MethodExecutionContext executionContext);
+    }
 
-    void afterSetRowId(MethodExecutionContext executionContext);
+    default void beforeSetTime(MethodExecutionContext executionContext) {
 
-    void afterSetShort(MethodExecutionContext executionContext);
+    }
 
-    void afterSetSQLXML(MethodExecutionContext executionContext);
+    default void beforeSetTimestamp(MethodExecutionContext executionContext) {
 
-    void afterSetString(MethodExecutionContext executionContext);
+    }
 
-    void afterSetTime(MethodExecutionContext executionContext);
+    default void beforeSetUnicodeStream(MethodExecutionContext executionContext) {
 
-    void afterSetTimestamp(MethodExecutionContext executionContext);
+    }
 
-    void afterSetUnicodeStream(MethodExecutionContext executionContext);
+    default void beforeSetURL(MethodExecutionContext executionContext) {
 
-    void afterSetURL(MethodExecutionContext executionContext);
+    }
+
+    default void afterAddBatch(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterClearParameters(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterExecute(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterExecuteLargeUpdate(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterExecuteQuery(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterExecuteUpdate(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetMetaData(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterGetParameterMetaData(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetArray(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetAsciiStream(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetBigDecimal(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetBinaryStream(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetBlob(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetBoolean(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetByte(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetBytes(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetCharacterStream(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetClob(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetDate(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetDouble(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetFloat(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetInt(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetLong(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetNCharacterStream(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetNClob(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetNString(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetNull(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetObject(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetRef(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetRowId(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetShort(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetSQLXML(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetString(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetTime(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetTimestamp(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetUnicodeStream(MethodExecutionContext executionContext) {
+
+    }
+
+    default void afterSetURL(MethodExecutionContext executionContext) {
+
+    }
 
 }

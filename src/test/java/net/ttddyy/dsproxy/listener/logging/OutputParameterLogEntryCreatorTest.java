@@ -1,7 +1,10 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.ExecutionInfoBuilder;
+import static net.ttddyy.dsproxy.QueryExecutionContextBuilder.withQueries;
+import net.ttddyy.dsproxy.proxy.MutableQueryExecutionContext;
+import java.time.Duration;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
+import net.ttddyy.dsproxy.QueryExecutionContextBuilder;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
@@ -55,7 +58,7 @@ class OutputParameterLogEntryCreatorTest {
         queryInfo.setParametersList(paramsList);
 
 
-        // prepare ExecutionInfo
+        // prepare QueryExecutionContext
 
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
@@ -67,10 +70,10 @@ class OutputParameterLogEntryCreatorTest {
         given(cs.getObject(2)).willReturn(200);
         given(cs.getObject("bar")).willReturn(201);
 
-        ExecutionInfo executionInfo = ExecutionInfoBuilder
+        MutableQueryExecutionContext executionInfo = QueryExecutionContextBuilder
                 .create()
                 .dataSourceName("foo")
-                .elapsedTime(100)
+                .elapsedTime(Duration.ofMillis(100))
                 .method(method)
                 .result(result)
                 .statementType(StatementType.CALLABLE)
@@ -83,7 +86,7 @@ class OutputParameterLogEntryCreatorTest {
 
         OutputParameterLogEntryCreator creator = new OutputParameterLogEntryCreator();
 
-        String entry = creator.getLogEntry(executionInfo, Lists.newArrayList(queryInfo), false, true, false);
+        String entry = creator.getLogEntry(withQueries(executionInfo, Lists.newArrayList(queryInfo)), false, true, false);
         assertThat(entry).containsOnlyOnce("OutParams:[(1=100,foo=101),(2=200,bar=201)]");
 
     }

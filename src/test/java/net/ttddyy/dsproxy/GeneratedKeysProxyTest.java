@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy;
 
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.hsqldb.jdbc.JDBCDataSource;
@@ -64,17 +65,17 @@ class GeneratedKeysProxyTest {
         generatedKeys.close();
     }
 
-    private static class LoggingExecutionListener implements QueryExecutionListener {
+    private static class LoggingExecutionListener implements ProxyDataSourceListener {
 
         private List<Integer> generatedKeys = new ArrayList<Integer>();
 
         @Override
-        public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+        public void beforeQuery(QueryExecutionContext execInfo) {
 
         }
 
         @Override
-        public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+        public void afterQuery(QueryExecutionContext execInfo) {
             try {
                 ResultSet resultSet = execInfo.getGeneratedKeys();
                 if (resultSet == null) {

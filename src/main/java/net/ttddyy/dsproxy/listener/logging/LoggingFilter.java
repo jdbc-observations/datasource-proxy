@@ -1,9 +1,6 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryInfo;
-
-import java.util.List;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 
 /**
  * Functional interface to be called for filtering queries to be logged.
@@ -18,7 +15,7 @@ public interface LoggingFilter {
      * Default filter that allows all queries to be logged.
      */
     LoggingFilter ALLOW_ALL = new LoggingFilter() {
-        public boolean shouldLog(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+        public boolean shouldLog(QueryExecutionContext context) {
             return true;
         }
     };
@@ -26,9 +23,8 @@ public interface LoggingFilter {
     /**
      * Determines if the query should be logged.
      *
-     * @param execInfo execution context
-     * @param queryInfoList list of queries
+     * @param context query execution context
      * @return true to log, false to skip
      */
-    boolean shouldLog(ExecutionInfo execInfo, List<QueryInfo> queryInfoList);
+    boolean shouldLog(QueryExecutionContext context);
 }

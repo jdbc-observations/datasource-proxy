@@ -1,13 +1,12 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
-import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.CallCheckMethodListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -38,7 +37,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -58,7 +56,7 @@ class StatementProxyLogicForPreparedStatementMockTest {
         final String query = "select * from emp where id = ?";
 
         PreparedStatement stat = mock(PreparedStatement.class);
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
@@ -181,18 +179,18 @@ class StatementProxyLogicForPreparedStatementMockTest {
 
     }
 
-    private StatementProxyLogic getProxyLogic(PreparedStatement ps, String query, QueryExecutionListener listener, Connection proxyConnection) {
+    private StatementProxyLogic getProxyLogic(PreparedStatement ps, String query, ProxyDataSourceListener listener, Connection proxyConnection) {
         return getProxyLogic(ps, query, listener, proxyConnection, false, false);
     }
 
     private StatementProxyLogic getProxyLogic(PreparedStatement ps, String query,
-                                              QueryExecutionListener listener, Connection proxyConnection,
+                                              ProxyDataSourceListener listener, Connection proxyConnection,
                                               boolean createResultSetProxy, boolean createGenerateKeysProxy) {
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName(DS_NAME);
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .listener(LegacyListenerBridge.ofQuery(listener))
+                .listener(listener != null ? listener : new ProxyDataSourceListener() { })  // tests pass null for "no listener"
                 .resultSetProxyLogicFactory(createResultSetProxy ? new SimpleResultSetProxyLogicFactory() : null)
                 .generatedKeysProxyLogicFactory(createGenerateKeysProxy ? new SimpleResultSetProxyLogicFactory() : null)
                 .build();
@@ -207,14 +205,13 @@ class StatementProxyLogicForPreparedStatementMockTest {
     }
 
     @SuppressWarnings("unchecked")
-    private void verifyListener(QueryExecutionListener listener, String methodName, String query, Map<String, Object> expectedQueryArgs) {
-        ArgumentCaptor<ExecutionInfo> executionInfoCaptor = ArgumentCaptor.forClass(ExecutionInfo.class);
-        ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
+    private void verifyListener(ProxyDataSourceListener listener, String methodName, String query, Map<String, Object> expectedQueryArgs) {
+        ArgumentCaptor<QueryExecutionContext> executionInfoCaptor = ArgumentCaptor.forClass(QueryExecutionContext.class);
 
 
-        verify(listener).afterQuery(executionInfoCaptor.capture(), queryInfoListCaptor.capture());
+        verify(listener).afterQuery(executionInfoCaptor.capture());
 
-        ExecutionInfo execInfo = executionInfoCaptor.getValue();
+        QueryExecutionContext execInfo = executionInfoCaptor.getValue();
         assertThat(execInfo.getMethod()).isNotNull();
         assertThat(execInfo.getMethod().getName()).isEqualTo(methodName);
 
@@ -224,7 +221,7 @@ class StatementProxyLogicForPreparedStatementMockTest {
         assertThat(execInfo.isBatch()).isFalse();
         assertThat(execInfo.getBatchSize()).isZero();
 
-        List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
+        List<QueryInfo> queryInfoList = executionInfoCaptor.getValue().getQueries();
         assertThat(queryInfoList).hasSize(1);
         QueryInfo queryInfo = queryInfoList.get(0);
         assertThat(queryInfo.getQuery()).isEqualTo(query);
@@ -252,7 +249,7 @@ class StatementProxyLogicForPreparedStatementMockTest {
         PreparedStatement stat = mock(PreparedStatement.class);
         when(stat.executeBatch()).thenReturn(new int[]{1, 1, 1});
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
@@ -313,7 +310,7 @@ class StatementProxyLogicForPreparedStatementMockTest {
         PreparedStatement stat = mock(PreparedStatement.class);
         when(stat.executeBatch()).thenReturn(new int[]{1});
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
@@ -363,7 +360,7 @@ class StatementProxyLogicForPreparedStatementMockTest {
         PreparedStatement stat = mock(PreparedStatement.class);
         when(stat.executeBatch()).thenReturn(new int[]{1});
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
@@ -407,7 +404,7 @@ class StatementProxyLogicForPreparedStatementMockTest {
 
         PreparedStatement stat = mock(PreparedStatement.class);
 
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         StatementProxyLogic logic = getProxyLogic(stat, query, listener, null);
 
@@ -429,11 +426,11 @@ class StatementProxyLogicForPreparedStatementMockTest {
         verify(stat).clearParameters();
         verify(stat).addBatch();
 
-        ArgumentCaptor<List> queryInfoListCaptor = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<QueryExecutionContext> executionInfoCaptor = ArgumentCaptor.forClass(QueryExecutionContext.class);
 
-        verify(listener).afterQuery(any(ExecutionInfo.class), queryInfoListCaptor.capture());
+        verify(listener).afterQuery(executionInfoCaptor.capture());
 
-        List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
+        List<QueryInfo> queryInfoList = executionInfoCaptor.getValue().getQueries();
         assertThat(queryInfoList).hasSize(1);
 
         assertThat(queryInfoList.get(0).getParametersList()).hasSize(1);
@@ -540,9 +537,9 @@ class StatementProxyLogicForPreparedStatementMockTest {
     void proxyResultSet() throws Throwable {
 
         final AtomicReference<Object> listenerReceivedResult = new AtomicReference<Object>();
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(QueryExecutionContext execInfo) {
                 listenerReceivedResult.set(execInfo.getResult());
             }
         };
@@ -584,9 +581,9 @@ class StatementProxyLogicForPreparedStatementMockTest {
     void proxyGeneratedKeysResultSet() throws Throwable {
 
         final AtomicReference<Object> listenerReceivedResult = new AtomicReference<Object>();
-        QueryExecutionListener listener = new NoOpQueryExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
-            public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+            public void afterQuery(QueryExecutionContext execInfo) {
                 listenerReceivedResult.set(execInfo.getResult());
             }
         };
@@ -688,8 +685,8 @@ class StatementProxyLogicForPreparedStatementMockTest {
 
     @Test
     void methodExecutionListener() throws Throwable {
-        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(LegacyListenerBridge.ofMethod(listener)).build();
+        CallCheckMethodListener listener = new CallCheckMethodListener();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
 
         PreparedStatement ps = mock(PreparedStatement.class);
 

@@ -1,18 +1,12 @@
 package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.QueryCountStrategy;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.listener.TracingMethodListener;
-import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventExecutionListener;
-import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
 import net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsSlowQueryListener;
@@ -32,7 +26,6 @@ import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener;
 import net.ttddyy.dsproxy.proxy.DefaultConnectionIdManager;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
-import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.RepeatableReadResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
@@ -643,17 +636,6 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Register given listener.
-     *
-     * @param listener a listener to register
-     * @return builder
-     */
-    public ProxyDataSourceBuilder listener(QueryExecutionListener listener) {
-        this.registeredListeners.add(LegacyListenerBridge.ofQuery(listener));
-        return this;
-    }
-
-    /**
      * Register given {@link ProxyDataSourceListener}. Listeners run in registration order.
      *
      * @param listener a listener to register
@@ -661,20 +643,6 @@ public class ProxyDataSourceBuilder {
      */
     public ProxyDataSourceBuilder listener(ProxyDataSourceListener listener) {
         this.registeredListeners.add(listener);
-        return this;
-    }
-
-    /**
-     * Register given {@link JdbcLifecycleEventListener}.
-     *
-     * @param listener a listener to register
-     * @return builder
-     * @since 1.5
-     */
-    public ProxyDataSourceBuilder listener(JdbcLifecycleEventListener listener) {
-        JdbcLifecycleEventExecutionListener executionListener = new JdbcLifecycleEventExecutionListener(listener);
-        this.registeredListeners.add(LegacyListenerBridge.ofQuery(executionListener));
-        this.registeredListeners.add(LegacyListenerBridge.ofMethod(executionListener));
         return this;
     }
 
@@ -904,18 +872,18 @@ public class ProxyDataSourceBuilder {
      * Enables automatic retrieval of generated keys.
      *
      * <p>When enabled, the proxy always calls {@link Statement#getGeneratedKeys()} after query execution.
-     * The retrieved {@link java.sql.ResultSet} is available via {@link ExecutionInfo#getGeneratedKeys()}.
+     * The retrieved {@link java.sql.ResultSet} is available via {@link QueryExecutionContext#getGeneratedKeys()}.
      *
      * <p>When this configuration is combined with {@link #proxyGeneratedKeys(ResultSetProxyLogicFactory)}, the proxied
-     * {@link java.sql.ResultSet} will be returned from {@link ExecutionInfo#getGeneratedKeys()}.
+     * {@link java.sql.ResultSet} will be returned from {@link QueryExecutionContext#getGeneratedKeys()}.
      *
      * <p>When the {@code autoClose} parameter is {@code true}, datasource-proxy closes the generated-keys
-     * {@link java.sql.ResultSet} after invoking {@link QueryExecutionListener#afterQuery(ExecutionInfo, List)}.
+     * {@link java.sql.ResultSet} after invoking {@link ProxyDataSourceListener#afterQuery(QueryExecutionContext)}.
      * This behavior may not be ideal if an upper layer, such as an ORM or application code, needs to access the
      * generated keys because the result set is already closed when it tries to access them.
      *
      * <p>To support such a use case, specify {@link RepeatableReadResultSetProxyLogicFactory} and set
-     * {@code autoClose=false}. This way, even if your {@link QueryExecutionListener} has accessed the generated keys,
+     * {@code autoClose=false}. This way, even if your {@link ProxyDataSourceListener} has accessed the generated keys,
      * they remain readable in the upper layers of the code, and those layers can close the generated-keys result set.
      *
      * @param autoClose set {@code true} to close the generated-keys {@link java.sql.ResultSet} after query listener execution
@@ -995,18 +963,6 @@ public class ProxyDataSourceBuilder {
      */
     public ProxyDataSourceBuilder repeatableReadResultSet() {
         this.resultSetProxyLogicFactory = new RepeatableReadResultSetProxyLogicFactory();
-        return this;
-    }
-
-    /**
-     * Add {@link MethodExecutionListener}.
-     *
-     * @param listener a method execution listener
-     * @return builder
-     * @since 1.4.3
-     */
-    public ProxyDataSourceBuilder methodListener(MethodExecutionListener listener) {
-        this.registeredListeners.add(LegacyListenerBridge.ofMethod(listener));
         return this;
     }
 
@@ -1149,7 +1105,7 @@ public class ProxyDataSourceBuilder {
     private ProxyConfig buildProxyConfig() {
 
         // Query Logging Listeners
-        List<QueryExecutionListener> listeners = new ArrayList<QueryExecutionListener>();
+        List<ProxyDataSourceListener> listeners = new ArrayList<>();
 
         // query logging listeners
         if (this.createCommonsQueryListener) {
@@ -1200,15 +1156,15 @@ public class ProxyDataSourceBuilder {
         // tracing listener
         ProxyDataSourceListener tracingListener = null;
         if (this.createTracingMethodListener) {
-            tracingListener = LegacyListenerBridge.ofMethod(buildTracingMethodListener());
+            tracingListener = buildTracingMethodListener();
         }
 
 
         // build proxy config
         ProxyConfig.Builder proxyConfigBuilder = ProxyConfig.Builder.create();
 
-        for (QueryExecutionListener listener : listeners) {
-            proxyConfigBuilder.listener(LegacyListenerBridge.ofQuery(listener));
+        for (ProxyDataSourceListener listener : listeners) {
+            proxyConfigBuilder.listener(listener);
         }
 
         // explicitly registered listeners, in call order

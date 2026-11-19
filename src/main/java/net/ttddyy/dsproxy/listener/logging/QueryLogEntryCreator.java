@@ -1,9 +1,6 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryInfo;
-
-import java.util.List;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 
 /**
  * Generate logging entry.
@@ -13,6 +10,6 @@ import java.util.List;
  */
 public interface QueryLogEntryCreator {
 
-    String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName, boolean writeConnectionId, boolean writeIsolation);
+    String getLogEntry(QueryExecutionContext context, boolean writeDataSourceName, boolean writeConnectionId, boolean writeIsolation);
 
 }

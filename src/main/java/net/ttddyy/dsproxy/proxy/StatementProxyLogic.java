@@ -281,7 +281,6 @@ public class StatementProxyLogic extends ProxyLogicSupport {
         queryContext.setMethod(method);
         queryContext.setMethodArgs(args);
         queryContext.setQueries(queries);
-        queryContext.stopwatchFactory = this.proxyConfig.getStopwatchFactory();
 
         boolean isGetResultSetMethod = GET_RESULTSET_METHOD.equals(methodName);
         boolean performQueryListener = !isGetGeneratedKeysMethod && !isGetResultSetMethod;

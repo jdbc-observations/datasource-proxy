@@ -1,10 +1,9 @@
 package net.ttddyy.dsproxy.proxy;
 
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
+import net.ttddyy.dsproxy.listener.CallCheckMethodListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.listener.MethodExecutionListener;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.PreparedStatementInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler;
 import org.junit.jupiter.api.Test;
@@ -75,12 +74,12 @@ class ConnectionProxyLogicMockTest {
     }
 
     private ConnectionProxyLogic getProxyLogic(Connection mockConnection) {
-        QueryExecutionListener listener = mock(QueryExecutionListener.class);
+        ProxyDataSourceListener listener = mock(ProxyDataSourceListener.class);
 
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("myDS");
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(LegacyListenerBridge.ofQuery(listener)).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
         return new ConnectionProxyLogic(mockConnection, connectionInfo, proxyConfig);
     }
 
@@ -300,8 +299,8 @@ class ConnectionProxyLogicMockTest {
 
     @Test
     void methodExecutionListener() throws Throwable {
-        CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(LegacyListenerBridge.ofMethod(listener)).build();
+        CallCheckMethodListener listener = new CallCheckMethodListener();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
         ConnectionInfo connectionInfo = new ConnectionInfo();
 
         Connection conn = mock(Connection.class);
@@ -327,7 +326,7 @@ class ConnectionProxyLogicMockTest {
         final AtomicBoolean isClosedBeforeCalled = new AtomicBoolean();
         final AtomicBoolean isClosedAfterCalled = new AtomicBoolean();
 
-        MethodExecutionListener listener = new MethodExecutionListener() {
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {
                 isClosedBefore.set(executionContext.getConnectionInfo().isClosed());
@@ -340,7 +339,7 @@ class ConnectionProxyLogicMockTest {
                 isClosedAfterCalled.set(true);
             }
         };
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(LegacyListenerBridge.ofMethod(listener)).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(listener).build();
         ConnectionInfo connectionInfo = new ConnectionInfo();
 
         Connection conn = mock(Connection.class);

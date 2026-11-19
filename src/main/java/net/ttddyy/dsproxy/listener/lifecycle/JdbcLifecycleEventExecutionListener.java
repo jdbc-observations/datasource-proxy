@@ -1,23 +1,22 @@
 package net.ttddyy.dsproxy.listener.lifecycle;
 
 import net.ttddyy.dsproxy.DataSourceProxyException;
-import net.ttddyy.dsproxy.ExecutionInfo;
-import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.listener.MethodExecutionListener;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
 
 /**
- * Holder for {@link JdbcLifecycleEventListener} and adapt it to {@link MethodExecutionListener} and {@link QueryExecutionListener}.
+ * Holder for {@link JdbcLifecycleEventListener} and adapt it to {@link ProxyDataSourceListener}, dispatching each JDBC method to its typed callback.
+ *
+ * @see JdbcLifecycleEventListener#asListener(JdbcLifecycleEventListener)
  *
  * @author Tadaya Tsuyukubo
  * @since 1.5
  */
-public class JdbcLifecycleEventExecutionListener implements MethodExecutionListener, QueryExecutionListener {
+public class JdbcLifecycleEventExecutionListener implements ProxyDataSourceListener {
 
     private JdbcLifecycleEventListener delegate;
 
@@ -38,13 +37,13 @@ public class JdbcLifecycleEventExecutionListener implements MethodExecutionListe
     }
 
     @Override
-    public void beforeQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        this.delegate.beforeQuery(execInfo, queryInfoList);
+    public void beforeQuery(QueryExecutionContext context) {
+        this.delegate.beforeQuery(context);
     }
 
     @Override
-    public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
-        this.delegate.afterQuery(execInfo, queryInfoList);
+    public void afterQuery(QueryExecutionContext context) {
+        this.delegate.afterQuery(context);
     }
 
     private void methodCallback(MethodExecutionContext methodContext, boolean isBefore) {

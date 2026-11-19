@@ -1,7 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
-import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
@@ -228,13 +227,13 @@ public class ProxyConfig {
 
     /**
      * When this returns {@code true}, the proxy logic always calls {@link Statement#getGeneratedKeys()} and stores the result in
-     * {@link net.ttddyy.dsproxy.ExecutionInfo}.
+     * {@link net.ttddyy.dsproxy.listener.QueryExecutionContext}.
      * Also, if {@link Statement#getGeneratedKeys()} is called while the cached generated-keys {@link ResultSet} is
      * still open, the cached result set is returned. If it is closed, calling {@link Statement#getGeneratedKeys()}
      * returns a new {@link ResultSet}. (Calling {@link Statement#getGeneratedKeys()} multiple times is not defined
      * in the JDBC specification, so behavior depends on the JDBC driver.)
      *
-     * If {@code false} is returned, {@link ExecutionInfo#getGeneratedKeys()} returns {@code null}.
+     * If {@code false} is returned, {@link net.ttddyy.dsproxy.listener.QueryExecutionContext#getGeneratedKeys()} returns {@code null}.
      *
      * @return {@code true} if generated-keys retrieval is enabled
      * @since 1.4.5

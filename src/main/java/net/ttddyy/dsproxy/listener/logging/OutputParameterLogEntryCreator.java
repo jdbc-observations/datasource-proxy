@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy.listener.logging;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
+import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 
@@ -18,17 +18,17 @@ import java.util.List;
 public class OutputParameterLogEntryCreator extends DefaultQueryLogEntryCreator {
 
     @Override
-    public String getLogEntry(ExecutionInfo execInfo, List<QueryInfo> queryInfoList, boolean writeDataSourceName, boolean writeConnectionId, boolean writeIsolation) {
+    public String getLogEntry(QueryExecutionContext context, boolean writeDataSourceName, boolean writeConnectionId, boolean writeIsolation) {
         final StringBuilder sb = new StringBuilder();
-        sb.append(super.getLogEntry(execInfo, queryInfoList, writeDataSourceName, writeConnectionId, writeIsolation));
+        sb.append(super.getLogEntry(context, writeDataSourceName, writeConnectionId, writeIsolation));
 
         sb.append(", OutParams:[");
 
-        for (QueryInfo queryInfo : queryInfoList) {
+        for (QueryInfo queryInfo : context.getQueries()) {
             for (List<ParameterSetOperation> parameters : queryInfo.getParametersList()) {
                 sb.append("(");
                 if (hasOutputParameters(parameters)) {
-                    String str = getOutputParameters(parameters, (CallableStatement) execInfo.getStatement());
+                    String str = getOutputParameters(parameters, (CallableStatement) context.getStatement());
                     sb.append(str);
                 }
                 sb.append("),");

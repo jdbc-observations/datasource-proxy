@@ -95,8 +95,8 @@ You can also filter which queries are logged by providing a `LoggingFilter`:
 builder
   .logQueryBySlf4j()
   // Only log queries that are not sent to the 'audit' table
-  .loggingFilter((execInfo, queryInfoList) ->
-    queryInfoList.stream().noneMatch(q -> q.getQuery().contains("audit"))
+  .loggingFilter(context ->
+    context.getQueries().stream().noneMatch(q -> q.getQuery().contains("audit"))
   )
 ----
 
@@ -116,7 +116,7 @@ The running query is NOT interrupted or canceled.
 After execution::
 Detect slow queries *after* they have finished.
 The `afterQuery` callback compares the query's elapsed time with the threshold.
-This is a simple approach that can be implemented with any `QueryExecutionListener`.
+This is a simple approach that can be implemented with any `ProxyDataSourceListener`.
 This approach is sometimes called _non-preemptive_.
 
 [cols="1,2,2", options="header"]
@@ -129,7 +129,7 @@ This approach is sometimes called _non-preemptive_.
 |When the threshold has passed while the query is still running
 |After the query has finished
 
-|Elapsed time in `ExecutionInfo`
+|Elapsed time in `QueryExecutionContext`
 |Time at the moment of the check (approximately the threshold time)
 |Actual query execution time
 
@@ -189,7 +189,7 @@ builder
 
 For example, if the threshold is set to 1 minute and a query takes 5 minutes to complete, the query is logged
 when 1 minute has passed while the query is still running. +
-This is expected behavior. Because the query is still executing, the elapsed time in `ExecutionInfo` is the time
+This is expected behavior. Because the query is still executing, the elapsed time in `QueryExecutionContext` is the time
 at the moment of the check (about 1 minute in this example), not the actual execution time of the query (5 minutes).
 
 To log slow queries with their actual execution time, use the <<slow-query-after-execution, after execution>>
@@ -208,10 +208,10 @@ Here is a sample implementation using `SLF4JQueryLoggingListener`:
 long thresholdInMills = ...
 SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener() {
   @Override
-  public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
+  public void afterQuery(QueryExecutionContext context) {
     // call query logging logic only when it took more than the threshold
-    if (thresholdInMills <= execInfo.getElapsedTime()) {
-      super.afterQuery(execInfo, queryInfoList);
+    if (thresholdInMills <= context.getElapsedTime().toMillis()) {
+      super.afterQuery(context);
     }
   }
 };
@@ -228,8 +228,8 @@ To perform other actions for slow queries, such as recording metrics or sending 
 ```java
 long thresholdInMills = ...
 builder
-  .afterQuery((execInfo, queryInfoList) -> {
-    if (thresholdInMills <= execInfo.getElapsedTime()) {
+  .afterQuery(context -> {
+    if (thresholdInMills <= context.getElapsedTime().toMillis()) {
       // slow query: log, record metrics, send notification, etc.
     }
   })
@@ -334,30 +334,30 @@ builder
 [[custom-listeners]]
 === Custom Listeners
 
-When you create a custom listener, you can register it via `listener()` or `methodListener()` methods.
+When you create a custom `ProxyDataSourceListener`, register it via `listener()`. Listeners run in registration order.
 
 ```java
   builder
-      .listener(myQueryListener)          // register QueryExecutionListener
-      .methodListener(myMethodListener)   // register MethodExecutionListener
+      .listener(myListener)
+      .listener(myOtherListener)
       .build();
 ```
 
 
 Also, with Java8 lambda, builder provides simple methods to inline listener definitions.
 
-- `beforeQuery()` and `afterQuery()` to register `QueryExecutionListener`
-- `beforeMethod()` and `afterMethod()` to register `MethodExecutionListener`
+- `beforeQuery()` and `afterQuery()` to register a query callback
+- `beforeMethod()` and `afterMethod()` to register a method callback
 
 
 ```java
   builder
-      // register MethodExecutionListener
+      // register a method callback
       .afterMethod(executionContext -> {
         ....
       })
-      // register QueryExecutionListener
-      .afterQuery((execInfo, queryInfoList) -> {
+      // register a query callback
+      .afterQuery(context -> {
           ...
       })
 

@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
+import net.ttddyy.dsproxy.proxy.NanoTimeStopwatchFactory;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 
 import java.lang.reflect.Method;
@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author Tadaya Tsuyukubo
  * @since 1.4.4
  */
-public class TracingMethodListener implements MethodExecutionListener {
+public class TracingMethodListener implements ProxyDataSourceListener {
 
     private static final int DEFAULT_DISPLAY_PARAM_LENGTH = 50;
 
@@ -56,11 +56,6 @@ public class TracingMethodListener implements MethodExecutionListener {
     };
 
     @Override
-    public void beforeMethod(MethodExecutionContext executionContext) {
-        // no-op
-    }
-
-    @Override
     public void afterMethod(MethodExecutionContext executionContext) {
 
         if (!this.tracingCondition.getAsBoolean()) {
@@ -72,8 +67,9 @@ public class TracingMethodListener implements MethodExecutionListener {
 
         Throwable thrown = executionContext.getThrown();
         ProxyConfig proxyConfig = executionContext.getProxyConfig();
-        long execTime = LegacyListenerBridge.toLegacyElapsedTime(executionContext.getElapsedTime(),
-                proxyConfig == null ? null : proxyConfig.getStopwatchFactory());
+        // keep the 1.x output unit: nanoseconds with NanoTimeStopwatchFactory, otherwise milliseconds
+        long execTime = proxyConfig != null && proxyConfig.getStopwatchFactory() instanceof NanoTimeStopwatchFactory
+                ? executionContext.getElapsedTime().toNanos() : executionContext.getElapsedTime().toMillis();
 
         ConnectionInfo connectionInfo = executionContext.getConnectionInfo();
         String connectionId = "-1";

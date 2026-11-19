@@ -37,9 +37,6 @@ public class MutableQueryExecutionContext implements QueryExecutionContext {
     private List<QueryInfo> queries = List.of();
     private final Map<String, Object> customValues = new HashMap<>();
 
-    // shortcut: temporary 1.x listener bridge, removed in Task 7 (Phase 2)
-    StopwatchFactory stopwatchFactory;  // lets LegacyListenerBridge report elapsed time in the 1.x unit
-
     @Override
     public String getDataSourceName() {
         return this.dataSourceName;

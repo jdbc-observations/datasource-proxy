@@ -42,9 +42,8 @@ The output can be formatted as JSON.
 
 Custom Logic Injection for Query and Method Execution::
 +
-You can write your own `QueryExecutionListener` implementations and have them invoked before or after
-query execution.
-`MethodExecutionListener` is also invoked for each JDBC API interaction.
+You can write your own `ProxyDataSourceListener` implementations and have them invoked before or after
+query execution and for each JDBC API interaction.
 
 
 Query and Parameter Replacement::

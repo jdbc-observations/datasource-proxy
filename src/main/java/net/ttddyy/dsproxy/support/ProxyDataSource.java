@@ -4,10 +4,9 @@ import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.DataSourceProxyException;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.CompositeProxyDataSourceListener;
-import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.ProxyLogicSupport;
 
@@ -22,7 +21,7 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
 /**
- * A {@link javax.sql.DataSource} proxy that supports {@link net.ttddyy.dsproxy.listener.QueryExecutionListener}.
+ * A {@link javax.sql.DataSource} proxy that supports {@link ProxyDataSourceListener}.
  *
  * @author Tadaya Tsuyukubo
  * @author Réda Housni Alaoui
@@ -166,15 +165,15 @@ public class ProxyDataSource extends ProxyLogicSupport implements DataSource, Cl
     /**
      * @deprecated
      */
-    public void setListener(QueryExecutionListener listener) {
+    public void setListener(ProxyDataSourceListener listener) {
         this.proxyConfig = ProxyConfig.Builder.from(this.proxyConfig)
-                .listener(LegacyListenerBridge.ofQuery(listener))
+                .listener(listener)
                 .build();
     }
 
-    public void addListener(QueryExecutionListener listener) {
+    public void addListener(ProxyDataSourceListener listener) {
         // append to the shared composite so already-open connections see it, as in 1.x
-        ((CompositeProxyDataSourceListener) this.proxyConfig.getListener()).add(LegacyListenerBridge.ofQuery(listener));
+        ((CompositeProxyDataSourceListener) this.proxyConfig.getListener()).add(listener);
     }
 
     public void setDataSourceName(String dataSourceName) {

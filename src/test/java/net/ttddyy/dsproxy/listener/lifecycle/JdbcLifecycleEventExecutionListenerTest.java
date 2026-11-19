@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.listener.lifecycle;
 
-import net.ttddyy.dsproxy.ExecutionInfo;
+import static net.ttddyy.dsproxy.QueryExecutionContextBuilder.withQueries;
+import net.ttddyy.dsproxy.proxy.MutableQueryExecutionContext;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import org.junit.jupiter.api.Test;
@@ -34,14 +35,14 @@ class JdbcLifecycleEventExecutionListenerTest {
         JdbcLifecycleEventListener mock = mock(JdbcLifecycleEventListener.class);
         JdbcLifecycleEventExecutionListener listener = new JdbcLifecycleEventExecutionListener(mock);
 
-        ExecutionInfo executionInfo = new ExecutionInfo();
+        MutableQueryExecutionContext executionInfo = new MutableQueryExecutionContext();
         List<QueryInfo> queryInfoList = new ArrayList<QueryInfo>();
 
-        listener.beforeQuery(executionInfo, queryInfoList);
-        verify(mock).beforeQuery(executionInfo, queryInfoList);
+        listener.beforeQuery(withQueries(executionInfo, queryInfoList));
+        verify(mock).beforeQuery(withQueries(executionInfo, queryInfoList));
 
-        listener.afterQuery(executionInfo, queryInfoList);
-        verify(mock).afterQuery(executionInfo, queryInfoList);
+        listener.afterQuery(withQueries(executionInfo, queryInfoList));
+        verify(mock).afterQuery(withQueries(executionInfo, queryInfoList));
     }
 
     @Test
