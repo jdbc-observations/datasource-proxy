@@ -4,7 +4,9 @@ import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Dispatches callbacks to the listeners in registration order.
@@ -18,11 +20,20 @@ public class CompositeProxyDataSourceListener implements ProxyDataSourceListener
     private final List<ProxyDataSourceListener> listeners;
 
     public CompositeProxyDataSourceListener(List<ProxyDataSourceListener> listeners) {
-        this.listeners = List.copyOf(listeners);
+        this.listeners = new CopyOnWriteArrayList<>(listeners);
     }
 
     public List<ProxyDataSourceListener> getListeners() {
-        return this.listeners;
+        return Collections.unmodifiableList(this.listeners);
+    }
+
+    /**
+     * Append a listener. Proxies already created with this composite see it too.
+     *
+     * @param listener listener
+     */
+    public void add(ProxyDataSourceListener listener) {
+        this.listeners.add(listener);
     }
 
     @Override

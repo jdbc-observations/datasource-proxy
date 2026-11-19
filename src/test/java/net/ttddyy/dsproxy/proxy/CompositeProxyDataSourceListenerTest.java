@@ -56,6 +56,21 @@ class CompositeProxyDataSourceListenerTest {
     }
 
     @Test
+    void addAppendsAndIsVisibleToExistingHolders() {
+        var calls = new ArrayList<String>();
+        var composite = new CompositeProxyDataSourceListener(new ArrayList<>());
+        composite.add(new ProxyDataSourceListener() {
+            @Override
+            public void beforeQuery(QueryExecutionContext c) {
+                calls.add("added");
+            }
+        });
+        composite.beforeQuery(new MutableQueryExecutionContext());
+        assertThat(calls).containsExactly("added");
+        assertThat(composite.getListeners()).hasSize(1);
+    }
+
+    @Test
     void getListenersIsUnmodifiableCopy() {
         var source = new ArrayList<ProxyDataSourceListener>();
         var composite = new CompositeProxyDataSourceListener(source);

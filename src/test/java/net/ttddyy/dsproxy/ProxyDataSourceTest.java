@@ -78,6 +78,20 @@ public class ProxyDataSourceTest {
     }
 
     @Test
+    void addListenerIsVisibleToAlreadyOpenConnection() throws Exception {
+        Connection conn = this.proxyDataSource.getConnection();  // opened before addListener
+        TestListener added = new TestListener();
+        this.proxyDataSource.addListener(added);
+
+        Statement st = conn.createStatement();
+        st.executeQuery("select * from emp;");
+
+        assertThat(added.getBeforeCount()).isEqualTo(1);
+        assertThat(added.getAfterCount()).isEqualTo(1);
+        conn.close();
+    }
+
+    @Test
     void statementWithExecuteUpdateQuery() throws Exception {
         Connection conn = proxyDataSource.getConnection();
         Statement st = conn.createStatement();

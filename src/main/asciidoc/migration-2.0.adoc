@@ -17,9 +17,15 @@ The taglib, JNDI, servlet and Spring support classes are removed. Replacements:
 
 == Listeners
 
-* `getElapsedTime()` on `QueryExecutionContext` and `MethodExecutionContext` returns a `java.time.Duration`
-  instead of a `long`. The 1.x unit depended on the stopwatch factory (milliseconds by default, nanoseconds with
-  `NanoTimeStopwatchFactory`); a `Duration` carries its unit. `Stopwatch.getElapsedTime()` also returns a `Duration`.
+* `ProxyConfig.Builder.queryListener(...)` and `methodListener(...)` are replaced by
+  `ProxyConfig.Builder.listener(ProxyDataSourceListener)`, which can be called repeatedly and appends.
+* `ProxyConfig.getQueryListener()` and `getMethodListener()` are replaced by `ProxyConfig.getListener()`.
+* `MethodExecutionContext.getElapsedTime()`, `setElapsedTime` and `MethodExecutionContext.Builder.elapsedTime` now use
+  `java.time.Duration` instead of `long`.
+* `ExecutionInfo.getElapsedTime()` (`long`, milliseconds by default) becomes `QueryExecutionContext.getElapsedTime()`
+  (`Duration`). The 1.x unit depended on the stopwatch factory (nanoseconds with `NanoTimeStopwatchFactory`);
+  a `Duration` carries its unit.
+* Custom `Stopwatch` / `StopwatchFactory` implementations must return a `Duration` from `Stopwatch.getElapsedTime()`.
 * If `afterMethod` throws while the JDBC call itself failed, the listener's exception is added to the JDBC exception
   with `addSuppressed` and the JDBC exception is rethrown. In 1.x the listener's exception replaced it.
 
