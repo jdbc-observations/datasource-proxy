@@ -4,7 +4,7 @@
 === Use Case
 
 * Log all queries to `System.out` as JSON
-* Log query metrics to the Commons Logging logger at the end of each HTTP request using a servlet filter
+* Collect query metrics
 
 === pom.xml
 
@@ -22,23 +22,6 @@ Install `datasource-proxy` and `commons-logging` because this example uses Commo
   <artifactId>commons-logging</artifactId>
   <version>[VERSION]</version>
 </dependency>
-```
-
-=== web.xml
-
-Add `CommonsQueryCountLoggingServletFilter` for query metrics.
-
-```xml
-  <filter>
-    <filter-name>queryCountFilter</filter-name>
-    <filter-class>net.ttddyy.dsproxy.support.CommonsQueryCountLoggingServletFilter</filter-class>
-    <!-- Default to DEBUG level. Use the "logLevel" filter parameter to change the log level. -->
-  </filter>
-
-  <filter-mapping>
-   <filter-name>queryCountFilter</filter-name>
-   <url-pattern>*</url-pattern>
-  </filter-mapping>
 ```
 
 === DataSource
@@ -62,32 +45,6 @@ public DataSource dataSource(DataSource actualDataSource) {
 }
 ```
 
-.XML-based example (`applicationContext.xml`):
-```xml
-<bean id="dataSource" primary="true" class="net.ttddyy.dsproxy.support.ProxyDataSource">
-  <property name="dataSource" ref="actualDataSource"/>
-  <property name="proxyConfig" ref="proxyConfig"/>
-</bean>
-
-<bean id="proxyConfig" factory-bean="proxyConfigSupport" factory-method="create"/>
-
-<bean id="proxyConfigSupport" class="net.ttddyy.dsproxy.support.ProxyConfigSpringXmlSupport">
-  <property name="dataSourceName" value="my-ds"/>
-  <property name="queryListener" ref="queryListeners"/>
-</bean>
-
-<bean id="queryListeners" class="net.ttddyy.dsproxy.listener.ChainListener">
-  <property name="listeners">
-    <list>
-      <bean class="net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener">
-        <property name="writeAsJson" value="true" />
-      </bean>
-      <bean class="net.ttddyy.dsproxy.listener.DataSourceQueryCountListener"/>
-    </list>
-  </property>
-</bean>
-```
-
 === Controller
 
 Write a simple controller that returns query metrics as JSON using Spring Boot.
@@ -102,19 +59,6 @@ public class MyController {
         return QueryCountHolder.getGrandTotal();
     }
 }
-```
-
-=== Taglib (optional)
-
-Display query metrics in a JSP page.
-
-```jsp
-<%@ taglib prefix="dsp" uri="http://www.ttddyy.net/dsproxy/tags" %>
-
-<dsp:metrics metric="select"/>  - Select
-<dsp:metrics metric="update" dataSource="FOO" />  - Number of update queries for datasource FOO
-<dsp:metrics metric="total"/>  - Total queries
-<dsp:metrics metric="time"/>  - Total time
 ```
 
 === Accessing the application

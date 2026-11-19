@@ -22,7 +22,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.springframework.util.StringUtils.capitalize;
+import static java.lang.Character.toUpperCase;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -58,8 +58,8 @@ class JdbcLifecycleEventExecutionListenerTest {
 
             for (Method method : methods) {
 
-                String expectedBeforeName = "before" + capitalize(method.getName());
-                String expectedAfterName = "after" + capitalize(method.getName());
+                String expectedBeforeName = "before" + toUpperCase(method.getName().charAt(0)) + method.getName().substring(1);
+                String expectedAfterName = "after" + toUpperCase(method.getName().charAt(0)) + method.getName().substring(1);
 
                 // create a listener
                 List<String> invokedMethodNames = new ArrayList<String>();

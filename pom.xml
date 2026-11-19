@@ -38,10 +38,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <commons-logging.version>1.1.1</commons-logging.version>
     <slf4j.version>1.7.12</slf4j.version>
-    <spring.version>2.5.6</spring.version>
-    <servlet-api.version>2.4</servlet-api.version>
-    <jsp-api.version>2.0</jsp-api.version>
-    <aopalliance.version>1.0</aopalliance.version>
     <hsqldb.version>2.3.5</hsqldb.version>
     <junit.version>5.14.4</junit.version>
     <mockito.version>5.24.0</mockito.version>
@@ -269,41 +265,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
-      <optional>true</optional>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-webmvc</artifactId>
-      <version>${spring.version}</version>
-      <optional>true</optional>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-jdbc</artifactId>
-      <version>${spring.version}</version>
-      <optional>true</optional>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>${servlet-api.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jsp-api</artifactId>
-      <version>${jsp-api.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>aopalliance</groupId>
-      <artifactId>aopalliance</artifactId>
-      <version>${aopalliance.version}</version>
       <optional>true</optional>
     </dependency>
 

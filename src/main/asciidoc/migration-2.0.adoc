@@ -6,6 +6,15 @@ Java 17 is required; stay on 1.x for Java 6–16.
 
 == Removed integrations
 
+The taglib, JNDI, servlet and Spring support classes are removed. Replacements:
+
+* Servlet / interceptor query counting (`*QueryCountLoggingServletFilter`, `*QueryCountLoggingRequestListener`,
+  `*QueryCountLoggingHandlerInterceptor`, `QueryCounterClear*`): call `QueryCounter.start()` around the request (Phase 3).
+* Taglib (`<dsp:metrics/>`): no replacement.
+* JNDI (`ProxyDataSourceObjectFactory`): construct the datasource with `ProxyDataSourceBuilder`.
+* Spring XML (`ProxyConfigSpringXmlSupport`, `ProxyConnectionAdvice`, `BeanNameProxyDataSource`,
+  `DataSourceProxyNativeJdbcExtractor`): use Java config with `ProxyDataSourceBuilder`.
+
 == Listeners
 
 == Query counting

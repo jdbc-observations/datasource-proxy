@@ -47,13 +47,6 @@ query execution.
 `MethodExecutionListener` is also invoked for each JDBC API interaction.
 
 
-Web Application Support::
-+
-`ProxyDataSource` can be configured via JNDI.
-Query metrics are available on a per-web-request basis (request-response lifecycle).
-For JSP-based UIs, a custom tag for accessing metrics (`<dsp:metrics/>`) is also available.
-
-
 Query and Parameter Replacement::
 +
 `QueryTransformer` and `ParameterTransformer` allow you to modify the executing query and parameters just
@@ -70,13 +63,6 @@ parameters, and executing queries.
 
 The `javax.sql.*` classes are part of the Java SE APIs, so they are not affected by the namespace change in
 Java EE APIs to Jakarta. For example, the `javax.sql.DataSource` class remains in the `javax.sql` package.
-
-In datasource-proxy, there are a few usages of the `javax` namespace in JNDI and query count support via
-`ServletRequestListener`.
-These are not used frequently and are expected to be removed or separated in the next major version release.
-
-If you require these features in the Jakarta namespace, it is recommended that you create your own classes
-based on the existing implementations.
 
 
 === Sample Log Output

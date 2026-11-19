@@ -11,9 +11,9 @@ import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.jdbc.datasource.SmartDataSource;
 
 import javax.sql.DataSource;
+import javax.sql.XADataSource;
 import java.io.PrintWriter;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -325,7 +325,7 @@ public class ProxyDataSourceTest {
         assertThat(this.proxyDataSource.isWrapperFor(JDBCDataSource.class)).isTrue();
         assertThat(this.proxyDataSource.isWrapperFor(DataSource.class)).isTrue();
 
-        assertThat(this.proxyDataSource.isWrapperFor(SmartDataSource.class)).isFalse();
+        assertThat(this.proxyDataSource.isWrapperFor(XADataSource.class)).isFalse();
     }
 
     @Test
@@ -337,7 +337,7 @@ public class ProxyDataSourceTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                ProxyDataSourceTest.this.proxyDataSource.unwrap(SmartDataSource.class);
+                ProxyDataSourceTest.this.proxyDataSource.unwrap(XADataSource.class);
             }
         }).isInstanceOf(SQLException.class);
     }
