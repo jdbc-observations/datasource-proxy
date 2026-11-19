@@ -29,6 +29,25 @@ The taglib, JNDI, servlet and Spring support classes are removed. Replacements:
 * If `afterMethod` throws while the JDBC call itself failed, the listener's exception is added to the JDBC exception
   with `addSuppressed` and the JDBC exception is rethrown. In 1.x the listener's exception replaced it.
 
+`ProxyDataSourceBuilder` listener registration:
+
+[cols="2,3"]
+|===
+|1.x |2.0
+
+|`listener(QueryExecutionListener)`, `methodListener(MethodExecutionListener)`
+|`listener(ProxyDataSourceListener)`. All registrations run in call order.
+
+|`beforeQuery((execInfo, queries) -> ...)` / `afterQuery(...)` (`SingleQueryExecution`)
+|`beforeQuery(ctx -> ... ctx.getQueries() ...)` / `afterQuery(...)` taking `Consumer<QueryExecutionContext>`
+
+|`beforeMethod(...)` / `afterMethod(...)` (`SingleMethodExecution`)
+|Same names, taking `Consumer<MethodExecutionContext>`; `SingleQueryExecution` and `SingleMethodExecution` are removed.
+
+|`ExecutionInfo`
+|`QueryExecutionContext`; `getElapsedTime()` is now a `Duration`.
+|===
+
 == Query counting
 
 == Logging
