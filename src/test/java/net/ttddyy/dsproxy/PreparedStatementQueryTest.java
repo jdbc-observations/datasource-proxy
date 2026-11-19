@@ -4,6 +4,7 @@ import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
+import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.SimpleResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
@@ -48,8 +49,8 @@ public class PreparedStatementQueryTest {
         connectionInfo.setDataSourceName("myDS");
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(this.testListener)
-                .queryListener(this.lastQueryListener)
+                .listener(LegacyListenerBridge.ofQuery(this.testListener))
+                .listener(LegacyListenerBridge.ofQuery(this.lastQueryListener))
                 .build();
 
         final Connection conn = jdbcDataSource.getConnection();
@@ -434,7 +435,7 @@ public class PreparedStatementQueryTest {
 
         // autoRetrieveGeneratedKeys=true
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -464,7 +465,7 @@ public class PreparedStatementQueryTest {
 
         // autoRetrieveGeneratedKeys=false
         proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(false)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -495,7 +496,7 @@ public class PreparedStatementQueryTest {
 
         // autoRetrieveGeneratedKeys=true
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -552,7 +553,7 @@ public class PreparedStatementQueryTest {
 
         // autoRetrieveGeneratedKeys=true
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -585,7 +586,7 @@ public class PreparedStatementQueryTest {
         ProxyConfig proxyConfig;
         PreparedStatement proxyPs;
         proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -602,7 +603,7 @@ public class PreparedStatementQueryTest {
 
         // autoRetrieve for batch prepared = true
         proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .retrieveGeneratedKeysForBatchPreparedOrCallable(true)  // set true
@@ -619,7 +620,7 @@ public class PreparedStatementQueryTest {
 
         // autoRetrieve for batch prepared = false
         proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .retrieveGeneratedKeysForBatchPreparedOrCallable(false)  // set false
@@ -774,7 +775,7 @@ public class PreparedStatementQueryTest {
 
         // autoCloseGeneratedKeys=false
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -796,7 +797,7 @@ public class PreparedStatementQueryTest {
 
         // autoCloseGeneratedKeys=true
         proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(true)
                 .build();
@@ -826,7 +827,7 @@ public class PreparedStatementQueryTest {
 
         // specify autoRetrieveGeneratedKeys and proxy factory
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .generatedKeysProxyLogicFactory(new SimpleResultSetProxyLogicFactory())
                 .autoCloseGeneratedKeys(false)

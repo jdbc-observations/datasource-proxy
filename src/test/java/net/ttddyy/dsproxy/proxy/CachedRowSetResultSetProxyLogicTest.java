@@ -349,7 +349,7 @@ class CachedRowSetResultSetProxyLogicTest {
     @Test
     void methodExecutionListener() throws Throwable {
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(LegacyListenerBridge.ofMethod(listener)).build();
         ResultSet rs = mock(ResultSet.class);
         ResultSetMetaData metaData = mock(ResultSetMetaData.class);
         when(rs.getMetaData()).thenReturn(metaData);

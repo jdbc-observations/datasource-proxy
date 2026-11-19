@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
+import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import org.assertj.core.api.ThrowableAssert;
@@ -51,8 +52,8 @@ public class ProxyDataSourceTest {
         this.methodListener = new CallCheckMethodExecutionListener();
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(this.listener)
-                .methodListener(this.methodListener)
+                .listener(LegacyListenerBridge.ofQuery(this.listener))
+                .listener(LegacyListenerBridge.ofMethod(this.methodListener))
                 .build();
 
         this.proxyDataSource = new ProxyDataSource();

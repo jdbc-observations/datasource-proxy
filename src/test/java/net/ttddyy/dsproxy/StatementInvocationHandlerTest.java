@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy;
 
+import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.junit.jupiter.api.AfterEach;
@@ -40,8 +41,8 @@ class StatementInvocationHandlerTest {
         connectionInfo.setDataSourceName("myDS");
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(this.testListener)
-                .queryListener(this.lastQueryListener)
+                .listener(LegacyListenerBridge.ofQuery(this.testListener))
+                .listener(LegacyListenerBridge.ofQuery(this.lastQueryListener))
                 .build();
 
         statement = new JdkJdbcProxyFactory().createStatement(stmt, connectionInfo, null, proxyConfig);

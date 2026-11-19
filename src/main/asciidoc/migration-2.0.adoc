@@ -17,6 +17,12 @@ The taglib, JNDI, servlet and Spring support classes are removed. Replacements:
 
 == Listeners
 
+* `getElapsedTime()` on `QueryExecutionContext` and `MethodExecutionContext` returns a `java.time.Duration`
+  instead of a `long`. The 1.x unit depended on the stopwatch factory (milliseconds by default, nanoseconds with
+  `NanoTimeStopwatchFactory`); a `Duration` carries its unit. `Stopwatch.getElapsedTime()` also returns a `Duration`.
+* If `afterMethod` throws while the JDBC call itself failed, the listener's exception is added to the JDBC exception
+  with `addSuppressed` and the JDBC exception is rethrown. In 1.x the listener's exception replaced it.
+
 == Query counting
 
 == Logging

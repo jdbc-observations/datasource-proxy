@@ -6,6 +6,7 @@ import net.ttddyy.dsproxy.DataSourceProxyException;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.ProxyLogicSupport;
 
@@ -166,12 +167,14 @@ public class ProxyDataSource extends ProxyLogicSupport implements DataSource, Cl
      */
     public void setListener(QueryExecutionListener listener) {
         this.proxyConfig = ProxyConfig.Builder.from(this.proxyConfig)
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .build();
     }
 
     public void addListener(QueryExecutionListener listener) {
-        this.proxyConfig.getQueryListener().addListener(listener);
+        this.proxyConfig = ProxyConfig.Builder.from(this.proxyConfig)
+                .listener(LegacyListenerBridge.ofQuery(listener))
+                .build();
     }
 
     public void setDataSourceName(String dataSourceName) {

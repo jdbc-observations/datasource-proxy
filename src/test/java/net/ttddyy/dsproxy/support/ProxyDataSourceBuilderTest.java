@@ -4,6 +4,9 @@ import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.ChainListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
+import net.ttddyy.dsproxy.proxy.CompositeProxyDataSourceListener;
+import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
 import net.ttddyy.dsproxy.listener.CompositeMethodListener;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
@@ -334,9 +337,33 @@ class ProxyDataSourceBuilderTest {
     }
 
 
+    // collects the 1.x query listeners registered through the temporary bridge (removed in Task 7)
+    private static ChainListener queryListeners(ProxyConfig proxyConfig) {
+        ChainListener chainListener = new ChainListener();
+        for (ProxyDataSourceListener listener : ((CompositeProxyDataSourceListener) proxyConfig.getListener()).getListeners()) {
+            QueryExecutionListener queryListener = ((LegacyListenerBridge) listener).getQueryListener();
+            if (queryListener != null) {
+                chainListener.addListener(queryListener);
+            }
+        }
+        return chainListener;
+    }
+
+    // collects the 1.x method listeners registered through the temporary bridge (removed in Task 7)
+    private static CompositeMethodListener methodListeners(ProxyConfig proxyConfig) {
+        CompositeMethodListener compositeListener = new CompositeMethodListener();
+        for (ProxyDataSourceListener listener : ((CompositeProxyDataSourceListener) proxyConfig.getListener()).getListeners()) {
+            MethodExecutionListener methodListener = ((LegacyListenerBridge) listener).getMethodListener();
+            if (methodListener != null) {
+                compositeListener.addListener(methodListener);
+            }
+        }
+        return compositeListener;
+    }
+
     @SuppressWarnings("unchecked")
     private <T extends QueryExecutionListener> T getAndVerifyListener(ProxyDataSource ds, Class<T> listenerClass) {
-        QueryExecutionListener listener = ds.getProxyConfig().getQueryListener();
+        QueryExecutionListener listener = queryListeners(ds.getProxyConfig());
         assertThat(listener).isInstanceOf(ChainListener.class);
         List<QueryExecutionListener> listeners = ((ChainListener) listener).getListeners();
         assertThat(listeners).hasSize(1);
@@ -356,7 +383,7 @@ class ProxyDataSourceBuilderTest {
         };
 
         ProxyDataSource ds = ProxyDataSourceBuilder.create().logQueryToSysOut().formatQuery(formatCallback).build();
-        ChainListener chainListener = ds.getProxyConfig().getQueryListener();
+        ChainListener chainListener = queryListeners(ds.getProxyConfig());
         assertThat(chainListener.getListeners()).hasSize(1).first().isInstanceOf(AbstractQueryLoggingListener.class);
         AbstractQueryLoggingListener listener = (AbstractQueryLoggingListener) chainListener.getListeners().get(0);
         QueryLogEntryCreator logEntryCreator = listener.getQueryLogEntryCreator();
@@ -464,7 +491,7 @@ class ProxyDataSourceBuilderTest {
 
     @SuppressWarnings("unchecked")
     private <T extends MethodExecutionListener> T getAndVerifyMethodListener(ProxyDataSource ds, Class<T> listenerClass) {
-        CompositeMethodListener compositeListener = ds.getProxyConfig().getMethodListener();
+        CompositeMethodListener compositeListener = methodListeners(ds.getProxyConfig());
         List<MethodExecutionListener> listeners = compositeListener.getListeners();
         assertThat(listeners).hasSize(1);
 
@@ -484,12 +511,12 @@ class ProxyDataSourceBuilderTest {
 
         // single listener
         ds = ProxyDataSourceBuilder.create().methodListener(listener1).build();
-        methodListener = ds.getProxyConfig().getMethodListener();
+        methodListener = methodListeners(ds.getProxyConfig());
         assertThat(methodListener.getListeners()).hasSize(1).contains(listener1);
 
         // multiple listeners
         ds = ProxyDataSourceBuilder.create().methodListener(listener1).methodListener(listener2).build();
-        methodListener = ds.getProxyConfig().getMethodListener();
+        methodListener = methodListeners(ds.getProxyConfig());
         assertThat(methodListener.getListeners()).hasSize(2).contains(listener1, listener2);
     }
 
@@ -509,7 +536,7 @@ class ProxyDataSourceBuilderTest {
                     }
                 })
                 .build();
-        compositeListener = ds.getProxyConfig().getMethodListener();
+        compositeListener = methodListeners(ds.getProxyConfig());
         assertThat(compositeListener.getListeners()).hasSize(1);
 
         // invoke found listener and verify invocation
@@ -527,7 +554,7 @@ class ProxyDataSourceBuilderTest {
                     }
                 })
                 .build();
-        compositeListener = ds.getProxyConfig().getMethodListener();
+        compositeListener = methodListeners(ds.getProxyConfig());
         assertThat(compositeListener.getListeners()).hasSize(1);
 
         // invoke found listener and verify invocation
@@ -553,7 +580,7 @@ class ProxyDataSourceBuilderTest {
                     }
                 })
                 .build();
-        chainListener = ds.getProxyConfig().getQueryListener();
+        chainListener = queryListeners(ds.getProxyConfig());
         assertThat(chainListener.getListeners()).hasSize(1);
 
         // invoke found listener and verify invocation
@@ -571,7 +598,7 @@ class ProxyDataSourceBuilderTest {
                     }
                 })
                 .build();
-        chainListener = ds.getProxyConfig().getQueryListener();
+        chainListener = queryListeners(ds.getProxyConfig());
         assertThat(chainListener.getListeners()).hasSize(1);
 
         // invoke found listener and verify invocation
@@ -588,8 +615,8 @@ class ProxyDataSourceBuilderTest {
         JdbcLifecycleEventListener listener = mock(JdbcLifecycleEventListener.class);
 
         ds = ProxyDataSourceBuilder.create().listener(listener).build();
-        CompositeMethodListener compositeMethodListener = ds.getProxyConfig().getMethodListener();
-        ChainListener chainListener = ds.getProxyConfig().getQueryListener();
+        CompositeMethodListener compositeMethodListener = methodListeners(ds.getProxyConfig());
+        ChainListener chainListener = queryListeners(ds.getProxyConfig());
 
         assertThat(compositeMethodListener.getListeners()).hasSize(1);
         assertThat(chainListener.getListeners()).hasSize(1);

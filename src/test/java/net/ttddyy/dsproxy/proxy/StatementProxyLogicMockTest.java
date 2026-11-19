@@ -418,7 +418,7 @@ class StatementProxyLogicMockTest {
         connectionInfo.setDataSourceName(DS_NAME);
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .resultSetProxyLogicFactory(createResultSetProxy ? new SimpleResultSetProxyLogicFactory() : null)
                 .generatedKeysProxyLogicFactory(createGenerateKeysProxy ? new SimpleResultSetProxyLogicFactory() : null)
                 .build();
@@ -951,7 +951,7 @@ class StatementProxyLogicMockTest {
     @Test
     void methodExecutionListener() throws Throwable {
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(LegacyListenerBridge.ofMethod(listener)).build();
 
         final String query = "insert into emp (id, name) values (1, 'foo')";
 

@@ -51,7 +51,7 @@ class ProxyLogicSupportTest {
                 assertThat(executionContext.getMethod()).isSameAs(method);
                 assertThat(executionContext.getMethodArgs()).isSameAs(methodArgs);
                 assertThat(executionContext.getTarget()).isSameAs(target);
-                assertThat(executionContext.getElapsedTime()).isNotNegative();
+                assertThat(executionContext.getElapsedTime().isNegative()).isFalse();
                 assertThat(executionContext.getThrown()).isNull();
                 assertThat(executionContext.getResult()).isSameAs(returnObj);
 
@@ -62,7 +62,7 @@ class ProxyLogicSupportTest {
         };
 
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(LegacyListenerBridge.ofMethod(listener)).build();
 
         Custom custom = new Custom((proxyTarget, m, args) -> returnObj);
         Object result = custom.proceedMethodExecution(proxyConfig, target, connectionInfo, proxy, method, methodArgs);
@@ -104,7 +104,7 @@ class ProxyLogicSupportTest {
             }
         };
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(LegacyListenerBridge.ofMethod(listener)).build();
 
         Custom custom = new Custom((proxyTarget, m, args) -> {
             throw exception;
@@ -152,7 +152,7 @@ class ProxyLogicSupportTest {
         };
 
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(LegacyListenerBridge.ofMethod(listener)).build();
 
         final AtomicReference<Method> invokedMethod = new AtomicReference<Method>();
         final AtomicReference<Object[]> invokedMethodArgs = new AtomicReference<Object[]>();

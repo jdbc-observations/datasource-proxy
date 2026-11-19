@@ -1,6 +1,7 @@
 package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.TestUtils;
+import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import org.junit.jupiter.api.AfterEach;
@@ -35,7 +36,7 @@ class LoggingListenerTest {
         this.loggingListener = new CommonsQueryLoggingListener();
         this.loggingListener.setLog(this.inMemoryLog);
 
-        ProxyConfig proxyConfig = ProxyConfig.Builder.create().queryListener(this.loggingListener).build();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().listener(LegacyListenerBridge.ofQuery(this.loggingListener)).build();
 
         // real datasource
         this.jdbcDataSource = TestUtils.getDataSourceWithData();

@@ -2,6 +2,7 @@ package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
 import net.ttddyy.dsproxy.proxy.Stopwatch;
 import net.ttddyy.dsproxy.proxy.StopwatchFactory;
 import net.ttddyy.dsproxy.proxy.SystemStopwatchFactory;
@@ -106,7 +107,7 @@ public class SlowQueryListener implements QueryExecutionListener {
                 RunningQueryContext context = SlowQueryListener.this.inExecution.get(execInfoKey);
 
                 if (context != null) {
-                    long elapsedTime = context.stopwatch.getElapsedTime();
+                    long elapsedTime = LegacyListenerBridge.toLegacyElapsedTime(context.stopwatch.getElapsedTime(), SlowQueryListener.this.stopwatchFactory);
                     // Set the elapsed time.
                     if (context.executionInfo.getElapsedTime() == 0) {
                         context.executionInfo.setElapsedTime(elapsedTime);

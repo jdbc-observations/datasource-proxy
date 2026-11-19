@@ -32,6 +32,7 @@ import net.ttddyy.dsproxy.listener.logging.SystemOutQueryLoggingListener;
 import net.ttddyy.dsproxy.listener.logging.SystemOutSlowQueryListener;
 import net.ttddyy.dsproxy.proxy.DefaultConnectionIdManager;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.RepeatableReadResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
@@ -1226,11 +1227,11 @@ public class ProxyDataSourceBuilder {
         ProxyConfig.Builder proxyConfigBuilder = ProxyConfig.Builder.create();
 
         for (QueryExecutionListener listener : listeners) {
-            proxyConfigBuilder.queryListener(listener);
+            proxyConfigBuilder.listener(LegacyListenerBridge.ofQuery(listener));
         }
 
         for (MethodExecutionListener methodListener : this.methodExecutionListeners) {
-            proxyConfigBuilder.methodListener(methodListener);
+            proxyConfigBuilder.listener(LegacyListenerBridge.ofMethod(methodListener));
         }
 
         if (this.queryTransformer != null) {

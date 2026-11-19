@@ -43,7 +43,7 @@ class DataSourceProxyLogicMockTest {
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
                 .dataSourceName(DS_NAME)
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .build();
         return new DataSourceProxyLogic(ds, proxyConfig);
     }
@@ -148,7 +148,7 @@ class DataSourceProxyLogicMockTest {
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
                 .dataSourceName(DS_NAME)
-                .methodListener(listener)
+                .listener(LegacyListenerBridge.ofMethod(listener))
                 .build();
         DataSourceProxyLogic logic = new DataSourceProxyLogic(ds, proxyConfig);
 

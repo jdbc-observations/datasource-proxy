@@ -1,11 +1,10 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.transform.ParameterReplacer;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
@@ -19,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -129,7 +129,7 @@ public class StatementProxyLogic extends ProxyLogicSupport {
 
         QueryTransformer queryTransformer = this.proxyConfig.getQueryTransformer();
         ParameterTransformer parameterTransformer = this.proxyConfig.getParameterTransformer();
-        QueryExecutionListener queryListener = this.proxyConfig.getQueryListener();
+        ProxyDataSourceListener listener = this.proxyConfig.getListener();
         JdbcProxyFactory proxyFactory = this.proxyConfig.getJdbcProxyFactory();
 
         if (isCommonMethod(methodName)) {
@@ -270,13 +270,24 @@ public class StatementProxyLogic extends ProxyLogicSupport {
             }
         }
 
-        final ExecutionInfo execInfo = new ExecutionInfo(this.connectionInfo, this.statement, isBatchExecution, batchSize, method, args);
+        final MutableQueryExecutionContext queryContext = new MutableQueryExecutionContext();
+        queryContext.setDataSourceName(this.connectionInfo.getDataSourceName());
+        queryContext.setConnectionId(this.connectionInfo.getConnectionId());
+        queryContext.setIsolationLevel(this.connectionInfo.getIsolationLevel());
+        queryContext.setStatement(this.statement);
+        queryContext.setStatementType(StatementType.valueOf(this.statement));
+        queryContext.setBatch(isBatchExecution);
+        queryContext.setBatchSize(batchSize);
+        queryContext.setMethod(method);
+        queryContext.setMethodArgs(args);
+        queryContext.setQueries(queries);
+        queryContext.stopwatchFactory = this.proxyConfig.getStopwatchFactory();
 
         boolean isGetResultSetMethod = GET_RESULTSET_METHOD.equals(methodName);
         boolean performQueryListener = !isGetGeneratedKeysMethod && !isGetResultSetMethod;
 
         if (performQueryListener) {
-            queryListener.beforeQuery(execInfo, queries);
+            listener.beforeQuery(queryContext);
         }
 
         final Stopwatch stopwatch = this.proxyConfig.getStopwatchFactory().create().start();
@@ -286,7 +297,7 @@ public class StatementProxyLogic extends ProxyLogicSupport {
 
             Object retVal = method.invoke(this.statement, args);
 
-            final long elapsedTime = stopwatch.getElapsedTime();
+            final Duration elapsedTime = stopwatch.getElapsedTime();
 
 
             // method that returns ResultSet but exclude "getGeneratedKeys()"
@@ -347,23 +358,23 @@ public class StatementProxyLogic extends ProxyLogicSupport {
                 }
             }
 
-            execInfo.setResult(retVal);
-            execInfo.setGeneratedKeys(this.generatedKeys);
-            execInfo.setElapsedTime(elapsedTime);
-            execInfo.setSuccess(true);
+            queryContext.setResult(retVal);
+            queryContext.setGeneratedKeys(this.generatedKeys);
+            queryContext.setElapsedTime(elapsedTime);
+            queryContext.setSuccess(true);
 
             return retVal;
         } catch (InvocationTargetException ex) {
-            final long elapsedTime = stopwatch.getElapsedTime();
+            final Duration elapsedTime = stopwatch.getElapsedTime();
 
-            execInfo.setElapsedTime(elapsedTime);
-            execInfo.setThrowable(ex.getTargetException());
-            execInfo.setSuccess(false);
+            queryContext.setElapsedTime(elapsedTime);
+            queryContext.setThrowable(ex.getTargetException());
+            queryContext.setSuccess(false);
             throw ex.getTargetException();
         } finally {
 
             if (performQueryListener) {
-                queryListener.afterQuery(execInfo, queries);
+                listener.afterQuery(queryContext);
             }
 
             // auto-close the auto-retrieved generated keys. result of "getGeneratedKeys()" should not be affected.

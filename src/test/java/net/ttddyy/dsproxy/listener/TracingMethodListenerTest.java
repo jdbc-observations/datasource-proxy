@@ -4,6 +4,7 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
+import java.time.Duration;
 import java.sql.PreparedStatement;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -62,7 +63,7 @@ class TracingMethodListenerTest {
         MethodExecutionContext context = MethodExecutionContext.Builder.create()
                 .target(target)
                 .method(method)
-                .elapsedTime(99)
+                .elapsedTime(Duration.ofMillis(99))
                 .connectionInfo(connectionInfo)
                 .methodArgs(new Object[]{50, "foo"})
                 .build();
@@ -96,7 +97,7 @@ class TracingMethodListenerTest {
         MethodExecutionContext context = MethodExecutionContext.Builder.create()
                 .target(target)
                 .method(method)
-                .elapsedTime(99)
+                .elapsedTime(Duration.ofMillis(99))
                 .connectionInfo(connectionInfo)
                 .methodArgs(new Object[]{50, "foo"})
                 .build();

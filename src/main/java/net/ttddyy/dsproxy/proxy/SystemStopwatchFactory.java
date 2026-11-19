@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -31,13 +32,13 @@ public class SystemStopwatchFactory implements StopwatchFactory {
         }
 
         /**
-         * Returns the elapsed time in milliseconds since {@link #start()}.
+         * Returns the elapsed time, truncated to milliseconds, since {@link #start()}.
          *
          * @return elapsed time in milliseconds since {@link #start()}
          */
         @Override
-        public long getElapsedTime() {
-            return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - this.startTime);
+        public Duration getElapsedTime() {
+            return Duration.ofMillis(TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - this.startTime));
         }
 
     }

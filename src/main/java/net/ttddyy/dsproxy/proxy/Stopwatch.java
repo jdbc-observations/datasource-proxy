@@ -3,6 +3,8 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 
+import java.time.Duration;
+
 /**
  * Used to measure elapsed time for execution.
  *
@@ -24,10 +26,10 @@ public interface Stopwatch {
 
     /**
      * Get the time from {@link #start()}.
-     * The unit of returned time depends on the implementation class.
+     * Precision depends on the implementation class.
      *
      * @return elapsed time
      */
-    long getElapsedTime();
+    Duration getElapsedTime();
 
 }

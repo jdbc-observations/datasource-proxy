@@ -1,6 +1,8 @@
 package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
+import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicLong;
@@ -69,7 +71,9 @@ public class TracingMethodListener implements MethodExecutionListener {
         Class<?> targetClass = executionContext.getTarget().getClass();
 
         Throwable thrown = executionContext.getThrown();
-        long execTime = executionContext.getElapsedTime();
+        ProxyConfig proxyConfig = executionContext.getProxyConfig();
+        long execTime = LegacyListenerBridge.toLegacyElapsedTime(executionContext.getElapsedTime(),
+                proxyConfig == null ? null : proxyConfig.getStopwatchFactory());
 
         ConnectionInfo connectionInfo = executionContext.getConnectionInfo();
         String connectionId = "-1";

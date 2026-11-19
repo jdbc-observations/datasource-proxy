@@ -5,6 +5,7 @@ import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
 
 import java.lang.reflect.Method;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class MethodExecutionContext {
         private Object[] methodArgs;
         private Object result;
         private Throwable thrown;
-        private long elapsedTime;
+        private Duration elapsedTime = Duration.ZERO;
         private ConnectionInfo connectionInfo;
         private ProxyConfig proxyConfig;
         private Object proxy;
@@ -71,7 +72,7 @@ public class MethodExecutionContext {
             return this;
         }
 
-        public Builder elapsedTime(long elapsedTime) {
+        public Builder elapsedTime(Duration elapsedTime) {
             this.elapsedTime = elapsedTime;
             return this;
         }
@@ -98,7 +99,7 @@ public class MethodExecutionContext {
     private Object[] methodArgs;
     private Object result;
     private Throwable thrown;
-    private long elapsedTime;
+    private Duration elapsedTime = Duration.ZERO;
     private ConnectionInfo connectionInfo;
     private ProxyConfig proxyConfig;
     private Object proxy;
@@ -163,17 +164,16 @@ public class MethodExecutionContext {
     /**
      * Returns the time taken to execute the method.
      *
-     * <p>The unit of time is determined by the implementation of {@link net.ttddyy.dsproxy.proxy.Stopwatch}.
-     * By default, it uses {@link net.ttddyy.dsproxy.proxy.SystemStopwatchFactory.SystemStopwatch}, which measures
-     * milliseconds.
+     * <p>Precision depends on the {@link net.ttddyy.dsproxy.proxy.Stopwatch} implementation.
+     * The default {@link net.ttddyy.dsproxy.proxy.SystemStopwatchFactory.SystemStopwatch} measures milliseconds.
      *
      * @return elapsed time for the method execution
      */
-    public long getElapsedTime() {
+    public Duration getElapsedTime() {
         return this.elapsedTime;
     }
 
-    public void setElapsedTime(long elapsedTime) {
+    public void setElapsedTime(Duration elapsedTime) {
         this.elapsedTime = elapsedTime;
     }
 

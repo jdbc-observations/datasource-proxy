@@ -1,8 +1,8 @@
 package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.listener.CompositeMethodListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
+import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -89,10 +89,10 @@ public abstract class ProxyLogicSupport {
                 .proxyConfig(proxyConfig)
                 .build();
 
-        CompositeMethodListener methodExecutionListener = proxyConfig.getMethodListener();
-        methodExecutionListener.beforeMethod(methodContext);
+        ProxyDataSourceListener listener = proxyConfig.getListener();
+        listener.beforeMethod(methodContext);
 
-        // method and args may be replaced in MethodExecutionListener
+        // method and args may be replaced in beforeMethod
         Method methodToInvoke = methodContext.getMethod();
         Object[] methodArgsToInvoke = methodContext.getMethodArgs();
 
@@ -105,13 +105,21 @@ public abstract class ProxyLogicSupport {
             thrown = throwable;
             throw throwable;
         } finally {
-            final long elapsedTime = stopwatch.getElapsedTime();
-
-            methodContext.setElapsedTime(elapsedTime);
+            methodContext.setElapsedTime(stopwatch.getElapsedTime());
             methodContext.setResult(result);
             methodContext.setThrown(thrown);
 
-            methodExecutionListener.afterMethod(methodContext);
+            try {
+                listener.afterMethod(methodContext);
+            } catch (Throwable listenerException) {
+                if (thrown == null) {
+                    throw listenerException;
+                }
+                // keep the JDBC exception; the listener's exception must not hide it
+                if (listenerException != thrown) {
+                    thrown.addSuppressed(listenerException);
+                }
+            }
         }
         return result;
     }

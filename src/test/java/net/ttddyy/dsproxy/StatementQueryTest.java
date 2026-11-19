@@ -3,6 +3,7 @@ package net.ttddyy.dsproxy;
 import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.JdbcProxyFactory;
+import net.ttddyy.dsproxy.proxy.LegacyListenerBridge;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.SimpleResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
@@ -127,7 +128,7 @@ class StatementQueryTest {
 
         // autoRetrieveGeneratedKeys=true
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -157,7 +158,7 @@ class StatementQueryTest {
 
         // autoRetrieveGeneratedKeys=false
         proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(false)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -187,7 +188,7 @@ class StatementQueryTest {
 
         // autoRetrieveGeneratedKeys=true
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -217,7 +218,7 @@ class StatementQueryTest {
 
         // autoRetrieveGeneratedKeys=true
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -301,7 +302,7 @@ class StatementQueryTest {
 
         // default value (expected to NOT auto-retrieve)
         proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -318,7 +319,7 @@ class StatementQueryTest {
 
         // autoRetrieve for batch statement = true
         proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .retrieveGeneratedKeysForBatchStatement(true)  // set true
@@ -335,7 +336,7 @@ class StatementQueryTest {
 
         // autoRetrieve for batch statement = false
         proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .retrieveGeneratedKeysForBatchStatement(false)  // set false
@@ -486,7 +487,7 @@ class StatementQueryTest {
         // autoCloseGeneratedKeys=false
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(false)
                 .build();
@@ -507,7 +508,7 @@ class StatementQueryTest {
 
         // autoCloseGeneratedKeys=true
         proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .autoCloseGeneratedKeys(true)
                 .build();
@@ -537,7 +538,7 @@ class StatementQueryTest {
         // specify autoRetrieveGeneratedKeys and proxy factory
         JdbcProxyFactory proxyFactory = new JdkJdbcProxyFactory();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create()
-                .queryListener(listener)
+                .listener(LegacyListenerBridge.ofQuery(listener))
                 .autoRetrieveGeneratedKeys(true)
                 .generatedKeysProxyLogicFactory(new SimpleResultSetProxyLogicFactory())
                 .autoCloseGeneratedKeys(false)
