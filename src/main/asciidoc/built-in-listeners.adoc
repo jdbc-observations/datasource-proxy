@@ -334,7 +334,7 @@ builder
 [[custom-listeners]]
 === Custom Listeners
 
-When you create a custom `ProxyDataSourceListener`, register it via `listener()`. Listeners run in registration order.
+When you create a custom `ProxyDataSourceListener`, register it via `listener()`. Explicitly registered listeners and lambda shortcuts run in call order; built-in logging, counting and slow-query listeners run first, and tracing (`traceMethods`) runs last.
 
 ```java
   builder

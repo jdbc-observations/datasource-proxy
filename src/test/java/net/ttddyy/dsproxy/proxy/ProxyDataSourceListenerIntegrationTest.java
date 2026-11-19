@@ -151,6 +151,22 @@ class ProxyDataSourceListenerIntegrationTest {
     }
 
     @Test
+    void afterQueryExceptionDoesNotHideJdbcException() throws Exception {
+        RuntimeException listenerException = new RuntimeException("from afterQuery");
+        ProxyDataSourceListener listener = new ProxyDataSourceListener() {
+            @Override
+            public void afterQuery(QueryExecutionContext context) {
+                throw listenerException;
+            }
+        };
+        try (Connection conn = proxy(listener).getConnection(); Statement st = conn.createStatement()) {
+            assertThatThrownBy(() -> st.executeQuery("SELECT * FROM no_such_table"))
+                    .isInstanceOf(SQLException.class)
+                    .satisfies(ex -> assertThat(ex.getSuppressed()).containsExactly(listenerException));
+        }
+    }
+
+    @Test
     void beforeQueryExceptionPropagatesAndSkipsExecution() throws Exception {
         RuntimeException listenerException = new RuntimeException("from beforeQuery");
         RecordingListener later = new RecordingListener();

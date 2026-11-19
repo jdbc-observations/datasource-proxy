@@ -30,9 +30,6 @@ import net.ttddyy.dsproxy.QueryType;
  * @see net.ttddyy.dsproxy.QueryCount
  * @see net.ttddyy.dsproxy.QueryCountHolder
  * @see net.ttddyy.dsproxy.listener.QueryCountStrategy
- * @see net.ttddyy.dsproxy.support.CommonsQueryCountLoggingServletFilter
- * @see net.ttddyy.dsproxy.support.CommonsQueryCountLoggingRequestListener
- * @see net.ttddyy.dsproxy.support.CommonsQueryCountLoggingHandlerInterceptor
  */
 public class DataSourceQueryCountListener implements ProxyDataSourceListener {
 

@@ -636,7 +636,8 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Register given {@link ProxyDataSourceListener}. Listeners run in registration order.
+     * Register given {@link ProxyDataSourceListener}. Explicitly registered listeners and lambda shortcuts run in call order;
+     * built-in logging, counting and slow-query listeners run first, and tracing ({@code traceMethods}) runs last.
      *
      * @param listener a listener to register
      * @return builder

@@ -25,8 +25,10 @@ The taglib, JNDI, servlet and Spring support classes are removed. Replacements:
 * `ExecutionInfo.getElapsedTime()` (`long`, milliseconds by default) becomes `QueryExecutionContext.getElapsedTime()`
   (`Duration`). The 1.x unit depended on the stopwatch factory (nanoseconds with `NanoTimeStopwatchFactory`);
   a `Duration` carries its unit.
+* Code that prints `MethodExecutionContext.getElapsedTime()` still compiles but now prints a `Duration` such as
+  `PT0.012S` instead of a number. Use `.toMillis()` to keep the old output.
 * Custom `Stopwatch` / `StopwatchFactory` implementations must return a `Duration` from `Stopwatch.getElapsedTime()`.
-* If `afterMethod` throws while the JDBC call itself failed, the listener's exception is added to the JDBC exception
+* If `afterQuery` or `afterMethod` throws while the JDBC call itself failed, the listener's exception is added to the JDBC exception
   with `addSuppressed` and the JDBC exception is rethrown. In 1.x the listener's exception replaced it.
 * `QueryExecutionListener` and `MethodExecutionListener` are removed. Implement `ProxyDataSourceListener`:
   `beforeQuery(ExecutionInfo, List<QueryInfo>)` becomes `beforeQuery(QueryExecutionContext)` (queries via
@@ -47,8 +49,9 @@ The taglib, JNDI, servlet and Spring support classes are removed. Replacements:
   `QueryLogEntryCreator.getLogEntry(QueryExecutionContext, boolean, boolean, boolean)`;
   `LoggingFilter.shouldLog(QueryExecutionContext)`; the `DefaultQueryLogEntryCreator` / `DefaultJsonQueryLogEntryCreator`
   `write*Entry(StringBuilder, QueryExecutionContext)` hooks. (Phases 3 and 4 replace these classes.)
-* Query log `Time:` and the query-count elapsed time are always milliseconds. In 1.x they were nanoseconds when
-  `NanoTimeStopwatchFactory` was configured. `TracingMethodListener` keeps the 1.x unit.
+* With `NanoTimeStopwatchFactory`, the query log, the slow-query log and the query-count time all report milliseconds
+  (in 1.x they were nanoseconds). `TracingMethodListener` reports nanoseconds only for `NanoTimeStopwatchFactory`.
+  A custom `StopwatchFactory` reports milliseconds everywhere.
 
 `ProxyDataSourceBuilder` listener registration:
 
@@ -57,7 +60,7 @@ The taglib, JNDI, servlet and Spring support classes are removed. Replacements:
 |1.x |2.0
 
 |`listener(QueryExecutionListener)`, `methodListener(MethodExecutionListener)` (removed)
-|`listener(ProxyDataSourceListener)`. All registrations run in call order.
+|`listener(ProxyDataSourceListener)`. Explicitly registered listeners and lambda shortcuts run in call order; built-in logging, counting and slow-query listeners run first, and tracing (`traceMethods`) runs last.
 
 |`listener(JdbcLifecycleEventListener)` (removed)
 |`listener(JdbcLifecycleEventListener.asListener(myLifecycle))`
@@ -71,6 +74,8 @@ The taglib, JNDI, servlet and Spring support classes are removed. Replacements:
 |`ExecutionInfo`
 |`QueryExecutionContext`; `getElapsedTime()` is now a `Duration`.
 |===
+
+Unit-testing your own listeners: replace `new ExecutionInfo()` with `net.ttddyy.dsproxy.proxy.MutableQueryExecutionContext`.
 
 == Query counting
 

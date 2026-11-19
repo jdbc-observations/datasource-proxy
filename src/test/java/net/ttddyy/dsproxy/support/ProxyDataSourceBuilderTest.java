@@ -425,7 +425,7 @@ class ProxyDataSourceBuilderTest {
 
         // default strategy
         ds = ProxyDataSourceBuilder.create().traceMethods().build();
-        listener = getAndVerifyMethodListener(ds, TracingMethodListener.class);
+        listener = getAndVerifyListener(ds, TracingMethodListener.class);
 
         assertThat(listener).as("default tracing listener").isNotNull();
 
@@ -433,7 +433,7 @@ class ProxyDataSourceBuilderTest {
         TracingMethodListener.TracingMessageConsumer consumer = mock(TracingMethodListener.TracingMessageConsumer.class);
 
         ds = ProxyDataSourceBuilder.create().traceMethods(consumer).build();
-        listener = getAndVerifyMethodListener(ds, TracingMethodListener.class);
+        listener = getAndVerifyListener(ds, TracingMethodListener.class);
         assertThat(listener.getTracingMessageConsumer()).as("tracing listener with message consumer")
                 .isNotNull()
                 .isSameAs(consumer);
@@ -442,14 +442,14 @@ class ProxyDataSourceBuilderTest {
         TracingMethodListener.TracingCondition condition = mock(TracingMethodListener.TracingCondition.class);
 
         ds = ProxyDataSourceBuilder.create().traceMethodsWhen(condition).build();
-        listener = getAndVerifyMethodListener(ds, TracingMethodListener.class);
+        listener = getAndVerifyListener(ds, TracingMethodListener.class);
         assertThat(listener.getTracingCondition()).as("tracing listener with tracing condition")
                 .isNotNull()
                 .isSameAs(condition);
 
         // with message consumer and tracing condition
         ds = ProxyDataSourceBuilder.create().traceMethodsWhen(condition, consumer).build();
-        listener = getAndVerifyMethodListener(ds, TracingMethodListener.class);
+        listener = getAndVerifyListener(ds, TracingMethodListener.class);
         assertThat(listener.getTracingMessageConsumer()).as("tracing listener with tracing condition and message consumer")
                 .isNotNull()
                 .isSameAs(consumer);
@@ -457,17 +457,6 @@ class ProxyDataSourceBuilderTest {
                 .isNotNull()
                 .isSameAs(condition);
 
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T extends ProxyDataSourceListener> T getAndVerifyMethodListener(ProxyDataSource ds, Class<T> listenerClass) {
-        List<ProxyDataSourceListener> listeners = listeners(ds.getProxyConfig());
-        assertThat(listeners).hasSize(1);
-
-        ProxyDataSourceListener target = listeners.get(0);
-        assertThat(target).isInstanceOf(listenerClass);
-
-        return (T) target;
     }
 
     @Test

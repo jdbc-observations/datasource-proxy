@@ -373,7 +373,18 @@ public class StatementProxyLogic extends ProxyLogicSupport {
         } finally {
 
             if (performQueryListener) {
-                listener.afterQuery(queryContext);
+                try {
+                    listener.afterQuery(queryContext);
+                } catch (Throwable listenerException) {
+                    final Throwable thrown = queryContext.getThrowable();
+                    if (thrown == null) {
+                        throw listenerException;
+                    }
+                    // keep the JDBC exception; the listener's exception must not hide it
+                    if (listenerException != thrown) {
+                        thrown.addSuppressed(listenerException);
+                    }
+                }
             }
 
             // auto-close the auto-retrieved generated keys. result of "getGeneratedKeys()" should not be affected.
