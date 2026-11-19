@@ -8,8 +8,8 @@ import net.ttddyy.dsproxy.listener.logging.QueryLogEntryCreator;
 import net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.sql.CallableStatement;
@@ -31,8 +31,8 @@ public class SlowQueryListenerTest {
 
     private DataSource jdbcDataSource;
 
-    @After
-    public void teardown() throws Exception {
+    @AfterEach
+    void teardown() throws Exception {
         if (this.jdbcDataSource != null) {
             TestUtils.shutdown(this.jdbcDataSource);
         }
@@ -40,7 +40,7 @@ public class SlowQueryListenerTest {
 
 
     @Test
-    public void onSlowQuery() throws Exception {
+    void onSlowQuery() throws Exception {
 
         final ExecutionInfo executionInfo = new ExecutionInfo();
         final List<QueryInfo> queryInfo = new ArrayList<QueryInfo>();
@@ -63,11 +63,11 @@ public class SlowQueryListenerTest {
         TimeUnit.MILLISECONDS.sleep(200);  // ample time
         listener.afterQuery(executionInfo, queryInfo);
 
-        assertThat(counter.get()).as("callback should be called, and it should be once").isEqualTo(1);
+        assertThat(counter.get()).as("callback should be called, and it should be once").isOne();
     }
 
     @Test
-    public void onSlowQueryWithFastQuery() throws Exception {
+    void onSlowQueryWithFastQuery() throws Exception {
 
         SlowQueryListener listener = new SlowQueryListener() {
             @Override
@@ -88,7 +88,7 @@ public class SlowQueryListenerTest {
 
 
     @Test
-    public void executionTime() throws Exception {
+    void executionTime() throws Exception {
 
         final AtomicLong executionTime = new AtomicLong(0);
         QueryLogEntryCreator queryLogEntryCreator = new DefaultQueryLogEntryCreator() {

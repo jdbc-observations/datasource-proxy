@@ -8,22 +8,22 @@ import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.SimpleResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * @author Tadaya Tsuyukubo
@@ -36,8 +36,8 @@ public class PreparedStatementQueryTest {
     private Connection connection;
 
 
-    @Before
-    public void setup() throws Exception {
+    @BeforeEach
+    void setup() throws Exception {
         testListener = new TestListener();
         lastQueryListener = new LastQueryListener();
 
@@ -56,13 +56,13 @@ public class PreparedStatementQueryTest {
         connection = new JdkJdbcProxyFactory().createConnection(conn, connectionInfo, proxyConfig);
     }
 
-    @After
-    public void teardown() throws Exception {
+    @AfterEach
+    void teardown() throws Exception {
         TestUtils.shutdown(jdbcDataSource);
     }
 
     @Test
-    public void testException() throws Exception {
+    void exception() throws Exception {
         final String query = "select * from emp;";
         PreparedStatement stat = connection.prepareStatement(query);
 
@@ -76,8 +76,8 @@ public class PreparedStatementQueryTest {
         }
         assertThat(ex).isNotNull();
 
-        assertThat(testListener.beforeCount).isEqualTo(1);
-        assertThat(testListener.afterCount).isEqualTo(1);
+        assertThat(testListener.beforeCount).isOne();
+        assertThat(testListener.afterCount).isOne();
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
         assertThat(beforeQueries).hasSize(1);
@@ -97,13 +97,13 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    public void testExecuteQueryWithNoParam() throws Exception {
+    void executeQueryWithNoParam() throws Exception {
         final String query = "select * from emp;";
         PreparedStatement stat = connection.prepareStatement(query);
         stat.executeQuery();
 
-        assertThat(testListener.beforeCount).isEqualTo(1);
-        assertThat(testListener.afterCount).isEqualTo(1);
+        assertThat(testListener.beforeCount).isOne();
+        assertThat(testListener.afterCount).isOne();
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
         assertThat(beforeQueries).hasSize(1);
@@ -121,14 +121,14 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    public void testExecuteQueryWithParam() throws Exception {
+    void executeQueryWithParam() throws Exception {
         final String query = "select * from emp where id = ?;";
         PreparedStatement stat = connection.prepareStatement(query);
         stat.setInt(1, 1);
         stat.executeQuery();
 
-        assertThat(testListener.beforeCount).isEqualTo(1);
-        assertThat(testListener.afterCount).isEqualTo(1);
+        assertThat(testListener.beforeCount).isOne();
+        assertThat(testListener.afterCount).isOne();
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
         assertThat(beforeQueries).hasSize(1);
@@ -149,15 +149,15 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    public void testExecuteUpdate() throws Exception {
+    void executeUpdate() throws Exception {
         final String query = "update emp set name = ? where id = ?;";
         PreparedStatement stat = connection.prepareStatement(query);
         stat.setString(1, "BAZ");
         stat.setInt(2, 1);
         stat.executeUpdate();
 
-        assertThat(testListener.beforeCount).isEqualTo(1);
-        assertThat(testListener.afterCount).isEqualTo(1);
+        assertThat(testListener.beforeCount).isOne();
+        assertThat(testListener.afterCount).isOne();
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
         assertThat(beforeQueries).hasSize(1);
@@ -171,15 +171,15 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    public void testExecuteUpdateWithParamReuse() throws Exception {
+    void executeUpdateWithParamReuse() throws Exception {
         final String query = "update emp set name = ? where id = ?;";
         PreparedStatement stat = connection.prepareStatement(query);
         stat.setString(1, "BAZ");
         stat.setInt(2, 1);
         stat.executeUpdate();
 
-        assertThat(testListener.beforeCount).isEqualTo(1);
-        assertThat(testListener.afterCount).isEqualTo(1);
+        assertThat(testListener.beforeCount).isOne();
+        assertThat(testListener.afterCount).isOne();
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
         assertThat(beforeQueries).hasSize(1);
@@ -211,7 +211,7 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    public void testClearParameters() throws Exception {
+    void clearParameters() throws Exception {
         final String query = "update emp set name = ? where id = ?;";
         PreparedStatement stat = connection.prepareStatement(query);
         stat.setString(1, "baz");
@@ -224,8 +224,8 @@ public class PreparedStatementQueryTest {
 
         stat.executeUpdate();
 
-        assertThat(testListener.beforeCount).isEqualTo(1);
-        assertThat(testListener.afterCount).isEqualTo(1);
+        assertThat(testListener.beforeCount).isOne();
+        assertThat(testListener.afterCount).isOne();
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
         assertThat(beforeQueries).hasSize(1);
@@ -252,27 +252,27 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    public void testExecuteBatch() throws Exception {
+    void executeBatch() throws Exception {
         final String query = "update emp set name = ? where id = ?;";
         PreparedStatement stat = connection.prepareStatement(query);
         stat.setString(1, "FOO");
         stat.setInt(2, 1);
         stat.addBatch();
 
-        assertThat(testListener.beforeCount).isEqualTo(0);
-        assertThat(testListener.afterCount).isEqualTo(0);
+        assertThat(testListener.beforeCount).isZero();
+        assertThat(testListener.afterCount).isZero();
 
         stat.setString(1, "BAR");
         stat.setInt(2, 2);
         stat.addBatch();
 
-        assertThat(testListener.beforeCount).isEqualTo(0);
-        assertThat(testListener.afterCount).isEqualTo(0);
+        assertThat(testListener.beforeCount).isZero();
+        assertThat(testListener.afterCount).isZero();
 
         int[] updateCount = stat.executeBatch();
 
-        assertThat(testListener.beforeCount).isEqualTo(1);
-        assertThat(testListener.afterCount).isEqualTo(1);
+        assertThat(testListener.beforeCount).isOne();
+        assertThat(testListener.afterCount).isOne();
 
         assertThat(updateCount).containsSequence(1, 1);
 
@@ -308,7 +308,7 @@ public class PreparedStatementQueryTest {
      * Reported in https://github.com/ttddyy/datasource-proxy/issues/9.
      */
     @Test
-    public void testExecuteBatchShouldClearQueries() throws Exception {
+    void executeBatchShouldClearQueries() throws Exception {
 
         final String query = "insert into emp ( id, name )values (?, ?);";
         PreparedStatement stat = connection.prepareStatement(query);
@@ -348,7 +348,7 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    public void sameInstanceOfExecutionInfo() throws Exception {
+    void sameInstanceOfExecutionInfo() throws Exception {
         final String query = "select * from emp;";
         PreparedStatement stat = connection.prepareStatement(query);
         stat.executeQuery();
@@ -360,7 +360,7 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    public void resultSetProxy() throws Throwable {
+    void resultSetProxy() throws Throwable {
         String sql = "select * from emp;";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql);
@@ -378,7 +378,7 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    public void generatedKeysProxy() throws Throwable {
+    void generatedKeysProxy() throws Throwable {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -418,7 +418,7 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    public void autoRetrieveGeneratedKeys() throws Throwable {
+    void autoRetrieveGeneratedKeys() throws Throwable {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -480,7 +480,7 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    public void autoRetrieveGeneratedKeysWithGenerateKeyParameter() throws Throwable {
+    void autoRetrieveGeneratedKeysWithGenerateKeyParameter() throws Throwable {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -537,7 +537,7 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    public void autoRetrieveGeneratedKeysWithExecuteQueryMethod() throws Throwable {
+    void autoRetrieveGeneratedKeysWithExecuteQueryMethod() throws Throwable {
         String sql = "select * from emp;";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -567,7 +567,7 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    public void autoRetrieveGeneratedKeysWithBatchPrepared() throws Throwable {
+    void autoRetrieveGeneratedKeysWithBatchPrepared() throws Throwable {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -635,7 +635,7 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    public void getGeneratedKeys() throws Throwable {
+    void getGeneratedKeys() throws Throwable {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -692,7 +692,7 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    public void getGeneratedKeysWithAutoRetrievalAndAutoCloseFalse() throws Throwable {
+    void getGeneratedKeysWithAutoRetrievalAndAutoCloseFalse() throws Throwable {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -727,7 +727,7 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    public void getGeneratedKeysWithAutoRetrievalAndAutoCloseTrue() throws Throwable {
+    void getGeneratedKeysWithAutoRetrievalAndAutoCloseTrue() throws Throwable {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -756,7 +756,7 @@ public class PreparedStatementQueryTest {
 
 
     @Test
-    public void autoCloseGeneratedKeysProxy() throws Throwable {
+    void autoCloseGeneratedKeysProxy() throws Throwable {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -766,12 +766,7 @@ public class PreparedStatementQueryTest {
             @Override
             public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
                 ResultSet generatedKeys = execInfo.getGeneratedKeys();
-                boolean isClosed = true;
-                try {
-                    isClosed = generatedKeys.isClosed();
-                } catch (SQLException ex) {
-                    fail("Failed to call generatedKeys.isClosed() message=" + ex.getMessage());
-                }
+                boolean isClosed = Assertions.assertDoesNotThrow(generatedKeys::isClosed, "Failed to call generatedKeys.isClosed() message=");
                 assertThat(isClosed).isFalse();
                 listenerReceivedExecutionInfo.set(execInfo);
             }
@@ -792,11 +787,10 @@ public class PreparedStatementQueryTest {
         ResultSet generatedKeys = info.getGeneratedKeys();
         assertThat(generatedKeys.isClosed()).isFalse();
 
-        try {
-            generatedKeys.close();
-        } catch (SQLException ex) {
-            fail("closing non closed ResultSet should success. message=" + ex.getMessage());
-        }
+        final ResultSet keysToClose = generatedKeys;
+        Assertions.assertDoesNotThrow(() -> {
+            keysToClose.close();
+        }, "closing non closed ResultSet should success. message=");
 
         listenerReceivedExecutionInfo.set(null);
 
@@ -817,7 +811,7 @@ public class PreparedStatementQueryTest {
     }
 
     @Test
-    public void autoRetrieveGeneratedKeysWithGeneratedKeysProxy() throws Throwable {
+    void autoRetrieveGeneratedKeysWithGeneratedKeysProxy() throws Throwable {
         String sql = "insert into emp_with_auto_id ( name ) values ('BAZ');";
         Connection conn = this.jdbcDataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);

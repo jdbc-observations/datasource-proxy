@@ -9,7 +9,7 @@ import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.NoOpQueryExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.io.InputStream;
@@ -38,9 +38,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -52,12 +49,12 @@ import static org.mockito.Mockito.when;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class StatementProxyLogicForPreparedStatementMockTest {
+class StatementProxyLogicForPreparedStatementMockTest {
 
     private static final String DS_NAME = "myDS";
 
     @Test
-    public void testExecuteQuery() throws Throwable {
+    void executeQuery() throws Throwable {
         final String query = "select * from emp where id = ?";
 
         PreparedStatement stat = mock(PreparedStatement.class);
@@ -225,7 +222,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         assertThat(execInfo.getDataSourceName()).isEqualTo(DS_NAME);
         assertThat(execInfo.getThrowable()).isNull();
         assertThat(execInfo.isBatch()).isFalse();
-        assertThat(execInfo.getBatchSize()).isEqualTo(0);
+        assertThat(execInfo.getBatchSize()).isZero();
 
         List<QueryInfo> queryInfoList = queryInfoListCaptor.getValue();
         assertThat(queryInfoList).hasSize(1);
@@ -241,7 +238,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
             queryArgs.put(args[0].toString(), args[1]);
         }
 
-        assertThat(queryArgs).hasSize(expectedQueryArgs.size());
+        assertThat(queryArgs).hasSameSizeAs(expectedQueryArgs);
         for (Map.Entry<String, Object> entry : expectedQueryArgs.entrySet()) {
             assertThat(queryArgs).containsEntry(entry.getKey(), entry.getValue());
         }
@@ -249,7 +246,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testBatch() throws Throwable {
+    void batch() throws Throwable {
         final String query = "update emp set name = ? where id = ?";
 
         PreparedStatement stat = mock(PreparedStatement.class);
@@ -279,10 +276,10 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         Object result = logic.invoke(null, executeBatch, null);
 
         assertThat(result).isInstanceOf(int[].class);
-        assertThat(((int[]) result).length).isEqualTo(3);
-        assertThat(((int[]) result)[0]).isEqualTo(1);
-        assertThat(((int[]) result)[1]).isEqualTo(1);
-        assertThat(((int[]) result)[2]).isEqualTo(1);
+        assertThat(((int[]) result)).hasSize(3);
+        assertThat(((int[]) result)[0]).isOne();
+        assertThat(((int[]) result)[1]).isOne();
+        assertThat(((int[]) result)[2]).isOne();
 
         verify(stat).setString(1, "foo");
         verify(stat).setInt(2, 10);
@@ -310,7 +307,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testBatchWithClearBatch() throws Throwable {
+    void batchWithClearBatch() throws Throwable {
         final String query = "update emp set name = ? where id = ?";
 
         PreparedStatement stat = mock(PreparedStatement.class);
@@ -340,8 +337,8 @@ public class StatementProxyLogicForPreparedStatementMockTest {
 
         assertThat(result).isInstanceOf(int[].class);
 
-        assertThat(((int[]) result).length).isEqualTo(1);
-        assertThat(((int[]) result)[0]).isEqualTo(1);
+        assertThat(((int[]) result)).hasSize(1);
+        assertThat(((int[]) result)[0]).isOne();
 
         verify(stat).setString(1, "foo");
         verify(stat).setInt(2, 10);
@@ -360,7 +357,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testBatchWithClearParameters() throws Throwable {
+    void batchWithClearParameters() throws Throwable {
         final String query = "update emp set name = ? where id = ?";
 
         PreparedStatement stat = mock(PreparedStatement.class);
@@ -386,8 +383,8 @@ public class StatementProxyLogicForPreparedStatementMockTest {
 
         assertThat(result).isInstanceOf(int[].class);
 
-        assertThat(((int[]) result).length).isEqualTo(1);
-        assertThat(((int[]) result)[0]).isEqualTo(1);
+        assertThat(((int[]) result)).hasSize(1);
+        assertThat(((int[]) result)[0]).isOne();
 
         verify(stat).setString(1, "foo");
         verify(stat).clearParameters();
@@ -405,7 +402,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testClearParameters() throws Throwable {
+    void clearParameters() throws Throwable {
         final String query = "update emp set name = ? where id = ?";
 
         PreparedStatement stat = mock(PreparedStatement.class);
@@ -447,7 +444,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
 
 
     @Test
-    public void testGetTarget() throws Throwable {
+    void getTarget() throws Throwable {
         PreparedStatement stmt = mock(PreparedStatement.class);
         StatementProxyLogic logic = getProxyLogic(stmt, null, null, null);
 
@@ -458,7 +455,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
     }
 
     @Test
-    public void testUnwrap() throws Throwable {
+    void unwrap() throws Throwable {
         PreparedStatement mock = mock(PreparedStatement.class);
         when(mock.unwrap(String.class)).thenReturn("called");
 
@@ -472,7 +469,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
     }
 
     @Test
-    public void testIsWrapperFor() throws Throwable {
+    void isWrapperFor() throws Throwable {
         PreparedStatement mock = mock(PreparedStatement.class);
         when(mock.isWrapperFor(String.class)).thenReturn(true);
 
@@ -486,7 +483,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
     }
 
     @Test
-    public void testGetConnection() throws Throwable {
+    void getConnection() throws Throwable {
         Connection conn = mock(Connection.class);
         PreparedStatement stat = mock(PreparedStatement.class);
 
@@ -500,7 +497,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
     }
 
     @Test
-    public void testToString() throws Throwable {
+    void testToString() throws Throwable {
         PreparedStatement stat = mock(PreparedStatement.class);
 
         when(stat.toString()).thenReturn("my ps");
@@ -513,7 +510,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
     }
 
     @Test
-    public void testHashCode() throws Throwable {
+    void testHashCode() throws Throwable {
         PreparedStatement stat = mock(PreparedStatement.class);
         StatementProxyLogic logic = getProxyLogic(stat, null, null, null);
 
@@ -524,7 +521,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
     }
 
     @Test
-    public void testEquals() throws Throwable {
+    void equals() throws Throwable {
         PreparedStatement stat = mock(PreparedStatement.class);
         StatementProxyLogic logic = getProxyLogic(stat, null, null, null);
 
@@ -540,7 +537,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
     }
 
     @Test
-    public void proxyResultSet() throws Throwable {
+    void proxyResultSet() throws Throwable {
 
         final AtomicReference<Object> listenerReceivedResult = new AtomicReference<Object>();
         QueryExecutionListener listener = new NoOpQueryExecutionListener() {
@@ -570,8 +567,8 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         // check "executeQuery"
         result = logic.invoke(null, executeQueryMethod, new Object[]{});
         assertThat(result).isInstanceOf(ResultSet.class);
-        assertTrue(Proxy.isProxyClass(result.getClass()));
-        assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
+        assertThat(Proxy.isProxyClass(result.getClass())).isTrue();
+        assertThat(Proxy.getInvocationHandler(result).getClass()).isEqualTo(ResultSetInvocationHandler.class);
         assertThat(listenerReceivedResult.get()).as("listener should receive proxied resultset").isSameAs(result);
 
         listenerReceivedResult.set(null);
@@ -579,12 +576,12 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         // check "getGeneratedKeys". generated keys has separate configuration
         result = logic.invoke(null, getGeneratedKeysMethod, null);
         assertThat(result).isInstanceOf(ResultSet.class);
-        assertFalse(Proxy.isProxyClass(result.getClass()));
+        assertThat(Proxy.isProxyClass(result.getClass())).isFalse();
 
     }
 
     @Test
-    public void proxyGeneratedKeysResultSet() throws Throwable {
+    void proxyGeneratedKeysResultSet() throws Throwable {
 
         final AtomicReference<Object> listenerReceivedResult = new AtomicReference<Object>();
         QueryExecutionListener listener = new NoOpQueryExecutionListener() {
@@ -618,8 +615,8 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         // check "getGeneratedKeys"
         result = logic.invoke(null, getGeneratedKeysMethod, new Object[]{});
         assertThat(result).isInstanceOf(ResultSet.class);
-        assertTrue(Proxy.isProxyClass(result.getClass()));
-        assertTrue(Proxy.getInvocationHandler(result).getClass().equals(ResultSetInvocationHandler.class));
+        assertThat(Proxy.isProxyClass(result.getClass())).isTrue();
+        assertThat(Proxy.getInvocationHandler(result).getClass()).isEqualTo(ResultSetInvocationHandler.class);
         assertThat(listenerReceivedResult).as("listener should not be called").hasValue(null);
 
         listenerReceivedResult.set(null);
@@ -627,17 +624,17 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         // check "executeQuery"
         result = logic.invoke(null, executeQueryMethod, null);
         assertThat(result).isInstanceOf(ResultSet.class);
-        assertFalse(Proxy.isProxyClass(result.getClass()));
+        assertThat(Proxy.isProxyClass(result.getClass())).isFalse();
 
         // check "getResultSet"
         result = logic.invoke(null, getResultSetMethod, null);
         assertThat(result).isInstanceOf(ResultSet.class);
-        assertFalse(Proxy.isProxyClass(result.getClass()));
+        assertThat(Proxy.isProxyClass(result.getClass())).isFalse();
 
     }
 
     @Test
-    public void autoCloseGeneratedKeys() throws Throwable {
+    void autoCloseGeneratedKeys() throws Throwable {
 
         ResultSet resultSet = mock(ResultSet.class);
         when(resultSet.isClosed()).thenReturn(false);
@@ -690,7 +687,7 @@ public class StatementProxyLogicForPreparedStatementMockTest {
 
 
     @Test
-    public void methodExecutionListener() throws Throwable {
+    void methodExecutionListener() throws Throwable {
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
 
@@ -708,19 +705,18 @@ public class StatementProxyLogicForPreparedStatementMockTest {
         Method method = PreparedStatement.class.getMethod("executeQuery");
         logic.invoke(null, method, new Object[]{});
 
-        assertTrue(listener.isBeforeMethodCalled());
-        assertTrue(listener.isAfterMethodCalled());
+        assertThat(listener.isBeforeMethodCalled()).isTrue();
+        assertThat(listener.isAfterMethodCalled()).isTrue();
 
         MethodExecutionContext executionContext = listener.getAfterMethodContext();
-        assertSame("method should come from interface",
-                PreparedStatement.class, executionContext.getMethod().getDeclaringClass());
-        assertSame("executeQuery", executionContext.getMethod().getName());
-        assertSame(ps, executionContext.getTarget());
-        assertSame(connectionInfo, executionContext.getConnectionInfo());
+        assertThat(executionContext.getMethod().getDeclaringClass()).as("method should come from interface").isSameAs(PreparedStatement.class);
+        assertThat(executionContext.getMethod().getName()).isSameAs("executeQuery");
+        assertThat(executionContext.getTarget()).isSameAs(ps);
+        assertThat(executionContext.getConnectionInfo()).isSameAs(connectionInfo);
     }
 
     @Test
-    public void proxyConfig() throws Throwable {
+    void proxyConfig() throws Throwable {
         PreparedStatement ps = mock(PreparedStatement.class);
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
         StatementProxyLogic logic = StatementProxyLogic.Builder.create()

@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.support;
 
 import net.ttddyy.dsproxy.QueryCount;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -9,10 +9,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Tadaya Tsuyukubo
  * @since 1.3
  */
-public class DefaultQueryCountLogEntryCreatorTest {
+class DefaultQueryCountLogEntryCreatorTest {
 
     @Test
-    public void logFormat() {
+    void logFormat() {
         QueryCount queryCount = new QueryCount();
         queryCount.setTime(1);
         queryCount.setTotal(2);
@@ -35,7 +35,7 @@ public class DefaultQueryCountLogEntryCreatorTest {
     }
 
     @Test
-    public void logFormatWithNoName() {
+    void logFormatWithNoName() {
         QueryCount queryCount = new QueryCount();
 
         String log = new DefaultQueryCountLogEntryCreator().getLogMessage(null, queryCount);

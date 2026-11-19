@@ -4,8 +4,8 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.proxy.StatementProxyLogic;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -24,12 +24,12 @@ import static org.mockito.Mockito.verify;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class TransformInfoForParametersTest {
+class TransformInfoForParametersTest {
 
     private TransformInfo transformInfo; // work around to pass obj in inner class
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         this.transformInfo = null;
     }
 
@@ -47,7 +47,7 @@ public class TransformInfoForParametersTest {
 
 
     @Test
-    public void testParamTransformerInPreparedStatement() throws Throwable {
+    void paramTransformerInPreparedStatement() throws Throwable {
 
         ParameterTransformer parameterTransformer = getMockParameterTransformer();
 
@@ -65,12 +65,12 @@ public class TransformInfoForParametersTest {
         assertThat(this.transformInfo.getDataSourceName()).isEqualTo("my-ds");
         assertThat(this.transformInfo.getQuery()).isEqualTo("my-query");
         assertThat(this.transformInfo.isBatch()).isFalse();
-        assertThat(this.transformInfo.getCount()).isEqualTo(0);
+        assertThat(this.transformInfo.getCount()).isZero();
 
     }
 
     @Test
-    public void testParamTransformerBatchInPreparedStatement() throws Throwable {
+    void paramTransformerBatchInPreparedStatement() throws Throwable {
 
         ParameterTransformer parameterTransformer = getMockParameterTransformer();
 
@@ -89,7 +89,7 @@ public class TransformInfoForParametersTest {
         assertThat(this.transformInfo.getDataSourceName()).isEqualTo("my-ds");
         assertThat(this.transformInfo.getQuery()).isEqualTo("my-query");
         assertThat(this.transformInfo.isBatch()).isTrue();
-        assertThat(this.transformInfo.getCount()).isEqualTo(0);
+        assertThat(this.transformInfo.getCount()).isZero();
 
         // second batch invocation
         proxyLogic.invoke(null, method, args);
@@ -100,11 +100,11 @@ public class TransformInfoForParametersTest {
         assertThat(this.transformInfo.getDataSourceName()).isEqualTo("my-ds");
         assertThat(this.transformInfo.getQuery()).isEqualTo("my-query");
         assertThat(this.transformInfo.isBatch()).isTrue();
-        assertThat(this.transformInfo.getCount()).isEqualTo(1);
+        assertThat(this.transformInfo.getCount()).isOne();
     }
 
     @Test
-    public void testParamTransformerInCallableStatement() throws Throwable {
+    void paramTransformerInCallableStatement() throws Throwable {
 
         ParameterTransformer parameterTransformer = getMockParameterTransformer();
 
@@ -122,12 +122,12 @@ public class TransformInfoForParametersTest {
         assertThat(this.transformInfo.getDataSourceName()).isEqualTo("my-ds");
         assertThat(this.transformInfo.getQuery()).isEqualTo("my-query");
         assertThat(this.transformInfo.isBatch()).isFalse();
-        assertThat(this.transformInfo.getCount()).isEqualTo(0);
+        assertThat(this.transformInfo.getCount()).isZero();
 
     }
 
     @Test
-    public void testParamTransformerBatchInCallableStatement() throws Throwable {
+    void paramTransformerBatchInCallableStatement() throws Throwable {
 
         ParameterTransformer parameterTransformer = getMockParameterTransformer();
 
@@ -147,7 +147,7 @@ public class TransformInfoForParametersTest {
         assertThat(this.transformInfo.getDataSourceName()).isEqualTo("my-ds");
         assertThat(this.transformInfo.getQuery()).isEqualTo("my-query");
         assertThat(this.transformInfo.isBatch()).isTrue();
-        assertThat(this.transformInfo.getCount()).isEqualTo(0);
+        assertThat(this.transformInfo.getCount()).isZero();
 
         // second batch invocation
         proxyLogic.invoke(null, method, args);
@@ -158,7 +158,7 @@ public class TransformInfoForParametersTest {
         assertThat(this.transformInfo.getDataSourceName()).isEqualTo("my-ds");
         assertThat(this.transformInfo.getQuery()).isEqualTo("my-query");
         assertThat(this.transformInfo.isBatch()).isTrue();
-        assertThat(this.transformInfo.getCount()).isEqualTo(1);
+        assertThat(this.transformInfo.getCount()).isOne();
 
     }
 

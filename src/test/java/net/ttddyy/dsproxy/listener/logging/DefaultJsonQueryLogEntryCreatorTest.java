@@ -6,7 +6,7 @@ import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.QueryInfoBuilder;
 import net.ttddyy.dsproxy.StatementType;
 import org.assertj.core.util.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -18,28 +18,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class DefaultJsonQueryLogEntryCreatorTest {
+class DefaultJsonQueryLogEntryCreatorTest {
 
     @Test
-    public void escapesControlCharactersWithoutShortJsonEscapes() {
+    void escapesControlCharactersWithoutShortJsonEscapes() {
         DefaultJsonQueryLogEntryCreator creator = new DefaultJsonQueryLogEntryCreator();
         String input = "a" + (char) 0 + (char) 1 + (char) 11 + (char) 31 + "b";
         assertThat(creator.escapeSpecialCharacter(input)).isEqualTo("a\\u0000\\u0001\\u000b\\u001fb");
     }
 
     @Test
-    public void getLogEntryEscapesControlCharactersInQuery() {
+    void getLogEntryEscapesControlCharactersInQuery() {
         ExecutionInfo info = new ExecutionInfo();
         info.setStatementType(StatementType.STATEMENT);
         QueryInfo query = new QueryInfo("select 'a" + (char) 1 + "b'");
         String json = new DefaultJsonQueryLogEntryCreator().getLogEntry(
                 info, Arrays.asList(query), false, false, false);
-        assertThat(json).contains("select 'a\\u0001b'");
-        assertThat(json).doesNotContain(String.valueOf((char) 1));
+        assertThat(json)
+                .contains("select 'a\\u0001b'")
+                .doesNotContain(String.valueOf((char) 1));
     }
 
     @Test
-    public void getLogEntryForStatement() throws Exception {
+    void getLogEntryForStatement() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
@@ -82,7 +83,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void getLogEntryForBatchStatement() throws Exception {
+    void getLogEntryForBatchStatement() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
@@ -110,7 +111,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void getLogEntryForPreparedStatement() throws Exception {
+    void getLogEntryForPreparedStatement() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
@@ -142,7 +143,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void getLogEntryForBatchPreparedStatement() throws Exception {
+    void getLogEntryForBatchPreparedStatement() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
@@ -175,7 +176,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void getLogEntryForCallableStatement() throws Exception {
+    void getLogEntryForCallableStatement() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
@@ -206,7 +207,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void getLogEntryForBatchCallableStatement() throws Exception {
+    void getLogEntryForBatchCallableStatement() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
@@ -239,7 +240,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void getLogEntryParameterOrderWithIndex() throws Exception {
+    void getLogEntryParameterOrderWithIndex() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
@@ -274,7 +275,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void getLogEntryParameterOrderWithNamedParam() throws Exception {
+    void getLogEntryParameterOrderWithNamedParam() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
@@ -309,7 +310,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void statementType() throws Exception {
+    void statementType() throws Exception {
         ExecutionInfo executionInfo;
         String jsonResult;
 
@@ -332,7 +333,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void query() throws Exception {
+    void query() throws Exception {
         ExecutionInfo executionInfo = ExecutionInfoBuilder.create().build();
         QueryInfo select1 = QueryInfoBuilder.create().query("select 1").build();
         QueryInfo select2 = QueryInfoBuilder.create().query("select 2").build();
@@ -351,7 +352,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void querySize() throws Exception {
+    void querySize() throws Exception {
         ExecutionInfo executionInfo = ExecutionInfoBuilder.create().build();
         QueryInfo select1 = QueryInfoBuilder.create().query("select 1").build();
         QueryInfo select2 = QueryInfoBuilder.create().query("select 2").build();
@@ -370,7 +371,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void success() throws Exception {
+    void success() throws Exception {
         ExecutionInfo executionInfo;
         String jsonResult;
 
@@ -389,7 +390,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void batch() throws Exception {
+    void batch() throws Exception {
         ExecutionInfo executionInfo;
         String jsonResult;
 
@@ -407,7 +408,7 @@ public class DefaultJsonQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void batchSize() throws Exception {
+    void batchSize() throws Exception {
         ExecutionInfo executionInfo;
         String jsonResult;
 

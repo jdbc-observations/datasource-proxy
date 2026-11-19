@@ -6,9 +6,9 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.hsqldb.jdbc.JDBCDataSource;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.sql.CallableStatement;
@@ -61,8 +61,8 @@ public class CallableStatementQueryTransformerTest {
         }
     };
 
-    @Before
-    public void setup() throws Exception {
+    @BeforeEach
+    void setup() throws Exception {
         // real datasource
         JDBCDataSource rawDataSource = new JDBCDataSource();
         rawDataSource.setDatabase("jdbc:hsqldb:mem:aname");
@@ -89,8 +89,8 @@ public class CallableStatementQueryTransformerTest {
     }
 
 
-    @After
-    public void teardown() throws Exception {
+    @AfterEach
+    void teardown() throws Exception {
         interceptedQueries.clear();
         TestUtils.shutdown(rawDatasource);
     }
@@ -117,7 +117,7 @@ public class CallableStatementQueryTransformerTest {
     }
 
     @Test
-    public void testExecute() throws Exception {
+    void execute() throws Exception {
         String queryToReplace = "CALL proc_bar(?)";
         CallableStatement cs = getProxyConnection(queryToReplace).prepareCall("CALL proc_foo(?)");
         cs.setString(1, "FOO");
@@ -134,7 +134,7 @@ public class CallableStatementQueryTransformerTest {
     }
 
     @Test
-    public void testBatch() throws Exception {
+    void batch() throws Exception {
         String queryToReplace = "CALL insert_bar(?, ?)";
         CallableStatement cs = getProxyConnection(queryToReplace).prepareCall("CALL insert_foo(?, ?)");
         cs.setInt(1, 100);
@@ -145,7 +145,7 @@ public class CallableStatementQueryTransformerTest {
         cs.addBatch();
         int[] result = cs.executeBatch();
 
-        assertThat(result.length).isEqualTo(2);
+        assertThat(result).hasSize(2);
 
         // verify intercepted query.
         assertThat(interceptedQueries).hasSize(1).contains("CALL insert_foo(?, ?)");
@@ -154,7 +154,7 @@ public class CallableStatementQueryTransformerTest {
         Statement statement = rawDatasource.getConnection().createStatement();
         ResultSet rs = statement.executeQuery("SELECT COUNT(*) FROM foo");
         assertThat(rs.next()).isTrue();
-        assertThat(rs.getInt(1)).as("table foo has no records").isEqualTo(0);
+        assertThat(rs.getInt(1)).as("table foo has no records").isZero();
 
         rs = statement.executeQuery("SELECT COUNT(*) FROM bar");
         assertThat(rs.next()).isTrue();

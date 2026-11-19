@@ -6,9 +6,9 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.hsqldb.jdbc.JDBCDataSource;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -24,12 +24,12 @@ import static org.mockito.Mockito.mock;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class PreparedStatementQueryTransformTest {
+class PreparedStatementQueryTransformTest {
     private DataSource rawDatasource;
     private List<String> interceptedQueries = new ArrayList<String>();
 
-    @Before
-    public void setup() throws Exception {
+    @BeforeEach
+    void setup() throws Exception {
         // real datasource
         JDBCDataSource rawDataSource = new JDBCDataSource();
         rawDataSource.setDatabase("jdbc:hsqldb:mem:aname");
@@ -46,8 +46,8 @@ public class PreparedStatementQueryTransformTest {
     }
 
 
-    @After
-    public void teardown() throws Exception {
+    @AfterEach
+    void teardown() throws Exception {
         interceptedQueries.clear();
         TestUtils.shutdown(rawDatasource);
     }
@@ -82,32 +82,32 @@ public class PreparedStatementQueryTransformTest {
     }
 
     @Test
-    public void testCreatePreparedStatement() throws Exception {
+    void createPreparedStatement() throws Exception {
         getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
 
         // The interceptor should be called when a statement method is invoked.
-        assertThat(interceptedQueries).hasSize(1).containsExactly("UPDATE foo SET name = ?");
+        assertThat(interceptedQueries).containsExactly("UPDATE foo SET name = ?");
     }
 
     @Test
-    public void testExecuteWithSelect() throws Exception {
+    void executeWithSelect() throws Exception {
         PreparedStatement ps = getProxyConnectionForSelect().prepareStatement("SELECT name FROM foo");
         boolean result = ps.execute();
         assertThat(result).isTrue();
 
         // verify intercepted query
-        assertThat(interceptedQueries).hasSize(1).containsExactly("SELECT name FROM foo");
+        assertThat(interceptedQueries).containsExactly("SELECT name FROM foo");
     }
 
     @Test
-    public void testExecuteWithUpdate() throws Exception {
+    void executeWithUpdate() throws Exception {
         PreparedStatement ps = getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
         ps.setString(1, "FOO");
         boolean result = ps.execute();
         assertThat(result).isFalse();
 
         // verify intercepted query
-        assertThat(interceptedQueries).hasSize(1).containsExactly("UPDATE foo SET name = ?");
+        assertThat(interceptedQueries).containsExactly("UPDATE foo SET name = ?");
 
         // verify bar is updated instead of foo
         ResultSet rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
@@ -119,7 +119,7 @@ public class PreparedStatementQueryTransformTest {
     }
 
     @Test
-    public void testExecuteQuery() throws Exception {
+    void executeQuery() throws Exception {
         PreparedStatement ps = getProxyConnectionForSelect().prepareStatement("SELECT name FROM foo");
         ResultSet resultSet = ps.executeQuery();
         assertThat(resultSet.next()).isTrue();
@@ -127,18 +127,18 @@ public class PreparedStatementQueryTransformTest {
         assertThat(resultSet.getString("name")).isEqualTo("bar");
 
         // verify intercepted query
-        assertThat(interceptedQueries).hasSize(1).containsExactly("SELECT name FROM foo");
+        assertThat(interceptedQueries).containsExactly("SELECT name FROM foo");
     }
 
     @Test
-    public void testExecuteUpdate() throws Exception {
+    void executeUpdate() throws Exception {
         PreparedStatement ps = getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
         ps.setString(1, "FOO");
         int count = ps.executeUpdate();
-        assertThat(count).isEqualTo(1);
+        assertThat(count).isOne();
 
         // verify intercepted query
-        assertThat(interceptedQueries).hasSize(1).containsExactly("UPDATE foo SET name = ?");
+        assertThat(interceptedQueries).containsExactly("UPDATE foo SET name = ?");
 
         // verify bar is updated instead of foo
         ResultSet rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
@@ -150,7 +150,7 @@ public class PreparedStatementQueryTransformTest {
     }
 
     @Test
-    public void testExecuteBatch() throws Exception {
+    void executeBatch() throws Exception {
         PreparedStatement ps = getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
         ps.setString(1, "FOO1");
         ps.addBatch();
@@ -160,7 +160,7 @@ public class PreparedStatementQueryTransformTest {
         assertThat(result).containsExactly(1, 1);
 
         // verify intercepted query
-        assertThat(interceptedQueries).hasSize(1).containsExactly("UPDATE foo SET name = ?");
+        assertThat(interceptedQueries).containsExactly("UPDATE foo SET name = ?");
 
         // verify bar is updated instead of foo
         ResultSet rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
@@ -172,12 +172,12 @@ public class PreparedStatementQueryTransformTest {
     }
 
     @Test
-    public void testClearBatch() throws Exception {
+    void clearBatch() throws Exception {
         PreparedStatement ps = getProxyConnectionForUpdate().prepareStatement("UPDATE foo SET name = ?");
         ps.clearBatch();
 
         // The interceptor is called once even though the batch was cleared.
-        assertThat(interceptedQueries).hasSize(1).containsExactly("UPDATE foo SET name = ?");
+        assertThat(interceptedQueries).containsExactly("UPDATE foo SET name = ?");
     }
 
 }

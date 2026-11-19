@@ -7,9 +7,9 @@ import net.ttddyy.dsproxy.QueryInfoBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.NoOpLog;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Tadaya Tsuyukubo
  * @since 1.3.1
  */
-public class CommonsQueryLoggingListenerTest {
+class CommonsQueryLoggingListenerTest {
 
     public static class NameAwareLog extends NoOpLog {
         String name;
@@ -31,21 +31,21 @@ public class CommonsQueryLoggingListenerTest {
     }
 
 
-    @Before
-    public void setup() throws Exception {
+    @BeforeEach
+    void setup() throws Exception {
         LogFactory.releaseAll();
         // see configuration for logger resolution order
         // https://commons.apache.org/proper/commons-logging/guide.html
         LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", NameAwareLog.class.getName());
     }
 
-    @After
-    public void teardown() throws Exception {
+    @AfterEach
+    void teardown() throws Exception {
         LogFactory.getFactory().removeAttribute("org.apache.commons.logging.Log");
     }
 
     @Test
-    public void defaultLoggerName() {
+    void defaultLoggerName() {
         LogFactory.getFactory().release();
         CommonsQueryLoggingListener listener = new CommonsQueryLoggingListener();
         String name = ((NameAwareLog) listener.getLog()).name;
@@ -53,7 +53,7 @@ public class CommonsQueryLoggingListenerTest {
     }
 
     @Test
-    public void setLogName() {
+    void setLogName() {
         Log log = LogFactory.getLog("my.logger");
         CommonsQueryLoggingListener listener = new CommonsQueryLoggingListener();
         listener.setLog("my.logger");
@@ -62,7 +62,7 @@ public class CommonsQueryLoggingListenerTest {
 
 
     @Test
-    public void loggingCondition() {
+    void loggingCondition() {
         CommonsQueryLoggingListener listener = new CommonsQueryLoggingListener();
         InMemoryCommonsLog log = new InMemoryCommonsLog();
         listener.setLog(log);
@@ -115,7 +115,7 @@ public class CommonsQueryLoggingListenerTest {
     }
 
     @Test
-    public void loggingFilterCustomLogic() {
+    void loggingFilterCustomLogic() {
         CommonsQueryLoggingListener listener = new CommonsQueryLoggingListener();
         InMemoryCommonsLog log = new InMemoryCommonsLog();
         listener.setLog(log);

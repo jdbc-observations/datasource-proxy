@@ -6,7 +6,7 @@ import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.QueryInfoBuilder;
 import net.ttddyy.dsproxy.StatementType;
 import org.assertj.core.util.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -18,12 +18,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class DefaultQueryLogEntryCreatorTest {
+class DefaultQueryLogEntryCreatorTest {
 
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     @Test
-    public void getLogEntryForStatement() throws Exception {
+    void getLogEntryForStatement() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
@@ -77,7 +77,7 @@ public class DefaultQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void getLogEntryForBatchStatement() throws Exception {
+    void getLogEntryForBatchStatement() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
@@ -116,7 +116,7 @@ public class DefaultQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void getLogEntryForPreparedStatement() throws Exception {
+    void getLogEntryForPreparedStatement() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
@@ -159,7 +159,7 @@ public class DefaultQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void getLogEntryForBatchPreparedStatement() throws Exception {
+    void getLogEntryForBatchPreparedStatement() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
@@ -202,7 +202,7 @@ public class DefaultQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void getLogEntryForCallableStatement() throws Exception {
+    void getLogEntryForCallableStatement() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
@@ -244,7 +244,7 @@ public class DefaultQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void getLogEntryForBatchCallableStatement() throws Exception {
+    void getLogEntryForBatchCallableStatement() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
@@ -287,7 +287,7 @@ public class DefaultQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void getLogEntryParameterOrderWithIndex() throws Exception {
+    void getLogEntryParameterOrderWithIndex() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
@@ -323,7 +323,7 @@ public class DefaultQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void getLogEntryParameterOrderWithNamedParam() throws Exception {
+    void getLogEntryParameterOrderWithNamedParam() throws Exception {
         Method method = Object.class.getMethod("toString");
         Object result = new Object();
 
@@ -359,7 +359,7 @@ public class DefaultQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void statementType() throws Exception {
+    void statementType() throws Exception {
         ExecutionInfo executionInfo;
         String result;
 
@@ -382,7 +382,7 @@ public class DefaultQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void query() throws Exception {
+    void query() throws Exception {
         ExecutionInfo executionInfo = ExecutionInfoBuilder.create().build();
         QueryInfo select1 = QueryInfoBuilder.create().query("select 1").build();
         QueryInfo select2 = QueryInfoBuilder.create().query("select 2").build();
@@ -401,7 +401,7 @@ public class DefaultQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void formatQuery() throws Exception {
+    void formatQuery() throws Exception {
         ExecutionInfo executionInfo = ExecutionInfoBuilder.create().build();
         QueryInfo select = QueryInfoBuilder.create().query("select 1").build();
 
@@ -417,7 +417,7 @@ public class DefaultQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void querySize() throws Exception {
+    void querySize() throws Exception {
         ExecutionInfo executionInfo = ExecutionInfoBuilder.create().build();
         QueryInfo select1 = QueryInfoBuilder.create().query("select 1").build();
         QueryInfo select2 = QueryInfoBuilder.create().query("select 2").build();
@@ -436,7 +436,7 @@ public class DefaultQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void success() throws Exception {
+    void success() throws Exception {
         ExecutionInfo executionInfo;
         String result;
 
@@ -455,7 +455,7 @@ public class DefaultQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void batch() throws Exception {
+    void batch() throws Exception {
         ExecutionInfo executionInfo;
         String result;
 
@@ -473,7 +473,7 @@ public class DefaultQueryLogEntryCreatorTest {
     }
 
     @Test
-    public void batchSize() throws Exception {
+    void batchSize() throws Exception {
         ExecutionInfo executionInfo;
         String result;
 
@@ -491,7 +491,7 @@ public class DefaultQueryLogEntryCreatorTest {
 
 
     @Test
-    public void multiline() throws Exception {
+    void multiline() throws Exception {
         DefaultQueryLogEntryCreator creator = new DefaultQueryLogEntryCreator();
         creator.setMultiline(true);
 
@@ -500,7 +500,7 @@ public class DefaultQueryLogEntryCreatorTest {
 
         assertThat(result).hasLineCount(5);
         String[] lines = result.split(LINE_SEPARATOR);
-        assertThat(lines[0]).isEqualTo("");
+        assertThat(lines[0]).isEmpty();
         assertThat(lines[1]).contains("Name", "Connection", "Isolation", "Time", "Success");
         assertThat(lines[2]).contains("Type", "Batch", "QuerySize", "BatchSize");
         assertThat(lines[3]).contains("Query");

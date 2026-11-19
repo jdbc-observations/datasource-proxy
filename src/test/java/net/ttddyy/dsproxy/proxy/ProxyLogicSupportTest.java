@@ -3,23 +3,21 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.sql.Statement;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Tadaya Tsuyukubo
  */
-public class ProxyLogicSupportTest {
+class ProxyLogicSupportTest {
 
     @Test
-    public void proceedMethodExecution() throws Throwable {
+    void proceedMethodExecution() throws Throwable {
         final Object target = new Object();
         final Object proxy = new Object();
         final Method method = Statement.class.getMethod("getConnection");
@@ -36,7 +34,7 @@ public class ProxyLogicSupportTest {
                 assertThat(executionContext.getMethod()).isSameAs(method);
                 assertThat(executionContext.getMethodArgs()).isSameAs(methodArgs);
                 assertThat(executionContext.getTarget()).isSameAs(target);
-                assertThat(executionContext.getElapsedTime()).isEqualTo(0);
+                assertThat(executionContext.getElapsedTime()).isZero();
                 assertThat(executionContext.getThrown()).isNull();
                 assertThat(executionContext.getResult()).isNull();
 
@@ -53,7 +51,7 @@ public class ProxyLogicSupportTest {
                 assertThat(executionContext.getMethod()).isSameAs(method);
                 assertThat(executionContext.getMethodArgs()).isSameAs(methodArgs);
                 assertThat(executionContext.getTarget()).isSameAs(target);
-                assertThat(executionContext.getElapsedTime()).isGreaterThanOrEqualTo(0);
+                assertThat(executionContext.getElapsedTime()).isNotNegative();
                 assertThat(executionContext.getThrown()).isNull();
                 assertThat(executionContext.getResult()).isSameAs(returnObj);
 
@@ -69,20 +67,20 @@ public class ProxyLogicSupportTest {
         Custom custom = new Custom((proxyTarget, m, args) -> returnObj);
         Object result = custom.proceedMethodExecution(proxyConfig, target, connectionInfo, proxy, method, methodArgs);
 
-        assertSame(returnObj, result);
-        assertTrue(listener.isBeforeMethodCalled());
-        assertTrue(listener.isAfterMethodCalled());
+        assertThat(result).isSameAs(returnObj);
+        assertThat(listener.isBeforeMethodCalled()).isTrue();
+        assertThat(listener.isAfterMethodCalled()).isTrue();
 
         MethodExecutionContext beforeMethodContext = listener.getBeforeMethodContext();
         MethodExecutionContext afterMethodContext = listener.getAfterMethodContext();
 
-        assertSame("each method should be passed same context object", beforeMethodContext, afterMethodContext);
+        assertThat(afterMethodContext).as("each method should be passed same context object").isSameAs(beforeMethodContext);
         assertThat(beforeMethodContext.getProxyConfig()).isSameAs(proxyConfig);
     }
 
 
     @Test
-    public void proceedMethodExecutionWithException() throws Throwable {
+    void proceedMethodExecutionWithException() throws Throwable {
         final Object target = new Object();
         final Method method = Statement.class.getMethod("getConnection");
         final Object[] methodArgs = new Object[]{};
@@ -120,13 +118,13 @@ public class ProxyLogicSupportTest {
             thrownException = throwable;
         }
 
-        assertSame(exception, thrownException);
-        assertTrue(listener.isBeforeMethodCalled());
-        assertTrue(listener.isAfterMethodCalled());
+        assertThat(thrownException).isSameAs(exception);
+        assertThat(listener.isBeforeMethodCalled()).isTrue();
+        assertThat(listener.isAfterMethodCalled()).isTrue();
     }
 
     @Test
-    public void proceedMethodExecutionWithMethodAndParameterUpdate() throws Throwable {
+    void proceedMethodExecutionWithMethodAndParameterUpdate() throws Throwable {
         final Object target = new Object();
         final Method method = Statement.class.getMethod("execute", String.class);
         final Object[] methodArgs = new Object[]{};

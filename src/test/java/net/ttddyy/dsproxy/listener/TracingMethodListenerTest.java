@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
@@ -13,10 +13,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class TracingMethodListenerTest {
+class TracingMethodListenerTest {
 
     @Test
-    public void tracingCondition() {
+    void tracingCondition() {
 
         TracingMethodListener.TracingCondition falseCondition = new TracingMethodListener.TracingCondition() {
             @Override
@@ -41,7 +41,7 @@ public class TracingMethodListenerTest {
     }
 
     @Test
-    public void logMessage() throws Exception {
+    void logMessage() throws Exception {
         final AtomicReference<String> messageHolder = new AtomicReference<String>();
         TracingMethodListener listener = new TracingMethodListener() {
             @Override
@@ -73,7 +73,7 @@ public class TracingMethodListenerTest {
     }
 
     @Test
-    public void tracingMessageConsumer() throws Exception {
+    void tracingMessageConsumer() throws Exception {
         final AtomicReference<String> messageHolder = new AtomicReference<String>();
         TracingMethodListener listener = new TracingMethodListener();
 

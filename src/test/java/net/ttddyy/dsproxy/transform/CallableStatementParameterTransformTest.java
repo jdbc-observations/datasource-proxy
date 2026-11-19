@@ -6,9 +6,9 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.hsqldb.jdbc.JDBCDataSource;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -48,8 +48,8 @@ public class CallableStatementParameterTransformTest {
         batchValues.add("BAR:" + input1 + "+" + input2);
     }
 
-    @Before
-    public void setup() throws Exception {
+    @BeforeEach
+    void setup() throws Exception {
         JDBCDataSource rawDataSource = new JDBCDataSource();
         rawDataSource.setDatabase("jdbc:hsqldb:mem:aname");
         rawDataSource.setUser("sa");
@@ -67,8 +67,8 @@ public class CallableStatementParameterTransformTest {
         batchValues.clear();
     }
 
-    @After
-    public void teardown() throws Exception {
+    @AfterEach
+    void teardown() throws Exception {
         TestUtils.shutdown(rawDatasource);
     }
 
@@ -93,7 +93,7 @@ public class CallableStatementParameterTransformTest {
     }
 
     @Test
-    public void testReplaceParam() throws Exception {
+    void replaceParam() throws Exception {
 
         ParameterTransformer paramTransformer = mock(ParameterTransformer.class);
         doAnswer(new Answer() {
@@ -131,7 +131,7 @@ public class CallableStatementParameterTransformTest {
     }
 
     @Test
-    public void testClearAndReplaceParam() throws Exception {
+    void clearAndReplaceParam() throws Exception {
 
         ParameterTransformer paramTransformer = mock(ParameterTransformer.class);
         doAnswer(new Answer() {
@@ -173,7 +173,7 @@ public class CallableStatementParameterTransformTest {
     }
 
     @Test
-    public void testBatchReplaceParam() throws Exception {
+    void batchReplaceParam() throws Exception {
 
         ParameterTransformer paramTransformer = mock(ParameterTransformer.class);
         doAnswer(new Answer() {
@@ -207,7 +207,7 @@ public class CallableStatementParameterTransformTest {
     }
 
     @Test
-    public void testBatchClearAndReplaceParam() throws Exception {
+    void batchClearAndReplaceParam() throws Exception {
 
         ParameterTransformer paramTransformer = mock(ParameterTransformer.class);
         doAnswer(new Answer() {

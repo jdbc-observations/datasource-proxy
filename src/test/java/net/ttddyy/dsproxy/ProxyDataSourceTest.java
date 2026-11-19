@@ -8,9 +8,9 @@ import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import org.assertj.core.api.ThrowableAssert;
 import org.hsqldb.jdbc.JDBCDataSource;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.SmartDataSource;
 
 import javax.sql.DataSource;
@@ -24,8 +24,6 @@ import java.sql.Statement;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -45,8 +43,8 @@ public class ProxyDataSourceTest {
     private TestListener listener;
     private CallCheckMethodExecutionListener methodListener;
 
-    @Before
-    public void setup() throws Exception {
+    @BeforeEach
+    void setup() throws Exception {
         this.originalDataSource = TestUtils.getDataSourceWithData();
 
         this.listener = new TestListener();
@@ -62,8 +60,8 @@ public class ProxyDataSourceTest {
         this.proxyDataSource.setProxyConfig(proxyConfig);
     }
 
-    @After
-    public void teardown() throws Exception {
+    @AfterEach
+    void teardown() throws Exception {
         TestUtils.shutdown(this.proxyDataSource);
     }
 
@@ -79,54 +77,54 @@ public class ProxyDataSourceTest {
     }
 
     @Test
-    public void testStatementWithExecuteUpdateQuery() throws Exception {
+    void statementWithExecuteUpdateQuery() throws Exception {
         Connection conn = proxyDataSource.getConnection();
         Statement st = conn.createStatement();
         st.executeUpdate("create table aa ( a varchar(5) primary key );");
 
-        assertThat(listener.getBeforeCount()).isEqualTo(1);
-        assertThat(listener.getAfterCount()).isEqualTo(1);
+        assertThat(listener.getBeforeCount()).isOne();
+        assertThat(listener.getAfterCount()).isOne();
     }
 
     @Test
-    public void testStatementWithExecuteQuery() throws Exception {
+    void statementWithExecuteQuery() throws Exception {
         Connection conn = proxyDataSource.getConnection();
         Statement st = conn.createStatement();
         st.executeQuery("SELECT * FROM INFORMATION_SCHEMA.TABLES;");  // hsqldb system table
 
-        assertThat(listener.getBeforeCount()).isEqualTo(1);
-        assertThat(listener.getAfterCount()).isEqualTo(1);
+        assertThat(listener.getBeforeCount()).isOne();
+        assertThat(listener.getAfterCount()).isOne();
     }
 
     @Test
-    public void testUseStatement() throws Exception {
+    void useStatement() throws Exception {
         Connection conn = proxyDataSource.getConnection();
         Statement st = conn.createStatement();
         st.executeQuery("select * from emp;");
 
-        assertThat(listener.getBeforeCount()).isEqualTo(1);
-        assertThat(listener.getAfterCount()).isEqualTo(1);
+        assertThat(listener.getBeforeCount()).isOne();
+        assertThat(listener.getAfterCount()).isOne();
     }
 
     @Test
-    public void testUsePreparedStatement() throws Exception {
+    void usePreparedStatement() throws Exception {
         Connection conn = proxyDataSource.getConnection();
         PreparedStatement st = conn.prepareStatement("select * from emp");
         st.executeQuery();
 
-        assertThat(listener.getBeforeCount()).isEqualTo(1);
-        assertThat(listener.getAfterCount()).isEqualTo(1);
+        assertThat(listener.getBeforeCount()).isOne();
+        assertThat(listener.getAfterCount()).isOne();
     }
 
     @Test
-    public void testUsePreapareCall() throws Exception {
+    void usePreapareCall() throws Exception {
         Connection conn = proxyDataSource.getConnection();
         CallableStatement st = conn.prepareCall("select * from emp");
         st.execute();
     }
 
     @Test
-    public void statementGetConnection() throws Exception {
+    void statementGetConnection() throws Exception {
         Connection proxyConn = proxyDataSource.getConnection();
         Statement st = proxyConn.createStatement();
         Connection conn = st.getConnection();
@@ -135,7 +133,7 @@ public class ProxyDataSourceTest {
     }
 
     @Test
-    public void preparedGetConnection() throws Exception {
+    void preparedGetConnection() throws Exception {
         Connection proxyConn = proxyDataSource.getConnection();
         PreparedStatement ps = proxyConn.prepareStatement("select * from emp");
         Connection conn = ps.getConnection();
@@ -144,7 +142,7 @@ public class ProxyDataSourceTest {
     }
 
     @Test
-    public void callableGetConnection() throws Exception {
+    void callableGetConnection() throws Exception {
         Connection proxyConn = proxyDataSource.getConnection();
         CallableStatement cs = proxyConn.prepareCall("select * from emp");
         Connection conn = cs.getConnection();
@@ -153,14 +151,14 @@ public class ProxyDataSourceTest {
     }
 
     @Test
-    public void methodExecutionListener() throws Throwable {
-        assertFalse(this.methodListener.isBeforeMethodCalled());
-        assertFalse(this.methodListener.isAfterMethodCalled());
+    void methodExecutionListener() throws Throwable {
+        assertThat(this.methodListener.isBeforeMethodCalled()).isFalse();
+        assertThat(this.methodListener.isAfterMethodCalled()).isFalse();
 
         Connection connection = proxyDataSource.getConnection();
 
-        assertTrue("methodListener should be called for getConnection", this.methodListener.isBeforeMethodCalled());
-        assertTrue("methodListener should be called for getConnection", this.methodListener.isAfterMethodCalled());
+        assertThat(this.methodListener.isBeforeMethodCalled()).withFailMessage("methodListener should be called for getConnection").isTrue();
+        assertThat(this.methodListener.isAfterMethodCalled()).withFailMessage("methodListener should be called for getConnection").isTrue();
 
         MethodExecutionContext context = this.methodListener.getAfterMethodContext();
         assertThat(context.getTarget()).isSameAs(this.originalDataSource);
@@ -173,42 +171,42 @@ public class ProxyDataSourceTest {
 
         proxyDataSource.getConnection("sa", "");
 
-        assertTrue("methodListener should be called for getConnection", this.methodListener.isBeforeMethodCalled());
-        assertTrue("methodListener should be called for getConnection", this.methodListener.isAfterMethodCalled());
+        assertThat(this.methodListener.isBeforeMethodCalled()).withFailMessage("methodListener should be called for getConnection").isTrue();
+        assertThat(this.methodListener.isAfterMethodCalled()).withFailMessage("methodListener should be called for getConnection").isTrue();
 
         this.methodListener.reset();
 
         // for now, only getConnection is supported for method execution listener
 
         proxyDataSource.close();
-        assertFalse("methodListener should NOT be called for close", this.methodListener.isBeforeMethodCalled());
-        assertFalse("methodListener should NOT be called for close", this.methodListener.isAfterMethodCalled());
+        assertThat(this.methodListener.isBeforeMethodCalled()).withFailMessage("methodListener should NOT be called for close").isFalse();
+        assertThat(this.methodListener.isAfterMethodCalled()).withFailMessage("methodListener should NOT be called for close").isFalse();
 
         this.methodListener.reset();
 
         proxyDataSource.getLoginTimeout();
-        assertFalse("methodListener should NOT be called for getLoginTimeout", this.methodListener.isBeforeMethodCalled());
-        assertFalse("methodListener should NOT be called for getLoginTimeout", this.methodListener.isAfterMethodCalled());
+        assertThat(this.methodListener.isBeforeMethodCalled()).withFailMessage("methodListener should NOT be called for getLoginTimeout").isFalse();
+        assertThat(this.methodListener.isAfterMethodCalled()).withFailMessage("methodListener should NOT be called for getLoginTimeout").isFalse();
 
         this.methodListener.reset();
 
         proxyDataSource.setLoginTimeout(100);
-        assertFalse("methodListener should NOT be called for setLoginTimeout", this.methodListener.isBeforeMethodCalled());
-        assertFalse("methodListener should NOT be called for setLoginTimeout", this.methodListener.isAfterMethodCalled());
+        assertThat(this.methodListener.isBeforeMethodCalled()).withFailMessage("methodListener should NOT be called for setLoginTimeout").isFalse();
+        assertThat(this.methodListener.isAfterMethodCalled()).withFailMessage("methodListener should NOT be called for setLoginTimeout").isFalse();
 
         this.methodListener.reset();
 
         PrintWriter writer = proxyDataSource.getLogWriter();
-        assertFalse("methodListener should NOT be called for getLogWriter", this.methodListener.isBeforeMethodCalled());
-        assertFalse("methodListener should NOT be called for getLogWriter", this.methodListener.isAfterMethodCalled());
+        assertThat(this.methodListener.isBeforeMethodCalled()).withFailMessage("methodListener should NOT be called for getLogWriter").isFalse();
+        assertThat(this.methodListener.isAfterMethodCalled()).withFailMessage("methodListener should NOT be called for getLogWriter").isFalse();
 
         proxyDataSource.setLogWriter(writer);
-        assertFalse("methodListener should NOT be called for setLogWriter", this.methodListener.isBeforeMethodCalled());
-        assertFalse("methodListener should NOT be called for setLogWriter", this.methodListener.isAfterMethodCalled());
+        assertThat(this.methodListener.isBeforeMethodCalled()).withFailMessage("methodListener should NOT be called for setLogWriter").isFalse();
+        assertThat(this.methodListener.isAfterMethodCalled()).withFailMessage("methodListener should NOT be called for setLogWriter").isFalse();
     }
 
     @Test
-    public void connectionClose() throws Exception {
+    void connectionClose() throws Exception {
         ConnectionIdManager connIdManager = proxyDataSource.getConnectionIdManager();
         Connection conn = proxyDataSource.getConnection();
         Statement st = conn.createStatement();
@@ -227,7 +225,7 @@ public class ProxyDataSourceTest {
     }
 
     @Test
-    public void commitAndRollbackCount() throws Exception {
+    void commitAndRollbackCount() throws Exception {
         Connection conn = proxyDataSource.getConnection();
         Statement st = conn.createStatement();
 
@@ -235,16 +233,16 @@ public class ProxyDataSourceTest {
 
         st.close();
         conn.commit();
-        assertThat(connInfo.getCommitCount()).isEqualTo(1);
-        assertThat(connInfo.getRollbackCount()).isEqualTo(0);
+        assertThat(connInfo.getCommitCount()).isOne();
+        assertThat(connInfo.getRollbackCount()).isZero();
 
         conn.commit();
         assertThat(connInfo.getCommitCount()).isEqualTo(2);
-        assertThat(connInfo.getRollbackCount()).isEqualTo(0);
+        assertThat(connInfo.getRollbackCount()).isZero();
 
         conn.rollback();
         assertThat(connInfo.getCommitCount()).isEqualTo(2);
-        assertThat(connInfo.getRollbackCount()).isEqualTo(1);
+        assertThat(connInfo.getRollbackCount()).isOne();
 
         conn.rollback();
         assertThat(connInfo.getCommitCount()).isEqualTo(2);
@@ -252,7 +250,7 @@ public class ProxyDataSourceTest {
     }
 
     @Test
-    public void autoCloseable() throws Exception {
+    void autoCloseable() throws Exception {
         // DS that implements AutoCloseable but not Closeable
         DataSource ds = mock(DataSource.class, withSettings().extraInterfaces(AutoCloseable.class));
         ProxyDataSource proxyDS = new ProxyDataSource(ds);
@@ -262,8 +260,8 @@ public class ProxyDataSourceTest {
         verify((AutoCloseable) ds).close();
     }
 
-	@Test
-	public void closeProxyOfAutoCloseableViaClose() throws Exception {
+    @Test
+    void closeProxyOfAutoCloseableViaClose() throws Exception {
 		DataSource ds = mock(DataSource.class);
 		when(ds.isWrapperFor(AutoCloseable.class)).thenReturn(true);
 
@@ -275,8 +273,8 @@ public class ProxyDataSourceTest {
 		assertThat(closed).isTrue();
 	}
 
-	@Test
-	public void closeProxyOfCloseableViaClose() throws Exception {
+    @Test
+    void closeProxyOfCloseableViaClose() throws Exception {
 		DataSource ds = mock(DataSource.class);
 		when(ds.isWrapperFor(Closeable.class)).thenReturn(true);
 
@@ -288,8 +286,8 @@ public class ProxyDataSourceTest {
 		assertThat(closed).isTrue();
 	}
 
-	@Test
-	public void closeProxyOfAutoCloseableViaUnwrap() throws Exception {
+    @Test
+    void closeProxyOfAutoCloseableViaUnwrap() throws Exception {
 		DataSource ds = mock(DataSource.class);
 		when(ds.isWrapperFor(AutoCloseable.class)).thenReturn(true);
 
@@ -301,8 +299,8 @@ public class ProxyDataSourceTest {
 		assertThat(closed).isTrue();
 	}
 
-	@Test
-	public void closeProxyOfCloseableViaUnwrap() throws Exception {
+    @Test
+    void closeProxyOfCloseableViaUnwrap() throws Exception {
 		DataSource ds = mock(DataSource.class);
 		when(ds.isWrapperFor(Closeable.class)).thenReturn(true);
 
@@ -315,14 +313,14 @@ public class ProxyDataSourceTest {
 	}
 
     @Test
-    public void getDataSource() {
+    void getDataSource() {
         DataSource original = mock(DataSource.class);
         ProxyDataSource proxyDataSource = new ProxyDataSource(original);
         assertThat(proxyDataSource.getDataSource()).isSameAs(original);
     }
 
     @Test
-    public void isWrapperFor() throws Exception {
+    void isWrapperFor() throws Exception {
         assertThat(this.proxyDataSource.isWrapperFor(ProxyDataSource.class)).isTrue();
         assertThat(this.proxyDataSource.isWrapperFor(JDBCDataSource.class)).isTrue();
         assertThat(this.proxyDataSource.isWrapperFor(DataSource.class)).isTrue();
@@ -331,7 +329,7 @@ public class ProxyDataSourceTest {
     }
 
     @Test
-    public void unwrap() throws Exception {
+    void unwrap() throws Exception {
         assertThat(this.proxyDataSource.unwrap(ProxyDataSource.class)).isSameAs(this.proxyDataSource);
         assertThat(this.proxyDataSource.unwrap(JDBCDataSource.class)).isSameAs(this.originalDataSource);
         assertThat(this.proxyDataSource.unwrap(DataSource.class)).isSameAs(this.proxyDataSource);

@@ -2,7 +2,7 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.sql.CallableStatement;
@@ -16,12 +16,12 @@ import static org.mockito.Mockito.mock;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class JdkJdbcProxyFactoryTest {
+class JdkJdbcProxyFactoryTest {
 
     private JdkJdbcProxyFactory factory = new JdkJdbcProxyFactory();
 
     @Test
-    public void testCreateConnection() {
+    void createConnection() {
         Connection conn = mock(Connection.class);
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
 
@@ -31,7 +31,7 @@ public class JdkJdbcProxyFactoryTest {
     }
 
     @Test
-    public void testCreateStatement() {
+    void createStatement() {
         Statement stmt = mock(Statement.class);
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
 
@@ -41,7 +41,7 @@ public class JdkJdbcProxyFactoryTest {
     }
 
     @Test
-    public void testCreatePreparedStatement() {
+    void createPreparedStatement() {
         PreparedStatement ps = mock(PreparedStatement.class);
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
@@ -52,7 +52,7 @@ public class JdkJdbcProxyFactoryTest {
     }
 
     @Test
-    public void testCreateCallableStatement() {
+    void createCallableStatement() {
         CallableStatement cs = mock(CallableStatement.class);
 
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
@@ -63,7 +63,7 @@ public class JdkJdbcProxyFactoryTest {
     }
 
     @Test
-    public void testCreateDataSource() {
+    void createDataSource() {
         DataSource ds = mock(DataSource.class);
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().dataSourceName("my-ds").build();
 

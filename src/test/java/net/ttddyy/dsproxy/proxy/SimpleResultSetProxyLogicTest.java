@@ -3,24 +3,22 @@ package net.ttddyy.dsproxy.proxy;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
  * @author Tadaya Tsuyukubo
  */
-public class SimpleResultSetProxyLogicTest {
+class SimpleResultSetProxyLogicTest {
 
     @Test
-    public void testToString() throws Throwable {
+    void testToString() throws Throwable {
 
         ResultSet rs = mock(ResultSet.class);
         SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, new ConnectionInfo(), ProxyConfig.Builder.create().build());
@@ -34,7 +32,7 @@ public class SimpleResultSetProxyLogicTest {
     }
 
     @Test
-    public void testHashCode() throws Throwable {
+    void testHashCode() throws Throwable {
         ResultSet rs = mock(ResultSet.class);
         SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, new ConnectionInfo(), ProxyConfig.Builder.create().build());
 
@@ -45,7 +43,7 @@ public class SimpleResultSetProxyLogicTest {
     }
 
     @Test
-    public void testEquals() throws Throwable {
+    void equals() throws Throwable {
         ResultSet rs = mock(ResultSet.class);
         SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, new ConnectionInfo(), ProxyConfig.Builder.create().build());
 
@@ -61,7 +59,7 @@ public class SimpleResultSetProxyLogicTest {
     }
 
     @Test
-    public void methodExecutionListener() throws Throwable {
+    void methodExecutionListener() throws Throwable {
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
         ResultSet rs = mock(ResultSet.class);
@@ -72,19 +70,18 @@ public class SimpleResultSetProxyLogicTest {
         Method method = ResultSet.class.getMethod("close");
         logic.invoke(null, method, new Object[]{});
 
-        assertTrue(listener.isBeforeMethodCalled());
-        assertTrue(listener.isAfterMethodCalled());
+        assertThat(listener.isBeforeMethodCalled()).isTrue();
+        assertThat(listener.isAfterMethodCalled()).isTrue();
 
         MethodExecutionContext executionContext = listener.getAfterMethodContext();
-        assertSame("method should come from interface",
-                ResultSet.class, executionContext.getMethod().getDeclaringClass());
-        assertSame("close", executionContext.getMethod().getName());
-        assertSame(rs, executionContext.getTarget());
-        assertSame(connectionInfo, executionContext.getConnectionInfo());
+        assertThat(executionContext.getMethod().getDeclaringClass()).as("method should come from interface").isSameAs(ResultSet.class);
+        assertThat(executionContext.getMethod().getName()).isSameAs("close");
+        assertThat(executionContext.getTarget()).isSameAs(rs);
+        assertThat(executionContext.getConnectionInfo()).isSameAs(connectionInfo);
     }
 
     @Test
-    public void proxyConfig() throws Throwable {
+    void proxyConfig() throws Throwable {
         ResultSet rs = mock(ResultSet.class);
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
         SimpleResultSetProxyLogic logic = new SimpleResultSetProxyLogic(rs, null, proxyConfig);

@@ -2,8 +2,8 @@ package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.QueryCount;
 import net.ttddyy.dsproxy.QueryCountHolder;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -13,15 +13,15 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Tadaya Tsuyukubo
  * @since 1.4.2
  */
-public class SingleQueryCountHolderTest {
+class SingleQueryCountHolderTest {
 
-    @After
-    public void cleanUp() {
+    @AfterEach
+    void cleanUp() {
         QueryCountHolder.clear();
     }
 
     @Test
-    public void getQueryCount() throws Exception {
+    void getQueryCount() throws Exception {
         final SingleQueryCountHolder holder = new SingleQueryCountHolder();
         assertThat(holder.isPopulateQueryCountHolder()).isTrue();
 
@@ -49,7 +49,7 @@ public class SingleQueryCountHolderTest {
     }
 
     @Test
-    public void populateQueryCountHolder() throws Exception {
+    void populateQueryCountHolder() throws Exception {
         final SingleQueryCountHolder holder = new SingleQueryCountHolder();
         holder.setPopulateQueryCountHolder(false);
 

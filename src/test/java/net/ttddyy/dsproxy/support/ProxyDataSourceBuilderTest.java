@@ -37,7 +37,7 @@ import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
 import net.ttddyy.dsproxy.proxy.RepeatableReadResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -53,10 +53,10 @@ import static org.mockito.Mockito.mock;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class ProxyDataSourceBuilderTest {
+class ProxyDataSourceBuilderTest {
 
     @Test
-    public void buildCommonsQueryLoggingListener() {
+    void buildCommonsQueryLoggingListener() {
 
         ProxyDataSource ds;
         CommonsQueryLoggingListener listener;
@@ -77,7 +77,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void buildSLF4JQueryLoggingListener() {
+    void buildSLF4JQueryLoggingListener() {
 
         ProxyDataSource ds;
         SLF4JQueryLoggingListener listener;
@@ -110,7 +110,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void buildJULQueryLoggingListener() {
+    void buildJULQueryLoggingListener() {
 
         ProxyDataSource ds;
         JULQueryLoggingListener listener;
@@ -143,14 +143,14 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void buildSysOutQueryLoggingListener() {
+    void buildSysOutQueryLoggingListener() {
         ProxyDataSource ds = ProxyDataSourceBuilder.create().logQueryToSysOut().build();
         getAndVerifyListener(ds, SystemOutQueryLoggingListener.class);
     }
 
 
     @Test
-    public void buildCommonsSlowQueryListener() {
+    void buildCommonsSlowQueryListener() {
 
         ProxyDataSource ds;
         CommonsSlowQueryListener listener;
@@ -175,7 +175,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void buildSLF4JSlowQueryListener() {
+    void buildSLF4JSlowQueryListener() {
 
         ProxyDataSource ds;
         SLF4JSlowQueryListener listener;
@@ -211,7 +211,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void buildJULJSlowQueryListener() {
+    void buildJULJSlowQueryListener() {
 
         ProxyDataSource ds;
         JULSlowQueryListener listener;
@@ -247,7 +247,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void buildLog4jSlowQueryListener() {
+    void buildLog4jSlowQueryListener() {
 
         ProxyDataSource ds;
         Log4jSlowQueryListener listener;
@@ -283,13 +283,13 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void buildSysOutSlowQueryListener() {
+    void buildSysOutSlowQueryListener() {
         ProxyDataSource ds = ProxyDataSourceBuilder.create().logSlowQueryToSysOut(10, TimeUnit.SECONDS).build();
         getAndVerifyListener(ds, SystemOutSlowQueryListener.class);
     }
 
     @Test
-    public void multiline() {
+    void multiline() {
         ProxyDataSource ds;
 
         ds = ProxyDataSourceBuilder.create().multiline().logQueryByCommons().build();
@@ -348,7 +348,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void formatQuery() {
+    void formatQuery() {
         AtomicBoolean formatCalled = new AtomicBoolean();
         ProxyDataSourceBuilder.FormatQueryCallback formatCallback = query -> {
             formatCalled.set(true);
@@ -360,7 +360,7 @@ public class ProxyDataSourceBuilderTest {
         assertThat(chainListener.getListeners()).hasSize(1).first().isInstanceOf(AbstractQueryLoggingListener.class);
         AbstractQueryLoggingListener listener = (AbstractQueryLoggingListener) chainListener.getListeners().get(0);
         QueryLogEntryCreator logEntryCreator = listener.getQueryLogEntryCreator();
-        assertThat(logEntryCreator).isNotNull().isInstanceOf(DefaultQueryLogEntryCreator.class);
+        assertThat(logEntryCreator).isInstanceOf(DefaultQueryLogEntryCreator.class);
         DefaultQueryLogEntryCreator defaultQueryLogEntryCreator = (DefaultQueryLogEntryCreator) logEntryCreator;
         assertThat(defaultQueryLogEntryCreator.isMultiline()).isFalse();
 
@@ -376,7 +376,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void jdbcProxyFactory() {
+    void jdbcProxyFactory() {
         ProxyDataSource ds;
 
         ds = ProxyDataSourceBuilder.create().build();
@@ -388,7 +388,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void connectionIdManager() {
+    void connectionIdManager() {
         ProxyDataSource ds1 = ProxyDataSourceBuilder.create().build();
         ProxyDataSource ds2 = ProxyDataSourceBuilder.create().build();
         assertThat(ds1.getConnectionIdManager()).as("new instance should be created").isNotSameAs(ds2.getConnectionIdManager());
@@ -399,7 +399,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void countListener() {
+    void countListener() {
 
         ProxyDataSource ds;
         DataSourceQueryCountListener listener;
@@ -408,7 +408,6 @@ public class ProxyDataSourceBuilderTest {
         ds = ProxyDataSourceBuilder.create().countQuery().build();
         listener = getAndVerifyListener(ds, DataSourceQueryCountListener.class);
         assertThat(listener.getQueryCountStrategy()).as("default count listener")
-                .isNotNull()
                 .isInstanceOf(ThreadQueryCountHolder.class);
 
         // specify strategy
@@ -422,7 +421,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void tracingListener() {
+    void tracingListener() {
 
         ProxyDataSource ds;
         TracingMethodListener listener;
@@ -476,7 +475,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void buildMethodListener() {
+    void buildMethodListener() {
         ProxyDataSource ds;
         CompositeMethodListener methodListener;
 
@@ -495,7 +494,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void singleMethodExecutionWithBeforeMethodAndAfterMethod() {
+    void singleMethodExecutionWithBeforeMethodAndAfterMethod() {
         ProxyDataSource ds;
         CompositeMethodListener compositeListener;
         MethodExecutionListener listener;
@@ -539,7 +538,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void singleQueryExecutionWithBeforeQueryAndAfterQuery() {
+    void singleQueryExecutionWithBeforeQueryAndAfterQuery() {
         ProxyDataSource ds;
         ChainListener chainListener;
         QueryExecutionListener listener;
@@ -583,7 +582,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void buildJdbcLifecycleEventListener() {
+    void buildJdbcLifecycleEventListener() {
         ProxyDataSource ds;
 
         JdbcLifecycleEventListener listener = mock(JdbcLifecycleEventListener.class);
@@ -608,7 +607,7 @@ public class ProxyDataSourceBuilderTest {
 
 
     @Test
-    public void proxyResultSet() {
+    void proxyResultSet() {
         ProxyDataSource ds;
         ResultSetProxyLogicFactory factory = mock(ResultSetProxyLogicFactory.class);
 
@@ -634,7 +633,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void proxyGeneratedKeys() {
+    void proxyGeneratedKeys() {
         ProxyDataSource ds;
         ResultSetProxyLogicFactory factory = mock(ResultSetProxyLogicFactory.class);
 
@@ -664,7 +663,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void autoRetrievalGeneratedKeys() {
+    void autoRetrievalGeneratedKeys() {
         ProxyDataSource ds;
         ResultSetProxyLogicFactory factory = mock(ResultSetProxyLogicFactory.class);
 
@@ -716,7 +715,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void autoRetrievalGeneratedKeysForBatch() {
+    void autoRetrievalGeneratedKeysForBatch() {
         ProxyDataSource ds;
 
         // default
@@ -742,7 +741,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void buildProxy() {
+    void buildProxy() {
         DataSource original = mock(DataSource.class);
         DataSource proxy = ProxyDataSourceBuilder.create(original).buildProxy();
         assertThat(proxy).isInstanceOf(ProxyJdbcObject.class);
@@ -751,7 +750,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void isolationRetrieval() {
+    void isolationRetrieval() {
         DataSource proxy = ProxyDataSourceBuilder.create().buildProxy();
         assertThat(proxy).isInstanceOf(ProxyJdbcObject.class);
         ProxyConfig proxyConfig = ((ProxyJdbcObject) proxy).getProxyConfig();
@@ -767,7 +766,7 @@ public class ProxyDataSourceBuilderTest {
     }
 
     @Test
-    public void loggingFilter() {
+    void loggingFilter() {
         LoggingFilter filter = new LoggingFilter() {
             public boolean shouldLog(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
                 return false;

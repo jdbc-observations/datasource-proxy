@@ -3,9 +3,9 @@ package net.ttddyy.dsproxy.listener;
 import net.ttddyy.dsproxy.TestUtils;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -17,24 +17,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class MethodExecutionListenerTest {
+class MethodExecutionListenerTest {
 
     private DataSource jdbcDataSource;
 
-    @Before
-    public void setup() throws Exception {
+    @BeforeEach
+    void setup() throws Exception {
         // real datasource
         jdbcDataSource = TestUtils.getDataSourceWithData();
     }
 
-    @After
-    public void teardown() throws Exception {
+    @AfterEach
+    void teardown() throws Exception {
         TestUtils.shutdown(jdbcDataSource);
     }
 
 
     @Test
-    public void replaceMethodArgument() throws Throwable {
+    void replaceMethodArgument() throws Throwable {
         MethodExecutionListener methodListener = new MethodExecutionListener() {
             @Override
             public void beforeMethod(MethodExecutionContext executionContext) {

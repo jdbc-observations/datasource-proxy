@@ -6,9 +6,9 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import org.hsqldb.jdbc.JDBCDataSource;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -23,13 +23,13 @@ import static org.mockito.Mockito.mock;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class StatementQueryTransformTest {
+class StatementQueryTransformTest {
 
     private DataSource rawDatasource;
     private List<String> interceptedQueries = new ArrayList<String>();
 
-    @Before
-    public void setup() throws Exception {
+    @BeforeEach
+    void setup() throws Exception {
         // real datasource
         JDBCDataSource rawDataSource = new JDBCDataSource();
         rawDataSource.setDatabase("jdbc:hsqldb:mem:aname");
@@ -46,8 +46,8 @@ public class StatementQueryTransformTest {
     }
 
 
-    @After
-    public void teardown() throws Exception {
+    @AfterEach
+    void teardown() throws Exception {
         TestUtils.shutdown(rawDatasource);
         interceptedQueries.clear();
     }
@@ -84,7 +84,7 @@ public class StatementQueryTransformTest {
 
 
     @Test
-    public void testExecuteWithSelect() throws Exception {
+    void executeWithSelect() throws Exception {
         Statement stat = getProxyConnectionForSelect().createStatement();
         boolean result = stat.execute("SELECT name FROM foo");
         assertThat(result).isTrue();
@@ -94,7 +94,7 @@ public class StatementQueryTransformTest {
     }
 
     @Test
-    public void testExecuteWithUpdate() throws Exception {
+    void executeWithUpdate() throws Exception {
         // stmt.execute() with update statement. (expect false)
         Statement stat = getProxyConnectionForUpdate().createStatement();
         boolean result = stat.execute("UPDATE foo SET name = 'FOO'");
@@ -113,7 +113,7 @@ public class StatementQueryTransformTest {
     }
 
     @Test
-    public void testExecuteQuery() throws Exception {
+    void executeQuery() throws Exception {
         Statement stat = getProxyConnectionForSelect().createStatement();
         ResultSet resultSet = stat.executeQuery("SELECT name FROM foo");
         assertThat(resultSet.next()).isTrue();
@@ -124,10 +124,10 @@ public class StatementQueryTransformTest {
     }
 
     @Test
-    public void testExecuteUpdate() throws Exception {
+    void executeUpdate() throws Exception {
         Statement stat = getProxyConnectionForUpdate().createStatement();
         int count = stat.executeUpdate("UPDATE foo SET name = 'FOO'");
-        assertThat(count).isEqualTo(1);
+        assertThat(count).isOne();
 
         assertThat(interceptedQueries).hasSize(1).contains("UPDATE foo SET name = 'FOO'");
 
@@ -141,14 +141,14 @@ public class StatementQueryTransformTest {
     }
 
     @Test
-    public void testExecuteBatch() throws Exception {
+    void executeBatch() throws Exception {
         Statement stat = getProxyConnectionForUpdate().createStatement();
         stat.addBatch("UPDATE foo SET name = 'FOO1'");
         stat.addBatch("UPDATE foo SET name = 'FOO2'");
         int[] result = stat.executeBatch();
         assertThat(result).containsSequence(1, 1);
 
-        assertThat(interceptedQueries).hasSize(2).containsExactly("UPDATE foo SET name = 'FOO1'", "UPDATE foo SET name = 'FOO2'");
+        assertThat(interceptedQueries).containsExactly("UPDATE foo SET name = 'FOO1'", "UPDATE foo SET name = 'FOO2'");
 
         // verify bar is updated instead of foo
         ResultSet rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM foo");
@@ -160,7 +160,7 @@ public class StatementQueryTransformTest {
     }
 
     @Test
-    public void testClearBatch() throws Exception {
+    void clearBatch() throws Exception {
         Statement stat = getProxyConnectionForUpdate().createStatement();
         stat.addBatch("UPDATE foo SET name = 'FOO1'");
         stat.addBatch("UPDATE foo SET name = 'FOO2'");
@@ -169,7 +169,7 @@ public class StatementQueryTransformTest {
         assertThat(result).isEmpty();
 
         // The interceptor should be called even though the batch was cleared.
-        assertThat(interceptedQueries).hasSize(2).containsExactly("UPDATE foo SET name = 'FOO1'", "UPDATE foo SET name = 'FOO2'");
+        assertThat(interceptedQueries).containsExactly("UPDATE foo SET name = 'FOO1'", "UPDATE foo SET name = 'FOO2'");
 
         // verify data should not be changed
         ResultSet rs = rawDatasource.getConnection().createStatement().executeQuery("SELECT name FROM foo");

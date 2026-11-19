@@ -8,11 +8,12 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.apache.logging.log4j.junit.LoggerContextRule;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.test.appender.ListAppender;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,37 +29,46 @@ public class Log4jQueryLoggingListenerTest {
     private ListAppender app;
     private static final String CONFIG = "log4j-test2.xml";
 
-    @ClassRule
-    public static LoggerContextRule context = new LoggerContextRule(CONFIG);
+    private static LoggerContext context;
 
-    @Before
-    public void before() {
-        logger = context.getLogger();
+    @BeforeAll
+    static void startContext() {
+        context = Configurator.initialize("Log4jQueryLoggingListenerTest", CONFIG);
+    }
+
+    @AfterAll
+    static void stopContext() {
+        Configurator.shutdown(context);
+    }
+
+    @BeforeEach
+    void before() {
+        logger = context.getLogger(Log4jQueryLoggingListenerTest.class.getName());
         reset();
 
     }
     
     private void reset() {
-        app = context.getListAppender("List").clear();
+        app = ((ListAppender) context.getConfiguration().getAppender("List")).clear();
     }
-    
+
 
     @Test
-    public void defaultLoggerName() {
+    void defaultLoggerName() {
         Log4jQueryLoggingListener listener = new Log4jQueryLoggingListener();
         assertThat(listener.getLogger().getName())
                 .as("Default logger name").isEqualTo("net.ttddyy.dsproxy.listener.logging.Log4jQueryLoggingListener");
     }
 
     @Test
-    public void setLoggerName() {
+    void setLoggerName() {
         Log4jQueryLoggingListener listener = new Log4jQueryLoggingListener();
         listener.setLogger("my.logger");
         assertThat(listener.getLogger().getName()).as("Updated logger name").isEqualTo("my.logger");
     }
 
     @Test
-    public void loggingCondition() {
+    void loggingCondition() {
         Log4jQueryLoggingListener listener = new Log4jQueryLoggingListener();
 
         List<QueryInfo> queryInfoList = new ArrayList<QueryInfo>();
@@ -87,7 +97,7 @@ public class Log4jQueryLoggingListenerTest {
         listener.afterQuery(execInfo, queryInfoList);
         List<LogEvent> eventsDebug = app.getEvents();
 
-        assertThat(eventsDebug).hasSize(0);
+        assertThat(eventsDebug).isEmpty();
 
         // listener DEBUG, logger DEBUG
         listener.setLogLevel(Log4jLogLevel.DEBUG);
@@ -122,11 +132,11 @@ public class Log4jQueryLoggingListenerTest {
         Configurator.setLevel(this.logger.getName(), Level.INFO);
         reset();
         listener.afterQuery(execInfo, queryInfoList);
-        assertThat(app.getEvents()).hasSize(0);
+        assertThat(app.getEvents()).isEmpty();
     }
 
     @Test
-    public void loggingFilterCustomLogic() {
+    void loggingFilterCustomLogic() {
         Log4jQueryLoggingListener listener = new Log4jQueryLoggingListener();
         listener.setLogger(logger);
         listener.setLogLevel(Log4jLogLevel.DEBUG);

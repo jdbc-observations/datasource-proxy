@@ -2,7 +2,7 @@ package net.ttddyy.dsproxy.transform;
 
 import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
@@ -14,10 +14,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class ParameterReplacerTest {
+class ParameterReplacerTest {
 
     @Test
-    public void testParamReplacement() {
+    void paramReplacement() {
 
         Method method = null;
 
@@ -43,7 +43,7 @@ public class ParameterReplacerTest {
     }
 
     @Test
-    public void testClearParamAndReplace() {
+    void clearParamAndReplace() {
 
         Method method = null;
 

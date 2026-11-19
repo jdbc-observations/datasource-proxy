@@ -3,7 +3,7 @@ package net.ttddyy.dsproxy.listener.lifecycle;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
@@ -27,10 +27,10 @@ import static org.springframework.util.StringUtils.capitalize;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class JdbcLifecycleEventExecutionListenerTest {
+class JdbcLifecycleEventExecutionListenerTest {
 
     @Test
-    public void queryExecution() {
+    void queryExecution() {
         JdbcLifecycleEventListener mock = mock(JdbcLifecycleEventListener.class);
         JdbcLifecycleEventExecutionListener listener = new JdbcLifecycleEventExecutionListener(mock);
 
@@ -45,7 +45,7 @@ public class JdbcLifecycleEventExecutionListenerTest {
     }
 
     @Test
-    public void methodInvocation() {
+    void methodInvocation() {
 
         // TODO: parameterized test
         List<Class<? extends Wrapper>> proxyClasses = Arrays.asList(DataSource.class, Connection.class, ResultSet.class,
@@ -73,19 +73,19 @@ public class JdbcLifecycleEventExecutionListenerTest {
 
                 listener.beforeMethod(methodExecContext);
                 String description = "method=" + method.getName();
-                assertThat(invokedMethodNames).describedAs(description).hasSize(2).containsExactly("beforeMethod", expectedBeforeName);
+                assertThat(invokedMethodNames).describedAs(description).containsExactly("beforeMethod", expectedBeforeName);
                 assertThat(invokedMethodArgs).describedAs(description).hasSize(2);
-                assertThat(invokedMethodArgs.get(0)).describedAs(description).hasSize(1).containsExactly(methodExecContext);
-                assertThat(invokedMethodArgs.get(1)).describedAs(description).hasSize(1).containsExactly(methodExecContext);
+                assertThat(invokedMethodArgs.get(0)).describedAs(description).containsExactly(methodExecContext);
+                assertThat(invokedMethodArgs.get(1)).describedAs(description).containsExactly(methodExecContext);
 
                 invokedMethodNames.clear();
                 invokedMethodArgs.clear();
 
                 listener.afterMethod(methodExecContext);
-                assertThat(invokedMethodNames).hasSize(2).containsExactly(expectedAfterName, "afterMethod");
+                assertThat(invokedMethodNames).containsExactly(expectedAfterName, "afterMethod");
                 assertThat(invokedMethodArgs).hasSize(2);
-                assertThat(invokedMethodArgs.get(0)).hasSize(1).containsExactly(methodExecContext);
-                assertThat(invokedMethodArgs.get(1)).hasSize(1).containsExactly(methodExecContext);
+                assertThat(invokedMethodArgs.get(0)).containsExactly(methodExecContext);
+                assertThat(invokedMethodArgs.get(1)).containsExactly(methodExecContext);
             }
         }
 
@@ -107,7 +107,7 @@ public class JdbcLifecycleEventExecutionListenerTest {
     }
 
     @Test
-    public void objectMethods() {
+    void objectMethods() {
 
         for (Method method : Object.class.getMethods()) {
 
@@ -122,17 +122,17 @@ public class JdbcLifecycleEventExecutionListenerTest {
             methodExecContext.setTarget(Statement.class);
 
             listener.beforeMethod(methodExecContext);
-            assertThat(invokedMethodNames).hasSize(1).containsExactly("beforeMethod");
+            assertThat(invokedMethodNames).containsExactly("beforeMethod");
             assertThat(invokedMethodArgs).hasSize(1);
-            assertThat(invokedMethodArgs.get(0)).hasSize(1).containsExactly(methodExecContext);
+            assertThat(invokedMethodArgs.get(0)).containsExactly(methodExecContext);
 
             invokedMethodNames.clear();
             invokedMethodArgs.clear();
 
             listener.afterMethod(methodExecContext);
-            assertThat(invokedMethodNames).hasSize(1).containsExactly("afterMethod");
+            assertThat(invokedMethodNames).containsExactly("afterMethod");
             assertThat(invokedMethodArgs).hasSize(1);
-            assertThat(invokedMethodArgs.get(0)).hasSize(1).containsExactly(methodExecContext);
+            assertThat(invokedMethodArgs.get(0)).containsExactly(methodExecContext);
         }
     }
 

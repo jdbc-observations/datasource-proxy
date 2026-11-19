@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -15,10 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class ParameterKeyTest {
+class ParameterKeyTest {
 
     @Test
-    public void identityWithString() {
+    void identityWithString() {
         ParameterKey first = new ParameterKey("foo");
         ParameterKey second = new ParameterKey("foo");
         ParameterKey third = new ParameterKey("bar");
@@ -32,7 +32,7 @@ public class ParameterKeyTest {
     }
 
     @Test
-    public void identityWithInt() {
+    void identityWithInt() {
         ParameterKey first = new ParameterKey(100);
         ParameterKey second = new ParameterKey(100);
         ParameterKey third = new ParameterKey(99);
@@ -46,7 +46,7 @@ public class ParameterKeyTest {
     }
 
     @Test
-    public void sort() {
+    void sort() {
         ParameterKey numOne = new ParameterKey(1);
         ParameterKey numFive = new ParameterKey(5);
         ParameterKey numTen = new ParameterKey(10);
@@ -91,33 +91,38 @@ public class ParameterKeyTest {
     }
 
     @Test
-    public void equal() {
+    void equal() {
         ParameterKey numOne = new ParameterKey(1);
         ParameterKey anotherNumOne = new ParameterKey(1);
         ParameterKey strOne = new ParameterKey("1");
         ParameterKey anotherStrOne = new ParameterKey("1");
 
-        assertThat(numOne).isEqualTo(anotherNumOne);
-        assertThat(numOne).isNotEqualTo(strOne);
-        assertThat(strOne).isEqualTo(anotherStrOne);
-        assertThat(strOne).isNotEqualTo(numOne);
+        assertThat(numOne)
+                .isEqualTo(anotherNumOne)
+                .isNotEqualTo(strOne);
+        assertThat(strOne)
+                .isEqualTo(anotherStrOne)
+                .isNotEqualTo(numOne);
 
     }
+
     @Test
-    public void equalComparison() {
+    void equalComparison() {
         ParameterKey numOne = new ParameterKey(1);
         ParameterKey anotherNumOne = new ParameterKey(1);
         ParameterKey strOne = new ParameterKey("1");
         ParameterKey anotherStrOne = new ParameterKey("1");
         ParameterKey foo = new ParameterKey("foo");
 
-        assertThat(numOne).isEqualByComparingTo(numOne);
-        assertThat(numOne).isEqualByComparingTo(anotherNumOne);
-        assertThat(numOne).isEqualByComparingTo(strOne);
+        assertThat(numOne)
+                .isEqualByComparingTo(numOne)
+                .isEqualByComparingTo(anotherNumOne)
+                .isEqualByComparingTo(strOne);
 
-        assertThat(strOne).isEqualByComparingTo(strOne);
-        assertThat(strOne).isEqualByComparingTo(anotherStrOne);
-        assertThat(strOne).isEqualByComparingTo(numOne);
+        assertThat(strOne)
+                .isEqualByComparingTo(strOne)
+                .isEqualByComparingTo(anotherStrOne)
+                .isEqualByComparingTo(numOne);
 
         assertThat(foo).isEqualByComparingTo(foo);
     }

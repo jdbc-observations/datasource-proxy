@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy.listener.lifecycle;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
@@ -15,14 +15,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.String.format;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Tadaya Tsuyukubo
  */
-public class JdbcLifecycleEventListenerUtilsTest {
+class JdbcLifecycleEventListenerUtilsTest {
 
     // Class Hierarchy:
     //   DataSource : DataSource & CommonDataSource
@@ -36,7 +34,7 @@ public class JdbcLifecycleEventListenerUtilsTest {
 
 
     @Test
-    public void getListenerMethod() {
+    void getListenerMethod() {
 
         for (Class<? extends Wrapper> proxyClass : this.proxyClasses) {
             Method[] methods = proxyClass.getMethods();  // get methods including ones declared on parents such as Wrapper, CommonDataSource
@@ -52,10 +50,10 @@ public class JdbcLifecycleEventListenerUtilsTest {
 
                 String messageForBefore = format("Failed for %s on %s. expected=%s", methodName, proxyClass.getSimpleName(), expectedBeforeName);
                 String messageForAfter = format("Failed for %s on %s. expected=%s", methodName, proxyClass.getSimpleName(), expectedAfterName);
-                assertNotNull(messageForBefore, resolvedBeforeMethod);
-                assertNotNull(messageForAfter, resolvedAfterMethod);
-                assertEquals(expectedBeforeName, resolvedBeforeMethod.getName());
-                assertEquals(expectedAfterName, resolvedAfterMethod.getName());
+                assertThat(resolvedBeforeMethod).as(messageForBefore).isNotNull();
+                assertThat(resolvedAfterMethod).as(messageForAfter).isNotNull();
+                assertThat(resolvedBeforeMethod.getName()).isEqualTo(expectedBeforeName);
+                assertThat(resolvedAfterMethod.getName()).isEqualTo(expectedAfterName);
             }
 
         }
@@ -63,7 +61,7 @@ public class JdbcLifecycleEventListenerUtilsTest {
     }
 
     @Test
-    public void getListenerMethodWithObjectMethods() {
+    void getListenerMethodWithObjectMethods() {
 
         Method[] methods = Object.class.getMethods();
         for (Class<? extends Wrapper> proxyClass : this.proxyClasses) {
@@ -74,8 +72,8 @@ public class JdbcLifecycleEventListenerUtilsTest {
                 Method resolvedAfterMethod = JdbcLifecycleEventListenerUtils.getListenerMethod(methodName, false);
 
                 String message = format("method=%s, proxyClass=%s", method.getName(), proxyClass.getSimpleName());
-                assertNull(message, resolvedBeforeMethod);
-                assertNull(message, resolvedAfterMethod);
+                assertThat(resolvedBeforeMethod).as(message).isNull();
+                assertThat(resolvedAfterMethod).as(message).isNull();
             }
 
         }
@@ -83,7 +81,7 @@ public class JdbcLifecycleEventListenerUtilsTest {
     }
 
     @Test
-    public void getListenerMethodWithWrapper() {
+    void getListenerMethodWithWrapper() {
 
         // explicitly test for methods on Wrapper
         for (Method method : Wrapper.class.getMethods()) {
@@ -93,13 +91,13 @@ public class JdbcLifecycleEventListenerUtilsTest {
             Method resolvedBeforeMethod = JdbcLifecycleEventListenerUtils.getListenerMethod(methodName, true);
             Method resolvedAfterMethod = JdbcLifecycleEventListenerUtils.getListenerMethod(methodName, false);
 
-            assertEquals(expectedBeforeName, resolvedBeforeMethod.getName());
-            assertEquals(expectedAfterName, resolvedAfterMethod.getName());
+            assertThat(resolvedBeforeMethod.getName()).isEqualTo(expectedBeforeName);
+            assertThat(resolvedAfterMethod.getName()).isEqualTo(expectedAfterName);
         }
     }
 
     @Test
-    public void getListenerMethodWithCommonDataSource() {
+    void getListenerMethodWithCommonDataSource() {
 
         for (Method method : CommonDataSource.class.getMethods()) {
             String methodName = method.getName();
@@ -108,8 +106,8 @@ public class JdbcLifecycleEventListenerUtilsTest {
             Method resolvedBeforeMethod = JdbcLifecycleEventListenerUtils.getListenerMethod(methodName, true);
             Method resolvedAfterMethod = JdbcLifecycleEventListenerUtils.getListenerMethod(methodName, false);
 
-            assertEquals(expectedBeforeName, resolvedBeforeMethod.getName());
-            assertEquals(expectedAfterName, resolvedAfterMethod.getName());
+            assertThat(resolvedBeforeMethod.getName()).isEqualTo(expectedBeforeName);
+            assertThat(resolvedAfterMethod.getName()).isEqualTo(expectedAfterName);
         }
     }
 

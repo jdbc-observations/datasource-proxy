@@ -3,7 +3,7 @@ package net.ttddyy.dsproxy.support;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.support.nativejdbc.NativeJdbcExtractor;
 
 import java.sql.CallableStatement;
@@ -19,10 +19,10 @@ import static org.mockito.Mockito.when;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class DataSourceProxyNativeJdbcExtractorMockTest {
+class DataSourceProxyNativeJdbcExtractorMockTest {
 
     @Test
-    public void testDoGetNativeConnection() throws Exception {
+    void doGetNativeConnection() throws Exception {
         Connection org = mock(Connection.class);
 
         Connection proxy = new JdkJdbcProxyFactory().createConnection(org, getConnectionInfo(), ProxyConfig.Builder.create().build());
@@ -37,7 +37,7 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
     }
 
     @Test
-    public void testDoGetNativeConnectionWithDelegate() throws Exception {
+    void doGetNativeConnectionWithDelegate() throws Exception {
 
         Connection org = mock(Connection.class);
         Connection proxy = new JdkJdbcProxyFactory().createConnection(org, getConnectionInfo(), ProxyConfig.Builder.create().build());
@@ -56,7 +56,7 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
     }
 
     @Test
-    public void testGetNativeStatement() throws Exception {
+    void getNativeStatement() throws Exception {
         Statement org = mock(Statement.class);
         Statement proxy = new JdkJdbcProxyFactory().createStatement(org, getConnectionInfo(), null, ProxyConfig.Builder.create().build());
 
@@ -70,7 +70,7 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
     }
 
     @Test
-    public void testGetNativeStatementWithDelegate() throws Exception {
+    void getNativeStatementWithDelegate() throws Exception {
 
         Statement org = mock(Statement.class);
         Statement proxy = new JdkJdbcProxyFactory().createStatement(org, getConnectionInfo(), null, ProxyConfig.Builder.create().build());
@@ -90,7 +90,7 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
 
 
     @Test
-    public void testGetNativePreparedStatement() throws Exception {
+    void getNativePreparedStatement() throws Exception {
         PreparedStatement org = mock(PreparedStatement.class);
         PreparedStatement proxy = new JdkJdbcProxyFactory().createPreparedStatement(org, null, getConnectionInfo(), null, ProxyConfig.Builder.create().build(), false);
 
@@ -104,7 +104,7 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
     }
 
     @Test
-    public void testGetNativePreparedStatementWithDelegate() throws Exception {
+    void getNativePreparedStatementWithDelegate() throws Exception {
 
         PreparedStatement org = mock(PreparedStatement.class);
         PreparedStatement proxy = new JdkJdbcProxyFactory().createPreparedStatement(org, null, getConnectionInfo(), null, ProxyConfig.Builder.create().build(), false);
@@ -124,7 +124,7 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
 
 
     @Test
-    public void testGetNativeCallableStatement() throws Exception {
+    void getNativeCallableStatement() throws Exception {
         CallableStatement org = mock(CallableStatement.class);
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("foo");
@@ -140,7 +140,7 @@ public class DataSourceProxyNativeJdbcExtractorMockTest {
     }
 
     @Test
-    public void testGetNativeCallableStatementWithDelegate() throws Exception {
+    void getNativeCallableStatementWithDelegate() throws Exception {
         CallableStatement org = mock(CallableStatement.class);
         ConnectionInfo connectionInfo = new ConnectionInfo();
         connectionInfo.setDataSourceName("foo");

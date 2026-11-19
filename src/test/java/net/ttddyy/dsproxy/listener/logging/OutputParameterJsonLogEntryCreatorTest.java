@@ -6,7 +6,7 @@ import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 import org.assertj.core.util.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.sql.CallableStatement;
@@ -23,10 +23,10 @@ import static org.mockito.Mockito.mock;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class OutputParameterJsonLogEntryCreatorTest {
+class OutputParameterJsonLogEntryCreatorTest {
 
     @Test
-    public void outParams() throws Exception {
+    void outParams() throws Exception {
         // prepare QueryInfo
 
         ParameterSetOperation param1 = new ParameterSetOperation();

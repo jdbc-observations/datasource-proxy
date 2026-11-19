@@ -4,8 +4,8 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -25,12 +25,12 @@ import static org.mockito.Mockito.when;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class TransformInfoForQueryTest {
+class TransformInfoForQueryTest {
 
     private TransformInfo transformInfo;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         transformInfo = null;
     }
 
@@ -51,7 +51,7 @@ public class TransformInfoForQueryTest {
     }
 
     @Test
-    public void testQueryTransformerInStatement() throws Throwable {
+    void queryTransformerInStatement() throws Throwable {
 
         Statement stmt = mock(Statement.class);
         QueryTransformer queryTransformer = getMockQueryTransformer(1);
@@ -70,13 +70,13 @@ public class TransformInfoForQueryTest {
         assertThat(transformInfo.getQuery()).isEqualTo("my-query");
         assertThat(transformInfo.getDataSourceName()).isEqualTo("my-ds");
         assertThat(transformInfo.isBatch()).isFalse();
-        assertThat(transformInfo.getCount()).isEqualTo(0);
+        assertThat(transformInfo.getCount()).isZero();
 
     }
 
 
     @Test
-    public void testQueryTransformerBatchInStatement() throws Throwable {
+    void queryTransformerBatchInStatement() throws Throwable {
 
         Statement stmt = mock(Statement.class);
         QueryTransformer queryTransformer = getMockQueryTransformer(2);
@@ -95,7 +95,7 @@ public class TransformInfoForQueryTest {
         assertThat(transformInfo.getQuery()).isEqualTo("my-query-1");
         assertThat(transformInfo.getDataSourceName()).isEqualTo("my-ds");
         assertThat(transformInfo.isBatch()).isTrue();
-        assertThat(transformInfo.getCount()).isEqualTo(0);
+        assertThat(transformInfo.getCount()).isZero();
 
         // second batch
         handler.invoke(null, method, new Object[]{"my-query-2"});
@@ -106,12 +106,12 @@ public class TransformInfoForQueryTest {
         assertThat(transformInfo.getQuery()).isEqualTo("my-query-2");
         assertThat(transformInfo.getDataSourceName()).isEqualTo("my-ds");
         assertThat(transformInfo.isBatch()).isTrue();
-        assertThat(transformInfo.getCount()).isEqualTo(1);
+        assertThat(transformInfo.getCount()).isOne();
 
     }
 
     @Test
-    public void testQueryTransformerInConnectionHandlerForPrepareStatement() throws Throwable {
+    void queryTransformerInConnectionHandlerForPrepareStatement() throws Throwable {
 
         Connection conn = mock(Connection.class);
         QueryTransformer queryTransformer = getMockQueryTransformer(1);
@@ -129,12 +129,12 @@ public class TransformInfoForQueryTest {
         assertThat(transformInfo.getQuery()).isEqualTo("my-query");
         assertThat(transformInfo.getDataSourceName()).isEqualTo("my-ds");
         assertThat(transformInfo.isBatch()).isFalse();
-        assertThat(transformInfo.getCount()).isEqualTo(0);
+        assertThat(transformInfo.getCount()).isZero();
 
     }
 
     @Test
-    public void testQueryTransformerInConnectionHandlerForPrepareCall() throws Throwable {
+    void queryTransformerInConnectionHandlerForPrepareCall() throws Throwable {
 
         Connection conn = mock(Connection.class);
         QueryTransformer queryTransformer = getMockQueryTransformer(1);
@@ -152,7 +152,7 @@ public class TransformInfoForQueryTest {
         assertThat(transformInfo.getQuery()).isEqualTo("my-query");
         assertThat(transformInfo.getDataSourceName()).isEqualTo("my-ds");
         assertThat(transformInfo.isBatch()).isFalse();
-        assertThat(transformInfo.getCount()).isEqualTo(0);
+        assertThat(transformInfo.getCount()).isZero();
 
     }
 

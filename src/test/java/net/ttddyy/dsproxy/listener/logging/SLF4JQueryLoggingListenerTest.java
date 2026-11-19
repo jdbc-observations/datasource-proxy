@@ -4,7 +4,7 @@ import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.ExecutionInfoBuilder;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.QueryInfoBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,24 +15,24 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Tadaya Tsuyukubo
  * @since 1.3.1
  */
-public class SLF4JQueryLoggingListenerTest {
+class SLF4JQueryLoggingListenerTest {
 
     @Test
-    public void defaultLoggerName() {
+    void defaultLoggerName() {
         SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener();
         assertThat(listener.getLogger().getName())
                 .as("Default logger name").isEqualTo("net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener");
     }
 
     @Test
-    public void setLoggerName() {
+    void setLoggerName() {
         SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener();
         listener.setLogger("my.logger");
         assertThat(listener.getLogger().getName()).as("Updated logger name").isEqualTo("my.logger");
     }
 
     @Test
-    public void loggingCondition() {
+    void loggingCondition() {
         SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener();
         InMemorySLF4JLogger logger = new InMemorySLF4JLogger();
 
@@ -82,7 +82,7 @@ public class SLF4JQueryLoggingListenerTest {
     }
 
     @Test
-    public void loggingFilterCustomLogic() {
+    void loggingFilterCustomLogic() {
         SLF4JQueryLoggingListener listener = new SLF4JQueryLoggingListener();
         InMemorySLF4JLogger logger = new InMemorySLF4JLogger();
         listener.setLogger(logger);

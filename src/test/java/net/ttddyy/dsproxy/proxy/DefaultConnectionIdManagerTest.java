@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 
@@ -11,10 +11,10 @@ import static org.mockito.Mockito.mock;
  * @author Tadaya Tsuyukubo
  * @since 1.4.2
  */
-public class DefaultConnectionIdManagerTest {
+class DefaultConnectionIdManagerTest {
 
     @Test
-    public void getId() {
+    void getId() {
         DefaultConnectionIdManager idManager = new DefaultConnectionIdManager();
 
         assertThat(idManager.getId(null)).isEqualTo("1");
@@ -30,7 +30,7 @@ public class DefaultConnectionIdManagerTest {
     }
 
     @Test
-    public void getOpenConnectionIds() {
+    void getOpenConnectionIds() {
         DefaultConnectionIdManager idManager = new DefaultConnectionIdManager();
 
         assertThat(idManager.getOpenConnectionIds()).isEmpty();

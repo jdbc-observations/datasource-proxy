@@ -55,7 +55,7 @@ public class MockTestUtils {
             }
 
 
-            assertThat(actualQueryArgs).hasSize(expectedQueryArgs.size());
+            assertThat(actualQueryArgs).hasSameSizeAs(expectedQueryArgs);
             for (Map.Entry<String, Object> entry : expectedQueryArgs.entrySet()) {
                 assertThat(actualQueryArgs).containsEntry(entry.getKey(), entry.getValue());
             }

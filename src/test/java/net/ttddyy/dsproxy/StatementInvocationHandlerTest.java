@@ -2,9 +2,9 @@ package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -12,21 +12,21 @@ import java.sql.Statement;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.fail;
 
 
 /**
  * @author Tadaya Tsuyukubo
  */
-public class StatementInvocationHandlerTest {
+class StatementInvocationHandlerTest {
 
     private DataSource jdbcDataSource;
     private TestListener testListener;
     private LastQueryListener lastQueryListener;
     private Statement statement;
 
-    @Before
-    public void setup() throws Exception {
+    @BeforeEach
+    void setup() throws Exception {
         testListener = new TestListener();
         lastQueryListener = new LastQueryListener();
 
@@ -47,14 +47,14 @@ public class StatementInvocationHandlerTest {
         statement = new JdkJdbcProxyFactory().createStatement(stmt, connectionInfo, null, proxyConfig);
     }
 
-    @After
-    public void teardown() throws Exception {
+    @AfterEach
+    void teardown() throws Exception {
         TestUtils.shutdown(jdbcDataSource);
     }
 
 
     @Test
-    public void testException() throws Exception {
+    void exception() throws Exception {
         final String query = "select * from emp;";
 
         Exception ex = null;
@@ -66,8 +66,8 @@ public class StatementInvocationHandlerTest {
         }
         assertThat(ex).isNotNull();
 
-        assertThat(testListener.beforeCount).isEqualTo(1);
-        assertThat(testListener.afterCount).isEqualTo(1);
+        assertThat(testListener.beforeCount).isOne();
+        assertThat(testListener.afterCount).isOne();
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
         assertThat(beforeQueries).hasSize(1);
@@ -87,12 +87,12 @@ public class StatementInvocationHandlerTest {
     }
 
     @Test
-    public void testExecuteQuery() throws Exception {
+    void executeQuery() throws Exception {
         final String query = "select * from emp;";
         statement.executeQuery(query);
 
-        assertThat(testListener.beforeCount).isEqualTo(1);
-        assertThat(testListener.afterCount).isEqualTo(1);
+        assertThat(testListener.beforeCount).isOne();
+        assertThat(testListener.afterCount).isOne();
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
         assertThat(beforeQueries).hasSize(1);
@@ -104,12 +104,12 @@ public class StatementInvocationHandlerTest {
     }
 
     @Test
-    public void testExecuteUpdate() throws Exception {
+    void executeUpdate() throws Exception {
         final String query = "update emp set name = 'bar';";
         statement.executeUpdate(query);
 
-        assertThat(testListener.beforeCount).isEqualTo(1);
-        assertThat(testListener.afterCount).isEqualTo(1);
+        assertThat(testListener.beforeCount).isOne();
+        assertThat(testListener.afterCount).isOne();
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
         assertThat(beforeQueries).hasSize(1);
@@ -121,23 +121,23 @@ public class StatementInvocationHandlerTest {
     }
 
     @Test
-    public void testExecuteBatch() throws Exception {
+    void executeBatch() throws Exception {
         final String query1 = "insert into emp ( id, name ) values (3, 'baz');";
         statement.addBatch(query1);
-        assertThat(testListener.beforeCount).isEqualTo(0);
-        assertThat(testListener.afterCount).isEqualTo(0);
+        assertThat(testListener.beforeCount).isZero();
+        assertThat(testListener.afterCount).isZero();
 
         final String query2 = "update emp set name = 'FOO';";
         statement.addBatch(query2);
-        assertThat(testListener.beforeCount).isEqualTo(0);
-        assertThat(testListener.afterCount).isEqualTo(0);
+        assertThat(testListener.beforeCount).isZero();
+        assertThat(testListener.afterCount).isZero();
 
         int[] result = statement.executeBatch();
-        assertThat(testListener.beforeCount).isEqualTo(1);
-        assertThat(testListener.afterCount).isEqualTo(1);
+        assertThat(testListener.beforeCount).isOne();
+        assertThat(testListener.afterCount).isOne();
 
-        assertThat(result.length).isEqualTo(2);
-        assertThat(result[0]).as("one row inserted").isEqualTo(1);
+        assertThat(result).hasSize(2);
+        assertThat(result[0]).as("one row inserted").isOne();
         assertThat(result[1]).as("two rows updated").isEqualTo(3);
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
@@ -153,14 +153,14 @@ public class StatementInvocationHandlerTest {
     }
 
     @Test
-    public void testClearBatch() throws Exception {
+    void clearBatch() throws Exception {
         statement.addBatch("insert into emp ( id, name ) values (2, 'bar');");
-        assertThat(testListener.beforeCount).isEqualTo(0);
-        assertThat(testListener.afterCount).isEqualTo(0);
+        assertThat(testListener.beforeCount).isZero();
+        assertThat(testListener.afterCount).isZero();
 
         statement.clearBatch();
-        assertThat(testListener.beforeCount).isEqualTo(0);
-        assertThat(testListener.afterCount).isEqualTo(0);
+        assertThat(testListener.beforeCount).isZero();
+        assertThat(testListener.afterCount).isZero();
 
         List<QueryInfo> beforeQueries = lastQueryListener.getBeforeQueries();
         assertThat(beforeQueries).isEmpty();
@@ -174,7 +174,7 @@ public class StatementInvocationHandlerTest {
      * Reported in https://github.com/ttddyy/datasource-proxy/issues/9.
      */
     @Test
-    public void testExecuteBatchShouldClearQueries() throws Exception {
+    void executeBatchShouldClearQueries() throws Exception {
 
         statement.addBatch("insert into emp ( id, name )values (100, 'FOO');");
         statement.addBatch("insert into emp ( id, name )values (200, 'BAR');");
@@ -186,9 +186,8 @@ public class StatementInvocationHandlerTest {
 
         statement.addBatch("insert into emp ( id, name )values (300, 'BAZ');");
 
-        int[] updateCount = statement.executeBatch();  // 2nd execution
-        assertThat(updateCount).isNotNull();
-        assertThat(updateCount.length).isEqualTo(1);
+        int[] updateCount = statement.executeBatch();  assertThat(updateCount)
+                .hasSize(1);
 
         // second execution should pass only one QueryInfo to listener
         afterQueries = lastQueryListener.getAfterQueries();
@@ -202,7 +201,7 @@ public class StatementInvocationHandlerTest {
     }
 
     @Test
-    public void sameInstanceOfExecutionInfo() throws Exception {
+    void sameInstanceOfExecutionInfo() throws Exception {
         final String query = "select * from emp;";
         statement.executeQuery(query);
 

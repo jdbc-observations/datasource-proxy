@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 
@@ -13,15 +13,15 @@ import static org.mockito.Mockito.mock;
  *
  * @author Tadaya Tsuyukubo
  */
-public class GlobalConnectionIdManagerTest {
+class GlobalConnectionIdManagerTest {
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         GlobalConnectionIdManager.resetId();
     }
 
     @Test
-    public void getId() {
+    void getId() {
         GlobalConnectionIdManager idManager1 = new GlobalConnectionIdManager();
         GlobalConnectionIdManager idManager2 = new GlobalConnectionIdManager();
 
@@ -34,7 +34,7 @@ public class GlobalConnectionIdManagerTest {
     }
 
     @Test
-    public void getOpenConnectionIds() {
+    void getOpenConnectionIds() {
         GlobalConnectionIdManager idManager = new GlobalConnectionIdManager();
         assertThat(idManager.getOpenConnectionIds()).isEmpty();
 

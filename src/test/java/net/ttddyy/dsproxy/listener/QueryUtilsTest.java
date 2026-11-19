@@ -1,7 +1,7 @@
 package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.QueryType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -9,23 +9,23 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  */
-public class QueryUtilsTest {
+class QueryUtilsTest {
 
     @Test
-    public void removeCommentAndWhiteSpace(){
-        assertThat(QueryUtils.removeCommentAndWhiteSpace("")).isEqualTo("");
-        assertThat(QueryUtils.removeCommentAndWhiteSpace(null)).isEqualTo(null);
-        assertThat(QueryUtils.removeCommentAndWhiteSpace("--\n")).isEqualTo("");
-        assertThat(QueryUtils.removeCommentAndWhiteSpace("\n\n\n")).isEqualTo("");
-        assertThat(QueryUtils.removeCommentAndWhiteSpace("/* abc  */")).isEqualTo("");
-        assertThat(QueryUtils.removeCommentAndWhiteSpace("  ")).isEqualTo("");
+    void removeCommentAndWhiteSpace(){
+        assertThat(QueryUtils.removeCommentAndWhiteSpace("")).isEmpty();
+        assertThat(QueryUtils.removeCommentAndWhiteSpace(null)).isNull();
+        assertThat(QueryUtils.removeCommentAndWhiteSpace("--\n")).isEmpty();
+        assertThat(QueryUtils.removeCommentAndWhiteSpace("\n\n\n")).isEmpty();
+        assertThat(QueryUtils.removeCommentAndWhiteSpace("/* abc  */")).isEmpty();
+        assertThat(QueryUtils.removeCommentAndWhiteSpace("  ")).isEmpty();
         assertThat(QueryUtils.removeCommentAndWhiteSpace("  aa  ")).isEqualTo("aa");
         assertThat(QueryUtils.removeCommentAndWhiteSpace(" aa")).isEqualTo("aa");
         assertThat(QueryUtils.removeCommentAndWhiteSpace("aa ")).isEqualTo("aa");
     }
 
     @Test
-    public void getQueryType(){
+    void getQueryType(){
         assertThat(QueryUtils.getQueryType("")).isEqualTo(QueryType.OTHER);
         assertThat(QueryUtils.getQueryType(null)).isEqualTo(QueryType.OTHER);
         assertThat(QueryUtils.getQueryType("SELECT")).isEqualTo(QueryType.SELECT);

@@ -2,9 +2,9 @@ package net.ttddyy.dsproxy;
 
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.SingleQueryCountHolder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,15 +19,15 @@ import static org.mockito.Mockito.mock;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class DataSourceQueryCountListenerTest {
+class DataSourceQueryCountListenerTest {
 
     private QueryInfo queryInfo;
     private List<QueryInfo> queryInfoList;
     private ExecutionInfo executionInfo;
     private DataSourceQueryCountListener listener;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         queryInfo = mock(QueryInfo.class);
 
         queryInfoList = new ArrayList<QueryInfo>();
@@ -42,42 +42,42 @@ public class DataSourceQueryCountListenerTest {
         listener = new DataSourceQueryCountListener();
     }
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         QueryCountHolder.clear();
     }
 
 
     @Test
-    public void testSelect() {
+    void select() {
         given(queryInfo.getQuery()).willReturn("select * from emp");
         listener.afterQuery(executionInfo, queryInfoList);
         verifyQueryCount(1, 0, 0, 0, 0);
     }
 
     @Test
-    public void testInsert() {
+    void insert() {
         given(queryInfo.getQuery()).willReturn("insert into emp (id) values (1)");
         listener.afterQuery(executionInfo, queryInfoList);
         verifyQueryCount(0, 1, 0, 0, 0);
     }
 
     @Test
-    public void testUpdate() {
+    void update() {
         given(queryInfo.getQuery()).willReturn("update emp set id = 1");
         listener.afterQuery(executionInfo, queryInfoList);
         verifyQueryCount(0, 0, 1, 0, 0);
     }
 
     @Test
-    public void testDelete() {
+    void delete() {
         given(queryInfo.getQuery()).willReturn("delete * from emp");
         listener.afterQuery(executionInfo, queryInfoList);
         verifyQueryCount(0, 0, 0, 1, 0);
     }
 
     @Test
-    public void testOther() {
+    void other() {
         given(queryInfo.getQuery()).willReturn("create table aa(...)");
         listener.afterQuery(executionInfo, queryInfoList);
         verifyQueryCount(0, 0, 0, 0, 1);
@@ -85,7 +85,7 @@ public class DataSourceQueryCountListenerTest {
 
     private void verifyQueryCount(int select, int insert, int update, int delete, int other) {
         QueryCount queryCount = QueryCountHolder.get("testDS");
-        assertThat(queryCount).isNotNull().isInstanceOf(QueryCount.class);
+        assertThat(queryCount).isInstanceOf(QueryCount.class);
         assertThat(queryCount.getTime()).as("total time").isEqualTo(123L);
         assertThat(queryCount.getSelect()).as("num of select").isEqualTo(select);
         assertThat(queryCount.getInsert()).as("num of insert").isEqualTo(insert);
@@ -95,7 +95,7 @@ public class DataSourceQueryCountListenerTest {
     }
 
     @Test
-    public void statement() {
+    void statement() {
         given(queryInfo.getQuery()).willReturn("foo");
         given(executionInfo.getStatementType()).willReturn(StatementType.STATEMENT);
         listener.afterQuery(executionInfo, queryInfoList);
@@ -104,7 +104,7 @@ public class DataSourceQueryCountListenerTest {
     }
 
     @Test
-    public void prepared() {
+    void prepared() {
         given(queryInfo.getQuery()).willReturn("foo");
         given(executionInfo.getStatementType()).willReturn(StatementType.PREPARED);
         listener.afterQuery(executionInfo, queryInfoList);
@@ -112,7 +112,7 @@ public class DataSourceQueryCountListenerTest {
     }
 
     @Test
-    public void callable() {
+    void callable() {
         given(queryInfo.getQuery()).willReturn("foo");
         given(executionInfo.getStatementType()).willReturn(StatementType.CALLABLE);
         listener.afterQuery(executionInfo, queryInfoList);
@@ -121,7 +121,7 @@ public class DataSourceQueryCountListenerTest {
 
     private void verifyStatementTypeCount(int statement, int prepared, int callable) {
         QueryCount queryCount = QueryCountHolder.get("testDS");
-        assertThat(queryCount).isNotNull().isInstanceOf(QueryCount.class);
+        assertThat(queryCount).isInstanceOf(QueryCount.class);
         assertThat(queryCount.getStatement()).as("num of statement").isEqualTo(statement);
         assertThat(queryCount.getPrepared()).as("num of prepared").isEqualTo(prepared);
         assertThat(queryCount.getCallable()).as("num of callable").isEqualTo(callable);
@@ -129,7 +129,7 @@ public class DataSourceQueryCountListenerTest {
 
 
     @Test
-    public void threadLocalHolderStrategy() throws Exception {
+    void threadLocalHolderStrategy() throws Exception {
         // perform on main thread
         QueryInfo queryInfo = mock(QueryInfo.class);
         given(queryInfo.getQuery()).willReturn("insert into emp (id) values (1)");
@@ -150,10 +150,10 @@ public class DataSourceQueryCountListenerTest {
                 // verify count within thread
                 try {
                     QueryCount queryCount = QueryCountHolder.get("testDS");
-                    assertThat(queryCount).isNotNull().isInstanceOf(QueryCount.class);
-                    assertThat(queryCount.getSelect()).as("num of select").isEqualTo(1);
-                    assertThat(queryCount.getInsert()).as("num of insert").isEqualTo(0);
-                    assertThat(queryCount.getTotal()).as("num of queries").isEqualTo(1);
+                    assertThat(queryCount).isInstanceOf(QueryCount.class);
+                    assertThat(queryCount.getSelect()).as("num of select").isOne();
+                    assertThat(queryCount.getInsert()).as("num of insert").isZero();
+                    assertThat(queryCount.getTotal()).as("num of queries").isOne();
                 } catch (Throwable e) {
                     failureInThread.set(e);
                 }
@@ -170,15 +170,15 @@ public class DataSourceQueryCountListenerTest {
 
         // verify count in main thread
         QueryCount queryCount = QueryCountHolder.get("testDS");
-        assertThat(queryCount).isNotNull().isInstanceOf(QueryCount.class);
-        assertThat(queryCount.getSelect()).as("num of select").isEqualTo(0);
-        assertThat(queryCount.getInsert()).as("num of insert").isEqualTo(1);
-        assertThat(queryCount.getTotal()).as("num of queries").isEqualTo(1);
+        assertThat(queryCount).isInstanceOf(QueryCount.class);
+        assertThat(queryCount.getSelect()).as("num of select").isZero();
+        assertThat(queryCount.getInsert()).as("num of insert").isOne();
+        assertThat(queryCount.getTotal()).as("num of queries").isOne();
 
     }
 
     @Test
-    public void instanceHolderStrategy() throws Exception {
+    void instanceHolderStrategy() throws Exception {
         // set query count holder strategy
         listener.setQueryCountStrategy(new SingleQueryCountHolder());
 
@@ -205,9 +205,9 @@ public class DataSourceQueryCountListenerTest {
                     queryCountFromHolderInDifferentThread.set(queryCountFromThreadLocal);
 
                     QueryCount queryCount = listener.getQueryCountStrategy().getOrCreateQueryCount("testDS");
-                    assertThat(queryCount).isNotNull().isInstanceOf(QueryCount.class);
-                    assertThat(queryCount.getSelect()).as("num of select").isEqualTo(1);
-                    assertThat(queryCount.getInsert()).as("num of insert").isEqualTo(1);
+                    assertThat(queryCount).isInstanceOf(QueryCount.class);
+                    assertThat(queryCount.getSelect()).as("num of select").isOne();
+                    assertThat(queryCount.getInsert()).as("num of insert").isOne();
                     assertThat(queryCount.getTotal()).as("num of queries").isEqualTo(2);
                 } catch (Throwable e) {
                     failureInThread.set(e);
@@ -225,9 +225,9 @@ public class DataSourceQueryCountListenerTest {
 
         // verify count in main thread
         QueryCount queryCount = listener.getQueryCountStrategy().getOrCreateQueryCount("testDS");
-        assertThat(queryCount).isNotNull().isInstanceOf(QueryCount.class);
-        assertThat(queryCount.getSelect()).as("num of select").isEqualTo(1);
-        assertThat(queryCount.getInsert()).as("num of insert").isEqualTo(1);
+        assertThat(queryCount).isInstanceOf(QueryCount.class);
+        assertThat(queryCount.getSelect()).as("num of select").isOne();
+        assertThat(queryCount.getInsert()).as("num of insert").isOne();
         assertThat(queryCount.getTotal()).as("num of queries").isEqualTo(2);
 
         // verify QueryCountHolder.get() performed in separate thread

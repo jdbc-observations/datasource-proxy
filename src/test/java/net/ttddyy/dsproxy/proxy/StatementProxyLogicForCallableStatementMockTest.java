@@ -7,7 +7,7 @@ import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.io.InputStream;
@@ -34,8 +34,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -47,11 +45,11 @@ import static org.mockito.Mockito.when;
  *
  * @author Tadaya Tsuyukubo
  */
-public class StatementProxyLogicForCallableStatementMockTest {
+class StatementProxyLogicForCallableStatementMockTest {
     private static final String DS_NAME = "myDS";
 
     @Test
-    public void testExecuteWithNoParam() throws Throwable {
+    void executeWithNoParam() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -69,7 +67,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
     }
 
     @Test
-    public void testExecuteWithParamByPosition() throws Throwable {
+    void executeWithParamByPosition() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -90,7 +88,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
     }
 
     @Test
-    public void testExecuteWithParamByName() throws Throwable {
+    void executeWithParamByName() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -111,7 +109,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
     }
 
     @Test
-    public void testExecuteUpdateWithNoParam() throws Throwable {
+    void executeUpdateWithNoParam() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -129,7 +127,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
     }
 
     @Test
-    public void testExecuteUpdateWithParamByPosition() throws Throwable {
+    void executeUpdateWithParamByPosition() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -150,7 +148,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
     }
 
     @Test
-    public void testExecuteUpdateWithParamByName() throws Throwable {
+    void executeUpdateWithParamByName() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -171,7 +169,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
     }
 
     @Test
-    public void testExecuteQueryWithNoParam() throws Throwable {
+    void executeQueryWithNoParam() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -189,7 +187,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
     }
 
     @Test
-    public void testExecuteQueryWithParamByPosition() throws Throwable {
+    void executeQueryWithParamByPosition() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -210,7 +208,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
     }
 
     @Test
-    public void testExecuteQueryWithParamByName() throws Throwable {
+    void executeQueryWithParamByName() throws Throwable {
         final String query = "{call procedure_name}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -233,7 +231,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testExecuteBatch() throws Throwable {
+    void executeBatch() throws Throwable {
         final String query = "{call procedure_a}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -279,7 +277,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testBatchWithClearBatch() throws Throwable {
+    void batchWithClearBatch() throws Throwable {
         final String query = "{call procedure_a}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -322,7 +320,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testBatchWithClearParameters() throws Throwable {
+    void batchWithClearParameters() throws Throwable {
         final String query = "{call procedure_a}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -361,7 +359,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testClearParameters() throws Throwable {
+    void clearParameters() throws Throwable {
         final String query = "{call procedure_a}";
 
         CallableStatement stat = mock(CallableStatement.class);
@@ -677,7 +675,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
         }
         if (ParamStatus.NO_PARAM != paramStatus) {
             if (ParamStatus.BY_POSITION == paramStatus) {
-                assertThat(queryArgs).hasSize(PARAMS.size());
+                assertThat(queryArgs).hasSameSizeAs(PARAMS);
 
                 for (int i = 0; i < PARAMS.size(); i++) {
                     Param param = PARAMS.get(i);
@@ -728,7 +726,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
 
 
     @Test
-    public void testGetTarget() throws Throwable {
+    void getTarget() throws Throwable {
         CallableStatement orig = mock(CallableStatement.class);
         StatementProxyLogic logic = getProxyLogic(orig, null, null, null);
 
@@ -739,7 +737,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
     }
 
     @Test
-    public void testUnwrap() throws Throwable {
+    void unwrap() throws Throwable {
         CallableStatement mock = mock(CallableStatement.class);
         when(mock.unwrap(String.class)).thenReturn("called");
 
@@ -752,7 +750,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
     }
 
     @Test
-    public void testIsWrapperFor() throws Throwable {
+    void isWrapperFor() throws Throwable {
         CallableStatement mock = mock(CallableStatement.class);
         when(mock.isWrapperFor(String.class)).thenReturn(true);
 
@@ -766,7 +764,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
     }
 
     @Test
-    public void testGetConnection() throws Throwable {
+    void getConnection() throws Throwable {
         Connection conn = mock(Connection.class);
         CallableStatement stat = mock(CallableStatement.class);
 
@@ -780,7 +778,7 @@ public class StatementProxyLogicForCallableStatementMockTest {
     }
 
     @Test
-    public void methodExecutionListener() throws Throwable {
+    void methodExecutionListener() throws Throwable {
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().methodListener(listener).build();
 
@@ -798,20 +796,19 @@ public class StatementProxyLogicForCallableStatementMockTest {
         Method method = CallableStatement.class.getMethod("wasNull");
         logic.invoke(null, method, new Object[]{});
 
-        assertTrue(listener.isBeforeMethodCalled());
-        assertTrue(listener.isAfterMethodCalled());
+        assertThat(listener.isBeforeMethodCalled()).isTrue();
+        assertThat(listener.isAfterMethodCalled()).isTrue();
 
         MethodExecutionContext executionContext = listener.getAfterMethodContext();
-        assertSame("method should come from interface",
-                CallableStatement.class, executionContext.getMethod().getDeclaringClass());
-        assertSame("wasNull", executionContext.getMethod().getName());
-        assertSame(cs, executionContext.getTarget());
-        assertSame(connectionInfo, executionContext.getConnectionInfo());
+        assertThat(executionContext.getMethod().getDeclaringClass()).as("method should come from interface").isSameAs(CallableStatement.class);
+        assertThat(executionContext.getMethod().getName()).isSameAs("wasNull");
+        assertThat(executionContext.getTarget()).isSameAs(cs);
+        assertThat(executionContext.getConnectionInfo()).isSameAs(connectionInfo);
 
     }
 
     @Test
-    public void proxyConfig() throws Throwable {
+    void proxyConfig() throws Throwable {
         CallableStatement cs = mock(CallableStatement.class);
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
         StatementProxyLogic logic = StatementProxyLogic.Builder.create()

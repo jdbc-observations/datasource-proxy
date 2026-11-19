@@ -4,7 +4,7 @@ import net.ttddyy.dsproxy.listener.CallCheckMethodExecutionListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.jdk.ConnectionInvocationHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
@@ -13,9 +13,6 @@ import java.lang.reflect.Proxy;
 import java.sql.Connection;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -23,12 +20,12 @@ import static org.mockito.Mockito.when;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class DataSourceProxyLogicMockTest {
+class DataSourceProxyLogicMockTest {
 
     private static final String DS_NAME = "myDS";
 
     @Test
-    public void testGetConnection() throws Throwable {
+    void getConnection() throws Throwable {
         DataSource ds = mock(DataSource.class);
         DataSourceProxyLogic logic = getProxyLogic(ds);
 
@@ -62,7 +59,7 @@ public class DataSourceProxyLogicMockTest {
     }
 
     @Test
-    public void testGetTarget() throws Throwable {
+    void getTarget() throws Throwable {
         DataSource ds = mock(DataSource.class);
         DataSourceProxyLogic logic = getProxyLogic(ds);
 
@@ -75,7 +72,7 @@ public class DataSourceProxyLogicMockTest {
     }
 
     @Test
-    public void testUnwrap() throws Throwable {
+    void unwrap() throws Throwable {
         DataSource ds = mock(DataSource.class);
         when(ds.unwrap(String.class)).thenReturn("called");
 
@@ -89,7 +86,7 @@ public class DataSourceProxyLogicMockTest {
     }
 
     @Test
-    public void testIsWrapperFor() throws Throwable {
+    void isWrapperFor() throws Throwable {
         DataSource ds = mock(DataSource.class);
         when(ds.isWrapperFor(String.class)).thenReturn(true);
 
@@ -103,7 +100,7 @@ public class DataSourceProxyLogicMockTest {
     }
 
     @Test
-    public void testToString() throws Throwable {
+    void testToString() throws Throwable {
         DataSource ds = mock(DataSource.class);
 
         when(ds.toString()).thenReturn("my ds");
@@ -116,7 +113,7 @@ public class DataSourceProxyLogicMockTest {
     }
 
     @Test
-    public void testHashCode() throws Throwable {
+    void testHashCode() throws Throwable {
         DataSource ds = mock(DataSource.class);
         DataSourceProxyLogic logic = getProxyLogic(ds);
 
@@ -127,7 +124,7 @@ public class DataSourceProxyLogicMockTest {
     }
 
     @Test
-    public void testEquals() throws Throwable {
+    void equals() throws Throwable {
         DataSource ds = mock(DataSource.class);
         DataSourceProxyLogic logic = getProxyLogic(ds);
 
@@ -143,7 +140,7 @@ public class DataSourceProxyLogicMockTest {
     }
 
     @Test
-    public void methodExecutionListener() throws Throwable {
+    void methodExecutionListener() throws Throwable {
         CallCheckMethodExecutionListener listener = new CallCheckMethodExecutionListener();
 
         DataSource ds = mock(DataSource.class);
@@ -159,19 +156,18 @@ public class DataSourceProxyLogicMockTest {
         Method method = DataSource.class.getMethod("getConnection");
         logic.invoke(null, method, new Object[]{});
 
-        assertTrue(listener.isBeforeMethodCalled());
-        assertTrue(listener.isAfterMethodCalled());
+        assertThat(listener.isBeforeMethodCalled()).isTrue();
+        assertThat(listener.isAfterMethodCalled()).isTrue();
 
         MethodExecutionContext executionContext = listener.getAfterMethodContext();
-        assertSame("method should come from interface",
-                DataSource.class, executionContext.getMethod().getDeclaringClass());
-        assertSame("getConnection", executionContext.getMethod().getName());
-        assertSame(ds, executionContext.getTarget());
+        assertThat(executionContext.getMethod().getDeclaringClass()).as("method should come from interface").isSameAs(DataSource.class);
+        assertThat(executionContext.getMethod().getName()).isSameAs("getConnection");
+        assertThat(executionContext.getTarget()).isSameAs(ds);
         assertThat(executionContext.getConnectionInfo()).isNotNull();
     }
 
     @Test
-    public void proxyConfig() throws Throwable {
+    void proxyConfig() throws Throwable {
         DataSource ds = mock(DataSource.class);
         ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
         DataSourceProxyLogic logic = new DataSourceProxyLogic(ds, proxyConfig);

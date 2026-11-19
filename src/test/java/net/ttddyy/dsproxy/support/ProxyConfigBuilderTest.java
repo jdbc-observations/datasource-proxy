@@ -5,7 +5,7 @@ import net.ttddyy.dsproxy.listener.CompositeMethodListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -15,10 +15,10 @@ import static org.mockito.Mockito.mock;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class ProxyConfigBuilderTest {
+class ProxyConfigBuilderTest {
 
     @Test
-    public void multipleQueryListeners() {
+    void multipleQueryListeners() {
         ProxyConfig proxyConfig;
         List<QueryExecutionListener> listeners;
         ChainListener chainListener;
@@ -59,7 +59,7 @@ public class ProxyConfigBuilderTest {
     }
 
     @Test
-    public void multipleMethodListeners() {
+    void multipleMethodListeners() {
         ProxyConfig proxyConfig;
         List<MethodExecutionListener> listeners;
         CompositeMethodListener compositeListener;

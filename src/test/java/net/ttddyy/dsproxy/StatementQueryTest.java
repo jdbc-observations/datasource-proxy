@@ -7,43 +7,42 @@ import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.SimpleResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
 import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
 
 /**
  * @author Tadaya Tsuyukubo
  */
-public class StatementQueryTest {
+class StatementQueryTest {
 
     private DataSource jdbcDataSource;
 
 
-    @Before
-    public void setup() throws Exception {
+    @BeforeEach
+    void setup() throws Exception {
         // real datasource
         jdbcDataSource = TestUtils.getDataSourceWithData();
     }
 
-    @After
-    public void teardown() throws Exception {
+    @AfterEach
+    void teardown() throws Exception {
         TestUtils.shutdown(jdbcDataSource);
     }
 
     @Test
-    public void resultSetProxy() throws Throwable {
+    void resultSetProxy() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
 
@@ -72,7 +71,7 @@ public class StatementQueryTest {
     }
 
     @Test
-    public void generatedKeysProxy() throws Throwable {
+    void generatedKeysProxy() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
 
@@ -113,7 +112,7 @@ public class StatementQueryTest {
     }
 
     @Test
-    public void autoRetrieveGeneratedKeys() throws Throwable {
+    void autoRetrieveGeneratedKeys() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
 
@@ -173,7 +172,7 @@ public class StatementQueryTest {
     }
 
     @Test
-    public void autoRetrieveGeneratedKeysWithExecuteQueryMethod() throws Throwable {
+    void autoRetrieveGeneratedKeysWithExecuteQueryMethod() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
 
@@ -203,7 +202,7 @@ public class StatementQueryTest {
     }
 
     @Test
-    public void autoRetrieveGeneratedKeysWithQueryExecutionMethods() throws Throwable {
+    void autoRetrieveGeneratedKeysWithQueryExecutionMethods() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
 
@@ -283,7 +282,7 @@ public class StatementQueryTest {
     }
 
     @Test
-    public void autoRetrieveGeneratedKeysWithBatchStatement() throws Throwable {
+    void autoRetrieveGeneratedKeysWithBatchStatement() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
 
@@ -352,7 +351,7 @@ public class StatementQueryTest {
 
 
     @Test
-    public void getGeneratedKeys() throws Throwable {
+    void getGeneratedKeys() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
 
@@ -408,7 +407,7 @@ public class StatementQueryTest {
     }
 
     @Test
-    public void getGeneratedKeysWithAutoRetrievalAndAutoCloseFalse() throws Throwable {
+    void getGeneratedKeysWithAutoRetrievalAndAutoCloseFalse() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
 
@@ -442,7 +441,7 @@ public class StatementQueryTest {
     }
 
     @Test
-    public void getGeneratedKeysWithAutoRetrievalAndAutoCloseTrue() throws Throwable {
+    void getGeneratedKeysWithAutoRetrievalAndAutoCloseTrue() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
 
@@ -469,7 +468,7 @@ public class StatementQueryTest {
     }
 
     @Test
-    public void autoCloseGeneratedKeysProxy() throws Throwable {
+    void autoCloseGeneratedKeysProxy() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
 
@@ -478,12 +477,7 @@ public class StatementQueryTest {
             @Override
             public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
                 ResultSet generatedKeys = execInfo.getGeneratedKeys();
-                boolean isClosed = true;
-                try {
-                    isClosed = generatedKeys.isClosed();
-                } catch (SQLException ex) {
-                    fail("Failed to call generatedKeys.isClosed() message=" + ex.getMessage());
-                }
+                boolean isClosed = Assertions.assertDoesNotThrow(generatedKeys::isClosed, "Failed to call generatedKeys.isClosed() message=");
                 assertThat(isClosed).isFalse();
                 listenerReceivedExecutionInfo.set(execInfo);
             }
@@ -504,11 +498,10 @@ public class StatementQueryTest {
         ResultSet generatedKeys = info.getGeneratedKeys();
         assertThat(generatedKeys.isClosed()).isFalse();
 
-        try {
-            generatedKeys.close();
-        } catch (SQLException ex) {
-            fail("closing non closed ResultSet should success. message=" + ex.getMessage());
-        }
+        final ResultSet keysToClose = generatedKeys;
+        Assertions.assertDoesNotThrow(() -> {
+            keysToClose.close();
+        }, "closing non closed ResultSet should success. message=");
 
         listenerReceivedExecutionInfo.set(null);
 
@@ -529,7 +522,7 @@ public class StatementQueryTest {
     }
 
     @Test
-    public void autoRetrieveGeneratedKeysWithGeneratedKeysProxy() throws Throwable {
+    void autoRetrieveGeneratedKeysWithGeneratedKeysProxy() throws Throwable {
         Connection conn = this.jdbcDataSource.getConnection();
         Statement st = conn.createStatement();
 

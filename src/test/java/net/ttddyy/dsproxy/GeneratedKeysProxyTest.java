@@ -4,7 +4,7 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.hsqldb.jdbc.JDBCDataSource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,10 +21,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author Reda.Housni-Alaoui
  */
-public class GeneratedKeysProxyTest {
+class GeneratedKeysProxyTest {
 
     @Test
-    public void checkThatResultSetCanBeConsumedMoreThanOnce() throws Exception {
+    void checkThatResultSetCanBeConsumedMoreThanOnce() throws Exception {
         JDBCDataSource dataSourceWithData = dataSourceWithData();
 
         GeneratedKeysProxyTest.LoggingExecutionListener listener = new GeneratedKeysProxyTest.LoggingExecutionListener();

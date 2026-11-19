@@ -2,8 +2,8 @@ package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,18 +15,18 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Tadaya Tsuyukubo
  * @since 1.4.1
  */
-public class CommonsSlowQueryListenerTest {
+class CommonsSlowQueryListenerTest {
 
     private CommonsSlowQueryListener listener;
 
-    @Before
-    public void setup() throws Exception {
+    @BeforeEach
+    void setup() throws Exception {
         this.listener = new CommonsSlowQueryListener();
         this.listener.setLog(new InMemoryCommonsLog());
     }
 
     @Test
-    public void testLogMessage() throws Exception {
+    void logMessage() throws Exception {
         this.listener.setThreshold(50);
         this.listener.setThresholdTimeUnit(TimeUnit.MILLISECONDS);
 

@@ -2,7 +2,7 @@ package net.ttddyy.dsproxy.proxy;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.jdk.JdkJdbcProxyFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -15,10 +15,10 @@ import static org.mockito.Mockito.mock;
 /**
  * @author Tadaya Tsuyukubo
  */
-public class NativeJdbcExtractUtilsTest {
+class NativeJdbcExtractUtilsTest {
 
     @Test
-    public void testGetConnection() {
+    void getConnection() {
         Connection source = mock(Connection.class);
         Connection proxy = new JdkJdbcProxyFactory().createConnection(source, getConnectionInfo(), ProxyConfig.Builder.create().build());
 
@@ -32,7 +32,7 @@ public class NativeJdbcExtractUtilsTest {
     }
 
     @Test
-    public void testGetStatement() {
+    void getStatement() {
         Statement source = mock(Statement.class);
         Statement proxy = new JdkJdbcProxyFactory().createStatement(source, getConnectionInfo(), null, ProxyConfig.Builder.create().build());
 
@@ -46,7 +46,7 @@ public class NativeJdbcExtractUtilsTest {
     }
 
     @Test
-    public void testGetPreparedStatement() {
+    void getPreparedStatement() {
         PreparedStatement source = mock(PreparedStatement.class);
         PreparedStatement proxy = new JdkJdbcProxyFactory().createPreparedStatement(source, null, getConnectionInfo(), null, ProxyConfig.Builder.create().build(), false);
 
@@ -60,7 +60,7 @@ public class NativeJdbcExtractUtilsTest {
     }
 
     @Test
-    public void testGetCallableStatement() {
+    void getCallableStatement() {
         CallableStatement source = mock(CallableStatement.class);
         CallableStatement proxy = new JdkJdbcProxyFactory().createCallableStatement(source, null, getConnectionInfo(), null, ProxyConfig.Builder.create().build());
 

@@ -2,8 +2,8 @@ package net.ttddyy.dsproxy.listener.logging;
 
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,19 +15,19 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Tadaya Tsuyukubo
  * @since 1.4.1
  */
-public class SLF4JSlowQueryListenerTest {
+class SLF4JSlowQueryListenerTest {
 
     private SLF4JSlowQueryListener listener;
 
-    @Before
-    public void setup() throws Exception {
+    @BeforeEach
+    void setup() throws Exception {
         this.listener = new SLF4JSlowQueryListener();
         this.listener.setLogger(new InMemorySLF4JLogger());
     }
 
 
     @Test
-    public void testLogMessage() throws Exception {
+    void logMessage() throws Exception {
         this.listener.setThreshold(50);
         this.listener.setThresholdTimeUnit(TimeUnit.MILLISECONDS);
 
@@ -48,7 +48,7 @@ public class SLF4JSlowQueryListenerTest {
     }
 
     @Test
-    public void defaultLoggerName() {
+    void defaultLoggerName() {
         SLF4JSlowQueryListener listener = new SLF4JSlowQueryListener();
         assertThat(listener.getLogger().getName())
                 .as("Default logger name").isEqualTo("net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener");

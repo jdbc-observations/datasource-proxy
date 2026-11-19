@@ -2,8 +2,8 @@ package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.QueryCount;
 import net.ttddyy.dsproxy.QueryCountHolder;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -13,15 +13,15 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Tadaya Tsuyukubo
  * @since 1.4.2
  */
-public class ThreadQueryCountHolderTest {
+class ThreadQueryCountHolderTest {
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         QueryCountHolder.clear();
     }
 
     @Test
-    public void getQueryCount() throws Exception {
+    void getQueryCount() throws Exception {
         final ThreadQueryCountHolder holder = new ThreadQueryCountHolder();
         QueryCount queryCount = holder.getOrCreateQueryCount("testDS");
         queryCount.incrementSuccess();
@@ -39,13 +39,13 @@ public class ThreadQueryCountHolderTest {
         thread.start();
         thread.join();
 
-        assertThat(queryCount.getSuccess()).isEqualTo(1);
-        assertThat(queryCount.getFailure()).isEqualTo(0);
+        assertThat(queryCount.getSuccess()).isOne();
+        assertThat(queryCount.getFailure()).isZero();
 
         QueryCount fromThread = queryCountReference.get();
         assertThat(fromThread).isNotNull().isNotSameAs(queryCount);
-        assertThat(fromThread.getSuccess()).isEqualTo(0);
-        assertThat(fromThread.getFailure()).isEqualTo(1);
+        assertThat(fromThread.getSuccess()).isZero();
+        assertThat(fromThread.getFailure()).isOne();
 
     }
 

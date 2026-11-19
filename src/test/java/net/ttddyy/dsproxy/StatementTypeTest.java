@@ -1,6 +1,6 @@
 package net.ttddyy.dsproxy;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -13,10 +13,10 @@ import static org.mockito.Mockito.mock;
  * @author Tadaya Tsuyukubo
  * @since 1.3.1
  */
-public class StatementTypeTest {
+class StatementTypeTest {
 
     @Test
-    public void valueOf() {
+    void valueOf() {
         Statement statement = mock(Statement.class);
         PreparedStatement prepared = mock(PreparedStatement.class);
         CallableStatement callable = mock(CallableStatement.class);
