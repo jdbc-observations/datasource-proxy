@@ -115,7 +115,7 @@ public class ProxyConfig {
             return this;
         }
 
-        public Builder resultSetProxyLogicFactory(ResultSetProxyLogicFactory resultSetProxyLogicFactory) {
+        public Builder resultSetProxyLogicFactory(@Nullable ResultSetProxyLogicFactory resultSetProxyLogicFactory) {
             this.resultSetProxyLogicFactory = resultSetProxyLogicFactory;
             return this;
         }
@@ -140,7 +140,7 @@ public class ProxyConfig {
             return this;
         }
 
-        public Builder generatedKeysProxyLogicFactory(ResultSetProxyLogicFactory generatedKeysProxyLogicFactory) {
+        public Builder generatedKeysProxyLogicFactory(@Nullable ResultSetProxyLogicFactory generatedKeysProxyLogicFactory) {
             this.generatedKeysConfig.proxyLogicFactory = generatedKeysProxyLogicFactory;
             return this;
         }

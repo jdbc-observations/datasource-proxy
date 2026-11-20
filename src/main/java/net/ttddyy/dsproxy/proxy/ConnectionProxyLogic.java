@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
+import org.jspecify.annotations.Nullable;
+
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
@@ -34,7 +36,7 @@ public class ConnectionProxyLogic extends ProxyLogicSupport {
     }
 
     @Override
-    protected Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable {
+    protected @Nullable Object performProxyLogic(Object proxy, Method method, @Nullable Object @Nullable [] args, MethodExecutionContext methodContext) throws Throwable {
         final Connection proxyConnection = (Connection) proxy;
         final String methodName = method.getName();
 

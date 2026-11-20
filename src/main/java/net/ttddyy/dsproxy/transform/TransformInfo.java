@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.transform;
 
+import org.jspecify.annotations.Nullable;
+
 import java.sql.Statement;
 
 /**
@@ -27,7 +29,7 @@ import java.sql.Statement;
 public class TransformInfo {
 
     private Class<? extends Statement> clazz;
-    private String dataSourceName;
+    private @Nullable String dataSourceName;
     private String query;
     private boolean isBatch;
     private int count;
@@ -35,7 +37,7 @@ public class TransformInfo {
     public TransformInfo() {
     }
 
-    public TransformInfo(Class<? extends Statement> clazz, String dataSourceName, String query, boolean batch, int count) {
+    public TransformInfo(Class<? extends Statement> clazz, @Nullable String dataSourceName, String query, boolean batch, int count) {
         this.clazz = clazz;
         this.dataSourceName = dataSourceName;
         this.query = query;
@@ -51,7 +53,7 @@ public class TransformInfo {
         this.clazz = clazz;
     }
 
-    public String getDataSourceName() {
+    public @Nullable String getDataSourceName() {
         return dataSourceName;
     }
 

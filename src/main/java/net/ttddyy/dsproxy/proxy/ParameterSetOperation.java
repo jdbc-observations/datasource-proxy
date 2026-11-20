@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
+import org.jspecify.annotations.Nullable;
+
 import java.lang.reflect.Method;
 
 /**
@@ -41,7 +43,7 @@ public class ParameterSetOperation {
     public ParameterSetOperation() {
     }
 
-    public ParameterSetOperation(Method method, Object[] args) {
+    public ParameterSetOperation(Method method, @Nullable Object[] args) {
         this.method = method;
         this.args = args;
     }
@@ -59,7 +61,7 @@ public class ParameterSetOperation {
         return args;
     }
 
-    public void setArgs(Object[] args) {
+    public void setArgs(@Nullable Object[] args) {
         this.args = args;
     }
 }

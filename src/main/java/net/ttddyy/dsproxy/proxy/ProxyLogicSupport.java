@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
+import org.jspecify.annotations.Nullable;
+
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
@@ -30,7 +32,7 @@ public abstract class ProxyLogicSupport {
         return COMMON_METHOD_NAMES.contains(methodName);
     }
 
-    protected Object handleCommonMethod(String methodName, Object original, ProxyConfig proxyConfig, Object[] args) throws SQLException {
+    protected Object handleCommonMethod(String methodName, Object original, ProxyConfig proxyConfig, @Nullable Object @Nullable [] args) throws SQLException {
         if ("toString".equals(methodName)) {
             // special treat for toString method
             final StringBuilder sb = new StringBuilder();
@@ -63,7 +65,7 @@ public abstract class ProxyLogicSupport {
     /**
      * Invoke the method on target object.
      */
-    protected Object proceedExecution(Method method, Object target, Object[] args) throws Throwable {
+    protected @Nullable Object proceedExecution(Method method, Object target, @Nullable Object @Nullable [] args) throws Throwable {
         try {
             return method.invoke(target, args);
         } catch (InvocationTargetException ex) {
@@ -75,7 +77,7 @@ public abstract class ProxyLogicSupport {
      * Populates {@link MethodExecutionContext} and invokes the before- and after-method callbacks.
      */
     protected Object proceedMethodExecution(ProxyConfig proxyConfig, Object original, ConnectionInfo connectionInfo,
-                                            Object proxy, Method method, Object[] args) throws Throwable {
+                                            Object proxy, Method method, @Nullable Object @Nullable [] args) throws Throwable {
         MethodExecutionContext methodContext = MethodExecutionContext.Builder.create()
                 .target(original)
                 .proxy(proxy)
@@ -121,7 +123,7 @@ public abstract class ProxyLogicSupport {
     }
 
 
-    protected abstract Object performProxyLogic(Object proxy, Method method, Object[] args,
+    protected abstract @Nullable Object performProxyLogic(Object proxy, Method method, @Nullable Object @Nullable [] args,
                                                 MethodExecutionContext methodContext) throws Throwable;
 
 }

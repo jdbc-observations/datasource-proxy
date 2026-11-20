@@ -27,7 +27,7 @@ public interface QueryExecutionContext {
 
     @Nullable Method getMethod();
 
-    Object @Nullable [] getMethodArgs();
+    @Nullable Object @Nullable [] getMethodArgs();
 
     @Nullable Object getResult();
 
@@ -62,7 +62,7 @@ public interface QueryExecutionContext {
      * @param type expected value type
      * @return stored value, or {@code null}
      */
-    <T> T getCustomValue(String key, Class<T> type);
+    <T> @Nullable T getCustomValue(String key, Class<T> type);
 
     /**
      * Store key/value pair. Mainly used for passing values between before and after callbacks.

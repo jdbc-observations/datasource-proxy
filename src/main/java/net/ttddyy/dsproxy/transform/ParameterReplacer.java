@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.transform;
 
+import org.jspecify.annotations.Nullable;
+
 
 import net.ttddyy.dsproxy.proxy.ParameterKey;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
@@ -32,13 +34,13 @@ public class ParameterReplacer {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getValue(int index) {
+    public <T> @Nullable T getValue(int index) {
         ParameterKey parameterKey = new ParameterKey(index);
         return (T) this.parameters.get(parameterKey).getArgs()[1];  // index 1 in arguments is always value
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getValue(String paramName) {
+    public <T> @Nullable T getValue(String paramName) {
         ParameterKey parameterKey = new ParameterKey(paramName);
         return (T) this.parameters.get(parameterKey).getArgs()[1];  // index 1 in arguments is always value
     }

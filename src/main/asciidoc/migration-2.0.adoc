@@ -27,14 +27,21 @@ The taglib, JNDI, servlet and Spring support classes are removed. Replacements:
   a `Duration` carries its unit.
 * Code that prints `MethodExecutionContext.getElapsedTime()` still compiles but now prints a `Duration` such as
   `PT0.012S` instead of a number. Use `.toMillis()` to keep the old output.
-* `Stopwatch`, `StopwatchFactory`, `SystemStopwatchFactory`, `NanoTimeStopwatchFactory`, `ProxyConfig.Builder.stopwatchFactory`
-  and `SlowQueryListener.setStopwatchFactory` are removed. Elapsed time is always measured with `System.nanoTime()` and
+* `Stopwatch`, `StopwatchFactory`, `SystemStopwatchFactory`, `NanoTimeStopwatchFactory`, `ProxyConfig.Builder.stopwatchFactory`,
+  `ProxyConfig.getStopwatchFactory()` and `SlowQueryListener.setStopwatchFactory` are removed. Elapsed time is always measured with `System.nanoTime()` and
   reported as `Duration`. `TracingMethodListener` prints milliseconds.
 * `NativeJdbcExtractUtils` is now a `final` class with a private constructor; call its static methods directly.
 * `SlowQueryListener.setThreshold(long)` + `setThresholdTimeUnit(TimeUnit)` -> `setThreshold(Duration)`; `getThreshold()`
   returns `Duration`; `getThresholdTimeUnit()` is removed. The threshold must be positive: `0` (which in 1.x reported every
   query as slow) and negative values are rejected with `IllegalArgumentException`, and using the listener without a
   threshold throws `IllegalStateException`.
+  The `ProxyDataSourceBuilder.logSlowQueryBy*(0, unit)` methods accept the value but `build()` throws
+  `IllegalArgumentException`.
+* `SlowQueryListener.RunningQueryContext` (for subclasses): the constructor is now `(QueryExecutionContext, long startNanos)`;
+  the `startTimeInMills` and `stopwatch` fields are replaced by `startNanos`, and its fields are `final`.
+* datasource-proxy now depends on `org.jspecify:jspecify` and every package is `@NullMarked`. Values that can be null are
+  marked `@Nullable` (for example `QueryExecutionContext.getThrowable()`, `getCustomValue(...)`). Kotlin callers see
+  these as nullable types instead of platform types, and NullAway or similar checkers will flag unchecked uses.
 * If `afterQuery` or `afterMethod` throws while the JDBC call itself failed, the listener's exception is added to the JDBC exception
   with `addSuppressed` and the JDBC exception is rethrown. In 1.x the listener's exception replaced it.
 * `QueryExecutionListener` and `MethodExecutionListener` are removed. Implement `ProxyDataSourceListener`:

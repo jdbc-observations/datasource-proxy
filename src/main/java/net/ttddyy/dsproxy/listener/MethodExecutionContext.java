@@ -23,7 +23,7 @@ public class MethodExecutionContext {
     public static class Builder {
         private @Nullable Object target;
         private @Nullable Method method;
-        private Object @Nullable [] methodArgs;
+        private @Nullable Object @Nullable [] methodArgs;
         private @Nullable Object result;
         private @Nullable Throwable thrown;
         private Duration elapsedTime = Duration.ZERO;
@@ -98,7 +98,7 @@ public class MethodExecutionContext {
 
     private @Nullable Object target;
     private @Nullable Method method;
-    private Object @Nullable [] methodArgs;
+    private @Nullable Object @Nullable [] methodArgs;
     private @Nullable Object result;
     private @Nullable Throwable thrown;
     private Duration elapsedTime = Duration.ZERO;
@@ -131,7 +131,7 @@ public class MethodExecutionContext {
         this.method = method;
     }
 
-    public Object @Nullable [] getMethodArgs() {
+    public @Nullable Object @Nullable [] getMethodArgs() {
         return methodArgs;
     }
 
@@ -143,7 +143,7 @@ public class MethodExecutionContext {
      *
      * @param methodArgs method parameters
      */
-    public void setMethodArgs(Object @Nullable [] methodArgs) {
+    public void setMethodArgs(@Nullable Object @Nullable [] methodArgs) {
         this.methodArgs = methodArgs;
     }
 
@@ -230,7 +230,7 @@ public class MethodExecutionContext {
     /**
      * @since 1.5.1
      */
-    public <T> T getCustomValue(String key, Class<T> type) {
+    public <T> @Nullable T getCustomValue(String key, Class<T> type) {
         return type.cast(this.customValues.get(key));
     }
 

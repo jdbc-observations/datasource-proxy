@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
+import org.jspecify.annotations.Nullable;
+
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 
@@ -107,7 +109,7 @@ public class RepeatableReadResultSetProxyLogic extends ProxyLogicSupport impleme
     }
 
     @Override
-    protected Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable {
+    protected @Nullable Object performProxyLogic(Object proxy, Method method, @Nullable Object @Nullable [] args, MethodExecutionContext methodContext) throws Throwable {
         final String methodName = method.getName();
 
         if (!METHODS_TO_INTERCEPT.contains(methodName)) {
@@ -230,7 +232,7 @@ public class RepeatableReadResultSetProxyLogic extends ProxyLogicSupport impleme
      * @param args   method arguments
      * @return {@code true} if value is considered as {@code null}.
      */
-    protected boolean isNullValue(Object value, Method method, Object[] args) {
+    protected boolean isNullValue(@Nullable Object value, Method method, @Nullable Object @Nullable [] args) {
         return value == null;
     }
 

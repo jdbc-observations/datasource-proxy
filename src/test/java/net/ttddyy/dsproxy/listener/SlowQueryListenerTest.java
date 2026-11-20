@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -49,14 +50,16 @@ public class SlowQueryListenerTest {
         final List<QueryInfo> queryInfo = new ArrayList<QueryInfo>();
 
         final AtomicInteger counter = new AtomicInteger();
+        final AtomicReference<Duration> elapsedHolder = new AtomicReference<>();
+        final AtomicReference<QueryExecutionContext> contextHolder = new AtomicReference<>();
 
+        // the callback runs on the executor thread: capture, then assert on the test thread
         SlowQueryListener listener = new SlowQueryListener() {
             @Override
             protected void onSlowQuery(QueryExecutionContext execInfo, Duration elapsedTime) {
                 counter.incrementAndGet();
-                assertThat(elapsedTime).isGreaterThanOrEqualTo(Duration.ofMillis(50));
-                assertThat(execInfo).isSameAs(executionInfo);
-                assertThat(execInfo.getQueries()).isSameAs(queryInfo);
+                elapsedHolder.set(elapsedTime);
+                contextHolder.set(execInfo);
             }
         };
         listener.setThreshold(Duration.ofMillis(50));
@@ -67,6 +70,9 @@ public class SlowQueryListenerTest {
         listener.afterQuery(withQueries(executionInfo, queryInfo));
 
         assertThat(counter.get()).as("callback should be called, and it should be once").isOne();
+        assertThat(elapsedHolder.get()).isGreaterThanOrEqualTo(Duration.ofMillis(50));
+        assertThat(contextHolder.get()).isSameAs(executionInfo);
+        assertThat(contextHolder.get().getQueries()).isSameAs(queryInfo);
     }
 
     @Test

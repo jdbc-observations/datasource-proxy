@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
+import org.jspecify.annotations.Nullable;
+
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
@@ -29,7 +31,7 @@ public class DataSourceProxyLogic extends ProxyLogicSupport {
     }
 
     @Override
-    protected Object performProxyLogic(Object proxy, Method method, Object[] args, MethodExecutionContext methodContext) throws Throwable {
+    protected @Nullable Object performProxyLogic(Object proxy, Method method, @Nullable Object @Nullable [] args, MethodExecutionContext methodContext) throws Throwable {
         JdbcProxyFactory jdbcProxyFactory = this.proxyConfig.getJdbcProxyFactory();
         ConnectionIdManager connectionIdManager = this.proxyConfig.getConnectionIdManager();
 

@@ -26,7 +26,7 @@ public class MutableQueryExecutionContext implements QueryExecutionContext {
     private @Nullable String connectionId;
     private int isolationLevel;
     private @Nullable Method method;
-    private Object @Nullable [] methodArgs;
+    private @Nullable Object @Nullable [] methodArgs;
     private @Nullable Object result;
     private @Nullable Throwable throwable;
     private boolean success;
@@ -76,11 +76,11 @@ public class MutableQueryExecutionContext implements QueryExecutionContext {
     }
 
     @Override
-    public Object @Nullable [] getMethodArgs() {
+    public @Nullable Object @Nullable [] getMethodArgs() {
         return this.methodArgs;
     }
 
-    public void setMethodArgs(Object @Nullable [] methodArgs) {
+    public void setMethodArgs(@Nullable Object @Nullable [] methodArgs) {
         this.methodArgs = methodArgs;
     }
 
@@ -175,7 +175,7 @@ public class MutableQueryExecutionContext implements QueryExecutionContext {
     }
 
     @Override
-    public <T> T getCustomValue(String key, Class<T> type) {
+    public <T> @Nullable T getCustomValue(String key, Class<T> type) {
         return type.cast(this.customValues.get(key));
     }
 

@@ -140,13 +140,13 @@ public class ProxyDataSourceBuilder {
     private @Nullable JdbcProxyFactory jdbcProxyFactory;
     private @Nullable ConnectionIdManager connectionIdManager;
 
-    private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
+    private @Nullable ResultSetProxyLogicFactory resultSetProxyLogicFactory;
 
     private boolean autoRetrieveGeneratedKeys;
     private @Nullable Boolean retrieveGeneratedKeysForBatchStatement;
     private @Nullable Boolean retrieveGeneratedKeysForBatchPreparedOrCallable;
     private boolean autoCloseGeneratedKeys;
-    private ResultSetProxyLogicFactory generatedKeysProxyLogicFactory;
+    private @Nullable ResultSetProxyLogicFactory generatedKeysProxyLogicFactory;
 
     public static ProxyDataSourceBuilder create() {
         return new ProxyDataSourceBuilder();
