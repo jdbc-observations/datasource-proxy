@@ -32,6 +32,17 @@ class NativeJdbcExtractUtilsTest {
     }
 
     @Test
+    void getConnectionUnwrapsNestedProxies() {
+        Connection source = mock(Connection.class);
+        JdkJdbcProxyFactory factory = new JdkJdbcProxyFactory();
+        ProxyConfig proxyConfig = ProxyConfig.Builder.create().build();
+        Connection inner = factory.createConnection(source, getConnectionInfo(), proxyConfig);
+        Connection outer = factory.createConnection(inner, getConnectionInfo(), proxyConfig);
+
+        assertThat(NativeJdbcExtractUtils.getConnection(outer)).isSameAs(source);
+    }
+
+    @Test
     void getStatement() {
         Statement source = mock(Statement.class);
         Statement proxy = new JdkJdbcProxyFactory().createStatement(source, getConnectionInfo(), null, ProxyConfig.Builder.create().build());

@@ -61,6 +61,21 @@ if (connection instanceof ProxyJdbcObject) {
 }
 ----
 
+`NativeJdbcExtractUtils` does this for you. It unwraps every datasource-proxy layer, including nested proxies, and
+returns the argument unchanged if it is not a proxy:
+
+[source,java]
+----
+Connection original = NativeJdbcExtractUtils.getConnection(connection);
+Statement originalStatement = NativeJdbcExtractUtils.getStatement(statement);
+// also: getPreparedStatement(...), getCallableStatement(...)
+----
+
+Use it when you need the object the proxy wraps, for example to call a driver-specific API.
+It differs from JDBC `unwrap(Class)`: `NativeJdbcExtractUtils` strips only datasource-proxy proxies, so the result
+may still be a connection-pool wrapper. `unwrap(Class)` is passed on to the driver or pool and returns an object of
+the type you ask for.
+
 
 ==== DriverManager and Connection Support
 

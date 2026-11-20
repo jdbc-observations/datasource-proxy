@@ -30,6 +30,7 @@ The taglib, JNDI, servlet and Spring support classes are removed. Replacements:
 * `Stopwatch`, `StopwatchFactory`, `SystemStopwatchFactory`, `NanoTimeStopwatchFactory`, `ProxyConfig.Builder.stopwatchFactory`
   and `SlowQueryListener.setStopwatchFactory` are removed. Elapsed time is always measured with `System.nanoTime()` and
   reported as `Duration`. `TracingMethodListener` prints milliseconds.
+* `NativeJdbcExtractUtils` is now a `final` class with a private constructor; call its static methods directly.
 * `SlowQueryListener.setThreshold(long)` + `setThresholdTimeUnit(TimeUnit)` -> `setThreshold(Duration)`; `getThreshold()`
   returns `Duration`; `getThresholdTimeUnit()` is removed. The threshold must be positive: `0` (which in 1.x reported every
   query as slow) and negative values are rejected with `IllegalArgumentException`, and using the listener without a
