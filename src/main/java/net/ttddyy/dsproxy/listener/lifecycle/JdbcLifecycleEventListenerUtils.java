@@ -19,21 +19,17 @@ import java.util.Set;
  */
 public class JdbcLifecycleEventListenerUtils {
 
-    private static final Map<String, Method> beforeLifecycleMethodsByMethodName = new HashMap<String, Method>();
-    private static final Map<String, Method> afterLifecycleMethodsByMethodName = new HashMap<String, Method>();
+    private static final Set<String> JDBC_METHOD_NAMES = getDeclaredMethodNames(
+            Wrapper.class,
+            DataSource.class, CommonDataSource.class,
+            Connection.class,
+            Statement.class, PreparedStatement.class, CallableStatement.class,
+            ResultSet.class);
 
-    static {
-
-        Set<String> methodNames = getDeclaredMethodNames(
-                Wrapper.class,
-                DataSource.class, CommonDataSource.class,
-                Connection.class,
-                Statement.class, PreparedStatement.class, CallableStatement.class,
-                ResultSet.class);
-
-        beforeLifecycleMethodsByMethodName.putAll(getLifecycleMethodByMethodName(methodNames, true));
-        afterLifecycleMethodsByMethodName.putAll(getLifecycleMethodByMethodName(methodNames, false));
-    }
+    private static final Map<String, Method> beforeLifecycleMethodsByMethodName =
+            getLifecycleMethodByMethodName(JDBC_METHOD_NAMES, true);
+    private static final Map<String, Method> afterLifecycleMethodsByMethodName =
+            getLifecycleMethodByMethodName(JDBC_METHOD_NAMES, false);
 
 
     /**
@@ -46,18 +42,20 @@ public class JdbcLifecycleEventListenerUtils {
      * @return a map that key is the method name string and value is lifecycle method
      */
     private static Map<String, Method> getLifecycleMethodByMethodName(Set<String> methodNames, boolean isBefore) {
-        Map<String, Method> lifecycleMethodByName = new HashMap<String, Method>();
+        Map<String, Method> lifecycleMethodByName = new HashMap<>();
         for (Method method : JdbcLifecycleEventListener.class.getMethods()) {
             lifecycleMethodByName.put(method.getName(), method);
         }
 
-        Map<String, Method> result = new HashMap<String, Method>();
+        Map<String, Method> result = new HashMap<>();
         for (String methodName : methodNames) {
             String lifecycleMethodName = (isBefore ? "before" : "after") + capitalize(methodName);
             Method targetLifecycleMethod = lifecycleMethodByName.get(lifecycleMethodName);
-            result.put(methodName, targetLifecycleMethod);
+            if (targetLifecycleMethod != null) {  // Map.copyOf rejects null; lookup still returns null for these
+                result.put(methodName, targetLifecycleMethod);
+            }
         }
-        return result;
+        return Map.copyOf(result);
     }
 
     private static String capitalize(String methodName) {
@@ -68,7 +66,7 @@ public class JdbcLifecycleEventListenerUtils {
     }
 
     private static Set<String> getDeclaredMethodNames(Class<?>... classes) {
-        Set<String> names = new HashSet<String>();
+        Set<String> names = new HashSet<>();
         for (Class<?> clazz : classes) {
             names.addAll(getDeclaredMethodNames(clazz));
         }
@@ -76,7 +74,7 @@ public class JdbcLifecycleEventListenerUtils {
     }
 
     private static Set<String> getDeclaredMethodNames(Class<?> clazz) {
-        Set<String> names = new HashSet<String>();
+        Set<String> names = new HashSet<>();
         for (Method method : clazz.getDeclaredMethods()) {
             names.add(method.getName());
         }

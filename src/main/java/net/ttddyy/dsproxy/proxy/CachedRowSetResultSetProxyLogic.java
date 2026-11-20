@@ -23,9 +23,9 @@ import java.sql.SQLException;
 public class CachedRowSetResultSetProxyLogic extends ProxyLogicSupport implements ResultSetProxyLogic {
 
     private ResultSet resultSet;  // original result set
-    private ResultSet cachedRowSet;
-    private ConnectionInfo connectionInfo;
-    private ProxyConfig proxyConfig;
+    private final ResultSet cachedRowSet;
+    private final ConnectionInfo connectionInfo;
+    private final ProxyConfig proxyConfig;
 
     // The default implementation does not support isClosed(), so handle it in this class.
     protected boolean supportIsClosedMethod = true;

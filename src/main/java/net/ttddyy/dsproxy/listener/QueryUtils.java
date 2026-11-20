@@ -28,28 +28,13 @@ public class QueryUtils {
         }
 
         final char firstChar = trimmedQuery.charAt(0);
-        final QueryType type;
-        switch (firstChar) {
-            case 'S':
-            case 's':
-                type = QueryType.SELECT;
-                break;
-            case 'I':
-            case 'i':
-                type = QueryType.INSERT;
-                break;
-            case 'U':
-            case 'u':
-                type = QueryType.UPDATE;
-                break;
-            case 'D':
-            case 'd':
-                type = QueryType.DELETE;
-                break;
-            default:
-                type = QueryType.OTHER;
-        }
-        return type;
+        return switch (firstChar) {
+            case 'S', 's' -> QueryType.SELECT;
+            case 'I', 'i' -> QueryType.INSERT;
+            case 'U', 'u' -> QueryType.UPDATE;
+            case 'D', 'd' -> QueryType.DELETE;
+            default -> QueryType.OTHER;
+        };
     }
 
 }

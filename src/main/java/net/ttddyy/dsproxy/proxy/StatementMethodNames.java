@@ -1,8 +1,6 @@
 package net.ttddyy.dsproxy.proxy;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import static net.ttddyy.dsproxy.proxy.ProxyLogicSupport.COMMON_METHOD_NAMES;
@@ -24,8 +22,7 @@ public interface StatementMethodNames {
     static final String GET_CONNECTION_METHOD = "getConnection";
     static final String GET_RESULTSET_METHOD = "getResultSet";
 
-    static final Set<String> PARAMETER_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("setArray", "setAsciiStream", "setBigDecimal",
+    static final Set<String> PARAMETER_METHODS = Set.of("setArray", "setAsciiStream", "setBigDecimal",
                     "setBinaryStream", "setBlob", "setBoolean", "setByte",
                     "setBytes", "setCharacterStream", "setClob", "setDate",
                     "setDouble", "setFloat", "setInt", "setLong",
@@ -35,66 +32,33 @@ public interface StatementMethodNames {
                     "setRowId", "setNString", "setNCharacterStream", "setNClob", "setSQLXML",
                     "clearParameters",
                     PARAMETER_METHOD_REGISTER_OUT_PARAMETER  // CallableStatement output parameter
-            ))
-    );
+            );
 
-    static final Set<String> BATCH_PARAM_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("addBatch", "clearBatch"))
-    );
+    static final Set<String> BATCH_PARAM_METHODS = Set.of("addBatch", "clearBatch");
 
-    static final Set<String> BATCH_EXEC_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList(
+    static final Set<String> BATCH_EXEC_METHODS = Set.of(
                     "executeBatch",
                     "executeLargeBatch"  // JDBC 4.2 (Java1.8)
-            ))
-    );
-    static final Set<String> QUERY_EXEC_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList(
+            );
+    static final Set<String> QUERY_EXEC_METHODS = Set.of(
                     "executeQuery", "executeUpdate", "execute",
                     "executeLargeUpdate"  // JDBC 4.2 (Java1.8)
-            ))
-    );
-    static final Set<String> EXEC_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>() {
-                {
-                    addAll(BATCH_EXEC_METHODS);
-                    addAll(QUERY_EXEC_METHODS);
-                }
-            }
-    );
+            );
+    static final Set<String> EXEC_METHODS = union(BATCH_EXEC_METHODS, QUERY_EXEC_METHODS);
 
-    static final Set<String> JDBC4_METHODS = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList("unwrap", "isWrapperFor"))
-    );
+    static final Set<String> JDBC4_METHODS = Set.of("unwrap", "isWrapperFor");
 
-    static final Set<String> METHODS_TO_RETURN_RESULTSET = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList(
+    static final Set<String> METHODS_TO_RETURN_RESULTSET = Set.of(
                     "executeQuery", GET_GENERATED_KEYS_METHOD, GET_RESULTSET_METHOD  // from Statement
-            ))
-    );
+            );
 
-    static final Set<String> METHODS_TO_INTERCEPT = Collections.unmodifiableSet(
-            new HashSet<String>() {
-                {
-                    addAll(PARAMETER_METHODS);
-                    addAll(BATCH_PARAM_METHODS);
-                    addAll(EXEC_METHODS);
-                    addAll(JDBC4_METHODS);
-                    addAll(METHODS_TO_RETURN_RESULTSET);
-                    addAll(COMMON_METHOD_NAMES);
-                    add(GET_CONNECTION_METHOD);
-                }
-            }
-    );
+    static final Set<String> METHODS_TO_INTERCEPT = union(PARAMETER_METHODS, BATCH_PARAM_METHODS, EXEC_METHODS, JDBC4_METHODS, METHODS_TO_RETURN_RESULTSET, COMMON_METHOD_NAMES, Set.of(GET_CONNECTION_METHOD));
 
-    static final Set<String> METHODS_TO_OPERATE_PARAMETER = Collections.unmodifiableSet(
-            new HashSet<String>() {
-                {
-                    addAll(PARAMETER_METHODS);
-                    addAll(BATCH_PARAM_METHODS);
-                }
-            }
-    );
+    static final Set<String> METHODS_TO_OPERATE_PARAMETER = union(PARAMETER_METHODS, BATCH_PARAM_METHODS);
 
+    @SafeVarargs
+    private static Set<String> union(Set<String>... sets) {
+        return Set.copyOf(Arrays.stream(sets).flatMap(Set::stream).toList());
+    }
 
 }

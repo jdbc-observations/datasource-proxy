@@ -14,9 +14,9 @@ import java.sql.ResultSet;
  */
 public class SimpleResultSetProxyLogic extends ProxyLogicSupport implements ResultSetProxyLogic {
 
-    private ResultSet resultSet;
-    private ConnectionInfo connectionInfo;
-    private ProxyConfig proxyConfig;
+    private final ResultSet resultSet;
+    private final ConnectionInfo connectionInfo;
+    private final ProxyConfig proxyConfig;
 
     public SimpleResultSetProxyLogic(ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
         this.resultSet = resultSet;

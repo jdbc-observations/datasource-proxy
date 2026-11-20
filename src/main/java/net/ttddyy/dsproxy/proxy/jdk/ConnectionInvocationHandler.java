@@ -15,7 +15,7 @@ import java.sql.Connection;
  */
 public class ConnectionInvocationHandler implements InvocationHandler {
 
-    private ConnectionProxyLogic delegate;
+    private final ConnectionProxyLogic delegate;
 
     public ConnectionInvocationHandler(Connection connection, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
         this.delegate = new ConnectionProxyLogic(connection, connectionInfo, proxyConfig);

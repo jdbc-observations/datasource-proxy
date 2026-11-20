@@ -18,7 +18,7 @@ import java.sql.ResultSet;
  */
 public class ResultSetInvocationHandler implements InvocationHandler {
 
-    private ResultSetProxyLogic delegate;
+    private final ResultSetProxyLogic delegate;
 
     public ResultSetInvocationHandler(ResultSetProxyLogicFactory factory, ResultSet resultSet, ConnectionInfo connectionInfo, ProxyConfig proxyConfig) {
         this.delegate = factory.create(resultSet, connectionInfo, proxyConfig);

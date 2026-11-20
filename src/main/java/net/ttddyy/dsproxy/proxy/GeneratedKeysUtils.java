@@ -3,8 +3,6 @@ package net.ttddyy.dsproxy.proxy;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -13,20 +11,10 @@ import java.util.Set;
  */
 public class GeneratedKeysUtils {
 
-    private static final Set<String> METHOD_NAMES_TO_CHECK;
-
-    static {
-        Set<String> methodNames = new HashSet<String>();
-        methodNames.add("prepareStatement");
-        methodNames.add("execute");
-        methodNames.add("executeUpdate");
-        methodNames.add("executeLargeUpdate");
-
-        // Whether to generate keys for batch execution depends on the driver implementation.
-        methodNames.add("executeBatch");
-        methodNames.add("executeLargeBatch");
-        METHOD_NAMES_TO_CHECK = Collections.unmodifiableSet(methodNames);
-    }
+    private static final Set<String> METHOD_NAMES_TO_CHECK = Set.of(
+            "prepareStatement", "execute", "executeUpdate", "executeLargeUpdate",
+            // Whether to generate keys for batch execution depends on the driver implementation.
+            "executeBatch", "executeLargeBatch");
 
     /**
      * Returns whether the given method supports automatic generated-key retrieval.

@@ -30,34 +30,19 @@ public class QueryCount {
 
     public void increment(QueryType queryType) {
         switch (queryType) {
-            case SELECT:
-                incrementSelect();
-                break;
-            case INSERT:
-                incrementInsert();
-                break;
-            case UPDATE:
-                incrementUpdate();
-                break;
-            case DELETE:
-                incrementDelete();
-                break;
-            case OTHER:
-                incrementOther();
+            case SELECT -> incrementSelect();
+            case INSERT -> incrementInsert();
+            case UPDATE -> incrementUpdate();
+            case DELETE -> incrementDelete();
+            case OTHER -> incrementOther();
         }
     }
 
     public void increment(StatementType statementType) {
         switch (statementType) {
-            case STATEMENT:
-                incrementStatement();
-                break;
-            case PREPARED:
-                incrementPrepared();
-                break;
-            case CALLABLE:
-                incrementCallable();
-                break;
+            case STATEMENT -> incrementStatement();
+            case PREPARED -> incrementPrepared();
+            case CALLABLE -> incrementCallable();
         }
     }
 

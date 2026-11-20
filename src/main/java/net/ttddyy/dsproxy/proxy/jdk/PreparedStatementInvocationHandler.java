@@ -17,7 +17,7 @@ import java.sql.PreparedStatement;
  */
 public class PreparedStatementInvocationHandler implements InvocationHandler {
 
-    private StatementProxyLogic delegate;
+    private final StatementProxyLogic delegate;
 
     public PreparedStatementInvocationHandler(
             PreparedStatement ps, String query, ConnectionInfo connectionInfo,

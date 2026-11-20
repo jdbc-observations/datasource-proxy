@@ -17,7 +17,7 @@ import java.sql.Connection;
  */
 public class CallableStatementInvocationHandler implements InvocationHandler {
 
-    private StatementProxyLogic delegate;
+    private final StatementProxyLogic delegate;
 
     public CallableStatementInvocationHandler(
             CallableStatement cs, String query, ConnectionInfo connectionInfo,

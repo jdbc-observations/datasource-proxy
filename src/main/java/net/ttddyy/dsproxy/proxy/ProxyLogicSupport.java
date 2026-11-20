@@ -9,9 +9,6 @@ import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.sql.Wrapper;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -22,13 +19,11 @@ import java.util.Set;
  */
 public abstract class ProxyLogicSupport {
 
-    protected static final Set<String> COMMON_METHOD_NAMES = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList(
+    protected static final Set<String> COMMON_METHOD_NAMES = Set.of(
                     "getTarget", "getProxyConfig",
                     "getDataSourceName",
                     "unwrap", "isWrapperFor",
-                    "toString", "equals", "hashCode"))
-    );
+                    "toString", "equals", "hashCode");
 
 
     protected boolean isCommonMethod(String methodName) {

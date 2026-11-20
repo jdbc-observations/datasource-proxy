@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
  */
 public class DataSourceInvocationHandler implements InvocationHandler {
 
-    private DataSourceProxyLogic delegate;
+    private final DataSourceProxyLogic delegate;
 
     public DataSourceInvocationHandler(DataSource dataSource, ProxyConfig proxyConfig) {
         delegate = new DataSourceProxyLogic(dataSource, proxyConfig);

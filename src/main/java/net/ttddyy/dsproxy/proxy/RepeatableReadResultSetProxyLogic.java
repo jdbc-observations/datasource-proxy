@@ -9,12 +9,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import static java.lang.Boolean.TRUE;
 import static java.lang.String.format;
@@ -29,33 +28,15 @@ import static java.lang.String.format;
  */
 public class RepeatableReadResultSetProxyLogic extends ProxyLogicSupport implements ResultSetProxyLogic {
 
-    private static final Set<String> METHODS_TO_INTERCEPT = Collections.unmodifiableSet(
-            new HashSet<String>() {
-                {
-                    // getDeclaredMethods does NOT include parent class methods(e.g: Wrapper#unwrap()"
-                    for (Method method : ResultSet.class.getDeclaredMethods()) {
-                        add(method.getName());
-                    }
-                    add("toString");
-                    add("getTarget"); // from ProxyJdbcObject
-                    add("getProxyConfig"); // from ProxyJdbcObject
-                }
-            }
-    );
+    private static final Set<String> METHODS_TO_INTERCEPT = Stream.concat(
+            // getDeclaredMethods does NOT include parent class methods(e.g: Wrapper#unwrap()"
+            Arrays.stream(ResultSet.class.getDeclaredMethods()).map(Method::getName),
+            Stream.of("toString", "getTarget", "getProxyConfig")  // getTarget/getProxyConfig from ProxyJdbcObject
+    ).collect(Collectors.toUnmodifiableSet());
 
-    private static final Map<String, Method> NUMBER_X_VALUE_METHOD_PER_NUMERIC_TYPE = Collections.unmodifiableMap(new HashMap<String, Method>() {
-        private static final String METHOD_SUFFIX = "Value";
-
-        {
-            for (Method method : Number.class.getDeclaredMethods()) {
-                String methodName = method.getName();
-                if (!methodName.endsWith(METHOD_SUFFIX)) {
-                    continue;
-                }
-                put(methodName.substring(0, methodName.indexOf(METHOD_SUFFIX)), method);
-            }
-        }
-    });
+    private static final Map<String, Method> NUMBER_X_VALUE_METHOD_PER_NUMERIC_TYPE = Arrays.stream(Number.class.getDeclaredMethods())
+            .filter(method -> method.getName().endsWith("Value"))
+            .collect(Collectors.toUnmodifiableMap(method -> method.getName().substring(0, method.getName().indexOf("Value")), method -> method));
 
     private static final Object UNCONSUMED_RESULT_COLUMN = new Object();
 

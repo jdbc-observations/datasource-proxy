@@ -16,8 +16,8 @@ import java.sql.Connection;
  */
 public class DataSourceProxyLogic extends ProxyLogicSupport {
 
-    private DataSource dataSource;
-    private ProxyConfig proxyConfig;
+    private final DataSource dataSource;
+    private final ProxyConfig proxyConfig;
 
     public DataSourceProxyLogic(DataSource dataSource, ProxyConfig proxyConfig) {
         this.dataSource = dataSource;

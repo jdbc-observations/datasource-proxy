@@ -12,7 +12,7 @@ public class ParameterKey implements Comparable<ParameterKey> {
 
     private int index;
     private String name;
-    private ParameterKeyType type;
+    private final ParameterKeyType type;
 
     public ParameterKey(int index) {
         this.index = index;
