@@ -4,6 +4,7 @@ import net.ttddyy.dsproxy.support.SLF4JLogUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,8 +22,7 @@ public class SLF4JSlowQueryListener extends AbstractSlowQueryLoggingListener {
     }
 
     public SLF4JSlowQueryListener(long threshold, TimeUnit thresholdTimeUnit) {
-        this.threshold = threshold;
-        this.thresholdTimeUnit = thresholdTimeUnit;
+        setThreshold(Duration.of(threshold, thresholdTimeUnit.toChronoUnit()));
     }
 
     @Override

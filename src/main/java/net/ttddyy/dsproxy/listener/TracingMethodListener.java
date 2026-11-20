@@ -1,8 +1,6 @@
 package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.ConnectionInfo;
-import net.ttddyy.dsproxy.proxy.NanoTimeStopwatchFactory;
-import net.ttddyy.dsproxy.proxy.ProxyConfig;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicLong;
@@ -66,10 +64,7 @@ public class TracingMethodListener implements ProxyDataSourceListener {
         Class<?> targetClass = executionContext.getTarget().getClass();
 
         Throwable thrown = executionContext.getThrown();
-        ProxyConfig proxyConfig = executionContext.getProxyConfig();
-        // keep the 1.x output unit: nanoseconds with NanoTimeStopwatchFactory, otherwise milliseconds
-        long execTime = proxyConfig != null && proxyConfig.getStopwatchFactory() instanceof NanoTimeStopwatchFactory
-                ? executionContext.getElapsedTime().toNanos() : executionContext.getElapsedTime().toMillis();
+        long execTime = executionContext.getElapsedTime().toMillis();
 
         ConnectionInfo connectionInfo = executionContext.getConnectionInfo();
         String connectionId = "-1";

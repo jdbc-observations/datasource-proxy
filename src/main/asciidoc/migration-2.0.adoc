@@ -27,7 +27,13 @@ The taglib, JNDI, servlet and Spring support classes are removed. Replacements:
   a `Duration` carries its unit.
 * Code that prints `MethodExecutionContext.getElapsedTime()` still compiles but now prints a `Duration` such as
   `PT0.012S` instead of a number. Use `.toMillis()` to keep the old output.
-* Custom `Stopwatch` / `StopwatchFactory` implementations must return a `Duration` from `Stopwatch.getElapsedTime()`.
+* `Stopwatch`, `StopwatchFactory`, `SystemStopwatchFactory`, `NanoTimeStopwatchFactory`, `ProxyConfig.Builder.stopwatchFactory`
+  and `SlowQueryListener.setStopwatchFactory` are removed. Elapsed time is always measured with `System.nanoTime()` and
+  reported as `Duration`. `TracingMethodListener` prints milliseconds.
+* `SlowQueryListener.setThreshold(long)` + `setThresholdTimeUnit(TimeUnit)` -> `setThreshold(Duration)`; `getThreshold()`
+  returns `Duration`; `getThresholdTimeUnit()` is removed. The threshold must be positive: `0` (which in 1.x reported every
+  query as slow) and negative values are rejected with `IllegalArgumentException`, and using the listener without a
+  threshold throws `IllegalStateException`.
 * If `afterQuery` or `afterMethod` throws while the JDBC call itself failed, the listener's exception is added to the JDBC exception
   with `addSuppressed` and the JDBC exception is rethrown. In 1.x the listener's exception replaced it.
 * `QueryExecutionListener` and `MethodExecutionListener` are removed. Implement `ProxyDataSourceListener`:
@@ -45,13 +51,10 @@ The taglib, JNDI, servlet and Spring support classes are removed. Replacements:
   instead of a `QueryExecutionListener`.
 * Built-in listeners (`DataSourceQueryCountListener`, `SlowQueryListener`, the query-logging and slow-query-logging
   listeners, `TracingMethodListener`) now implement `ProxyDataSourceListener`. Subclass hooks change accordingly:
-  `SlowQueryListener.onSlowQuery(QueryExecutionContext, long)`, `getExecutionInfoKey(QueryExecutionContext)`;
+  `SlowQueryListener.onSlowQuery(QueryExecutionContext, Duration)` (the `Duration` is the elapsed time at the check and replaces the start time in milliseconds), `getExecutionInfoKey(QueryExecutionContext)`;
   `QueryLogEntryCreator.getLogEntry(QueryExecutionContext, boolean, boolean, boolean)`;
   `LoggingFilter.shouldLog(QueryExecutionContext)`; the `DefaultQueryLogEntryCreator` / `DefaultJsonQueryLogEntryCreator`
   `write*Entry(StringBuilder, QueryExecutionContext)` hooks. (Phases 3 and 4 replace these classes.)
-* With `NanoTimeStopwatchFactory`, the query log, the slow-query log and the query-count time all report milliseconds
-  (in 1.x they were nanoseconds). `TracingMethodListener` reports nanoseconds only for `NanoTimeStopwatchFactory`.
-  A custom `StopwatchFactory` reports milliseconds everywhere.
 
 `ProxyDataSourceBuilder` listener registration:
 

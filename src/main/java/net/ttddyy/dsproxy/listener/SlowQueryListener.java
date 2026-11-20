@@ -1,9 +1,6 @@
 package net.ttddyy.dsproxy.listener;
 
 import net.ttddyy.dsproxy.proxy.MutableQueryExecutionContext;
-import net.ttddyy.dsproxy.proxy.Stopwatch;
-import net.ttddyy.dsproxy.proxy.StopwatchFactory;
-import net.ttddyy.dsproxy.proxy.SystemStopwatchFactory;
 
 import java.time.Duration;
 import java.util.Map;
@@ -18,9 +15,12 @@ import java.util.concurrent.TimeUnit;
  * Slow query detection listener.
  *
  * <p>This listener detects slow queries <em>during execution</em> (sometimes called <em>preemptive</em>).
- * When a query exceeds the specified threshold, the {@link #onSlowQuery(QueryExecutionContext, long)} callback is
+ * When a query exceeds the specified threshold, the {@link #onSlowQuery(QueryExecutionContext, Duration)} callback is
  * invoked while the query is still running. The callback is invoked only once for each query that exceeds the
  * threshold. The running query is not interrupted or cancelled.
+ *
+ * <p>The threshold must be set with {@link #setThreshold(Duration)} before the listener is used. It must be positive:
+ * zero and negative values are rejected (in 1.x, {@code 0} reported every query as slow).
  *
  * <p>NOTE:
  * <ul>
@@ -64,14 +64,12 @@ public class SlowQueryListener implements ProxyDataSourceListener {
      * related objects.
      */
     protected static class RunningQueryContext {
-        protected QueryExecutionContext queryExecutionContext;
-        protected long startTimeInMills;
-        protected Stopwatch stopwatch;
+        protected final QueryExecutionContext queryExecutionContext;
+        protected final long startNanos;
 
-        public RunningQueryContext(QueryExecutionContext queryExecutionContext, long nowInMills, Stopwatch stopwatch) {
+        public RunningQueryContext(QueryExecutionContext queryExecutionContext, long startNanos) {
             this.queryExecutionContext = queryExecutionContext;
-            this.startTimeInMills = nowInMills;
-            this.stopwatch = stopwatch;
+            this.startNanos = startNanos;
         }
     }
 
@@ -85,13 +83,14 @@ public class SlowQueryListener implements ProxyDataSourceListener {
             return thread;
         }
     });
-    protected long threshold;
-    protected TimeUnit thresholdTimeUnit;
+    protected Duration threshold;
     protected Map<String, RunningQueryContext> inExecution = new ConcurrentHashMap<String, RunningQueryContext>();
-    protected StopwatchFactory stopwatchFactory = new SystemStopwatchFactory();
 
     @Override
     public void beforeQuery(QueryExecutionContext queryExecutionContext) {
+        if (this.threshold == null) {
+            throw new IllegalStateException("threshold is not set");
+        }
 
         final String execInfoKey = getExecutionInfoKey(queryExecutionContext);
 
@@ -103,7 +102,7 @@ public class SlowQueryListener implements ProxyDataSourceListener {
                 RunningQueryContext context = SlowQueryListener.this.inExecution.get(execInfoKey);
 
                 if (context != null) {
-                    Duration elapsedTime = context.stopwatch.getElapsedTime();
+                    Duration elapsedTime = Duration.ofNanos(System.nanoTime() - context.startNanos);
                     // Set the elapsed time on the shared context, as 1.x did.
                     // shortcut: only the proxy's MutableQueryExecutionContext can carry it; Phase 4 replaces this listener
                     if (context.queryExecutionContext instanceof MutableQueryExecutionContext mutable
@@ -111,16 +110,13 @@ public class SlowQueryListener implements ProxyDataSourceListener {
                         mutable.setElapsedTime(elapsedTime);
                     }
 
-                    onSlowQuery(context.queryExecutionContext, context.startTimeInMills);
+                    onSlowQuery(context.queryExecutionContext, elapsedTime);
                 }
             }
         };
-        this.executor.schedule(check, this.threshold, this.thresholdTimeUnit);
-
-        long now = System.currentTimeMillis();
-        Stopwatch stopwatch = this.stopwatchFactory.create().start();
-        RunningQueryContext context = new RunningQueryContext(queryExecutionContext, now, stopwatch);
+        RunningQueryContext context = new RunningQueryContext(queryExecutionContext, System.nanoTime());
         this.inExecution.put(execInfoKey, context);
+        this.executor.schedule(check, this.threshold.toNanos(), TimeUnit.NANOSECONDS);
 
     }
 
@@ -158,29 +154,32 @@ public class SlowQueryListener implements ProxyDataSourceListener {
      * {@link QueryExecutionContext#getElapsedTime()} contains the elapsed time at the moment of the check.
      *
      * @param queryExecutionContext query execution context
-     * @param startTimeInMills time in milliseconds when the query started
+     * @param elapsedTime time since the query started, measured at the check (at least the threshold)
      */
-    protected void onSlowQuery(QueryExecutionContext queryExecutionContext, long startTimeInMills) {
+    protected void onSlowQuery(QueryExecutionContext queryExecutionContext, Duration elapsedTime) {
     }
 
-    public void setThreshold(long threshHold) {
-        this.threshold = threshHold;
-    }
-
-    public void setThresholdTimeUnit(TimeUnit thresholdTimeUnit) {
-        this.thresholdTimeUnit = thresholdTimeUnit;
+    /**
+     * Sets the threshold after which a running query is reported as slow.
+     *
+     * <p>Required: {@link #beforeQuery(QueryExecutionContext)} throws {@link IllegalStateException} if it is not set.
+     *
+     * @param threshold positive, non-null duration
+     * @throws IllegalArgumentException if {@code threshold} is {@code null}, zero or negative
+     */
+    public void setThreshold(Duration threshold) {
+        if (threshold == null || threshold.isZero() || threshold.isNegative()) {
+            throw new IllegalArgumentException("threshold must be positive: " + threshold);
+        }
+        this.threshold = threshold;
     }
 
     public ScheduledExecutorService getExecutor() {
         return executor;
     }
 
-    public long getThreshold() {
-        return threshold;
-    }
-
-    public TimeUnit getThresholdTimeUnit() {
-        return thresholdTimeUnit;
+    public Duration getThreshold() {
+        return this.threshold;
     }
 
     /**
@@ -193,14 +192,4 @@ public class SlowQueryListener implements ProxyDataSourceListener {
         this.useDaemonThread = useDaemonThread;
     }
 
-
-    /**
-     * Sets the {@link StopwatchFactory} used to compute {@link QueryExecutionContext#getElapsedTime()} for slow queries.
-     *
-     * @param stopwatchFactory factory used to create a {@link Stopwatch} for slow-query timing
-     * @since 1.5.1
-     */
-    public void setStopwatchFactory(StopwatchFactory stopwatchFactory) {
-        this.stopwatchFactory = stopwatchFactory;
-    }
 }

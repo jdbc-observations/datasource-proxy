@@ -5,6 +5,7 @@ import net.ttddyy.dsproxy.support.Log4jLogUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,8 +23,7 @@ public class Log4jSlowQueryListener extends AbstractSlowQueryLoggingListener {
     }
 
     public Log4jSlowQueryListener(long threshold, TimeUnit thresholdTimeUnit) {
-        this.threshold = threshold;
-        this.thresholdTimeUnit = thresholdTimeUnit;
+        setThreshold(Duration.of(threshold, thresholdTimeUnit.toChronoUnit()));
     }
 
     @Override

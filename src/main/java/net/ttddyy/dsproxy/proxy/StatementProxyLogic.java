@@ -289,14 +289,14 @@ public class StatementProxyLogic extends ProxyLogicSupport {
             listener.beforeQuery(queryContext);
         }
 
-        final Stopwatch stopwatch = this.proxyConfig.getStopwatchFactory().create().start();
+        final long startNanos = System.nanoTime();
 
         // Invoke method on original Statement.
         try {
 
             Object retVal = method.invoke(this.statement, args);
 
-            final Duration elapsedTime = stopwatch.getElapsedTime();
+            final Duration elapsedTime = Duration.ofNanos(System.nanoTime() - startNanos);
 
 
             // method that returns ResultSet but exclude "getGeneratedKeys()"
@@ -364,7 +364,7 @@ public class StatementProxyLogic extends ProxyLogicSupport {
 
             return retVal;
         } catch (InvocationTargetException ex) {
-            final Duration elapsedTime = stopwatch.getElapsedTime();
+            final Duration elapsedTime = Duration.ofNanos(System.nanoTime() - startNanos);
 
             queryContext.setElapsedTime(elapsedTime);
             queryContext.setThrowable(ex.getTargetException());

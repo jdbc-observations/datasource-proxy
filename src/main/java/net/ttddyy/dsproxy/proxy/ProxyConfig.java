@@ -35,7 +35,6 @@ public class ProxyConfig {
         private ResultSetProxyLogicFactory resultSetProxyLogicFactory;  // can be null if resultset proxy is disabled
         private ConnectionIdManager connectionIdManager = new DefaultConnectionIdManager();  // create instance every time
         private GeneratedKeysConfig generatedKeysConfig = new GeneratedKeysConfig();
-        private StopwatchFactory stopwatchFactory = new SystemStopwatchFactory();
         private boolean retrieveIsolationLevel;
 
         public static Builder create() {
@@ -52,7 +51,6 @@ public class ProxyConfig {
                     .jdbcProxyFactory(proxyConfig.jdbcProxyFactory)
                     .resultSetProxyLogicFactory(proxyConfig.resultSetProxyLogicFactory)
                     .connectionIdManager(proxyConfig.connectionIdManager)
-                    .stopwatchFactory(proxyConfig.stopwatchFactory)
                     .generatedKeysProxyLogicFactory(proxyConfig.generatedKeysConfig.proxyLogicFactory)
                     .autoRetrieveGeneratedKeys(proxyConfig.generatedKeysConfig.autoRetrieve)
                     .retrieveGeneratedKeysForBatchStatement(proxyConfig.generatedKeysConfig.retrieveForBatchStatement)
@@ -71,7 +69,6 @@ public class ProxyConfig {
             proxyConfig.jdbcProxyFactory = this.jdbcProxyFactory;
             proxyConfig.resultSetProxyLogicFactory = this.resultSetProxyLogicFactory;
             proxyConfig.connectionIdManager = this.connectionIdManager;
-            proxyConfig.stopwatchFactory = this.stopwatchFactory;
             proxyConfig.retrieveIsolationLevel = this.retrieveIsolationLevel;
 
             // generated keys
@@ -151,11 +148,6 @@ public class ProxyConfig {
             return this;
         }
 
-        public Builder stopwatchFactory(StopwatchFactory stopwatchFactory) {
-            this.stopwatchFactory = stopwatchFactory;
-            return this;
-        }
-
         /**
          * When set to {@code true}, retrieve the isolation level from the connection.
          *
@@ -178,7 +170,6 @@ public class ProxyConfig {
     private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
     private ConnectionIdManager connectionIdManager;
     private GeneratedKeysConfig generatedKeysConfig = new GeneratedKeysConfig();
-    private StopwatchFactory stopwatchFactory;
     private boolean retrieveIsolationLevel;
 
     public String getDataSourceName() {
@@ -290,18 +281,6 @@ public class ProxyConfig {
 
     public ConnectionIdManager getConnectionIdManager() {
         return connectionIdManager;
-    }
-
-    /**
-     * Returns the {@link StopwatchFactory}.
-     *
-     * Default implementation is {@link SystemStopwatchFactory}.
-     *
-     * @return stopwatch factory
-     * @since 1.5.1
-     */
-    public StopwatchFactory getStopwatchFactory() {
-        return this.stopwatchFactory;
     }
 
     /**

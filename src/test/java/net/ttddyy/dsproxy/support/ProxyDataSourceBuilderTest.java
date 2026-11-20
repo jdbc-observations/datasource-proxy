@@ -39,6 +39,7 @@ import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -156,8 +157,7 @@ class ProxyDataSourceBuilderTest {
         // default
         ds = ProxyDataSourceBuilder.create().logSlowQueryByCommons(10, TimeUnit.SECONDS).build();
         listener = getAndVerifyListener(ds, CommonsSlowQueryListener.class);
-        assertThat(listener.getThreshold()).isEqualTo(10);
-        assertThat(listener.getThresholdTimeUnit()).isEqualTo(TimeUnit.SECONDS);
+        assertThat(listener.getThreshold()).isEqualTo(Duration.ofSeconds(10));
         assertThat(listener.getLogLevel()).as("default log level").isEqualTo(CommonsLogLevel.WARN);
 
         // with logLevel
@@ -182,8 +182,7 @@ class ProxyDataSourceBuilderTest {
         // default
         ds = ProxyDataSourceBuilder.create().logSlowQueryBySlf4j(10, TimeUnit.SECONDS).build();
         listener = getAndVerifyListener(ds, SLF4JSlowQueryListener.class);
-        assertThat(listener.getThreshold()).isEqualTo(10);
-        assertThat(listener.getThresholdTimeUnit()).isEqualTo(TimeUnit.SECONDS);
+        assertThat(listener.getThreshold()).isEqualTo(Duration.ofSeconds(10));
         logger = listener.getLogger();
         assertThat(logger.getName()).isEqualTo("net.ttddyy.dsproxy.listener.logging.SLF4JSlowQueryListener");
         assertThat(listener.getLogLevel()).as("default log level").isEqualTo(SLF4JLogLevel.WARN);
@@ -218,8 +217,7 @@ class ProxyDataSourceBuilderTest {
         // default
         ds = ProxyDataSourceBuilder.create().logSlowQueryByJUL(10, TimeUnit.SECONDS).build();
         listener = getAndVerifyListener(ds, JULSlowQueryListener.class);
-        assertThat(listener.getThreshold()).isEqualTo(10);
-        assertThat(listener.getThresholdTimeUnit()).isEqualTo(TimeUnit.SECONDS);
+        assertThat(listener.getThreshold()).isEqualTo(Duration.ofSeconds(10));
         logger = listener.getLogger();
         assertThat(logger.getName()).isEqualTo("net.ttddyy.dsproxy.listener.logging.JULSlowQueryListener");
         assertThat(listener.getLogLevel()).as("default log level").isEqualTo(Level.WARNING);
@@ -254,8 +252,7 @@ class ProxyDataSourceBuilderTest {
         // default
         ds = ProxyDataSourceBuilder.create().logSlowQueryByLog4j(10, TimeUnit.SECONDS).build();
         listener = getAndVerifyListener(ds, Log4jSlowQueryListener.class);
-        assertThat(listener.getThreshold()).isEqualTo(10);
-        assertThat(listener.getThresholdTimeUnit()).isEqualTo(TimeUnit.SECONDS);
+        assertThat(listener.getThreshold()).isEqualTo(Duration.ofSeconds(10));
         logger = listener.getLogger();
         assertThat(logger.getName()).isEqualTo("net.ttddyy.dsproxy.listener.logging.Log4jSlowQueryListener");
         assertThat(listener.getLogLevel()).as("default log level").isEqualTo(Log4jLogLevel.WARN);

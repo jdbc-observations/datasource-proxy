@@ -164,8 +164,7 @@ public class MethodExecutionContext {
     /**
      * Returns the time taken to execute the method.
      *
-     * <p>Precision depends on the {@link net.ttddyy.dsproxy.proxy.Stopwatch} implementation.
-     * The default {@link net.ttddyy.dsproxy.proxy.SystemStopwatchFactory.SystemStopwatch} measures milliseconds.
+     * <p>Measured with {@link System#nanoTime()}.
      *
      * @return elapsed time for the method execution
      */

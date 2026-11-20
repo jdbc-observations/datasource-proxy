@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.listener.logging;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,8 +20,7 @@ public class JULSlowQueryListener extends AbstractSlowQueryLoggingListener {
     }
 
     public JULSlowQueryListener(long threshold, TimeUnit thresholdTimeUnit) {
-        this.threshold = threshold;
-        this.thresholdTimeUnit = thresholdTimeUnit;
+        setThreshold(Duration.of(threshold, thresholdTimeUnit.toChronoUnit()));
     }
 
     @Override

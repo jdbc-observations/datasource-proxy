@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.sql.Wrapper;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -96,7 +97,7 @@ public abstract class ProxyLogicSupport {
         Method methodToInvoke = methodContext.getMethod();
         Object[] methodArgsToInvoke = methodContext.getMethodArgs();
 
-        final Stopwatch stopwatch = proxyConfig.getStopwatchFactory().create().start();
+        final long startNanos = System.nanoTime();
         Object result = null;
         Throwable thrown = null;
         try {
@@ -105,7 +106,7 @@ public abstract class ProxyLogicSupport {
             thrown = throwable;
             throw throwable;
         } finally {
-            methodContext.setElapsedTime(stopwatch.getElapsedTime());
+            methodContext.setElapsedTime(Duration.ofNanos(System.nanoTime() - startNanos));
             methodContext.setResult(result);
             methodContext.setThrown(thrown);
 

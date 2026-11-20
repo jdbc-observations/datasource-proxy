@@ -1,5 +1,6 @@
 package net.ttddyy.dsproxy.listener.logging;
 
+import java.time.Duration;
 import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import net.ttddyy.dsproxy.listener.SlowQueryListener;
 
@@ -20,7 +21,7 @@ public abstract class AbstractSlowQueryLoggingListener extends SlowQueryListener
     protected String prefix;
 
     @Override
-    protected void onSlowQuery(QueryExecutionContext context, long startTimeInMills) {
+    protected void onSlowQuery(QueryExecutionContext context, Duration elapsedTime) {
         String entry = this.queryLogEntryCreator.getLogEntry(context, this.writeDataSourceName, this.writeConnectionId, this.writeIsolation);
         if (this.prefix != null) {
             StringBuilder sb = new StringBuilder();

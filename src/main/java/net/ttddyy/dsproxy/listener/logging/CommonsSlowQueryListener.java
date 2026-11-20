@@ -4,6 +4,7 @@ import net.ttddyy.dsproxy.support.CommonsLogUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,8 +22,7 @@ public class CommonsSlowQueryListener extends AbstractSlowQueryLoggingListener {
     }
 
     public CommonsSlowQueryListener(long threshold, TimeUnit thresholdTimeUnit) {
-        this.threshold = threshold;
-        this.thresholdTimeUnit = thresholdTimeUnit;
+        setThreshold(Duration.of(threshold, thresholdTimeUnit.toChronoUnit()));
     }
 
     @Override

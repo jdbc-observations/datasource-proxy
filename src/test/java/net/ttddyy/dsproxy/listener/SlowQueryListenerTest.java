@@ -16,6 +16,7 @@ import javax.sql.DataSource;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -23,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
 
 /**
@@ -50,14 +52,14 @@ public class SlowQueryListenerTest {
 
         SlowQueryListener listener = new SlowQueryListener() {
             @Override
-            protected void onSlowQuery(QueryExecutionContext execInfo, long startTimeInMills) {
+            protected void onSlowQuery(QueryExecutionContext execInfo, Duration elapsedTime) {
                 counter.incrementAndGet();
+                assertThat(elapsedTime).isGreaterThanOrEqualTo(Duration.ofMillis(50));
                 assertThat(execInfo).isSameAs(executionInfo);
                 assertThat(execInfo.getQueries()).isSameAs(queryInfo);
             }
         };
-        listener.setThreshold(50);
-        listener.setThresholdTimeUnit(TimeUnit.MILLISECONDS);
+        listener.setThreshold(Duration.ofMillis(50));
 
         // simulate slow query
         listener.beforeQuery(withQueries(executionInfo, queryInfo));
@@ -68,16 +70,31 @@ public class SlowQueryListenerTest {
     }
 
     @Test
+    void beforeQueryWithoutThresholdFails() {
+        SlowQueryListener listener = new SlowQueryListener();
+        assertThatThrownBy(() -> listener.beforeQuery(new MutableQueryExecutionContext()))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("threshold is not set");
+    }
+
+    @Test
+    void thresholdMustBePositive() {
+        SlowQueryListener listener = new SlowQueryListener();
+        assertThatThrownBy(() -> listener.setThreshold(Duration.ZERO)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> listener.setThreshold(Duration.ofMillis(-1))).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> listener.setThreshold(null)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     void onSlowQueryWithFastQuery() throws Exception {
 
         SlowQueryListener listener = new SlowQueryListener() {
             @Override
-            protected void onSlowQuery(QueryExecutionContext execInfo, long startTimeInMills) {
+            protected void onSlowQuery(QueryExecutionContext execInfo, Duration elapsedTime) {
                 fail("onSlowQuery method should not be called for fast query");
             }
         };
-        listener.setThreshold(100);
-        listener.setThresholdTimeUnit(TimeUnit.MILLISECONDS);
+        listener.setThreshold(Duration.ofMillis(100));
 
         final MutableQueryExecutionContext executionInfo = new MutableQueryExecutionContext();
         final List<QueryInfo> queryInfo = new ArrayList<QueryInfo>();

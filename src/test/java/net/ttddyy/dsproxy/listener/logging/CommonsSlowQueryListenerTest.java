@@ -6,6 +6,7 @@ import net.ttddyy.dsproxy.QueryInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -28,8 +29,7 @@ class CommonsSlowQueryListenerTest {
 
     @Test
     void logMessage() throws Exception {
-        this.listener.setThreshold(50);
-        this.listener.setThresholdTimeUnit(TimeUnit.MILLISECONDS);
+        this.listener.setThreshold(Duration.ofMillis(50));
 
         MutableQueryExecutionContext executionInfo = new MutableQueryExecutionContext();
         QueryInfo queryInfo = new QueryInfo();
