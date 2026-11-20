@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.listener.lifecycle;
 
+import org.jspecify.annotations.Nullable;
+
 import javax.sql.CommonDataSource;
 import javax.sql.DataSource;
 import java.lang.reflect.Method;
@@ -89,7 +91,7 @@ public class JdbcLifecycleEventListenerUtils {
      * @param isBefore          before method or not
      * @return corresponding callback method or {@code null} if not found. (e.g.: toString, hashCode)
      */
-    public static Method getListenerMethod(String invokedMethodName, boolean isBefore) {
+    public static @Nullable Method getListenerMethod(String invokedMethodName, boolean isBefore) {
         if (isBefore) {
             return beforeLifecycleMethodsByMethodName.get(invokedMethodName);
         } else {

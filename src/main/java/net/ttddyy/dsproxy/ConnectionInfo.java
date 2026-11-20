@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy;
 
+import org.jspecify.annotations.Nullable;
+
 import java.sql.Connection;
 
 /**
@@ -8,26 +10,26 @@ import java.sql.Connection;
  */
 public class ConnectionInfo {
 
-    private String dataSourceName;
-    private String connectionId;
+    private @Nullable String dataSourceName;
+    private @Nullable String connectionId;
     private int isolationLevel;
     private boolean isClosed;
     private int commitCount;
     private int rollbackCount;
 
-    public String getDataSourceName() {
+    public @Nullable String getDataSourceName() {
         return dataSourceName;
     }
 
-    public void setDataSourceName(String dataSourceName) {
+    public void setDataSourceName(@Nullable String dataSourceName) {
         this.dataSourceName = dataSourceName;
     }
 
-    public String getConnectionId() {
+    public @Nullable String getConnectionId() {
         return connectionId;
     }
 
-    public void setConnectionId(String connectionId) {
+    public void setConnectionId(@Nullable String connectionId) {
         this.connectionId = connectionId;
     }
 

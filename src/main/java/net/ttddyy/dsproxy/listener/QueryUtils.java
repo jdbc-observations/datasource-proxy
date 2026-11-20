@@ -1,12 +1,14 @@
 package net.ttddyy.dsproxy.listener;
 
+import org.jspecify.annotations.Nullable;
+
 import net.ttddyy.dsproxy.QueryType;
 
 /**
  * @author Tadaya Tsuyukubo
  */
 public class QueryUtils {
-    public static String removeCommentAndWhiteSpace(String query) {
+    public static @Nullable String removeCommentAndWhiteSpace(@Nullable String query) {
         if (query == null) {
             return null;
         }

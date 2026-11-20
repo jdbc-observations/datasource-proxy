@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.listener;
 
+import org.jspecify.annotations.Nullable;
+
 import net.ttddyy.dsproxy.proxy.MutableQueryExecutionContext;
 
 import java.time.Duration;
@@ -83,7 +85,7 @@ public class SlowQueryListener implements ProxyDataSourceListener {
             return thread;
         }
     });
-    protected Duration threshold;
+    protected @Nullable Duration threshold;  // required; checked in beforeQuery
     protected Map<String, RunningQueryContext> inExecution = new ConcurrentHashMap<String, RunningQueryContext>();
 
     @Override
@@ -178,7 +180,7 @@ public class SlowQueryListener implements ProxyDataSourceListener {
         return executor;
     }
 
-    public Duration getThreshold() {
+    public @Nullable Duration getThreshold() {
         return this.threshold;
     }
 

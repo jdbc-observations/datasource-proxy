@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
+import org.jspecify.annotations.Nullable;
+
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
@@ -19,7 +21,7 @@ import java.util.List;
 public class ProxyConfig {
 
     private static class GeneratedKeysConfig {
-        private ResultSetProxyLogicFactory proxyLogicFactory; // can be null if generated keys proxy is disabled
+        private @Nullable ResultSetProxyLogicFactory proxyLogicFactory; // can be null if generated keys proxy is disabled
         private boolean autoRetrieve;
         private boolean retrieveForBatchStatement = false;  // default false
         private boolean retrieveForBatchPreparedOrCallable = true;  // default true
@@ -32,7 +34,7 @@ public class ProxyConfig {
         private QueryTransformer queryTransformer = QueryTransformer.DEFAULT;
         private ParameterTransformer parameterTransformer = ParameterTransformer.DEFAULT;
         private JdbcProxyFactory jdbcProxyFactory = JdbcProxyFactory.DEFAULT;
-        private ResultSetProxyLogicFactory resultSetProxyLogicFactory;  // can be null if resultset proxy is disabled
+        private @Nullable ResultSetProxyLogicFactory resultSetProxyLogicFactory;  // can be null if resultset proxy is disabled
         private ConnectionIdManager connectionIdManager = new DefaultConnectionIdManager();  // create instance every time
         private GeneratedKeysConfig generatedKeysConfig = new GeneratedKeysConfig();
         private boolean retrieveIsolationLevel;
@@ -167,7 +169,7 @@ public class ProxyConfig {
     private QueryTransformer queryTransformer;
     private ParameterTransformer parameterTransformer;
     private JdbcProxyFactory jdbcProxyFactory;
-    private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
+    private @Nullable ResultSetProxyLogicFactory resultSetProxyLogicFactory;
     private ConnectionIdManager connectionIdManager;
     private GeneratedKeysConfig generatedKeysConfig = new GeneratedKeysConfig();
     private boolean retrieveIsolationLevel;
@@ -196,7 +198,7 @@ public class ProxyConfig {
         return jdbcProxyFactory;
     }
 
-    public ResultSetProxyLogicFactory getResultSetProxyLogicFactory() {
+    public @Nullable ResultSetProxyLogicFactory getResultSetProxyLogicFactory() {
         return resultSetProxyLogicFactory;
     }
 
@@ -212,7 +214,7 @@ public class ProxyConfig {
     /**
      * @since 1.4.5
      */
-    public ResultSetProxyLogicFactory getGeneratedKeysProxyLogicFactory() {
+    public @Nullable ResultSetProxyLogicFactory getGeneratedKeysProxyLogicFactory() {
         return this.generatedKeysConfig.proxyLogicFactory;
     }
 

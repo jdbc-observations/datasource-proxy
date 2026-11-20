@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.listener;
 
+import org.jspecify.annotations.Nullable;
+
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
@@ -19,15 +21,15 @@ import java.util.Map;
 public class MethodExecutionContext {
 
     public static class Builder {
-        private Object target;
-        private Method method;
-        private Object[] methodArgs;
-        private Object result;
-        private Throwable thrown;
+        private @Nullable Object target;
+        private @Nullable Method method;
+        private Object @Nullable [] methodArgs;
+        private @Nullable Object result;
+        private @Nullable Throwable thrown;
         private Duration elapsedTime = Duration.ZERO;
-        private ConnectionInfo connectionInfo;
-        private ProxyConfig proxyConfig;
-        private Object proxy;
+        private @Nullable ConnectionInfo connectionInfo;
+        private @Nullable ProxyConfig proxyConfig;
+        private @Nullable Object proxy;
 
         public static Builder create() {
             return new Builder();
@@ -94,26 +96,26 @@ public class MethodExecutionContext {
     }
 
 
-    private Object target;
-    private Method method;
-    private Object[] methodArgs;
-    private Object result;
-    private Throwable thrown;
+    private @Nullable Object target;
+    private @Nullable Method method;
+    private Object @Nullable [] methodArgs;
+    private @Nullable Object result;
+    private @Nullable Throwable thrown;
     private Duration elapsedTime = Duration.ZERO;
-    private ConnectionInfo connectionInfo;
-    private ProxyConfig proxyConfig;
-    private Object proxy;
+    private @Nullable ConnectionInfo connectionInfo;
+    private @Nullable ProxyConfig proxyConfig;
+    private @Nullable Object proxy;
     private Map<String, Object> customValues = new HashMap<String, Object>();
 
-    public Object getTarget() {
+    public @Nullable Object getTarget() {
         return target;
     }
 
-    public void setTarget(Object target) {
+    public void setTarget(@Nullable Object target) {
         this.target = target;
     }
 
-    public Method getMethod() {
+    public @Nullable Method getMethod() {
         return method;
     }
 
@@ -125,11 +127,11 @@ public class MethodExecutionContext {
      *
      * @param method a method to invoke
      */
-    public void setMethod(Method method) {
+    public void setMethod(@Nullable Method method) {
         this.method = method;
     }
 
-    public Object[] getMethodArgs() {
+    public Object @Nullable [] getMethodArgs() {
         return methodArgs;
     }
 
@@ -141,23 +143,23 @@ public class MethodExecutionContext {
      *
      * @param methodArgs method parameters
      */
-    public void setMethodArgs(Object[] methodArgs) {
+    public void setMethodArgs(Object @Nullable [] methodArgs) {
         this.methodArgs = methodArgs;
     }
 
-    public Object getResult() {
+    public @Nullable Object getResult() {
         return result;
     }
 
-    public void setResult(Object result) {
+    public void setResult(@Nullable Object result) {
         this.result = result;
     }
 
-    public Throwable getThrown() {
+    public @Nullable Throwable getThrown() {
         return thrown;
     }
 
-    public void setThrown(Throwable thrown) {
+    public void setThrown(@Nullable Throwable thrown) {
         this.thrown = thrown;
     }
 
@@ -179,22 +181,22 @@ public class MethodExecutionContext {
     /**
      * @since 1.4.4
      */
-    public ConnectionInfo getConnectionInfo() {
+    public @Nullable ConnectionInfo getConnectionInfo() {
         return connectionInfo;
     }
 
     /**
      * @since 1.4.4
      */
-    public void setConnectionInfo(ConnectionInfo connectionInfo) {
+    public void setConnectionInfo(@Nullable ConnectionInfo connectionInfo) {
         this.connectionInfo = connectionInfo;
     }
 
-    public ProxyConfig getProxyConfig() {
+    public @Nullable ProxyConfig getProxyConfig() {
         return proxyConfig;
     }
 
-    public void setProxyConfig(ProxyConfig proxyConfig) {
+    public void setProxyConfig(@Nullable ProxyConfig proxyConfig) {
         this.proxyConfig = proxyConfig;
     }
 
@@ -204,11 +206,11 @@ public class MethodExecutionContext {
      * @return proxy object
      * @since 1.10
      */
-    public Object getProxy() {
+    public @Nullable Object getProxy() {
         return this.proxy;
     }
 
-    public void setProxy(Object proxy) {
+    public void setProxy(@Nullable Object proxy) {
         this.proxy = proxy;
     }
 

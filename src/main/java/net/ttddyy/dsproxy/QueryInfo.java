@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy;
 
+import org.jspecify.annotations.Nullable;
+
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 
 import java.util.ArrayList;
@@ -17,7 +19,7 @@ import java.util.Map;
  * @author Tadaya Tsuyukubo
  */
 public class QueryInfo {
-    private String query;
+    private @Nullable String query;
 
     private List<List<ParameterSetOperation>> parametersList = new ArrayList<List<ParameterSetOperation>>();
 
@@ -28,11 +30,11 @@ public class QueryInfo {
         this.query = query;
     }
 
-    public String getQuery() {
+    public @Nullable String getQuery() {
         return query;
     }
 
-    public void setQuery(String query) {
+    public void setQuery(@Nullable String query) {
         this.query = query;
     }
 

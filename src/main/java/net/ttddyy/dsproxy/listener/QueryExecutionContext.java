@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.listener;
 
+import org.jspecify.annotations.Nullable;
+
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 
@@ -17,19 +19,19 @@ import java.util.List;
  */
 public interface QueryExecutionContext {
 
-    String getDataSourceName();
+    @Nullable String getDataSourceName();
 
-    String getConnectionId();
+    @Nullable String getConnectionId();
 
     int getIsolationLevel();
 
-    Method getMethod();
+    @Nullable Method getMethod();
 
-    Object[] getMethodArgs();
+    Object @Nullable [] getMethodArgs();
 
-    Object getResult();
+    @Nullable Object getResult();
 
-    Throwable getThrowable();
+    @Nullable Throwable getThrowable();
 
     boolean isSuccess();
 
@@ -38,15 +40,15 @@ public interface QueryExecutionContext {
      */
     Duration getElapsedTime();
 
-    StatementType getStatementType();
+    @Nullable StatementType getStatementType();
 
     boolean isBatch();
 
     int getBatchSize();
 
-    Statement getStatement();
+    @Nullable Statement getStatement();
 
-    ResultSet getGeneratedKeys();
+    @Nullable ResultSet getGeneratedKeys();
 
     /**
      * Queries (with parameters) being executed.

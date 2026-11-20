@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.support;
 
+import org.jspecify.annotations.Nullable;
+
 import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
@@ -58,36 +60,36 @@ public class ProxyDataSourceBuilder {
         String format(String query);
     }
 
-    private DataSource dataSource;
-    private String dataSourceName;
+    private @Nullable DataSource dataSource;
+    private @Nullable String dataSourceName;
 
     // For building TracingMethodListener
     private boolean createTracingMethodListener;
-    private TracingMethodListener.TracingCondition tracingCondition;
-    private TracingMethodListener.TracingMessageConsumer tracingMessageConsumer;
+    private TracingMethodListener.@Nullable TracingCondition tracingCondition;
+    private TracingMethodListener.@Nullable TracingMessageConsumer tracingMessageConsumer;
 
     // For building QueryLoggingListeners
-    private LoggingFilter loggingFilter;
+    private @Nullable LoggingFilter loggingFilter;
 
     // CommonsQueryLoggingListener
     private boolean createCommonsQueryListener;
-    private CommonsLogLevel commonsLogLevel;
-    private String commonsLoggerName;
+    private @Nullable CommonsLogLevel commonsLogLevel;
+    private @Nullable String commonsLoggerName;
 
     // for SLF4JQueryLoggingListener
     private boolean createSlf4jQueryListener;
-    private SLF4JLogLevel slf4jLogLevel;
-    private String slf4jLoggerName;
+    private @Nullable SLF4JLogLevel slf4jLogLevel;
+    private @Nullable String slf4jLoggerName;
 
     // for JULQueryLoggingListener
     private boolean createJulQueryListener;
-    private Level julLogLevel;
-    private String julLoggerName;
+    private @Nullable Level julLogLevel;
+    private @Nullable String julLoggerName;
 
     // for Log4jQueryLoggingListener
     private boolean createLog4jQueryListener;
-    private Log4jLogLevel log4jLogLevel;
-    private String log4jLoggerName;
+    private @Nullable Log4jLogLevel log4jLogLevel;
+    private @Nullable String log4jLoggerName;
 
     // for SystemOutQueryLoggingListener
     private boolean createSysOutQueryListener;
@@ -100,49 +102,49 @@ public class ProxyDataSourceBuilder {
 
     // for CommonsSlowQueryListener
     private boolean createCommonsSlowQueryListener;
-    private CommonsLogLevel commonsSlowQueryLogLevel;
-    private String commonsSlowQueryLogName;
+    private @Nullable CommonsLogLevel commonsSlowQueryLogLevel;
+    private @Nullable String commonsSlowQueryLogName;
 
     // for SLF4JSlowQueryListener
     private boolean createSlf4jSlowQueryListener;
-    private SLF4JLogLevel slf4jSlowQueryLogLevel;
-    private String slf4jSlowQueryLoggerName;
+    private @Nullable SLF4JLogLevel slf4jSlowQueryLogLevel;
+    private @Nullable String slf4jSlowQueryLoggerName;
 
     // for JULSlowQueryListener
     private boolean createJulSlowQueryListener;
-    private Level julSlowQueryLogLevel;
-    private String julSlowQueryLoggerName;
+    private @Nullable Level julSlowQueryLogLevel;
+    private @Nullable String julSlowQueryLoggerName;
 
     // for Log4jSlowQueryListener
     private boolean createLog4jSlowQueryListener;
-    private Log4jLogLevel log4jSlowQueryLogLevel;
-    private String log4jSlowQueryLoggerName;
+    private @Nullable Log4jLogLevel log4jSlowQueryLogLevel;
+    private @Nullable String log4jSlowQueryLoggerName;
 
     // for SystemOutSlowQueryListener
     private boolean createSysOutSlowQueryListener;
 
     private boolean createDataSourceQueryCountListener;
-    private QueryCountStrategy queryCountStrategy;
+    private @Nullable QueryCountStrategy queryCountStrategy;
 
     private boolean jsonFormat;
     private boolean multiline;
-    private FormatQueryCallback formatQueryCallback;
+    private @Nullable FormatQueryCallback formatQueryCallback;
     private boolean writeIsolation;
     private boolean retrieveIsolation;
     // all explicitly registered listeners in call order
     private List<ProxyDataSourceListener> registeredListeners = new ArrayList<ProxyDataSourceListener>();
 
-    private ParameterTransformer parameterTransformer;
-    private QueryTransformer queryTransformer;
+    private @Nullable ParameterTransformer parameterTransformer;
+    private @Nullable QueryTransformer queryTransformer;
 
-    private JdbcProxyFactory jdbcProxyFactory;
-    private ConnectionIdManager connectionIdManager;
+    private @Nullable JdbcProxyFactory jdbcProxyFactory;
+    private @Nullable ConnectionIdManager connectionIdManager;
 
     private ResultSetProxyLogicFactory resultSetProxyLogicFactory;
 
     private boolean autoRetrieveGeneratedKeys;
-    private Boolean retrieveGeneratedKeysForBatchStatement;
-    private Boolean retrieveGeneratedKeysForBatchPreparedOrCallable;
+    private @Nullable Boolean retrieveGeneratedKeysForBatchStatement;
+    private @Nullable Boolean retrieveGeneratedKeysForBatchPreparedOrCallable;
     private boolean autoCloseGeneratedKeys;
     private ResultSetProxyLogicFactory generatedKeysProxyLogicFactory;
 
@@ -1155,7 +1157,7 @@ public class ProxyDataSourceBuilder {
         }
 
         // tracing listener
-        ProxyDataSourceListener tracingListener = null;
+        @Nullable ProxyDataSourceListener tracingListener = null;
         if (this.createTracingMethodListener) {
             tracingListener = buildTracingMethodListener();
         }

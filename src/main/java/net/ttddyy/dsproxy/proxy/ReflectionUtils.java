@@ -1,5 +1,7 @@
 package net.ttddyy.dsproxy.proxy;
 
+import org.jspecify.annotations.Nullable;
+
 import java.lang.reflect.Method;
 
 /**
@@ -8,7 +10,7 @@ import java.lang.reflect.Method;
  */
 public class ReflectionUtils {
 
-    public static Method getMethodIfAvailable(Class<?> clazz, String name, Class... parameterTypes) {
+    public static @Nullable Method getMethodIfAvailable(Class<?> clazz, String name, Class... parameterTypes) {
         try {
             return clazz.getMethod(name, parameterTypes);
         } catch (NoSuchMethodException e) {
