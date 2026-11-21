@@ -34,13 +34,18 @@ Create a proxy datasource that performs the following actions:
 .Java-based example:
 ```java
 @Bean
-public DataSource dataSource(DataSource actualDataSource) {
+public DataSourceQueryCounter queryCounter() {
+    return new DataSourceQueryCounter();
+}
+
+@Bean
+public DataSource dataSource(DataSource actualDataSource, DataSourceQueryCounter queryCounter) {
     return ProxyDataSourceBuilder
             .create(actualDataSource)
             .name("dataSource")
             .logQueryToSysOut()    // log query execution to System.out
             .asJson()
-            .countQuery()          // collect query metrics
+            .countQuery(queryCounter)  // collect query metrics from all threads
             .build();
 }
 ```
@@ -53,10 +58,16 @@ Write a simple controller that returns query metrics as JSON using Spring Boot.
 @RestController
 public class MyController {
 
+    private final DataSourceQueryCounter queryCounter;
+
+    public MyController(DataSourceQueryCounter queryCounter) {
+        this.queryCounter = queryCounter;
+    }
+
     @RequestMapping
     public QueryCount index() throws Exception {
         // do some database operations
-        return QueryCountHolder.getGrandTotal();
+        return this.queryCounter.snapshot();
     }
 }
 ```

@@ -237,33 +237,85 @@ builder
 ```
 
 
-=== Query Count Listener
+=== Query Counting
 
+Query counting records, per DataSource name, the number of queries by type (`SELECT`, `INSERT`, `UPDATE`, `DELETE`,
+other), by statement type (`Statement`, `PreparedStatement`, `CallableStatement`), executions in total, successes,
+failures and total execution time. Results are immutable `QueryCount` records: `select()`, `insert()`, `update()`,
+`delete()`, `other()`, `statement()`, `prepared()`, `callable()`, `total()`, `success()`, `failure()`, `time()`
+(a `Duration`). A batch counts once in `total()` and once per statement in the type counts.
 
-`DataSourceQueryCountListener` collects statistics for executed queries, such as the number of query types
-(`SELECT`, `INSERT`, `UPDATE`, `DELETE`), statement types (`Statement`, `Prepared`, `Callable`), and more.
-This class also accepts a strategy for storing such metrics. The default strategy stores metrics in a
-thread-local value, which is expected to be reset at the end of the request-response lifecycle.
-Another strategy is `SingleQueryCountHolder`, which accumulates query metrics from all threads until the metrics
-are explicitly cleared.
-
+Counting must be enabled on the builder. A DataSource built without `countQuery()` reports nothing, so a scope
+around it counts 0.
 
 ```java
-builder.
-  .countQuery()    // enable collecting query metrics
-//  .countQuery(new SingleQueryCountHolder())  // enable and specify a query count holder
+builder
+  .countQuery()                    // count into QueryCounter scopes
+//.countQuery(dataSourceQueryCounter)  // ... and also into a counter for all threads
   .build();
 ```
 
-Stored metrics can be retrieved by the following static method.
+==== Scoped counting
+
+`QueryCounter` counts the queries the current thread runs inside a scope.
 
 ```java
-QueryCountHolder.get()
+QueryCount count = QueryCounter.count(() -> service.findRecent());   // lambda form
+
+try (var scope = QueryCounter.start()) {                             // try-with-resources form
+    service.findRecent();
+    scope.count().select();          // grand total across DataSources
+    scope.count("myDs").select();    // one DataSource; "" for a DataSource without a name
+}
 ```
 
-NOTE: Semantics changes based on how metrics are stored - thread local vs global map.
-When thread local is chosen, you need to clean up the stored metrics at the end of request-response lifecycle.
-You can call `QueryCountHolder.clear()` explicitly.
+Scopes nest: a query counts in the current scope and every enclosing one. Closing a scope that is not the innermost
+open scope on its thread throws `IllegalStateException`. To count per request, open a scope
+around the request, for example in a servlet filter.
+
+By default only the thread that opened the scope counts. To include work on other threads, wrap the task or the
+executor. Each task runs in the scope that was current when it was submitted, including on virtual-thread executors:
+
+```java
+try (var scope = QueryCounter.start()) {
+    ExecutorService executor = QueryCounter.wrap(Executors.newVirtualThreadPerTaskExecutor());
+    executor.submit(() -> repository.findAll()).get();
+    CompletableFuture.runAsync(QueryCounter.wrap(() -> repository.findAll())).get();
+    scope.count().select();   // 2
+}
+```
+
+`QueryCounter.wrap(Runnable)`, `wrap(Callable)`, `wrap(Executor)` and `wrap(ExecutorService)` are available.
+
+==== Counting all threads
+
+`DataSourceQueryCounter` counts every query on the DataSources it is registered with, from any thread, for example in
+an integration test that calls a running server. You create and own it.
+
+```java
+var counter = new DataSourceQueryCounter();
+DataSource ds = ProxyDataSourceBuilder.create(actual).countQuery(counter).build();
+
+counter.snapshot().select();          // grand total
+counter.snapshot("myDs").select();    // one DataSource
+counter.reset();
+```
+
+A snapshot taken while queries are running is not atomic. Scoped counting works on the same DataSource at the same
+time.
+
+==== Query type detection
+
+Query types come from the first keyword of the SQL, so `WITH ... SELECT ...` counts as other. Plug in your own
+classifier with `queryTypeDetector`. It must be thread-safe and never return `null`.
+
+```java
+builder
+  .countQuery()
+  .queryTypeDetector(sql -> sql != null && sql.stripLeading().regionMatches(true, 0, "WITH", 0, 4)
+          ? QueryType.SELECT : QueryUtils.getQueryType(sql))
+  .build();
+```
 
 
 [[tracing-method-listener]]

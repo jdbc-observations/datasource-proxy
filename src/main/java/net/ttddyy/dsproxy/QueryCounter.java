@@ -4,6 +4,9 @@ import net.ttddyy.dsproxy.listener.QueryExecutionContext;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Counts queries run inside a scope.
@@ -53,6 +56,73 @@ public final class QueryCounter {
             task.run();
             return scope.count();
         }
+    }
+
+    /**
+     * Carry the current scope into a task run on another thread. The task's queries count in that scope (and its
+     * enclosing scopes), even if the task finishes after the scope is closed.
+     *
+     * @param task task
+     * @return wrapped task, or {@code task} itself when no scope is open
+     */
+    public static Runnable wrap(Runnable task) {
+        Scope captured = current();
+        if (captured == null) {
+            return task;
+        }
+        return () -> {
+            Scope previous = current();
+            setCurrent(captured);
+            try {
+                task.run();
+            } finally {
+                setCurrent(previous);
+            }
+        };
+    }
+
+    /**
+     * Callable variant of {@link #wrap(Runnable)}.
+     *
+     * @param task task
+     * @param <T>  result type
+     * @return wrapped task, or {@code task} itself when no scope is open
+     */
+    public static <T> Callable<T> wrap(Callable<T> task) {
+        Scope captured = current();
+        if (captured == null) {
+            return task;
+        }
+        return () -> {
+            Scope previous = current();
+            setCurrent(captured);
+            try {
+                return task.call();
+            } finally {
+                setCurrent(previous);
+            }
+        };
+    }
+
+    /**
+     * Each submitted task runs in the scope that was current on the submitting thread.
+     *
+     * @param executor executor
+     * @return wrapping executor
+     */
+    public static Executor wrap(Executor executor) {
+        return command -> executor.execute(wrap(command));
+    }
+
+    /**
+     * Each submitted task runs in the scope that was current on the submitting thread. Works with virtual-thread
+     * executors.
+     *
+     * @param executor executor service
+     * @return wrapping executor service; lifecycle methods are delegated
+     */
+    public static ExecutorService wrap(ExecutorService executor) {
+        return new ScopedExecutorService(executor);
     }
 
     static @Nullable Scope current() {
