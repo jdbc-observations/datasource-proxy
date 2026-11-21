@@ -28,7 +28,8 @@ public final class QueryCountListener implements ProxyDataSourceListener {
 
     @Override
     public void afterQuery(QueryExecutionContext context) {
-        if (this.counter == null) {
+        QueryCounter.Scope scope = QueryCounter.current();
+        if (scope == null && this.counter == null) {
             return;
         }
         List<QueryType> types = new ArrayList<>(context.getQueries().size());
@@ -37,7 +38,13 @@ public final class QueryCountListener implements ProxyDataSourceListener {
             types.add(Objects.requireNonNull(this.queryTypeDetector.detect(query),
                     () -> "QueryTypeDetector returned null for: " + query));
         }
-        this.counter.record(context.getDataSourceName(), context, types);
+        String name = context.getDataSourceName();
+        for (QueryCounter.Scope s = scope; s != null; s = s.parent()) {
+            s.record(name, context, types);
+        }
+        if (this.counter != null) {
+            this.counter.record(name, context, types);
+        }
     }
 
     public @Nullable DataSourceQueryCounter getCounter() {
