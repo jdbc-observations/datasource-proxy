@@ -22,7 +22,7 @@ public class QueryUtils {
      * @return type of query
      * @since 1.4
      */
-    public static QueryType getQueryType(String query) {
+    public static QueryType getQueryType(@Nullable String query) {
 
         final String trimmedQuery = removeCommentAndWhiteSpace(query);
         if (trimmedQuery == null || trimmedQuery.length() < 1) {

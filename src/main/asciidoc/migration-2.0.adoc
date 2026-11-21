@@ -90,6 +90,18 @@ Unit-testing your own listeners: replace `new ExecutionInfo()` with `net.ttddyy.
 
 == Query counting
 
+* `QueryCountHolder.get(name)` / `getGrandTotal()` (per thread) → open a scope with `QueryCounter.start()` and read
+  `scope.count(name)` / `scope.count()`. `QueryCountHolder.clear()` → close the scope.
+* `countQuery(new SingleQueryCountHolder())` plus `QueryCountHolder` (all threads) → `countQuery(DataSourceQueryCounter)`,
+  then `counter.snapshot()` / `counter.snapshot(name)` and `counter.reset()`.
+* `countQuery(QueryCountStrategy)`, `QueryCountStrategy`, `ThreadQueryCountHolder`, `SingleQueryCountHolder` and
+  `DataSourceQueryCountListener` are removed. Use `countQuery()` or `countQuery(DataSourceQueryCounter)`; the builder adds
+  `QueryCountListener`.
+* `QueryCount` is now an immutable record: `getSelect()` → `select()` and so on; the `setX` / `incrementX` methods are
+  gone. `getTime()` (`long` milliseconds) → `time()` (`Duration`).
+* Custom query classification, for example counting `WITH ...` as a select (#76) → `builder.queryTypeDetector(...)`.
+* New in 2.0: `QueryCounter` only sees DataSources built with `countQuery()`. A scope around any other DataSource counts 0.
+
 == Logging
 
 == ResultSet

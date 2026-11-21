@@ -6,10 +6,11 @@ import net.ttddyy.dsproxy.ConnectionIdManager;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.proxy.CompositeProxyDataSourceListener;
 import net.ttddyy.dsproxy.proxy.MutableQueryExecutionContext;
-import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
+import net.ttddyy.dsproxy.DataSourceQueryCounter;
+import net.ttddyy.dsproxy.QueryCountListener;
+import net.ttddyy.dsproxy.QueryType;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.listener.QueryCountStrategy;
-import net.ttddyy.dsproxy.listener.ThreadQueryCountHolder;
+import net.ttddyy.dsproxy.listener.QueryTypeDetector;
 import net.ttddyy.dsproxy.listener.TracingMethodListener;
 import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventExecutionListener;
 import net.ttddyy.dsproxy.listener.lifecycle.JdbcLifecycleEventListener;
@@ -394,24 +395,15 @@ class ProxyDataSourceBuilderTest {
 
     @Test
     void countListener() {
+        QueryCountListener listener = getAndVerifyListener(ProxyDataSourceBuilder.create().countQuery().build(), QueryCountListener.class);
+        assertThat(listener.getCounter()).isNull();
+        assertThat(listener.getQueryTypeDetector().detect("select 1")).isEqualTo(QueryType.SELECT);
 
-        ProxyDataSource ds;
-        DataSourceQueryCountListener listener;
-
-        // default strategy
-        ds = ProxyDataSourceBuilder.create().countQuery().build();
-        listener = getAndVerifyListener(ds, DataSourceQueryCountListener.class);
-        assertThat(listener.getQueryCountStrategy()).as("default count listener")
-                .isInstanceOf(ThreadQueryCountHolder.class);
-
-        // specify strategy
-        QueryCountStrategy strategy = mock(QueryCountStrategy.class);
-
-        ds = ProxyDataSourceBuilder.create().countQuery(strategy).build();
-        listener = getAndVerifyListener(ds, DataSourceQueryCountListener.class);
-        assertThat(listener.getQueryCountStrategy()).as("count listener with strategy")
-                .isNotNull()
-                .isSameAs(strategy);
+        DataSourceQueryCounter counter = new DataSourceQueryCounter();
+        QueryTypeDetector detector = q -> QueryType.OTHER;
+        listener = getAndVerifyListener(ProxyDataSourceBuilder.create().countQuery(counter).queryTypeDetector(detector).build(), QueryCountListener.class);
+        assertThat(listener.getCounter()).isSameAs(counter);
+        assertThat(listener.getQueryTypeDetector()).isSameAs(detector);
     }
 
     @Test

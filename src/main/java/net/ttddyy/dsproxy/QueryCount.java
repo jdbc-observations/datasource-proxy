@@ -1,192 +1,42 @@
 package net.ttddyy.dsproxy;
 
-import java.util.concurrent.atomic.AtomicLong;
+import java.time.Duration;
+import java.util.Collection;
 
 /**
- * Hold query metrics.
+ * Immutable snapshot of query metrics.
  *
+ * @param select    number of SELECT queries
+ * @param insert    number of INSERT queries
+ * @param update    number of UPDATE queries
+ * @param delete    number of DELETE queries
+ * @param other     number of other queries
+ * @param statement number of executions through {@link java.sql.Statement}
+ * @param prepared  number of executions through {@link java.sql.PreparedStatement}
+ * @param callable  number of executions through {@link java.sql.CallableStatement}
+ * @param total     number of executions (a batch counts once)
+ * @param success   number of successful executions
+ * @param failure   number of failed executions
+ * @param time      total execution time
  * @author Tadaya Tsuyukubo
+ * @see QueryCounter
+ * @see DataSourceQueryCounter
  */
-public class QueryCount {
+public record QueryCount(long select, long insert, long update, long delete, long other,
+                         long statement, long prepared, long callable,
+                         long total, long success, long failure, Duration time) {
 
-    // number of queries
-    private AtomicLong select = new AtomicLong();
-    private AtomicLong insert = new AtomicLong();
-    private AtomicLong update = new AtomicLong();
-    private AtomicLong delete = new AtomicLong();
-    private AtomicLong other = new AtomicLong();
+    static final QueryCount ZERO = new QueryCount(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Duration.ZERO);
 
-    // number of statement types
-    private AtomicLong statement = new AtomicLong();
-    private AtomicLong prepared = new AtomicLong();
-    private AtomicLong callable = new AtomicLong();
-
-    // number of database calls
-    private AtomicLong total = new AtomicLong();
-    private AtomicLong failure = new AtomicLong();
-    private AtomicLong success = new AtomicLong();
-
-    private AtomicLong time = new AtomicLong();
-
-    public void increment(QueryType queryType) {
-        switch (queryType) {
-            case SELECT -> incrementSelect();
-            case INSERT -> incrementInsert();
-            case UPDATE -> incrementUpdate();
-            case DELETE -> incrementDelete();
-            case OTHER -> incrementOther();
+    static QueryCount sum(Collection<QueryCount> counts) {
+        QueryCount result = ZERO;
+        for (QueryCount c : counts) {
+            result = new QueryCount(result.select + c.select, result.insert + c.insert, result.update + c.update,
+                    result.delete + c.delete, result.other + c.other, result.statement + c.statement,
+                    result.prepared + c.prepared, result.callable + c.callable, result.total + c.total,
+                    result.success + c.success, result.failure + c.failure, result.time.plus(c.time));
         }
+        return result;
     }
 
-    public void increment(StatementType statementType) {
-        switch (statementType) {
-            case STATEMENT -> incrementStatement();
-            case PREPARED -> incrementPrepared();
-            case CALLABLE -> incrementCallable();
-        }
-    }
-
-    public void incrementSelect() {
-        select.incrementAndGet();
-    }
-
-    public void incrementInsert() {
-        insert.incrementAndGet();
-    }
-
-    public void incrementUpdate() {
-        update.incrementAndGet();
-    }
-
-    public void incrementDelete() {
-        delete.incrementAndGet();
-    }
-
-    public void incrementOther() {
-        other.incrementAndGet();
-    }
-
-    public void incrementStatement() {
-        statement.incrementAndGet();
-    }
-
-    public void incrementPrepared() {
-        prepared.incrementAndGet();
-    }
-
-    public void incrementCallable() {
-        callable.incrementAndGet();
-    }
-
-    public void incrementTotal() {
-        total.incrementAndGet();
-    }
-
-    public void incrementSuccess() {
-        success.incrementAndGet();
-    }
-
-    public void incrementFailure() {
-        failure.incrementAndGet();
-    }
-
-    public void incrementTime(long delta) {
-        time.addAndGet(delta);
-    }
-
-    public long getSelect() {
-        return select.longValue();
-    }
-
-    public void setSelect(long select) {
-        this.select.set(select);
-    }
-
-    public long getInsert() {
-        return insert.longValue();
-    }
-
-    public void setInsert(long insert) {
-        this.insert.set(insert);
-    }
-
-    public long getUpdate() {
-        return update.longValue();
-    }
-
-    public void setUpdate(long update) {
-        this.update.set(update);
-    }
-
-    public long getDelete() {
-        return delete.longValue();
-    }
-
-    public void setDelete(long delete) {
-        this.delete.set(delete);
-    }
-
-    public long getOther() {
-        return other.longValue();
-    }
-
-    public void setOther(long other) {
-        this.other.set(other);
-    }
-
-    public long getStatement() {
-        return statement.longValue();
-    }
-
-    public void setStatement(long statement) {
-        this.statement.set(statement);
-    }
-
-    public long getPrepared() {
-        return prepared.longValue();
-    }
-
-    public void setPrepared(long prepared) {
-        this.prepared.set(prepared);
-    }
-
-    public long getCallable() {
-        return callable.longValue();
-    }
-
-    public void setCallable(long callable) {
-        this.callable.set(callable);
-    }
-
-    public long getTotal() {
-        return total.longValue();
-    }
-
-    public void setTotal(long total) {
-        this.total.set(total);
-    }
-
-    public long getSuccess() {
-        return success.longValue();
-    }
-
-    public void setSuccess(long success) {
-        this.success.set(success);
-    }
-
-    public long getFailure() {
-        return failure.longValue();
-    }
-
-    public void setFailure(long failure) {
-        this.failure.set(failure);
-    }
-
-    public long getTime() {
-        return time.longValue();
-    }
-
-    public void setTime(long time) {
-        this.time.set(time);
-    }
 }

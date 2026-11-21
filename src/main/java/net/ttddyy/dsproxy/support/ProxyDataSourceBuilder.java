@@ -3,11 +3,13 @@ package net.ttddyy.dsproxy.support;
 import org.jspecify.annotations.Nullable;
 
 import net.ttddyy.dsproxy.ConnectionIdManager;
-import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
+import net.ttddyy.dsproxy.DataSourceQueryCounter;
+import net.ttddyy.dsproxy.QueryCountListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.ProxyDataSourceListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionContext;
-import net.ttddyy.dsproxy.listener.QueryCountStrategy;
+import net.ttddyy.dsproxy.listener.QueryTypeDetector;
+import net.ttddyy.dsproxy.listener.QueryUtils;
 import net.ttddyy.dsproxy.listener.TracingMethodListener;
 import net.ttddyy.dsproxy.listener.logging.CommonsLogLevel;
 import net.ttddyy.dsproxy.listener.logging.CommonsQueryLoggingListener;
@@ -123,8 +125,9 @@ public class ProxyDataSourceBuilder {
     // for SystemOutSlowQueryListener
     private boolean createSysOutSlowQueryListener;
 
-    private boolean createDataSourceQueryCountListener;
-    private @Nullable QueryCountStrategy queryCountStrategy;
+    private boolean countQuery;
+    private @Nullable DataSourceQueryCounter queryCounter;
+    private QueryTypeDetector queryTypeDetector = QueryUtils::getQueryType;
 
     private boolean jsonFormat;
     private boolean multiline;
@@ -616,24 +619,37 @@ public class ProxyDataSourceBuilder {
     }
 
     /**
-     * Create {@link net.ttddyy.dsproxy.listener.DataSourceQueryCountListener}.
+     * Enable query counting. Queries are counted into any open {@link net.ttddyy.dsproxy.QueryCounter} scope.
+     * Without this, {@code QueryCounter} scopes see 0 for this DataSource.
      *
      * @return builder
      */
     public ProxyDataSourceBuilder countQuery() {
-        this.createDataSourceQueryCountListener = true;
+        this.countQuery = true;
         return this;
     }
 
     /**
-     * Create {@link net.ttddyy.dsproxy.listener.DataSourceQueryCountListener}.
+     * Enable query counting, and also count every query, from any thread, into the given counter.
+     * Calling it again replaces the counter.
      *
+     * @param counter counter owned by the caller
      * @return builder
-     * @since 1.4.2
      */
-    public ProxyDataSourceBuilder countQuery(QueryCountStrategy queryCountStrategy) {
-        this.createDataSourceQueryCountListener = true;
-        this.queryCountStrategy = queryCountStrategy;
+    public ProxyDataSourceBuilder countQuery(DataSourceQueryCounter counter) {
+        this.countQuery = true;
+        this.queryCounter = counter;
+        return this;
+    }
+
+    /**
+     * Set how query counting classifies queries. Default is {@link QueryUtils#getQueryType(String)}.
+     *
+     * @param queryTypeDetector detector
+     * @return builder
+     */
+    public ProxyDataSourceBuilder queryTypeDetector(QueryTypeDetector queryTypeDetector) {
+        this.queryTypeDetector = queryTypeDetector;
         return this;
     }
 
@@ -1146,14 +1162,8 @@ public class ProxyDataSourceBuilder {
 
 
         // countQuery listener
-        if (this.createDataSourceQueryCountListener) {
-            DataSourceQueryCountListener countListener = new DataSourceQueryCountListener();
-
-            if (this.queryCountStrategy != null) {
-                countListener.setQueryCountStrategy(this.queryCountStrategy);
-            }
-
-            listeners.add(countListener);
+        if (this.countQuery) {
+            listeners.add(new QueryCountListener(this.queryCounter, this.queryTypeDetector));
         }
 
         // tracing listener
