@@ -280,12 +280,13 @@ executor. Each task runs in the scope that was current when it was submitted, in
 try (var scope = QueryCounter.start()) {
     ExecutorService executor = QueryCounter.wrap(Executors.newVirtualThreadPerTaskExecutor());
     executor.submit(() -> repository.findAll()).get();
-    CompletableFuture.runAsync(QueryCounter.wrap(() -> repository.findAll())).get();
+    CompletableFuture.runAsync(QueryCounter.wrap(() -> { repository.findAll(); })).get();
     scope.count().select();   // 2
 }
 ```
 
 `QueryCounter.wrap(Runnable)`, `wrap(Callable)`, `wrap(Executor)` and `wrap(ExecutorService)` are available.
+A lambda that returns a value is a `Callable`; where a `Runnable` is needed, use a block body as above.
 
 ==== Counting all threads
 

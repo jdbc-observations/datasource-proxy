@@ -146,6 +146,8 @@ public final class QueryCounter {
 
         private final QueryCountTable table = new QueryCountTable();
 
+        private final Thread owner = Thread.currentThread();
+
         private volatile boolean closed;
 
         private Scope(@Nullable Scope parent) {
@@ -170,18 +172,41 @@ public final class QueryCounter {
         /**
          * Close this scope and make its parent current again. Closing twice does nothing.
          *
-         * @throws IllegalStateException if this open scope is not the current scope on this thread
+         * <p>If inner scopes were left open, they are closed too (so the thread does not keep counting into them)
+         * and an {@link IllegalStateException} is thrown.
+         *
+         * @throws IllegalStateException if called on a thread other than the one that opened this scope, or if
+         *                               inner scopes were left open
          */
         @Override
         public void close() {
             if (this.closed) {
                 return;
             }
-            if (current() != this) {
-                throw new IllegalStateException("QueryCounter scope closed out of order or on another thread");
+            if (Thread.currentThread() != this.owner) {
+                throw new IllegalStateException("QueryCounter scope closed on another thread");
             }
-            this.closed = true;
-            setCurrent(this.parent);
+            Scope current = current();
+            if (current == this) {
+                this.closed = true;
+                setCurrent(this.parent);
+                return;
+            }
+            boolean leaked = false;
+            for (Scope s = current; s != null; s = s.parent) {
+                if (s == this) {
+                    leaked = true;
+                    break;
+                }
+            }
+            if (leaked) {
+                for (Scope s = current; s != this; s = s.parent) {
+                    s.closed = true;
+                }
+                this.closed = true;
+                setCurrent(this.parent);
+            }
+            throw new IllegalStateException("QueryCounter scope closed out of order; inner scopes were left open");
         }
 
         @Nullable Scope parent() {

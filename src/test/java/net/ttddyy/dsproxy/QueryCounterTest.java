@@ -120,6 +120,26 @@ class QueryCounterTest {
     }
 
     @Test
+    void leakedInnerScopeIsDiscardedWhenOuterCloses() {
+        assertThatThrownBy(() -> QueryCounter.count(QueryCounter::start)).isInstanceOf(IllegalStateException.class);
+        assertThat(QueryCounter.current()).isNull();
+    }
+
+    @Test
+    void closeFromAnotherThreadThrowsAndKeepsScopeOpen() throws Exception {
+        java.util.concurrent.ExecutorService pool = java.util.concurrent.Executors.newSingleThreadExecutor();
+        try (var scope = QueryCounter.start()) {
+            assertThatThrownBy(() -> pool.submit(QueryCounter.wrap(scope::close)).get())
+                    .hasCauseInstanceOf(IllegalStateException.class);
+            select(this.ds1);
+            assertThat(QueryCounter.current()).isSameAs(scope);
+            assertThat(scope.count().select()).isEqualTo(1);
+        } finally {
+            pool.shutdown();
+        }
+    }
+
+    @Test
     void closingNonCurrentScopeThrows() {
         var outer = QueryCounter.start();
         var inner = QueryCounter.start();

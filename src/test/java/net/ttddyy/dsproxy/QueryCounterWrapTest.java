@@ -62,6 +62,21 @@ class QueryCounterWrapTest {
         }
     }
 
+    private static int countRows(DataSource ds) {
+        select(ds);
+        return 1;
+    }
+
+    @Test
+    void wrapWorksWithCompletableFutureRunAsync() throws Exception {
+        try (var scope = QueryCounter.start()) {
+            java.util.concurrent.CompletableFuture.runAsync(QueryCounter.wrap(() -> {
+                countRows(this.ds1);
+            })).get();
+            assertThat(scope.count().select()).isEqualTo(1);
+        }
+    }
+
     @Test
     void wrapWithoutScopeReturnsTaskUnchanged() {
         Runnable r = () -> {
