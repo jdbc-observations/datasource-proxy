@@ -13,7 +13,7 @@ jobs:
       - name: Set up Maven Central Repository
         uses: actions/setup-java@v6
         with:
-          java-version: 8
+          java-version: 21
           distribution: temurin
           server-id: central
           server-username-env-var: MAVEN_USERNAME

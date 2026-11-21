@@ -13,7 +13,7 @@ jobs:
       - name: Set up code
         uses: actions/setup-java@v6
         with:
-          java-version: 8
+          java-version: 21
           distribution: temurin
 
       - name: Get project version
