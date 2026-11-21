@@ -44,7 +44,7 @@
     <mockito.version>5.24.0</mockito.version>
     <assertj.version>3.27.7</assertj.version>
     <logback.versino>1.2.0</logback.versino>
-    <asciidoctor.version>1.5.3</asciidoctor.version>
+    <asciidoctor.version>3.2.0</asciidoctor.version>
     <log4j2.version>2.17.2</log4j2.version>
     <central-publishing-maven-plugin.version>0.7.0</central-publishing-maven-plugin.version>
   </properties>
@@ -207,11 +207,13 @@
                  ./mvnw asciidoctor:process-asciidoc@output-html
             -->
             <configuration>
+              <sourceDirectory>src/main/asciidoc</sourceDirectory>
+              <relativeBaseDir>true</relativeBaseDir>
               <sourceDocumentName>index.adoc</sourceDocumentName>
               <backend>html5</backend>
-              <sourceHighlighter>highlightjs</sourceHighlighter>
               <attributes>
                 <toc>left</toc>
+                <source-highlighter>highlightjs</source-highlighter>
                 <highlightjs-theme>github</highlightjs-theme>
                 <sectanchors />
                 <icons>font</icons>
